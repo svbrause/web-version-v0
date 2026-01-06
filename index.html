@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Aesthetic Consult - Discover Your Perfect Treatment</title>
+    <!-- SVG Sprite for Icons -->
+    <svg
+      aria-hidden="true"
+      style="position: absolute; width: 0; height: 0; overflow: hidden"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+      <defs>
+        <!-- Trash icon for clear all button -->
+        <symbol id="icon-trash" viewBox="0 0 24 24">
+          <path
+            d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+          />
+          <line
+            x1="10"
+            y1="11"
+            x2="10"
+            y2="17"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <line
+            x1="14"
+            y1="11"
+            x2="14"
+            y2="17"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </symbol>
+      </defs>
+    </svg>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="branding.css" />
+    <!-- Using Airtable REST API directly (no library needed) -->
+
+    <!-- Analytics & Session Recording Configuration -->
+    <script>
+      // ============================================================
+      // ANALYTICS CONFIGURATION
+      // Set to true to enable session recording and analytics
+      // ============================================================
+      window.ANALYTICS_ENABLED = true; // Change to true when ready for production
+
+      // Microsoft Clarity Project ID - Get yours at https://clarity.microsoft.com
+      window.CLARITY_PROJECT_ID = "uk5nm6wky7"; // Replace with your actual project ID
+    </script>
+    <!-- PostHog Analytics -->
+    <script>
+      !(function (t, e) {
+        var o, n, p, r;
+        e.__SV ||
+          (window.posthog && window.posthog.__loaded) ||
+          ((window.posthog = e),
+          (e._i = []),
+          (e.init = function (i, s, a) {
+            function g(t, e) {
+              var o = e.split(".");
+              2 == o.length && ((t = t[o[0]]), (e = o[1])),
+                (t[e] = function () {
+                  t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+                });
+            }
+            ((p = t.createElement("script")).type = "text/javascript"),
+              (p.crossOrigin = "anonymous"),
+              (p.async = !0),
+              (p.src =
+                s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") +
+                "/static/array.js"),
+              (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(
+                p,
+                r
+              );
+            var u = e;
+            for (
+              void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
+                u.people = u.people || [],
+                u.toString = function (t) {
+                  var e = "posthog";
+                  return (
+                    "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e
+                  );
+                },
+                u.people.toString = function () {
+                  return u.toString(1) + ".people (stub)";
+                },
+                o =
+                  "init zr Wr fi Br Gr ci Nr Hr capture Ui calculateEventProperties Kr register register_once register_for_session unregister unregister_for_session Zr getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey cancelPendingSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Xr Jr createPersonProfile Qr jr ts opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Vr debug O Yr getPageViewId captureTraceFeedback captureTraceMetric Or".split(
+                    " "
+                  ),
+                n = 0;
+              n < o.length;
+              n++
+            )
+              g(u, o[n]);
+            e._i.push([i, s, a]);
+          }),
+          (e.__SV = 1));
+      })(document, window.posthog || []);
+      posthog.init("phc_F8Zq5cs2RJp2QlAsXDPPR84MBiF0qT8vMRS4QDyLsct", {
+        api_host: "https://us.i.posthog.com",
+        defaults: "2025-11-30",
+        person_profiles: "identified_only",
+        // Enable localhost tracking for testing
+        capture_pageview: true,
+        capture_pageleave: true,
+        debug: true, // Shows console logs - remove in production
+      });
+      console.log("📊 PostHog initialized");
+    </script>
+
+    <!-- Hotjar Tracking Code - REPLACE 'XXXXXXX' WITH YOUR HOTJAR SITE ID -->
+    <!-- Get your Site ID from: https://insights.hotjar.com/site/list -->
+    <script>
+      // TO ENABLE HOTJAR: Replace XXXXXXX with your actual Hotjar Site ID
+      var HOTJAR_SITE_ID = "XXXXXXX"; // Example: "3456789"
+
+      if (HOTJAR_SITE_ID !== "XXXXXXX") {
+        (function (h, o, t, j, a, r) {
+          h.hj =
+            h.hj ||
+            function () {
+              (h.hj.q = h.hj.q || []).push(arguments);
+            };
+          h._hjSettings = { hjid: parseInt(HOTJAR_SITE_ID), hjsv: 6 };
+          a = o.getElementsByTagName("head")[0];
+          r = o.createElement("script");
+          r.async = 1;
+          r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+          a.appendChild(r);
+        })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=");
+        console.log("📊 Hotjar initialized with Site ID:", HOTJAR_SITE_ID);
+      } else {
+        console.log(
+          "📊 Hotjar disabled - replace XXXXXXX with your Site ID in index.html"
+        );
+      }
+    </script>
+    <script src="https://t.contentsquare.net/uxa/3ac2b222bfce1.js"></script>
+    <!-- Microsoft Clarity - Session Recording & Heatmaps (Free) -->
+    <script type="text/javascript">
+      if (
+        window.ANALYTICS_ENABLED &&
+        window.CLARITY_PROJECT_ID !== "YOUR_CLARITY_PROJECT_ID"
+      ) {
+        (function (c, l, a, r, i, t, y) {
+          c[a] =
+            c[a] ||
+            function () {
+              (c[a].q = c[a].q || []).push(arguments);
+            };
+          t = l.createElement(r);
+          t.async = 1;
+          t.src = "https://www.clarity.ms/tag/" + i;
+          y = l.getElementsByTagName(r)[0];
+          y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", window.CLARITY_PROJECT_ID);
+        console.log(
+          "📊 Microsoft Clarity enabled with project:",
+          window.CLARITY_PROJECT_ID
+        );
+
+        // Test event to verify Clarity is working
+        setTimeout(function () {
+          if (typeof clarity === "function") {
+            clarity("set", "test_event", "page_loaded");
+            console.log("📊 Clarity test event sent");
+          }
+        }, 2000);
+      } else {
+        console.log(
+          "📊 Clarity disabled (set ANALYTICS_ENABLED = true to enable)"
+        );
+      }
+    </script>
+
+    <!-- Analytics Debug Helper -->
+    <script>
+      // Log all analytics status after page loads
+      window.addEventListener("load", function () {
+        console.log("═══════════════════════════════════════════");
+        console.log("📊 ANALYTICS STATUS CHECK");
+        console.log("═══════════════════════════════════════════");
+        console.log("PostHog loaded:", typeof window.posthog !== "undefined");
+        console.log("Clarity loaded:", typeof window.clarity !== "undefined");
+        console.log("Hotjar loaded:", typeof window.hj !== "undefined");
+        console.log("Current URL:", window.location.href);
+        console.log(
+          "Is Localhost:",
+          window.location.hostname === "localhost" ||
+            window.location.hostname === "127.0.0.1"
+        );
+        console.log("═══════════════════════════════════════════");
+
+        // Warn about localhost limitations
+        if (
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1"
+        ) {
+          console.warn(
+            "⚠️ NOTE: Some analytics platforms don't track localhost by default."
+          );
+          console.warn(
+            "⚠️ Deploy to a real domain OR configure your analytics to allow localhost."
+          );
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <!-- Top Right Buttons - Global -->
+    <div class="top-right-buttons" id="top-right-buttons">
+      <button class="my-cases-button" onclick="showMyCases()" title="My Goals">
+        <span class="button-icon"></span>
+      </button>
+    </div>
+    <div class="app-container">
+      <!-- Home Screen Teaser -->
+      <div id="home-teaser" class="screen active">
+        <div class="teaser-container">
+          <div class="teaser-logo">
+            <img src="image.png" alt="Company Logo" class="logo-image" />
+          </div>
+          <h1 class="teaser-title">Discover Your Perfect Treatment</h1>
+          <p class="teaser-subtitle">
+            AI-powered aesthetic consultation tailored to your unique needs
+          </p>
+          <div class="teaser-image">
+            <img
+              src="Onboarding-concept.jpg"
+              alt="Aesthetic consultation"
+              class="teaser-photo"
+              onerror="this.style.display='none';"
+            />
+          </div>
+          <div class="teaser-features">
+            <div class="teaser-feature">
+              <span class="feature-icon"
+                ><svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+                  ></path></svg
+              ></span>
+              <span>Personalized Recommendations</span>
+            </div>
+            <div class="teaser-feature">
+              <span class="feature-icon"
+                ><svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                  ></path>
+                  <circle cx="12" cy="13" r="4"></circle></svg
+              ></span>
+              <span>Real Patient Results</span>
+            </div>
+            <div class="teaser-feature">
+              <span class="feature-icon"
+                ><svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path
+                    d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                  ></path></svg
+              ></span>
+              <span>Exclusive Offers</span>
+            </div>
+          </div>
+
+          <button
+            class="teaser-cta"
+            onclick="showOnboarding(); return false;"
+            type="button"
+          >
+            Discover Your Personalized Plan
+          </button>
+          <p class="teaser-cta-subtext">
+            Get a free AI-powered facial analysis and personalized treatment
+            recommendations
+          </p>
+        </div>
+      </div>
+
+      <!-- Onboarding Screens -->
+      <div id="onboarding" class="screen">
+        <!-- Onboarding Screen 1 -->
+        <div class="onboarding-slide active" data-slide="0">
+          <div class="page-indicator">
+            <div class="indicator-bar active"></div>
+            <div class="indicator-bar"></div>
+            <div class="indicator-bar"></div>
+          </div>
+          <div class="onboarding-content">
+            <h1 class="onboarding-heading">Discover Your Perfect Treatment</h1>
+            <p class="onboarding-subheading">
+              AI-powered aesthetic consultation tailored to your unique needs
+            </p>
+            <div class="onboarding-image">
+              <img
+                src="Onboarding-credibility.jpg"
+                alt="Aesthetic consultation"
+                class="onboarding-photo"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+              />
+              <div
+                class="placeholder-image"
+                style="
+                  background: linear-gradient(135deg, #ffd291 0%, #e5f6fe 100%);
+                  display: none;
+                "
+              ></div>
+            </div>
+            <button class="continue-button" onclick="nextOnboardingSlide()">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <!-- Onboarding Screen 2 -->
+        <div class="onboarding-slide" data-slide="1">
+          <div class="page-indicator">
+            <div class="indicator-bar active"></div>
+            <div class="indicator-bar active"></div>
+            <div class="indicator-bar"></div>
+          </div>
+          <div class="onboarding-content">
+            <h1 class="onboarding-heading">See Real Results</h1>
+            <p class="onboarding-subheading">
+              Explore personalized case studies from patients like you
+            </p>
+            <div class="onboarding-image">
+              <img
+                src="Frame 1372.png"
+                alt="Before and after results"
+                class="onboarding-photo"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+              />
+              <div
+                class="placeholder-image"
+                style="
+                  background: linear-gradient(135deg, #e5f6fe 0%, #ffd291 100%);
+                  display: none;
+                "
+              ></div>
+            </div>
+            <button class="continue-button" onclick="nextOnboardingSlide()">
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <!-- Onboarding Screen 3 -->
+        <div class="onboarding-slide" data-slide="2">
+          <div class="page-indicator">
+            <div class="indicator-bar active"></div>
+            <div class="indicator-bar active"></div>
+            <div class="indicator-bar active"></div>
+          </div>
+          <div class="onboarding-content">
+            <h1 class="onboarding-heading">Get Started Today</h1>
+            <p class="onboarding-subheading">
+              Answer a few quick questions to see your personalized
+              recommendations
+            </p>
+            <div class="onboarding-image">
+              <img
+                src="Frame 992.jpg"
+                alt="Get started with consultation"
+                class="onboarding-photo"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+              />
+              <div
+                class="placeholder-image"
+                style="
+                  background: linear-gradient(135deg, #fad7a2 0%, #e5f6fe 100%);
+                  display: none;
+                "
+              ></div>
+            </div>
+            <div class="onboarding-cta-section">
+              <!-- Discount Offer -->
+              <div
+                class="onboarding-discount-offer"
+                id="onboarding-discount-offer"
+              >
+                <div class="discount-offer-header">
+                  <span class="discount-offer-icon">✨</span>
+                  <div class="discount-offer-text">
+                    <span
+                      class="discount-offer-amount"
+                      id="onboarding-discount-amount"
+                      >$50 OFF</span
+                    >
+                    <span
+                      class="discount-offer-desc"
+                      id="onboarding-discount-desc"
+                      >Your Personalized Offer</span
+                    >
+                  </div>
+                </div>
+                <p
+                  class="discount-offer-scarcity"
+                  id="onboarding-discount-scarcity"
+                >
+                  Available when you book
+                </p>
+              </div>
+
+              <p class="onboarding-cta-text">Ready to see your plan?</p>
+              <button class="lets-go-button" onclick="startForm()">
+                Start My Transformation →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Concerns Selection Screen (comes before goals/age) -->
+      <div id="concerns-selection-screen" class="screen">
+        <div class="concerns-screen-container">
+          <!-- Header Section -->
+          <div class="concerns-header">
+            <h1 class="concerns-title">Select Your Aesthetic Concerns</h1>
+            <p class="concerns-subtitle">
+              Tap the + buttons on the body to select areas you'd like to
+              address
+            </p>
+            <div class="concerns-controls">
+              <a href="#" class="concerns-link" id="how-to-use-link"
+                >How to Use</a
+              >
+              <a href="#" class="concerns-link" id="switch-gender-link"
+                >Switch to Male</a
+              >
+            </div>
+          </div>
+
+          <!-- Body Selector Section (embedded directly) -->
+          <div class="embedded-body-selector" id="embedded-body-selector">
+            <!-- Body selector content will be injected here -->
+          </div>
+
+          <!-- Footer Section with selection count and continue button -->
+          <div class="concerns-footer">
+            <div class="concerns-selection-count">
+              <span id="concerns-count">0</span> of 3 concerns selected
+            </div>
+            <div
+              id="selected-concerns-display"
+              class="selected-concerns-display"
+              style="display: none;"
+            ></div>
+            <button
+              type="button"
+              class="cta-button primary"
+              id="proceed-to-goals-btn"
+              onclick="proceedToGoalsAndAge()"
+              disabled
+            >
+              Continue to Goals
+            </button>
+          </div>
+
+          <div
+            id="region-issue-rows"
+            class="region-issue-container"
+            style="display: none"
+          >
+            <!-- Hidden - kept for backward compatibility with form submission -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Screen (Goals & Age) -->
+      <div id="form-screen" class="screen">
+        <div class="form-container">
+          <!-- Process Indicator -->
+          <div class="process-indicator">
+            <div class="process-step active">
+              <div class="step-number">1</div>
+              <div class="step-label">AI Consult</div>
+            </div>
+            <div class="process-connector"></div>
+            <div class="process-step">
+              <div class="step-number">2</div>
+              <div class="step-label">In-Clinic Consult</div>
+            </div>
+          </div>
+
+          <h1 class="form-title">Your Goals & Details</h1>
+          <p class="form-subtitle">
+            Help us personalize your treatment recommendations
+          </p>
+
+          <form id="aesthetic-form">
+            <!-- Selected Concerns Summary (editable) -->
+            <div class="form-section">
+              <div
+                id="selected-concerns-summary"
+                class="selected-concerns-summary"
+              >
+                <!-- Will be populated with selected concerns -->
+              </div>
+              <button
+                type="button"
+                class="body-selector-button"
+                id="open-body-selector-button"
+                onclick="openBodySelector()"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  style="margin-right: 8px"
+                >
+                  <path
+                    d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+                  ></path>
+                </svg>
+                Select Concerns on Body
+              </button>
+              <div
+                id="selected-concerns-display"
+                class="selected-concerns-display"
+                style="display: none;"
+              ></div>
+              <div
+                id="region-issue-rows"
+                class="region-issue-container"
+                style="display: none"
+              >
+                <!-- Hidden - kept for backward compatibility with form submission -->
+              </div>
+            </div>
+
+            <!-- Age Input -->
+            <div class="form-section">
+              <h2 class="section-title">Your Age</h2>
+              <div class="age-input-container">
+                <input
+                  type="number"
+                  id="patient-age"
+                  name="age"
+                  min="18"
+                  max="100"
+                  placeholder="Enter your age"
+                  class="age-input"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Overall Goals (with visual examples) -->
+            <div class="form-section">
+              <h2 class="section-title">Your Goals</h2>
+              <p class="section-subtitle">
+                (Select all that apply)
+                <button
+                  type="button"
+                  class="goals-help-link"
+                  onclick="showGoalsExplainer()"
+                >
+                  What do these mean?
+                </button>
+              </p>
+              <div class="goals-visual-grid" id="goals-visual-grid">
+                <!-- Goal cards will be populated by JavaScript with example photos -->
+                <label class="goal-visual-card" data-goal="facial-balancing">
+                  <input
+                    type="checkbox"
+                    name="overall-goals"
+                    value="facial-balancing"
+                  />
+                  <div class="goal-card-image" id="goal-image-facial-balancing">
+                    <div class="goal-image-placeholder">
+                      <svg
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                        <line x1="9" y1="9" x2="9.01" y2="9" />
+                        <line x1="15" y1="9" x2="15.01" y2="9" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="goal-card-content">
+                    <span class="goal-card-title">Facial Balancing</span>
+                    <span class="goal-card-description"
+                      >Enhance symmetry and proportions</span
+                    >
+                  </div>
+                  <div class="goal-card-check">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                </label>
+
+                <label class="goal-visual-card" data-goal="anti-aging">
+                  <input
+                    type="checkbox"
+                    name="overall-goals"
+                    value="anti-aging"
+                  />
+                  <div class="goal-card-image" id="goal-image-anti-aging">
+                    <div class="goal-image-placeholder">
+                      <svg
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      >
+                        <path
+                          d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+                        ></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="goal-card-content">
+                    <span class="goal-card-title">Anti-Aging</span>
+                    <span class="goal-card-description"
+                      >Reduce wrinkles and restore volume</span
+                    >
+                  </div>
+                  <div class="goal-card-check">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                </label>
+
+                <label class="goal-visual-card" data-goal="skin-rejuvenation">
+                  <input
+                    type="checkbox"
+                    name="overall-goals"
+                    value="skin-rejuvenation"
+                  />
+                  <div
+                    class="goal-card-image"
+                    id="goal-image-skin-rejuvenation"
+                  >
+                    <div class="goal-image-placeholder">
+                      <svg
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      >
+                        <path
+                          d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="goal-card-content">
+                    <span class="goal-card-title">Skin Rejuvenation</span>
+                    <span class="goal-card-description"
+                      >Improve texture, tone, and clarity</span
+                    >
+                  </div>
+                  <div class="goal-card-check">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                </label>
+
+                <label class="goal-visual-card" data-goal="natural-look">
+                  <input
+                    type="checkbox"
+                    name="overall-goals"
+                    value="natural-look"
+                  />
+                  <div class="goal-card-image" id="goal-image-natural-look">
+                    <div class="goal-image-placeholder">
+                      <svg
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      >
+                        <path
+                          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                        ></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="goal-card-content">
+                    <span class="goal-card-title">Natural Look</span>
+                    <span class="goal-card-description"
+                      >Subtle enhancements that refresh</span
+                    >
+                  </div>
+                  <div class="goal-card-check">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div
+              id="validation-message"
+              class="validation-message"
+              style="display: none"
+            ></div>
+
+            <button
+              type="submit"
+              class="submit-button"
+              id="submit-button"
+              disabled
+            >
+              Next
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Early Lead Capture Screen (after form, before results) -->
+      <div id="lead-capture-screen" class="screen">
+        <div class="lead-capture-container">
+          <div class="lead-capture-header">
+            <div class="lead-capture-icon">
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                />
+              </svg>
+            </div>
+            <h1 class="lead-capture-title">Great News!</h1>
+            <p class="lead-capture-subtitle" id="lead-capture-message">
+              We found <strong id="treatment-count">multiple</strong> treatment
+              options for your concerns!
+            </p>
+          </div>
+
+          <div class="lead-capture-preview">
+            <div class="preview-label">Your personalized results include:</div>
+            <div class="preview-items" id="lead-capture-preview-items">
+              <!-- Will be populated dynamically -->
+            </div>
+          </div>
+
+          <div class="lead-capture-form-section">
+            <h2 class="lead-form-title">
+              Get your personalized results
+            </h2>
+            <p class="lead-form-subtitle">
+              Enter your details to see your treatment recommendations
+            </p>
+
+            <form id="early-lead-capture-form" class="early-lead-form">
+              <div class="lead-form-field">
+                <input
+                  type="text"
+                  id="early-capture-name"
+                  name="name"
+                  placeholder="Full Name"
+                  required
+                  class="lead-input"
+                />
+              </div>
+              <div class="lead-form-field">
+                <input
+                  type="email"
+                  id="early-capture-email"
+                  name="email"
+                  placeholder="Email Address"
+                  required
+                  class="lead-input"
+                />
+              </div>
+              <div class="lead-form-field">
+                <input
+                  type="tel"
+                  id="early-capture-phone"
+                  name="phone"
+                  placeholder="Phone Number (optional)"
+                  class="lead-input"
+                />
+              </div>
+              <button
+                type="submit"
+                class="lead-submit-button"
+                id="lead-submit-btn"
+              >
+                See My Results
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+            </form>
+
+            <button
+              type="button"
+              class="lead-skip-button"
+              id="lead-skip-btn"
+              onclick="window.skipLeadCapture()"
+            >
+              Skip for now
+            </button>
+
+            <p class="lead-privacy-note">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              Your information is private and secure
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Consolidated Results Screen (Option 1 - Single Page) -->
+      <div id="results-screen" class="screen">
+        <div class="results-container">
+          <!-- Header -->
+          <div class="results-header">
+            <h1 class="results-title">Your Personalized Results</h1>
+            <p class="results-subtitle">
+              Based on your concerns, here are our recommendations
+            </p>
+          </div>
+
+          <!-- Concern Tabs -->
+          <div class="results-tabs" id="results-tabs">
+            <!-- Tabs will be dynamically populated -->
+          </div>
+
+          <!-- Results Content (scrollable) -->
+          <div class="results-content" id="results-content">
+            <!-- Content for each concern will be dynamically populated -->
+          </div>
+
+          <!-- Sticky CTA Footer -->
+          <div class="results-cta-footer">
+            <div class="results-cta-discount" id="results-cta-discount">
+              <span class="discount-badge">🎁 $50 OFF</span>
+              <span class="discount-text">Your first consultation</span>
+            </div>
+            <button class="results-cta-button" onclick="requestConsultation()">
+              <span class="cta-icon">✨</span>
+              Book Your Free Consultation
+            </button>
+            <p class="results-cta-note">
+              Free consultation • Expert analysis • No obligation
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Issue/Goal Detail Screen (kept for backward compatibility) -->
+      <div id="issue-detail-screen" class="screen">
+        <div class="issue-detail-container">
+          <div id="issue-detail-content">
+            <!-- Content will be dynamically inserted -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Gallery - Horizontal Carousel -->
+      <div id="gallery-toc" class="screen">
+        <div class="gallery-container">
+          <!-- Process Indicator -->
+          <div class="process-indicator">
+            <div class="process-step completed">
+              <div class="step-number">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="step-label">AI Consult</div>
+            </div>
+            <div class="process-connector"></div>
+            <div class="process-step">
+              <div class="step-number">2</div>
+              <div class="step-label">In-Clinic Consult</div>
+            </div>
+          </div>
+
+          <h1 class="gallery-title">AI Aesthetic Suggestions</h1>
+          <p class="gallery-subtitle">
+            Based on your concerns, here are personalized recommendations
+          </p>
+
+          <!-- Filter buttons -->
+          <div class="gallery-filters">
+            <button
+              class="filter-button active"
+              onclick="filterCases('all')"
+              data-filter="all"
+            >
+              All
+            </button>
+            <button
+              class="filter-button"
+              onclick="filterCases('read')"
+              data-filter="read"
+            >
+              Viewed
+            </button>
+            <button
+              class="filter-button"
+              onclick="filterCases('favorited')"
+              data-filter="favorited"
+            >
+              Favorited
+            </button>
+          </div>
+
+          <!-- Horizontal Case Carousel -->
+          <div id="case-carousel" class="case-carousel">
+            <div id="case-carousel-track" class="case-carousel-track">
+              <!-- Cases will be dynamically inserted here -->
+            </div>
+            <button
+              class="carousel-nav carousel-prev"
+              onclick="scrollCarousel(-1)"
+            >
+              ‹
+            </button>
+            <button
+              class="carousel-nav carousel-next"
+              onclick="scrollCarousel(1)"
+            >
+              ›
+            </button>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="gallery-cta">
+            <div class="gallery-cta-header">
+              <h3 class="gallery-cta-title">Ready to Transform Your Look?</h3>
+              <p class="gallery-cta-subtitle">
+                Get a comprehensive facial analysis and personalized treatment
+                plan designed just for you
+              </p>
+            </div>
+            <button class="cta-button primary" onclick="requestConsultation()">
+              <span class="cta-icon">✨</span>
+              Get My Personalized Treatment Plan
+            </button>
+            <button class="cta-button secondary" onclick="requestMoreInfo()">
+              Learn More About Treatments
+            </button>
+
+            <!-- Active Discount Display -->
+            <div class="gallery-discount-active" id="gallery-discount-active">
+              <div class="discount-active-content">
+                <span class="discount-active-icon">🎁</span>
+                <div class="discount-active-info">
+                  <span
+                    class="discount-active-amount"
+                    id="gallery-discount-amount"
+                    >$50 OFF</span
+                  >
+                  <span class="discount-active-text" id="gallery-discount-text"
+                    >applied to your consultation</span
+                  >
+                </div>
+                <button
+                  class="discount-redeem-btn"
+                  onclick="showDiscountDetails()"
+                >
+                  Redeem
+                </button>
+              </div>
+            </div>
+
+            <p class="gallery-cta-note">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                />
+              </svg>
+              Free consultation • Expert analysis • Personalized recommendations
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Detail Screen -->
+      <div id="case-detail" class="screen">
+        <div class="case-detail-container">
+          <button class="back-button" onclick="goBackToGallery()">
+            ← Back
+          </button>
+          <div id="case-detail-content">
+            <!-- Case detail content will be dynamically inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- My Goals Screen -->
+      <div id="my-cases-screen" class="screen">
+        <div class="my-cases-container">
+          <div class="my-cases-header">
+            <button class="back-button" onclick="closeMyCases()">← Back</button>
+            <h1 class="my-cases-title">Summary</h1>
+          </div>
+          <div id="my-cases-content">
+            <!-- Content will be dynamically inserted -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Remove Goal Confirmation Modal -->
+      <div id="remove-goal-modal" class="modal-overlay">
+        <div class="modal-container" style="max-width: 400px">
+          <div class="modal-header">
+            <h2 class="modal-title">Remove from Goals?</h2>
+            <button class="modal-close" onclick="closeRemoveGoalModal()">
+              ×
+            </button>
+          </div>
+          <div class="modal-form" style="padding: 24px">
+            <p
+              style="
+                font-size: 16px;
+                color: #424242;
+                margin-bottom: 24px;
+                line-height: 1.6;
+              "
+            >
+              Are you sure you want to remove
+              <strong id="remove-goal-name"></strong> from your goals?
+            </p>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="modal-cancel-button"
+                onclick="closeRemoveGoalModal()"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="modal-submit-button"
+                id="confirm-remove-goal-button"
+                onclick="confirmRemoveGoal()"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Request More Information Modal -->
+      <div id="request-info-modal" class="modal-overlay">
+        <div class="modal-container">
+          <div class="modal-header">
+            <h2 class="modal-title">Request More Information</h2>
+            <button class="modal-close" onclick="closeRequestModal()">×</button>
+          </div>
+          <form id="request-info-form" class="modal-form">
+            <div class="form-field">
+              <label for="request-name">Full Name *</label>
+              <input
+                type="text"
+                id="request-name"
+                name="name"
+                required
+                placeholder="Enter your full name"
+              />
+            </div>
+            <div class="form-field">
+              <label for="request-email">Email Address *</label>
+              <input
+                type="email"
+                id="request-email"
+                name="email"
+                required
+                placeholder="Enter your email"
+              />
+            </div>
+            <div class="form-field">
+              <label for="request-phone">Phone Number</label>
+              <input
+                type="tel"
+                id="request-phone"
+                name="phone"
+                placeholder="(555) 123-4567"
+              />
+            </div>
+            <div class="form-field">
+              <label for="request-message">Message</label>
+              <textarea
+                id="request-message"
+                name="message"
+                rows="4"
+                placeholder="Tell us what you'd like to learn more about..."
+              ></textarea>
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="modal-cancel-button"
+                onclick="closeRequestModal()"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="modal-submit-button">
+                Submit Request
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discount Details Modal -->
+    <div id="discount-details-modal" class="modal-overlay">
+      <div class="modal-container" style="max-width: 480px">
+        <div class="modal-header">
+          <h2 class="modal-title">Your Special Offer</h2>
+          <button class="modal-close" onclick="closeDiscountModal()">×</button>
+        </div>
+        <div class="modal-form" style="padding: 24px">
+          <div id="discount-modal-content">
+            <!-- Content will be populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals Explainer Modal (accessible from any screen) -->
+    <div id="goals-explainer-modal" class="goals-explainer-modal">
+      <div class="goals-explainer-content">
+        <button
+          type="button"
+          class="goals-explainer-close"
+          onclick="closeGoalsExplainer()"
+        >
+          ×
+        </button>
+        <h2>Understanding Your Aesthetic Goals</h2>
+        <p class="goals-explainer-intro">
+          Each goal represents a different approach to aesthetic enhancement.
+          Here's what they mean:
+        </p>
+
+        <div class="goal-explainer-cards" id="goal-explainer-cards">
+          <!-- Will be populated by JavaScript with examples -->
+        </div>
+
+        <button
+          type="button"
+          class="goals-explainer-done"
+          onclick="closeGoalsExplainer()"
+        >
+          Got it!
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Consultation CTA -->
+    <div id="floating-consultation-cta" class="floating-consultation-cta">
+      <button class="floating-cta-button" onclick="requestConsultation()">
+        <span class="floating-cta-icon">✨</span>
+        <span class="floating-cta-text">Claim Offers</span>
+      </button>
+    </div>
+
+    <!-- Body Selector Screen (Full Screen) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="body-selector/css/reset.css" />
+    <link rel="stylesheet" href="body-selector/css/main.css" />
+    <script src="body-selector/js/body-selector-integration.js"></script>
+    <script src="custom-dropdown.js"></script>
+    <script src="branding.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

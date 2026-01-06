@@ -1,0 +1,3109 @@
+/**
+ * Issue Prevalence Data
+ * 
+ * Generated from analysis of 869 patient records
+ * Data source: /Users/sambrause/Downloads/Photos-1-001/test2/
+ * 
+ * Usage:
+ *   const prevalence = getIssuePrevalence('Under Eye Hollow');
+ *   const agePrevalence = getIssuePrevalenceForAge('Under Eye Hollow', 35);
+ */
+
+// Overall prevalence (percentage of all 869 records)
+export const overallPrevalence = {
+  "Under Eye Hollow": {
+    "percentage": 90.56,
+    "count": 787,
+    "ageCorrelation": 0.8416
+  },
+  "Nasolabial Folds": {
+    "percentage": 84,
+    "count": 730,
+    "ageCorrelation": 0.9639
+  },
+  "Prejowl Sulcus": {
+    "percentage": 81.01,
+    "count": 704,
+    "ageCorrelation": 0.9298
+  },
+  "Neck Lines": {
+    "percentage": 73.99,
+    "count": 643,
+    "ageCorrelation": -0.1272
+  },
+  "Nasal Tip Too Wide": {
+    "percentage": 69.62,
+    "count": 605,
+    "ageCorrelation": 0.854
+  },
+  "Under Eye Wrinkles": {
+    "percentage": 66.86,
+    "count": 581,
+    "ageCorrelation": 0.9817
+  },
+  "Excess/Submental Fullness": {
+    "percentage": 66.05,
+    "count": 574,
+    "ageCorrelation": 0.6499
+  },
+  "Dark Spots": {
+    "percentage": 65.71,
+    "count": 571,
+    "ageCorrelation": 0.8027
+  },
+  "Marionette Lines": {
+    "percentage": 64.79,
+    "count": 563,
+    "ageCorrelation": 0.9571
+  },
+  "Retruded Chin": {
+    "percentage": 64.56,
+    "count": 561,
+    "ageCorrelation": -0.9565
+  },
+  "Mid Cheek Flattening": {
+    "percentage": 55.93,
+    "count": 486,
+    "ageCorrelation": 0.0867
+  },
+  "Under Eye Dark Circles": {
+    "percentage": 55.47,
+    "count": 482,
+    "ageCorrelation": 0.2702
+  },
+  "Asymmetric Lips": {
+    "percentage": 54.43,
+    "count": 473,
+    "ageCorrelation": 0.5809
+  },
+  "Nasal Bone - Too Wide": {
+    "percentage": 54.2,
+    "count": 471,
+    "ageCorrelation": 0.6137
+  },
+  "Thin Lips": {
+    "percentage": 53.74,
+    "count": 467,
+    "ageCorrelation": 0.9882
+  },
+  "Forehead Wrinkles": {
+    "percentage": 51.44,
+    "count": 447,
+    "ageCorrelation": 0.9852
+  },
+  "Brow Asymmetry": {
+    "percentage": 50.98,
+    "count": 443,
+    "ageCorrelation": 0.415
+  },
+  "Loose Neck Skin": {
+    "percentage": 49.37,
+    "count": 429,
+    "ageCorrelation": 0.9689
+  },
+  "Dry Lips": {
+    "percentage": 47.99,
+    "count": 417,
+    "ageCorrelation": 0.2263
+  },
+  "Temporal Hollow": {
+    "percentage": 43.04,
+    "count": 374,
+    "ageCorrelation": 0.4474
+  },
+  "Nostril Base - Too Wide": {
+    "percentage": 42.81,
+    "count": 372,
+    "ageCorrelation": 0.9058
+  },
+  "Red Spots": {
+    "percentage": 41.89,
+    "count": 364,
+    "ageCorrelation": -0.8752
+  },
+  "Over-Rotated": {
+    "percentage": 41.54,
+    "count": 361,
+    "ageCorrelation": 0.1426
+  },
+  "Dorsal Hump": {
+    "percentage": 40.62,
+    "count": 353,
+    "ageCorrelation": 0.0787
+  },
+  "Long Philtral Column": {
+    "percentage": 40.39,
+    "count": 351,
+    "ageCorrelation": 0.8768
+  },
+  "Over-Projected": {
+    "percentage": 38.78,
+    "count": 337,
+    "ageCorrelation": -0.8767
+  },
+  "Excess Upper Eyelid Skin": {
+    "percentage": 37.74,
+    "count": 328,
+    "ageCorrelation": 0.9841
+  },
+  "Glabella Wrinkles": {
+    "percentage": 35.44,
+    "count": 308,
+    "ageCorrelation": 0.9857
+  },
+  "Upper Eye Hollow": {
+    "percentage": 34.06,
+    "count": 296,
+    "ageCorrelation": 0.6427
+  },
+  "Crow's Feet Wrinkles": {
+    "percentage": 31.76,
+    "count": 276,
+    "ageCorrelation": 0.9822
+  },
+  "Asymmetric Chin": {
+    "percentage": 31.07,
+    "count": 270,
+    "ageCorrelation": -0.4087
+  },
+  "Bunny Lines": {
+    "percentage": 29.23,
+    "count": 254,
+    "ageCorrelation": 0.9614
+  },
+  "Jowls": {
+    "percentage": 27.04,
+    "count": 235,
+    "ageCorrelation": 0.9209
+  },
+  "Crooked Nose": {
+    "percentage": 26.58,
+    "count": 231,
+    "ageCorrelation": 0.4661
+  },
+  "Perioral Wrinkles": {
+    "percentage": 24.05,
+    "count": 209,
+    "ageCorrelation": 0.9836
+  },
+  "Ill-Defined Jawline": {
+    "percentage": 20.71,
+    "count": 180,
+    "ageCorrelation": -0.1636
+  },
+  "Platysmal Bands": {
+    "percentage": 20.14,
+    "count": 175,
+    "ageCorrelation": 0.9659
+  },
+  "Masseter Hypertrophy": {
+    "percentage": 19.56,
+    "count": 170,
+    "ageCorrelation": -0.6159
+  },
+  "Cheekbone - Not Prominent": {
+    "percentage": 19.45,
+    "count": 169,
+    "ageCorrelation": 0.1251
+  },
+  "Lower Eyelid Bags": {
+    "percentage": 17.84,
+    "count": 155,
+    "ageCorrelation": 0.8363
+  },
+  "Whiteheads": {
+    "percentage": 17.61,
+    "count": 153,
+    "ageCorrelation": -0.9228
+  },
+  "Lower Eyelid - Excess Skin": {
+    "percentage": 16.69,
+    "count": 145,
+    "ageCorrelation": 0.9684
+  },
+  "Blackheads": {
+    "percentage": 16.46,
+    "count": 143,
+    "ageCorrelation": -0.7069
+  },
+  "Negative Canthal Tilt": {
+    "percentage": 13.58,
+    "count": 118,
+    "ageCorrelation": 0.5282
+  },
+  "Wide Chin": {
+    "percentage": 13,
+    "count": 113,
+    "ageCorrelation": 0.954
+  },
+  "Flat Forehead": {
+    "percentage": 11.16,
+    "count": 97,
+    "ageCorrelation": -0.114
+  },
+  "Droopy Tip": {
+    "percentage": 10.59,
+    "count": 92,
+    "ageCorrelation": 0.4188
+  },
+  "Scars": {
+    "percentage": 10.36,
+    "count": 90,
+    "ageCorrelation": -0.9775
+  },
+  "Asymmetric Jawline": {
+    "percentage": 10.13,
+    "count": 88,
+    "ageCorrelation": -0.5151
+  },
+  "Lower Eyelid Sag": {
+    "percentage": 9.55,
+    "count": 83,
+    "ageCorrelation": -0.6436
+  },
+  "Lower Cheeks - Volume Depletion": {
+    "percentage": 9.32,
+    "count": 81,
+    "ageCorrelation": 0.7768
+  },
+  "Lacking Philtral Column": {
+    "percentage": 8.98,
+    "count": 78,
+    "ageCorrelation": 0.9046
+  },
+  "Under-Projected": {
+    "percentage": 8.86,
+    "count": 77,
+    "ageCorrelation": 0.5173
+  },
+  "Upper Eyelid Droop": {
+    "percentage": 8.75,
+    "count": 76,
+    "ageCorrelation": 0.7134
+  },
+  "Over-Projected Chin": {
+    "percentage": 8.29,
+    "count": 72,
+    "ageCorrelation": 0.4419
+  },
+  "Wide Jawline": {
+    "percentage": 7.94,
+    "count": 69,
+    "ageCorrelation": 0.8989
+  },
+  "Crepey Skin": {
+    "percentage": 7.59,
+    "count": 66,
+    "ageCorrelation": 0.8856
+  },
+  "Lower Cheeks - Over-Filled": {
+    "percentage": 7.02,
+    "count": 61,
+    "ageCorrelation": -0.6593
+  },
+  "Asymmetric Nostril Base [DEPRECATED]": {
+    "percentage": 7.02,
+    "count": 61,
+    "ageCorrelation": -0.2782
+  },
+  "Oily": {
+    "percentage": 6.1,
+    "count": 53,
+    "ageCorrelation": -0.5567
+  },
+  "Brow Ptosis": {
+    "percentage": 5.64,
+    "count": 49,
+    "ageCorrelation": 0.8917
+  },
+  "Heavy Lateral Cheek": {
+    "percentage": 5.29,
+    "count": 46,
+    "ageCorrelation": -0.585
+  },
+  "Tip Droop When Smiling": {
+    "percentage": 4.37,
+    "count": 38,
+    "ageCorrelation": -0.4306
+  },
+  "Acne [DEPRECATED]": {
+    "percentage": 4.26,
+    "count": 37,
+    "ageCorrelation": -0.7173
+  },
+  "Columellar Hang [DEPRECATED]": {
+    "percentage": 4.03,
+    "count": 35,
+    "ageCorrelation": 0.5483
+  },
+  "Lip Thinning When Smiling": {
+    "percentage": 3.8,
+    "count": 33,
+    "ageCorrelation": -0.8634
+  },
+  "Obtuse Cervicomental Angle [DEPRECATED]": {
+    "percentage": 3.8,
+    "count": 33,
+    "ageCorrelation": 0.9566
+  },
+  "Dry Skin": {
+    "percentage": 3.68,
+    "count": 32,
+    "ageCorrelation": 0.5915
+  },
+  "Gummy Smile": {
+    "percentage": 3.45,
+    "count": 30,
+    "ageCorrelation": -0.8931
+  },
+  "Alar Hang [DEPRECATED]": {
+    "percentage": 2.76,
+    "count": 24,
+    "ageCorrelation": -0.6315
+  },
+  "Narrow Jawline": {
+    "percentage": 2.65,
+    "count": 23,
+    "ageCorrelation": 0.6842
+  },
+  "Under-Rotated": {
+    "percentage": 2.3,
+    "count": 20,
+    "ageCorrelation": 0.4294
+  },
+  "Shallow Radix [DEPRECATED]": {
+    "percentage": 1.96,
+    "count": 17,
+    "ageCorrelation": -0.6758
+  },
+  "Alar Retraction [DEPRECATED]": {
+    "percentage": 1.84,
+    "count": 16,
+    "ageCorrelation": 0.5698
+  },
+  "Columellar Retraction [DEPRECATED]": {
+    "percentage": 1.73,
+    "count": 15,
+    "ageCorrelation": -0.642
+  },
+  "Deep Labiomental Groove [DEPRECATED]": {
+    "percentage": 0.69,
+    "count": 6,
+    "ageCorrelation": 0.582
+  },
+  "Deep Radix [DEPRECATED]": {
+    "percentage": 0.58,
+    "count": 5,
+    "ageCorrelation": -0.8837
+  },
+  "Nasal Tip Too Narrow": {
+    "percentage": 0.46,
+    "count": 4,
+    "ageCorrelation": 0.55
+  },
+  "Cheilosis [DEPRECATED]": {
+    "percentage": 0.35,
+    "count": 3,
+    "ageCorrelation": 0.3093
+  },
+  "Shallow Labiomental Groove [DEPRECATED]": {
+    "percentage": 0.35,
+    "count": 3,
+    "ageCorrelation": 0.6328
+  },
+  "Rosacea [DEPRECATED]": {
+    "percentage": 0.35,
+    "count": 3,
+    "ageCorrelation": 1
+  },
+  "Nasal Bone - Too Narrow [DEPRECATED]": {
+    "percentage": 0.12,
+    "count": 1,
+    "ageCorrelation": null
+  },
+  "Nostril Base - Too Narrow [DEPRECATED]": {
+    "percentage": 0.12,
+    "count": 1,
+    "ageCorrelation": null
+  }
+};
+
+// Prevalence by age range
+export const ageRangePrevalence = {
+  "Acne [DEPRECATED]": {
+    "10-19": {
+      "percentage": 60,
+      "count": 3,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 8.33,
+      "count": 11,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 3.94,
+      "count": 11,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 3.73,
+      "count": 9,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 0.82,
+      "count": 1,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 2.74,
+      "count": 2,
+      "totalInRange": 73
+    }
+  },
+  "Alar Hang [DEPRECATED]": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 3.79,
+      "count": 5,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 1.08,
+      "count": 3,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 3.73,
+      "count": 9,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 4.92,
+      "count": 6,
+      "totalInRange": 122
+    }
+  },
+  "Asymmetric Jawline": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 7.58,
+      "count": 10,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 10.39,
+      "count": 29,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 11.62,
+      "count": 28,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 10.66,
+      "count": 13,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 9.59,
+      "count": 7,
+      "totalInRange": 73
+    }
+  },
+  "Asymmetric Lips": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 42.42,
+      "count": 56,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 56.99,
+      "count": 159,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 54.77,
+      "count": 132,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 64.75,
+      "count": 79,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 52.05,
+      "count": 38,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 47.06,
+      "count": 8,
+      "totalInRange": 17
+    }
+  },
+  "Asymmetric Nostril Base [DEPRECATED]": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 7.58,
+      "count": 10,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 4.66,
+      "count": 13,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 7.88,
+      "count": 19,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 7.38,
+      "count": 9,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 9.59,
+      "count": 7,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 11.76,
+      "count": 2,
+      "totalInRange": 17
+    }
+  },
+  "Blackheads": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 22.73,
+      "count": 30,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 13.98,
+      "count": 39,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 17.43,
+      "count": 42,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 14.75,
+      "count": 18,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 12.33,
+      "count": 9,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 17.65,
+      "count": 3,
+      "totalInRange": 17
+    }
+  },
+  "Brow Asymmetry": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 36.36,
+      "count": 48,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 53.76,
+      "count": 150,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 52.28,
+      "count": 126,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 56.56,
+      "count": 69,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 56.16,
+      "count": 41,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 41.18,
+      "count": 7,
+      "totalInRange": 17
+    }
+  },
+  "Cheekbone - Not Prominent": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 16.67,
+      "count": 22,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 18.64,
+      "count": 52,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 17.01,
+      "count": 41,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 24.59,
+      "count": 30,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 20.55,
+      "count": 15,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 41.18,
+      "count": 7,
+      "totalInRange": 17
+    }
+  },
+  "Columellar Retraction [DEPRECATED]": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 1.52,
+      "count": 2,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 1.08,
+      "count": 3,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 2.07,
+      "count": 5,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 3.28,
+      "count": 4,
+      "totalInRange": 122
+    }
+  },
+  "Crooked Nose": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 22.73,
+      "count": 30,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 26.16,
+      "count": 73,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 31.54,
+      "count": 76,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 24.59,
+      "count": 30,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 21.92,
+      "count": 16,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 29.41,
+      "count": 5,
+      "totalInRange": 17
+    }
+  },
+  "Deep Radix [DEPRECATED]": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 1.52,
+      "count": 2,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 0.72,
+      "count": 2,
+      "totalInRange": 279
+    }
+  },
+  "Dorsal Hump": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 49.24,
+      "count": 65,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 40.86,
+      "count": 114,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 38.59,
+      "count": 93,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 36.07,
+      "count": 44,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 35.62,
+      "count": 26,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 52.94,
+      "count": 9,
+      "totalInRange": 17
+    }
+  },
+  "Dry Lips": {
+    "10-19": {
+      "percentage": 60,
+      "count": 3,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 35.61,
+      "count": 47,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 44.09,
+      "count": 123,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 54.36,
+      "count": 131,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 53.28,
+      "count": 65,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 53.42,
+      "count": 39,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 52.94,
+      "count": 9,
+      "totalInRange": 17
+    }
+  },
+  "Excess/Submental Fullness": {
+    "10-19": {
+      "percentage": 60,
+      "count": 3,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 53.03,
+      "count": 70,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 66.67,
+      "count": 186,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 66.8,
+      "count": 161,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 73.77,
+      "count": 90,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 72.6,
+      "count": 53,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 64.71,
+      "count": 11,
+      "totalInRange": 17
+    }
+  },
+  "Flat Forehead": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 12.12,
+      "count": 16,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 8.6,
+      "count": 24,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 13.69,
+      "count": 33,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 9.02,
+      "count": 11,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 12.33,
+      "count": 9,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 17.65,
+      "count": 3,
+      "totalInRange": 17
+    }
+  },
+  "Forehead Wrinkles": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 30.3,
+      "count": 40,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 41.58,
+      "count": 116,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 56.43,
+      "count": 136,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 63.93,
+      "count": 78,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 84.93,
+      "count": 62,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 82.35,
+      "count": 14,
+      "totalInRange": 17
+    }
+  },
+  "Heavy Lateral Cheek": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 8.33,
+      "count": 11,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 2.87,
+      "count": 8,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 5.39,
+      "count": 13,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 5.74,
+      "count": 7,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 6.85,
+      "count": 5,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 5.88,
+      "count": 1,
+      "totalInRange": 17
+    }
+  },
+  "Ill-Defined Jawline": {
+    "10-19": {
+      "percentage": 60,
+      "count": 3,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 13.64,
+      "count": 18,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 16.13,
+      "count": 45,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 19.09,
+      "count": 46,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 30.33,
+      "count": 37,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 35.62,
+      "count": 26,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 29.41,
+      "count": 5,
+      "totalInRange": 17
+    }
+  },
+  "Lower Cheeks - Over-Filled": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 6.82,
+      "count": 9,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 6.81,
+      "count": 19,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 8.3,
+      "count": 20,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 4.92,
+      "count": 6,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 6.85,
+      "count": 5,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 5.88,
+      "count": 1,
+      "totalInRange": 17
+    }
+  },
+  "Lower Eyelid Bags": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 6.06,
+      "count": 8,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 11.11,
+      "count": 31,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 17.01,
+      "count": 41,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 31.97,
+      "count": 39,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 34.25,
+      "count": 25,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 58.82,
+      "count": 10,
+      "totalInRange": 17
+    }
+  },
+  "Lower Eyelid Sag": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 12.12,
+      "count": 16,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 9.68,
+      "count": 27,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 9.13,
+      "count": 22,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 6.56,
+      "count": 8,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 12.33,
+      "count": 9,
+      "totalInRange": 73
+    }
+  },
+  "Marionette Lines": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 37.12,
+      "count": 49,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 52.33,
+      "count": 146,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 75.52,
+      "count": 182,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 86.07,
+      "count": 105,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 86.3,
+      "count": 63,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 94.12,
+      "count": 16,
+      "totalInRange": 17
+    }
+  },
+  "Masseter Hypertrophy": {
+    "10-19": {
+      "percentage": 60,
+      "count": 3,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 15.91,
+      "count": 21,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 21.51,
+      "count": 60,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 18.67,
+      "count": 45,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 21.31,
+      "count": 26,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 16.44,
+      "count": 12,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 17.65,
+      "count": 3,
+      "totalInRange": 17
+    }
+  },
+  "Mid Cheek Flattening": {
+    "10-19": {
+      "percentage": 60,
+      "count": 3,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 49.24,
+      "count": 65,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 54.48,
+      "count": 152,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 61.41,
+      "count": 148,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 57.38,
+      "count": 70,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 52.05,
+      "count": 38,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 58.82,
+      "count": 10,
+      "totalInRange": 17
+    }
+  },
+  "Nasal Bone - Too Wide": {
+    "10-19": {
+      "percentage": 60,
+      "count": 3,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 47.73,
+      "count": 63,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 50.9,
+      "count": 142,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 53.94,
+      "count": 130,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 63.93,
+      "count": 78,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 60.27,
+      "count": 44,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 64.71,
+      "count": 11,
+      "totalInRange": 17
+    }
+  },
+  "Nasal Tip Too Wide": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 65.15,
+      "count": 86,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 67.03,
+      "count": 187,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 68.05,
+      "count": 164,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 81.15,
+      "count": 99,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 72.6,
+      "count": 53,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 82.35,
+      "count": 14,
+      "totalInRange": 17
+    }
+  },
+  "Nasolabial Folds": {
+    "10-19": {
+      "percentage": 60,
+      "count": 3,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 65.91,
+      "count": 87,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 78.85,
+      "count": 220,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 88.8,
+      "count": 214,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 96.72,
+      "count": 118,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 97.26,
+      "count": 71,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 100,
+      "count": 17,
+      "totalInRange": 17
+    }
+  },
+  "Neck Lines": {
+    "10-19": {
+      "percentage": 100,
+      "count": 5,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 57.58,
+      "count": 76,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 72.04,
+      "count": 201,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 75.93,
+      "count": 183,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 86.07,
+      "count": 105,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 83.56,
+      "count": 61,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 70.59,
+      "count": 12,
+      "totalInRange": 17
+    }
+  },
+  "Nostril Base - Too Wide": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 34.85,
+      "count": 46,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 38.71,
+      "count": 108,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 43.98,
+      "count": 106,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 50,
+      "count": 61,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 54.79,
+      "count": 40,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 52.94,
+      "count": 9,
+      "totalInRange": 17
+    }
+  },
+  "Over-Projected": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 50.76,
+      "count": 67,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 41.94,
+      "count": 117,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 35.68,
+      "count": 86,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 33.61,
+      "count": 41,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 28.77,
+      "count": 21,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 17.65,
+      "count": 3,
+      "totalInRange": 17
+    }
+  },
+  "Over-Rotated": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 30.3,
+      "count": 40,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 43.37,
+      "count": 121,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 47.3,
+      "count": 114,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 42.62,
+      "count": 52,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 34.25,
+      "count": 25,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 41.18,
+      "count": 7,
+      "totalInRange": 17
+    }
+  },
+  "Prejowl Sulcus": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 54.55,
+      "count": 72,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 73.84,
+      "count": 206,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 92.95,
+      "count": 224,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 93.44,
+      "count": 114,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 94.52,
+      "count": 69,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 100,
+      "count": 17,
+      "totalInRange": 17
+    }
+  },
+  "Red Spots": {
+    "10-19": {
+      "percentage": 80,
+      "count": 4,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 49.24,
+      "count": 65,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 45.16,
+      "count": 126,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 40.66,
+      "count": 98,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 31.15,
+      "count": 38,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 41.1,
+      "count": 30,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 17.65,
+      "count": 3,
+      "totalInRange": 17
+    }
+  },
+  "Retruded Chin": {
+    "10-19": {
+      "percentage": 80,
+      "count": 4,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 71.21,
+      "count": 94,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 73.12,
+      "count": 204,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 59.34,
+      "count": 143,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 62.3,
+      "count": 76,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 45.21,
+      "count": 33,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 41.18,
+      "count": 7,
+      "totalInRange": 17
+    }
+  },
+  "Scars": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 15.15,
+      "count": 20,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 13.62,
+      "count": 38,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 8.3,
+      "count": 20,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 8.2,
+      "count": 10,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 1.37,
+      "count": 1,
+      "totalInRange": 73
+    }
+  },
+  "Shallow Radix [DEPRECATED]": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 3.03,
+      "count": 4,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 1.79,
+      "count": 5,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 0.83,
+      "count": 2,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 3.28,
+      "count": 4,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 1.37,
+      "count": 1,
+      "totalInRange": 73
+    }
+  },
+  "Temporal Hollow": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 34.09,
+      "count": 45,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 47.31,
+      "count": 132,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 48.96,
+      "count": 118,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 36.89,
+      "count": 45,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 35.62,
+      "count": 26,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 41.18,
+      "count": 7,
+      "totalInRange": 17
+    }
+  },
+  "Under Eye Dark Circles": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 49.24,
+      "count": 65,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 57.71,
+      "count": 161,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 64.73,
+      "count": 156,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 52.46,
+      "count": 64,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 36.99,
+      "count": 27,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 47.06,
+      "count": 8,
+      "totalInRange": 17
+    }
+  },
+  "Under Eye Hollow": {
+    "10-19": {
+      "percentage": 60,
+      "count": 3,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 85.61,
+      "count": 113,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 89.61,
+      "count": 250,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 90.46,
+      "count": 218,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 95.9,
+      "count": 117,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 94.52,
+      "count": 69,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 100,
+      "count": 17,
+      "totalInRange": 17
+    }
+  },
+  "Under Eye Wrinkles": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 46.97,
+      "count": 62,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 58.06,
+      "count": 162,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 70.95,
+      "count": 171,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 80.33,
+      "count": 98,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 95.89,
+      "count": 70,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 100,
+      "count": 17,
+      "totalInRange": 17
+    }
+  },
+  "Under-Projected": {
+    "10-19": {
+      "percentage": 20,
+      "count": 1,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 3.79,
+      "count": 5,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 5.02,
+      "count": 14,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 9.96,
+      "count": 24,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 13.93,
+      "count": 17,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 15.07,
+      "count": 11,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 29.41,
+      "count": 5,
+      "totalInRange": 17
+    }
+  },
+  "Upper Eye Hollow": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 22.73,
+      "count": 30,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 34.05,
+      "count": 95,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 34.85,
+      "count": 84,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 37.7,
+      "count": 46,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 42.47,
+      "count": 31,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 47.06,
+      "count": 8,
+      "totalInRange": 17
+    }
+  },
+  "Whiteheads": {
+    "10-19": {
+      "percentage": 40,
+      "count": 2,
+      "totalInRange": 5
+    },
+    "20-29": {
+      "percentage": 23.48,
+      "count": 31,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 17.2,
+      "count": 48,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 19.92,
+      "count": 48,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 14.75,
+      "count": 18,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 6.85,
+      "count": 5,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 5.88,
+      "count": 1,
+      "totalInRange": 17
+    }
+  },
+  "Alar Retraction [DEPRECATED]": {
+    "20-29": {
+      "percentage": 3.79,
+      "count": 5,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 0.36,
+      "count": 1,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 1.66,
+      "count": 4,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 1.64,
+      "count": 2,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 4.11,
+      "count": 3,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 5.88,
+      "count": 1,
+      "totalInRange": 17
+    }
+  },
+  "Asymmetric Chin": {
+    "20-29": {
+      "percentage": 33.33,
+      "count": 44,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 34.77,
+      "count": 97,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 26.97,
+      "count": 65,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 36.89,
+      "count": 45,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 26.03,
+      "count": 19,
+      "totalInRange": 73
+    }
+  },
+  "Brow Ptosis": {
+    "20-29": {
+      "percentage": 1.52,
+      "count": 2,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 1.79,
+      "count": 5,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 5.81,
+      "count": 14,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 11.48,
+      "count": 14,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 16.44,
+      "count": 12,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 11.76,
+      "count": 2,
+      "totalInRange": 17
+    }
+  },
+  "Bunny Lines": {
+    "20-29": {
+      "percentage": 11.36,
+      "count": 15,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 16.85,
+      "count": 47,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 29.05,
+      "count": 70,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 45.08,
+      "count": 55,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 75.34,
+      "count": 55,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 70.59,
+      "count": 12,
+      "totalInRange": 17
+    }
+  },
+  "Cheilosis [DEPRECATED]": {
+    "20-29": {
+      "percentage": 0.76,
+      "count": 1,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 0.36,
+      "count": 1,
+      "totalInRange": 279
+    },
+    "50-59": {
+      "percentage": 0.82,
+      "count": 1,
+      "totalInRange": 122
+    }
+  },
+  "Columellar Hang [DEPRECATED]": {
+    "20-29": {
+      "percentage": 4.55,
+      "count": 6,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 1.79,
+      "count": 5,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 5.81,
+      "count": 14,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 3.28,
+      "count": 4,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 6.85,
+      "count": 5,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 5.88,
+      "count": 1,
+      "totalInRange": 17
+    }
+  },
+  "Crepey Skin": {
+    "20-29": {
+      "percentage": 0.76,
+      "count": 1,
+      "totalInRange": 132
+    },
+    "40-49": {
+      "percentage": 3.32,
+      "count": 8,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 12.3,
+      "count": 15,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 46.58,
+      "count": 34,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 47.06,
+      "count": 8,
+      "totalInRange": 17
+    }
+  },
+  "Crow's Feet Wrinkles": {
+    "20-29": {
+      "percentage": 5.3,
+      "count": 7,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 18.64,
+      "count": 52,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 33.2,
+      "count": 80,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 51.64,
+      "count": 63,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 82.19,
+      "count": 60,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 82.35,
+      "count": 14,
+      "totalInRange": 17
+    }
+  },
+  "Dark Spots": {
+    "20-29": {
+      "percentage": 51.52,
+      "count": 68,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 59.86,
+      "count": 167,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 72.61,
+      "count": 175,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 73.77,
+      "count": 90,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 80.82,
+      "count": 59,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 70.59,
+      "count": 12,
+      "totalInRange": 17
+    }
+  },
+  "Deep Labiomental Groove [DEPRECATED]": {
+    "20-29": {
+      "percentage": 1.52,
+      "count": 2,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 0.36,
+      "count": 1,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 0.41,
+      "count": 1,
+      "totalInRange": 241
+    },
+    "60-69": {
+      "percentage": 2.74,
+      "count": 2,
+      "totalInRange": 73
+    }
+  },
+  "Droopy Tip": {
+    "20-29": {
+      "percentage": 12.12,
+      "count": 16,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 11.83,
+      "count": 33,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 8.71,
+      "count": 21,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 9.02,
+      "count": 11,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 10.96,
+      "count": 8,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 17.65,
+      "count": 3,
+      "totalInRange": 17
+    }
+  },
+  "Dry Skin": {
+    "20-29": {
+      "percentage": 3.79,
+      "count": 5,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 3.23,
+      "count": 9,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 4.15,
+      "count": 10,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 3.28,
+      "count": 4,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 5.48,
+      "count": 4,
+      "totalInRange": 73
+    }
+  },
+  "Excess Upper Eyelid Skin": {
+    "20-29": {
+      "percentage": 18.94,
+      "count": 25,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 21.86,
+      "count": 61,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 41.08,
+      "count": 99,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 59.84,
+      "count": 73,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 76.71,
+      "count": 56,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 82.35,
+      "count": 14,
+      "totalInRange": 17
+    }
+  },
+  "Glabella Wrinkles": {
+    "20-29": {
+      "percentage": 9.09,
+      "count": 12,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 23.3,
+      "count": 65,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 33.61,
+      "count": 81,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 60.66,
+      "count": 74,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 83.56,
+      "count": 61,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 88.24,
+      "count": 15,
+      "totalInRange": 17
+    }
+  },
+  "Gummy Smile": {
+    "20-29": {
+      "percentage": 5.3,
+      "count": 7,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 4.3,
+      "count": 12,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 2.9,
+      "count": 7,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 3.28,
+      "count": 4,
+      "totalInRange": 122
+    }
+  },
+  "Jowls": {
+    "20-29": {
+      "percentage": 5.3,
+      "count": 7,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 10.04,
+      "count": 28,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 24.07,
+      "count": 58,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 59.02,
+      "count": 72,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 80.82,
+      "count": 59,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 64.71,
+      "count": 11,
+      "totalInRange": 17
+    }
+  },
+  "Lacking Philtral Column": {
+    "20-29": {
+      "percentage": 4.55,
+      "count": 6,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 3.94,
+      "count": 11,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 5.39,
+      "count": 13,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 21.31,
+      "count": 26,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 24.66,
+      "count": 18,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 23.53,
+      "count": 4,
+      "totalInRange": 17
+    }
+  },
+  "Lip Thinning When Smiling": {
+    "20-29": {
+      "percentage": 9.09,
+      "count": 12,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 3.23,
+      "count": 9,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 3.73,
+      "count": 9,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 1.64,
+      "count": 2,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 1.37,
+      "count": 1,
+      "totalInRange": 73
+    }
+  },
+  "Long Philtral Column": {
+    "20-29": {
+      "percentage": 19.7,
+      "count": 26,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 34.05,
+      "count": 95,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 47.3,
+      "count": 114,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 55.74,
+      "count": 68,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 53.42,
+      "count": 39,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 52.94,
+      "count": 9,
+      "totalInRange": 17
+    }
+  },
+  "Loose Neck Skin": {
+    "20-29": {
+      "percentage": 15.91,
+      "count": 21,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 29.75,
+      "count": 83,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 55.19,
+      "count": 133,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 88.52,
+      "count": 108,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 91.78,
+      "count": 67,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 100,
+      "count": 17,
+      "totalInRange": 17
+    }
+  },
+  "Lower Cheeks - Volume Depletion": {
+    "20-29": {
+      "percentage": 6.06,
+      "count": 8,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 7.17,
+      "count": 20,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 12.45,
+      "count": 30,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 9.84,
+      "count": 12,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 9.59,
+      "count": 7,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 23.53,
+      "count": 4,
+      "totalInRange": 17
+    }
+  },
+  "Lower Eyelid - Excess Skin": {
+    "20-29": {
+      "percentage": 6.06,
+      "count": 8,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 7.89,
+      "count": 22,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 17.43,
+      "count": 42,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 29.51,
+      "count": 36,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 36.99,
+      "count": 27,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 58.82,
+      "count": 10,
+      "totalInRange": 17
+    }
+  },
+  "Narrow Jawline": {
+    "20-29": {
+      "percentage": 3.03,
+      "count": 4,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 2.51,
+      "count": 7,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 2.9,
+      "count": 7,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 4.1,
+      "count": 5,
+      "totalInRange": 122
+    }
+  },
+  "Nasal Bone - Too Narrow [DEPRECATED]": {
+    "20-29": {
+      "percentage": 0.76,
+      "count": 1,
+      "totalInRange": 132
+    }
+  },
+  "Nasal Tip Too Narrow": {
+    "20-29": {
+      "percentage": 0.76,
+      "count": 1,
+      "totalInRange": 132
+    },
+    "40-49": {
+      "percentage": 0.41,
+      "count": 1,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 1.64,
+      "count": 2,
+      "totalInRange": 122
+    }
+  },
+  "Negative Canthal Tilt": {
+    "20-29": {
+      "percentage": 9.85,
+      "count": 13,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 8.24,
+      "count": 23,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 15.77,
+      "count": 38,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 18.03,
+      "count": 22,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 27.4,
+      "count": 20,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 11.76,
+      "count": 2,
+      "totalInRange": 17
+    }
+  },
+  "Nostril Base - Too Narrow [DEPRECATED]": {
+    "20-29": {
+      "percentage": 0.76,
+      "count": 1,
+      "totalInRange": 132
+    }
+  },
+  "Obtuse Cervicomental Angle [DEPRECATED]": {
+    "20-29": {
+      "percentage": 1.52,
+      "count": 2,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 1.43,
+      "count": 4,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 2.9,
+      "count": 7,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 8.2,
+      "count": 10,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 10.96,
+      "count": 8,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 11.76,
+      "count": 2,
+      "totalInRange": 17
+    }
+  },
+  "Oily": {
+    "20-29": {
+      "percentage": 7.58,
+      "count": 10,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 5.02,
+      "count": 14,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 7.47,
+      "count": 18,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 6.56,
+      "count": 8,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 4.11,
+      "count": 3,
+      "totalInRange": 73
+    }
+  },
+  "Over-Projected Chin": {
+    "20-29": {
+      "percentage": 6.06,
+      "count": 8,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 4.3,
+      "count": 12,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 9.54,
+      "count": 23,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 10.66,
+      "count": 13,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 20.55,
+      "count": 15,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 5.88,
+      "count": 1,
+      "totalInRange": 17
+    }
+  },
+  "Perioral Wrinkles": {
+    "20-29": {
+      "percentage": 2.27,
+      "count": 3,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 7.89,
+      "count": 22,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 21.99,
+      "count": 53,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 50.82,
+      "count": 62,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 73.97,
+      "count": 54,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 88.24,
+      "count": 15,
+      "totalInRange": 17
+    }
+  },
+  "Platysmal Bands": {
+    "20-29": {
+      "percentage": 6.82,
+      "count": 9,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 6.09,
+      "count": 17,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 18.67,
+      "count": 45,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 40.98,
+      "count": 50,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 54.79,
+      "count": 40,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 82.35,
+      "count": 14,
+      "totalInRange": 17
+    }
+  },
+  "Rosacea [DEPRECATED]": {
+    "20-29": {
+      "percentage": 0.76,
+      "count": 1,
+      "totalInRange": 132
+    },
+    "40-49": {
+      "percentage": 0.83,
+      "count": 2,
+      "totalInRange": 241
+    }
+  },
+  "Shallow Labiomental Groove [DEPRECATED]": {
+    "20-29": {
+      "percentage": 0.76,
+      "count": 1,
+      "totalInRange": 132
+    },
+    "40-49": {
+      "percentage": 0.41,
+      "count": 1,
+      "totalInRange": 241
+    },
+    "60-69": {
+      "percentage": 1.37,
+      "count": 1,
+      "totalInRange": 73
+    }
+  },
+  "Thin Lips": {
+    "20-29": {
+      "percentage": 40.15,
+      "count": 53,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 45.88,
+      "count": 128,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 56.02,
+      "count": 135,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 63.11,
+      "count": 77,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 80.82,
+      "count": 59,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 88.24,
+      "count": 15,
+      "totalInRange": 17
+    }
+  },
+  "Tip Droop When Smiling": {
+    "20-29": {
+      "percentage": 5.3,
+      "count": 7,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 3.94,
+      "count": 11,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 4.56,
+      "count": 11,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 6.56,
+      "count": 8,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 1.37,
+      "count": 1,
+      "totalInRange": 73
+    }
+  },
+  "Under-Rotated": {
+    "20-29": {
+      "percentage": 3.03,
+      "count": 4,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 3.23,
+      "count": 9,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 2.07,
+      "count": 5,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 0.82,
+      "count": 1,
+      "totalInRange": 122
+    },
+    "70-79": {
+      "percentage": 5.88,
+      "count": 1,
+      "totalInRange": 17
+    }
+  },
+  "Upper Eyelid Droop": {
+    "20-29": {
+      "percentage": 4.55,
+      "count": 6,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 5.38,
+      "count": 15,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 8.3,
+      "count": 20,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 12.3,
+      "count": 15,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 24.66,
+      "count": 18,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 11.76,
+      "count": 2,
+      "totalInRange": 17
+    }
+  },
+  "Wide Chin": {
+    "20-29": {
+      "percentage": 8.33,
+      "count": 11,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 10.75,
+      "count": 30,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 13.28,
+      "count": 32,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 17.21,
+      "count": 21,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 19.18,
+      "count": 14,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 29.41,
+      "count": 5,
+      "totalInRange": 17
+    }
+  },
+  "Wide Jawline": {
+    "20-29": {
+      "percentage": 5.3,
+      "count": 7,
+      "totalInRange": 132
+    },
+    "30-39": {
+      "percentage": 6.45,
+      "count": 18,
+      "totalInRange": 279
+    },
+    "40-49": {
+      "percentage": 5.81,
+      "count": 14,
+      "totalInRange": 241
+    },
+    "50-59": {
+      "percentage": 14.75,
+      "count": 18,
+      "totalInRange": 122
+    },
+    "60-69": {
+      "percentage": 12.33,
+      "count": 9,
+      "totalInRange": 73
+    },
+    "70-79": {
+      "percentage": 17.65,
+      "count": 3,
+      "totalInRange": 17
+    }
+  }
+};
+
+// Get prevalence for an issue
+export function getIssuePrevalence(issueName) {
+  return overallPrevalence[issueName] || null;
+}
+
+// Get prevalence for an issue at a specific age
+export function getIssuePrevalenceForAge(issueName, age) {
+  if (!ageRangePrevalence[issueName]) return null;
+  
+  // Determine age range
+  let range;
+  if (age < 20) range = '10-19';
+  else if (age < 30) range = '20-29';
+  else if (age < 40) range = '30-39';
+  else if (age < 50) range = '40-49';
+  else if (age < 60) range = '50-59';
+  else if (age < 70) range = '60-69';
+  else range = '70-79';
+  
+  return ageRangePrevalence[issueName][range] || null;
+}
+
+// Get prevalence category (common, uncommon, rare)
+export function getPrevalenceCategory(percentage) {
+  if (percentage >= 50) return 'very-common';
+  if (percentage >= 30) return 'common';
+  if (percentage >= 15) return 'moderate';
+  if (percentage >= 5) return 'uncommon';
+  return 'rare';
+}
+
+// Get human-readable prevalence description
+export function getPrevalenceDescription(percentage, agePercentage = null) {
+  if (agePercentage !== null) {
+    // Use age-specific percentage
+    if (agePercentage >= 70) return 'Very common for your age';
+    if (agePercentage >= 50) return 'Common for your age';
+    if (agePercentage >= 30) return 'Moderately common for your age';
+    if (agePercentage >= 15) return 'Somewhat uncommon for your age';
+    return 'Uncommon for your age';
+  }
+  
+  // Use overall percentage
+  if (percentage >= 70) return 'Very common';
+  if (percentage >= 50) return 'Common';
+  if (percentage >= 30) return 'Moderately common';
+  if (percentage >= 15) return 'Somewhat uncommon';
+  return 'Uncommon';
+}
