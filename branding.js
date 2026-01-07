@@ -384,7 +384,9 @@ function updateProviderSection(brand) {
     }
   }
 
+  // Always ensure the provider section is visible and populated
   providerSection.style.display = "block";
+  providerSection.style.visibility = "visible";
 
   // Check if this is Unique Aesthetics for compact layout
   const isUniqueAesthetics =
@@ -617,5 +619,29 @@ if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initBranding);
 } else {
   // DOM is already ready
+  // Use a small delay to ensure all elements are fully rendered
   setTimeout(initBranding, 100);
 }
+
+// Also ensure provider section is populated after a short delay as a fallback
+// This handles cases where the initial call might have timing issues
+setTimeout(() => {
+  const savedBrand =
+    localStorage.getItem("selectedBrand") || "uniqueAestheticsPink";
+  const brand = BRANDS[savedBrand];
+  if (brand && brand.showProviders && brand.providers.length > 0) {
+    const providerSection = document.getElementById("provider-section");
+    // Check if section exists but is empty or only contains comments/whitespace
+    const hasContent =
+      providerSection &&
+      providerSection.innerHTML &&
+      providerSection.innerHTML.trim() !== "" &&
+      !providerSection.innerHTML.trim().startsWith("<!--") &&
+      providerSection.querySelector(".provider-compact, .provider-card");
+
+    if (providerSection && !hasContent) {
+      console.log("🔄 Re-populating provider section as fallback");
+      updateProviderSection(brand);
+    }
+  }
+}, 300);

@@ -467,24 +467,53 @@ function setupEmailInput(inputElement) {
  * Show error message below input
  */
 function showInputError(inputElement, message) {
+  if (!inputElement) return;
   hideInputError(inputElement); // Remove existing error first
   const errorDiv = document.createElement("div");
   errorDiv.className = "input-error-message";
   errorDiv.textContent = message;
   errorDiv.style.cssText =
     "color: #d32f2f; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;";
-  inputElement.parentNode.appendChild(errorDiv);
+  
+  // For age input, add to age-input-container if it exists
+  if (inputElement.id === "patient-age") {
+    const container = inputElement.closest('.age-input-container') || inputElement.parentNode;
+    container.appendChild(errorDiv);
+  } else {
+    inputElement.parentNode.appendChild(errorDiv);
+  }
 }
 
 /**
  * Hide error message below input
  */
 function hideInputError(inputElement) {
-  const existingError = inputElement.parentNode.querySelector(
+  if (!inputElement) return;
+  
+  // Check in direct parent
+  const existingError = inputElement.parentNode?.querySelector(
     ".input-error-message"
   );
   if (existingError) {
     existingError.remove();
+  }
+  
+  // Also check in age-input-container if it exists
+  const ageContainer = inputElement.closest('.age-input-container');
+  if (ageContainer) {
+    const errorInContainer = ageContainer.querySelector('.input-error-message');
+    if (errorInContainer) {
+      errorInContainer.remove();
+    }
+  }
+  
+  // Also check in demographic-section
+  const demographicSection = inputElement.closest('.demographic-section');
+  if (demographicSection) {
+    const errorInSection = demographicSection.querySelector('.input-error-message');
+    if (errorInSection) {
+      errorInSection.remove();
+    }
   }
 }
 
@@ -4922,7 +4951,8 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function showOnboarding() {
+// Define showOnboarding and make it available globally immediately
+window.showOnboarding = function showOnboarding() {
   console.log("showOnboarding called");
   try {
     if (typeof trackEvent === "function") {
@@ -4971,7 +5001,7 @@ function showOnboarding() {
       startForm();
     }
   }
-}
+};
 
 // Keep showHomeTeaser for backward compatibility but it's not used in new flow
 function showHomeTeaser() {
@@ -5097,10 +5127,13 @@ function initializeAreasOfConcern() {
     // Get icon filename for this area
     const iconFilename = AREA_ICON_MAP[area.id];
 
+    // Use selected icon folder if selected, otherwise use regular icon folder
+    const iconFolder = isSelected ? "area icons - selected" : "area icons";
+
     // Use PNG icon if available, otherwise fallback to SVG
     let iconHtml = "";
     if (iconFilename) {
-      iconHtml = `<img src="area icons/${iconFilename}" alt="${area.name}" class="area-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+      iconHtml = `<img src="${iconFolder}/${iconFilename}" alt="${area.name}" class="area-icon-image" data-icon-filename="${iconFilename}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display: none;">
           <circle cx="12" cy="12" r="10"></circle>
           <path d="M12 8v8M8 12h8"></path>
@@ -5151,15 +5184,26 @@ function toggleAreaOfConcern(areaId) {
   // Update UI
   const card = document.querySelector(`[data-area-id="${areaId}"]`);
   if (card) {
-    card.classList.toggle(
-      "selected",
-      userSelections.selectedAreas.includes(areaId)
-    );
+    const isSelected = userSelections.selectedAreas.includes(areaId);
+    card.classList.toggle("selected", isSelected);
+
+    // Update icon image source based on selection state
+    const iconImage = card.querySelector(".area-icon-image");
+    if (iconImage && iconImage.dataset.iconFilename) {
+      const iconFilename = iconImage.dataset.iconFilename;
+      const iconFolder = isSelected ? "area icons - selected" : "area icons";
+      iconImage.src = `${iconFolder}/${iconFilename}`;
+    }
   }
 
   // Collect form data to keep in sync
   if (typeof collectFormData === "function") {
     collectFormData();
+  }
+  
+  // Clear validation error when an area is selected
+  if (userSelections.selectedAreas && userSelections.selectedAreas.length > 0) {
+    hideValidationError();
   }
 }
 
@@ -5240,6 +5284,8 @@ function toggleConcernCategory(categoryId) {
       userSelections.selectedConcernCategories.push(categoryId);
       // Hide warning when successfully selecting
       hideConcernWarning();
+      // Clear validation error if one was shown
+      hideValidationError();
     } else {
       showConcernWarning(`Please select up to ${maxSelections} concerns.`);
       return;
@@ -5366,7 +5412,7 @@ function startForm() {
 
     // Navigate to step 1 (concerns selection) first, then initialize
     setTimeout(() => {
-      goToFormStep(1);
+      goToFormStep(1, true); // Skip validation when starting the form
       updateFormNavigation(1);
 
       // Initialize high-level concern categories after step is visible
@@ -5424,8 +5470,38 @@ function updateProceedToGoalsButton() {
 }
 
 // Multi-step form navigation
-function goToFormStep(stepNumber) {
+function goToFormStep(stepNumber, skipValidation = false) {
   console.log("goToFormStep called:", stepNumber);
+
+  // Validate before navigating to certain steps (unless validation is explicitly skipped)
+  if (!skipValidation) {
+    // Validate step 1 requirements before going to step 2
+    if (stepNumber === 2) {
+      const validation = validateStep1();
+      if (!validation.isValid) {
+        showValidationError(validation.message, validation.step);
+        return; // Prevent navigation
+      }
+    }
+    
+    // Validate step 2 requirements before going to step 3
+    if (stepNumber === 3) {
+      const validation = validateStep2();
+      if (!validation.isValid) {
+        showValidationError(validation.message, validation.step);
+        return; // Prevent navigation
+      }
+    }
+    
+    // Validate step 3 requirements before going to step 4 or 6
+    if (stepNumber === 4 || stepNumber === 6) {
+      const validation = validateStep3();
+      if (!validation.isValid) {
+        showValidationError(validation.message, validation.step, validation.field);
+        return; // Prevent navigation
+      }
+    }
+  }
 
   // Hide all steps and screens
   document.querySelectorAll(".form-step").forEach((step) => {
@@ -5448,16 +5524,47 @@ function goToFormStep(stepNumber) {
   const targetStep = document.getElementById(`form-step-${stepNumber}`);
   if (targetStep) {
     targetStep.classList.add("active");
+    
+    // Set up age input event listener when step 3 is shown
+    if (stepNumber === 3) {
+      setTimeout(() => {
+        const ageInput = document.getElementById("patient-age");
+        if (ageInput) {
+          // Use a named function to avoid duplicate listeners
+          function clearAgeError() {
+            const ageValue = parseInt(ageInput.value);
+            if (ageValue && ageValue >= 18) {
+              hideInputError(ageInput);
+              ageInput.classList.remove("input-error");
+            }
+          }
+          
+          // Remove old listeners by cloning (if needed)
+          const hasListener = ageInput.getAttribute('data-age-listener-attached');
+          if (!hasListener) {
+            ageInput.addEventListener("input", clearAgeError, { once: false });
+            ageInput.addEventListener("change", clearAgeError, { once: false });
+            ageInput.setAttribute('data-age-listener-attached', 'true');
+          }
+        }
+      }, 100);
+    }
   }
 
   // Update step indicators
   // Update Instagram Stories-style progress segments
-  document.querySelectorAll(".form-step-segment").forEach((segment, index) => {
-    const stepNum = index + 1;
+  document.querySelectorAll(".form-step-segment").forEach((segment) => {
+    const segmentStep = parseInt(segment.dataset.step) || 0;
     segment.classList.remove("active", "completed");
-    if (stepNum === stepNumber) {
+
+    // Skip step 5 (hidden)
+    if (segmentStep === 5) {
+      return;
+    }
+
+    if (segmentStep === stepNumber) {
       segment.classList.add("active");
-    } else if (stepNum < stepNumber) {
+    } else if (segmentStep < stepNumber) {
       segment.classList.add("completed");
     }
   });
@@ -5519,6 +5626,16 @@ function goToFormStep(stepNumber) {
 
   // Populate review step when navigating to it
   if (stepNumber === 6) {
+    // Additional validation check (already validated above, but double-check)
+    const validation = validateRequiredFields();
+    if (!validation.isValid) {
+      // Revert navigation - go back to the step with the error
+      const currentStep = validation.targetStep || 3;
+      goToFormStep(currentStep, true); // Skip validation to prevent infinite loop
+      showValidationError(validation.errors[0].message, validation.targetStep);
+      return; // Stop navigation
+    }
+    hideValidationError();
     setTimeout(() => {
       populateReviewStep();
     }, 100);
@@ -5640,6 +5757,403 @@ function collectFormData() {
   });
 }
 
+// Validate step 1: At least one concern must be selected
+function validateStep1() {
+  collectFormData();
+  const hasCategorySelections =
+    userSelections.selectedConcernCategories &&
+    userSelections.selectedConcernCategories.length > 0;
+  const actualIssueCount =
+    window.userSelections &&
+    window.userSelections.selectedIssues &&
+    window.userSelections.selectedIssues.length > 0
+      ? window.userSelections.selectedIssues.length
+      : 0;
+  
+  if (!hasCategorySelections && actualIssueCount === 0) {
+    return {
+      isValid: false,
+      message: "Please select at least one concern to continue.",
+      step: 1
+    };
+  }
+  return { isValid: true };
+}
+
+// Validate step 2: At least one area must be selected
+function validateStep2() {
+  collectFormData();
+  const hasAreaSelections =
+    userSelections.selectedAreas &&
+    userSelections.selectedAreas.length > 0;
+  
+  if (!hasAreaSelections) {
+    return {
+      isValid: false,
+      message: "Please select at least one area to continue.",
+      step: 2
+    };
+  }
+  return { isValid: true };
+}
+
+// Validate step 3: Age, Skin Type, and Sun Response are required
+function validateStep3() {
+  collectFormData();
+  const errors = [];
+  
+  // Check age
+  const ageValue = userSelections.age;
+  if (!ageValue || ageValue < 18) {
+    errors.push({
+      message: !ageValue
+        ? "Please enter your age to continue."
+        : "Please enter a valid age (must be 18 or older) to continue.",
+      field: "patient-age"
+    });
+  }
+  
+  // Check skin type
+  if (!userSelections.skinType) {
+    errors.push({
+      message: "Please select your skin type to continue.",
+      field: "skin-type"
+    });
+  }
+  
+  // Check sun response
+  if (!userSelections.sunResponse) {
+    errors.push({
+      message: "Please select how your skin responds to sun to continue.",
+      field: "sun-response"
+    });
+  }
+  
+  if (errors.length > 0) {
+    return {
+      isValid: false,
+      message: errors[0].message, // Show first error
+      step: 3,
+      field: errors[0].field
+    };
+  }
+  
+  return { isValid: true };
+}
+
+// Validate required fields before proceeding to review
+function validateRequiredFields() {
+  collectFormData();
+  
+  const errors = [];
+  let targetStep = null;
+  
+  // Check age
+  const ageValue = userSelections.age;
+  if (!ageValue || ageValue < 18) {
+    errors.push({
+      message: !ageValue
+        ? "Please enter your age to continue."
+        : "Please enter a valid age (must be 18 or older) to continue.",
+      step: 3,
+      field: "patient-age"
+    });
+    targetStep = 3;
+  }
+  
+  // Check concerns
+  const hasCategorySelections =
+    userSelections.selectedConcernCategories &&
+    userSelections.selectedConcernCategories.length > 0;
+  const actualIssueCount =
+    window.userSelections &&
+    window.userSelections.selectedIssues &&
+    window.userSelections.selectedIssues.length > 0
+      ? window.userSelections.selectedIssues.length
+      : 0;
+  if (!hasCategorySelections && actualIssueCount === 0) {
+    errors.push({
+      message: "Please select at least one concern to continue.",
+      step: 1,
+      field: null
+    });
+    if (!targetStep) targetStep = 1;
+  }
+  
+  // Check areas
+  const hasAreaSelections =
+    userSelections.selectedAreas &&
+    userSelections.selectedAreas.length > 0;
+  if (!hasAreaSelections) {
+    errors.push({
+      message: "Please select at least one area to continue.",
+      step: 2,
+      field: null
+    });
+    if (!targetStep) targetStep = 2;
+  }
+  
+  // Check skin type
+  if (!userSelections.skinType) {
+    errors.push({
+      message: "Please select your skin type to continue.",
+      step: 3,
+      field: "skin-type"
+    });
+    if (!targetStep) targetStep = 3;
+  }
+  
+  // Check sun response
+  if (!userSelections.sunResponse) {
+    errors.push({
+      message: "Please select how your skin responds to sun to continue.",
+      step: 3,
+      field: "sun-response"
+    });
+    if (!targetStep) targetStep = 3;
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors: errors,
+    targetStep: targetStep
+  };
+}
+
+// Show validation error message in UI
+function showValidationError(message, targetStep, field = null) {
+  // For step 1, use the concern warning message location (at the top)
+  if (targetStep === 1) {
+    const concernWarningEl = document.getElementById("concern-warning-message");
+    const concernWarningText = document.getElementById("concern-warning-text");
+    if (concernWarningEl && concernWarningText) {
+      concernWarningText.textContent = message;
+      concernWarningEl.style.display = "flex";
+      concernWarningEl.className = "concern-warning-message error";
+      // Don't auto-hide validation errors
+      
+      // Scroll to top of concerns section (not the bottom)
+      setTimeout(() => {
+        const concernsContainer = document.querySelector('.concerns-screen-container');
+        if (concernsContainer) {
+          concernsContainer.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 100);
+    }
+    
+    // Highlight concern category cards if no concerns selected
+    setTimeout(() => {
+      const hasCategorySelections =
+        userSelections.selectedConcernCategories &&
+        userSelections.selectedConcernCategories.length > 0;
+      const actualIssueCount =
+        window.userSelections &&
+        window.userSelections.selectedIssues &&
+        window.userSelections.selectedIssues.length > 0
+          ? window.userSelections.selectedIssues.length
+          : 0;
+      
+      if (!hasCategorySelections && actualIssueCount === 0) {
+        // Add visual indicator to concern selection area
+        const concernsContainer = document.querySelector('.concern-categories-grid');
+        if (concernsContainer) {
+          concernsContainer.style.border = "2px solid #ef5350";
+          concernsContainer.style.borderRadius = "12px";
+          concernsContainer.style.padding = "12px";
+        }
+      }
+    }, 200);
+    return; // Early return for step 1
+  }
+  
+  // For step 2, show error at the top of the areas section
+  if (targetStep === 2) {
+    // Create or use a validation message element at the top of step 2
+    const formSection = document.querySelector('#form-step-2 .form-section');
+    let step2ErrorEl = document.getElementById('step-2-validation-error');
+    
+    if (!step2ErrorEl && formSection) {
+      step2ErrorEl = document.createElement('div');
+      step2ErrorEl.id = 'step-2-validation-error';
+      step2ErrorEl.className = 'validation-message error';
+      formSection.insertBefore(step2ErrorEl, formSection.firstChild);
+    }
+    
+    if (step2ErrorEl) {
+      step2ErrorEl.textContent = message;
+      step2ErrorEl.style.display = 'block';
+      // No scrolling - error is already visible at the top
+    }
+    
+    // Don't add red outline - just show the error message
+    return; // Early return for step 2
+  }
+  
+  // For step 3, show inline errors next to specific fields (like email validation)
+  if (targetStep === 3) {
+    // Show error inline next to the specific field
+    if (field === "patient-age") {
+      const ageInput = document.getElementById("patient-age");
+      if (ageInput) {
+        showInputError(ageInput, message);
+        ageInput.classList.add("input-error");
+      }
+    } else if (field === "skin-type") {
+      const skinTypeSection = document.querySelector('#form-step-3 .demographic-section:nth-of-type(2)');
+      if (skinTypeSection) {
+        // Remove existing error if any
+        const existingError = skinTypeSection.querySelector('.input-error-message');
+        if (existingError) existingError.remove();
+        
+        // Add error message below the label
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "input-error-message";
+        errorDiv.textContent = message;
+        errorDiv.style.cssText = "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
+        const label = skinTypeSection.querySelector('.demographic-label');
+        if (label && label.nextSibling) {
+          skinTypeSection.insertBefore(errorDiv, label.nextSibling);
+        } else if (label) {
+          label.insertAdjacentElement('afterend', errorDiv);
+        }
+      }
+    } else if (field === "sun-response") {
+      const sunResponseSection = document.querySelector('#form-step-3 .demographic-section:nth-of-type(3)');
+      if (sunResponseSection) {
+        // Remove existing error if any
+        const existingError = sunResponseSection.querySelector('.input-error-message');
+        if (existingError) existingError.remove();
+        
+        // Add error message below the label
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "input-error-message";
+        errorDiv.textContent = message;
+        errorDiv.style.cssText = "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
+        const label = sunResponseSection.querySelector('.demographic-label');
+        if (label && label.nextSibling) {
+          sunResponseSection.insertBefore(errorDiv, label.nextSibling);
+        } else if (label) {
+          label.insertAdjacentElement('afterend', errorDiv);
+        }
+      }
+    } else {
+      // If no specific field, show error for the first missing field
+      collectFormData();
+      if (!userSelections.age || userSelections.age < 18) {
+        const ageInput = document.getElementById("patient-age");
+        if (ageInput) {
+          const errorMsg = !userSelections.age ? "Please enter your age to continue." : "Please enter a valid age (must be 18 or older) to continue.";
+          showInputError(ageInput, errorMsg);
+          ageInput.classList.add("input-error");
+        }
+      } else if (!userSelections.skinType) {
+        const skinTypeSection = document.querySelector('#form-step-3 .demographic-section:nth-of-type(2)');
+        if (skinTypeSection) {
+          const existingError = skinTypeSection.querySelector('.input-error-message');
+          if (existingError) existingError.remove();
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "input-error-message";
+          errorDiv.textContent = "Please select your skin type to continue.";
+          errorDiv.style.cssText = "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
+          const label = skinTypeSection.querySelector('.demographic-label');
+          if (label) {
+            label.insertAdjacentElement('afterend', errorDiv);
+          }
+        }
+      } else if (!userSelections.sunResponse) {
+        const sunResponseSection = document.querySelector('#form-step-3 .demographic-section:nth-of-type(3)');
+        if (sunResponseSection) {
+          const existingError = sunResponseSection.querySelector('.input-error-message');
+          if (existingError) existingError.remove();
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "input-error-message";
+          errorDiv.textContent = "Please select how your skin responds to sun to continue.";
+          errorDiv.style.cssText = "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
+          const label = sunResponseSection.querySelector('.demographic-label');
+          if (label) {
+            label.insertAdjacentElement('afterend', errorDiv);
+          }
+        }
+      }
+    }
+    return; // Early return for step 3
+  }
+  
+  // For other steps, use the regular validation message
+  const validationMessage = document.getElementById("validation-message");
+  if (validationMessage) {
+    validationMessage.textContent = message;
+    validationMessage.className = "validation-message error";
+    validationMessage.style.display = "block";
+    
+    // Scroll to validation message
+    setTimeout(() => {
+      validationMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 100);
+  }
+  
+  // Navigate to the step with the error if not already on that step
+  const currentStep = document.querySelector('.form-step.active')?.dataset.step;
+  if (targetStep && parseInt(currentStep) !== targetStep) {
+    goToFormStep(targetStep);
+  }
+}
+
+// Hide validation error message
+function hideValidationError() {
+  // Hide concern warning message if it's showing an error
+  const concernWarningEl = document.getElementById("concern-warning-message");
+  if (concernWarningEl && concernWarningEl.classList.contains("error")) {
+    concernWarningEl.style.display = "none";
+    concernWarningEl.classList.remove("error");
+  }
+  
+  const validationMessage = document.getElementById("validation-message");
+  if (validationMessage) {
+    validationMessage.style.display = "none";
+    validationMessage.textContent = "";
+  }
+  
+  // Remove step 2 validation error
+  const step2ErrorEl = document.getElementById('step-2-validation-error');
+  if (step2ErrorEl) {
+    step2ErrorEl.style.display = 'none';
+    step2ErrorEl.textContent = '';
+  }
+  
+  // Remove step 3 inline validation errors
+  const ageInput = document.getElementById("patient-age");
+  if (ageInput) {
+    hideInputError(ageInput);
+    ageInput.classList.remove("input-error");
+  }
+  
+  // Remove errors from skin type and sun response sections
+  document.querySelectorAll('#form-step-3 .input-error-message').forEach(error => {
+    error.remove();
+  });
+  
+  // Remove highlighting from concerns container
+  const concernsContainer = document.querySelector('.concern-categories-grid');
+  if (concernsContainer) {
+    concernsContainer.style.border = "";
+    concernsContainer.style.padding = "";
+  }
+  
+  // Remove highlighting from areas grid
+  const areasGrid = document.getElementById('areas-of-concern-grid');
+  if (areasGrid) {
+    areasGrid.style.border = "";
+    areasGrid.style.padding = "";
+  }
+}
+
 // Update the shared navigation bar based on current step
 function updateFormNavigation(stepNumber) {
   const navBackBtn = document.getElementById("nav-back-btn");
@@ -5647,6 +6161,9 @@ function updateFormNavigation(stepNumber) {
   const navContinueBtn = document.getElementById("nav-continue-btn");
 
   if (!navBackBtn || !navSkipBtn || !navContinueBtn) return;
+
+  // Hide validation error when navigating
+  hideValidationError();
 
   // Reset all buttons
   navBackBtn.style.display = "none";
@@ -5664,35 +6181,86 @@ function updateFormNavigation(stepNumber) {
     case 1:
       // Step 1: Only Continue button (concerns selection)
       navContinueBtn.style.display = "block";
-      navContinueBtn.onclick = () => goToFormStep(2);
+      navContinueBtn.onclick = () => {
+        // Validate that at least one concern is selected
+        const validation = validateStep1();
+        if (!validation.isValid) {
+          showValidationError(validation.message, validation.step);
+          return;
+        }
+        hideValidationError();
+        goToFormStep(2);
+      };
       break;
 
     case 2:
-      // Step 2: Areas of Concern - Back, Skip, and Continue buttons
+      // Step 2: Areas of Concern - Back, Skip, and Continue buttons (optional step)
       navBackBtn.style.display = "block";
-      navBackBtn.onclick = () => goToFormStep(1);
+      navBackBtn.onclick = () => {
+        hideValidationError();
+        goToFormStep(1);
+      };
       navSkipBtn.style.display = "block";
-      navSkipBtn.onclick = () => goToFormStep(3);
+      navSkipBtn.onclick = () => {
+        hideValidationError();
+        goToFormStep(3);
+      };
       navContinueBtn.style.display = "block";
-      navContinueBtn.onclick = () => goToFormStep(3);
+      navContinueBtn.onclick = () => {
+        hideValidationError();
+        goToFormStep(3);
+      };
       break;
 
     case 3:
       // Step 3: Your Details - Back and Continue buttons
       navBackBtn.style.display = "block";
-      navBackBtn.onclick = () => goToFormStep(2);
+      navBackBtn.onclick = () => {
+        hideValidationError();
+        goToFormStep(2);
+      };
       navSkipBtn.style.display = "block";
-      navSkipBtn.onclick = () => goToFormStep(6); // Skip to review (step 5 hidden)
+      navSkipBtn.onclick = () => {
+        // Validate required fields before skipping to review
+        const validation = validateStep3();
+        if (!validation.isValid) {
+          showValidationError(validation.message, validation.step, validation.field);
+          return;
+        }
+        hideValidationError();
+        goToFormStep(6);
+      };
       navContinueBtn.style.display = "block";
-      navContinueBtn.onclick = () => goToFormStep(4);
+      navContinueBtn.onclick = () => {
+        // Validate required fields before continuing
+        const validation = validateStep3();
+        if (!validation.isValid) {
+          showValidationError(validation.message, validation.step, validation.field);
+          return;
+        }
+        hideValidationError();
+        goToFormStep(4);
+      };
       break;
 
     case 4:
       // Step 4: Optional Information - Back and Continue buttons
       navBackBtn.style.display = "block";
-      navBackBtn.onclick = () => goToFormStep(3);
+      navBackBtn.onclick = () => {
+        hideValidationError();
+        goToFormStep(3);
+      };
       navContinueBtn.style.display = "block";
-      navContinueBtn.onclick = () => goToFormStep(6); // Skip step 5 (goals hidden)
+      navContinueBtn.onclick = () => {
+        // Validate all required fields before proceeding to review
+        const validation = validateRequiredFields();
+        if (!validation.isValid) {
+          showValidationError(validation.errors[0].message, validation.targetStep);
+          return;
+        }
+        hideValidationError();
+        goToFormStep(6); // Skip step 5 (goals hidden)
+      };
       break;
 
     case 5:
@@ -5707,16 +6275,24 @@ function updateFormNavigation(stepNumber) {
     case 6:
       // Step 6: Review - Back and Submit buttons
       navBackBtn.style.display = "block";
-      navBackBtn.onclick = () => goToFormStep(4); // Go back to step 4 (step 5 hidden)
+      navBackBtn.onclick = () => {
+        hideValidationError();
+        goToFormStep(4); // Go back to step 4 (step 5 hidden)
+      };
       navContinueBtn.style.display = "block";
       navContinueBtn.textContent = "Get My Results";
       navContinueBtn.type = "button";
       navContinueBtn.onclick = () => {
-        // Trigger form submission
-        const form = document.getElementById("aesthetic-form");
-        if (form) {
-          form.requestSubmit();
+        // Validate required fields
+        const validation = validateRequiredFields();
+        if (!validation.isValid) {
+          showValidationError(validation.errors[0].message, validation.targetStep);
+          return;
         }
+        
+        // All validation passed - proceed to lead capture
+        hideValidationError();
+        showEarlyLeadCapture();
       };
       break;
   }
@@ -6130,7 +6706,7 @@ function updateSelectedConcernsSummary() {
 // Make functions globally accessible
 window.startForm = startForm;
 window.showHomeTeaser = showHomeTeaser;
-window.showOnboarding = showOnboarding;
+// showOnboarding is already assigned to window above for immediate availability
 window.handleStartButtonClick = handleStartButtonClick;
 window.nextOnboardingSlide = nextOnboardingSlide;
 window.proceedToGoalsAndAge = proceedToGoalsAndAge;
@@ -6507,12 +7083,36 @@ function setupFormValidation() {
       // Collect age data in real-time
       collectFormData();
       updateIssueSelectionCount(); // This will also check age and update submit button
+      // Clear validation error if age is now valid
+      const ageValue = parseInt(e.target.value);
+      if (ageValue && ageValue >= 18) {
+        // Hide inline error when age is filled - hideInputError now checks all locations
+        hideInputError(e.target);
+        e.target.classList.remove("input-error");
+      }
     } else if (
       e.target.name === "skin-type" ||
       e.target.name === "sun-response"
     ) {
       // Collect demographic data in real-time
       collectFormData();
+      // Clear inline validation error when field is selected
+      if (e.target.name === "skin-type" && e.target.checked) {
+        // Find the section containing this input
+        const skinTypeSection = e.target.closest('.demographic-section');
+        if (skinTypeSection) {
+          const errorMsg = skinTypeSection.querySelector('.input-error-message');
+          if (errorMsg) errorMsg.remove();
+        }
+      }
+      if (e.target.name === "sun-response" && e.target.checked) {
+        // Find the section containing this input
+        const sunResponseSection = e.target.closest('.demographic-section');
+        if (sunResponseSection) {
+          const errorMsg = sunResponseSection.querySelector('.input-error-message');
+          if (errorMsg) errorMsg.remove();
+        }
+      }
     } else if (
       e.target.name === "skin-tone" ||
       e.target.name === "ethnic-background" ||
@@ -6529,6 +7129,22 @@ function setupFormValidation() {
     ageInput.addEventListener("input", function () {
       collectFormData(); // Collect data in real-time
       updateIssueSelectionCount();
+      // Clear inline validation error if age is now valid
+      const ageValue = parseInt(this.value);
+      if (ageValue && ageValue >= 18) {
+        // Clear the error message - hideInputError now checks all locations
+        hideInputError(this);
+        this.classList.remove("input-error");
+      }
+    });
+    
+    // Also listen for blur to validate on focus loss
+    ageInput.addEventListener("blur", function () {
+      const ageValue = parseInt(this.value);
+      if (ageValue && ageValue >= 18) {
+        hideInputError(this);
+        this.classList.remove("input-error");
+      }
     });
   }
   console.log("setupFormValidation completed");
@@ -7329,7 +7945,15 @@ function groupCasesByTreatmentSuggestion(cases) {
   // First level: group by concern
   const concernGroups = {};
 
-  nonSurgicalCases.forEach((caseItem) => {
+  // Calculate matching scores for all cases before grouping
+  const casesWithScores = nonSurgicalCases.map((caseItem) => {
+    if (!caseItem.matchingScore) {
+      caseItem.matchingScore = calculateMatchingScore(caseItem, userSelections);
+    }
+    return caseItem;
+  });
+
+  casesWithScores.forEach((caseItem) => {
     const concern = extractConcernFromCaseName(caseItem.name);
     const treatment = extractTreatmentFromCaseName(caseItem.name);
 
@@ -7352,10 +7976,17 @@ function groupCasesByTreatmentSuggestion(cases) {
   const groups = Object.values(concernGroups).map((concernGroup) => {
     const treatments = Object.keys(concernGroup.treatments);
     const allCases = Object.values(concernGroup.treatments).flat();
+    
+    // Sort cases by matching score (most similar first)
+    const sortedCases = allCases.sort((a, b) => {
+      const scoreA = a.matchingScore || 0;
+      const scoreB = b.matchingScore || 0;
+      return scoreB - scoreA; // Descending order (highest first)
+    });
 
     return {
       suggestion: concernGroup.concern, // This is the concern name
-      cases: allCases,
+      cases: sortedCases,
       treatments: treatments.sort(), // List of treatments for this concern
       treatmentsByCase: concernGroup.treatments, // Detailed treatment grouping
     };
@@ -7473,7 +8104,7 @@ function populateResultsScreen() {
                       areaTags.length > 0
                         ? `
                     <div class="treatment-group-relevance">
-                      <span class="relevance-label">Area:</span>
+                      <span class="relevance-label">Your Areas of Interest:</span>
                       ${areaTags
                         .map(
                           (area) =>
@@ -7501,7 +8132,7 @@ function populateResultsScreen() {
                     ${areaHtml}
                     <div class="treatment-group-preview">
                       ${group.cases
-                        .slice(0, 3)
+                        .slice(0, 2)
                         .map((caseItem) => {
                           const imageUrl =
                             caseItem.beforeAfter || caseItem.thumbnail;
@@ -7511,30 +8142,15 @@ function populateResultsScreen() {
                         })
                         .join("")}
                       ${
-                        group.cases.length > 3
+                        group.cases.length > 2
                           ? `<div class="treatment-group-more">+${
-                              group.cases.length - 3
+                              group.cases.length - 2
                             }</div>`
                           : ""
                       }
                     </div>
-                    <div class="treatment-group-treatments">
-                      ${group.treatments
-                        .slice(0, 3)
-                        .map(
-                          (t) =>
-                            `<span class="treatment-tag-small">${escapeHtml(
-                              t
-                            )}</span>`
-                        )
-                        .join("")}
-                      ${
-                        group.treatments.length > 3
-                          ? `<span class="treatment-tag-small">+${
-                              group.treatments.length - 3
-                            } more</span>`
-                          : ""
-                      }
+                    <div class="treatment-group-footer">
+                      <span class="treatment-group-cta">Explore →</span>
                     </div>
                   </div>
                   `;
@@ -9999,6 +10615,239 @@ const issueNameMappings = {
   ],
 };
 
+// Mapping from CSV category names to category IDs
+const CATEGORY_NAME_TO_ID = {
+  "Facial Balancing": "facial-balancing",
+  "Smooth Wrinkles & Lines": "smooth-wrinkles-lines",
+  "Restore Volume & Definition": "restore-volume-definition",
+  "Improve Skin Texture & Tone": "improve-skin-texture-tone",
+  "Reduce Dark Spots & Discoloration": "reduce-dark-spots-discoloration",
+  "Clear Acne & Minimize Pores": "clear-acne-minimize-pores",
+  "Eyelid & Eye Area Concerns": "eyelid-eye-area-concerns",
+  "Body Contouring & Fat Reduction": "body-contouring-fat-reduction",
+  "Unwanted Hair Removal": "unwanted-hair-removal",
+  "Wellness & Longevity": "wellness-longevity",
+};
+
+// Case-to-category mapping from CSV (populated from case-category-analysis.csv)
+// Format: caseId -> [categoryId1, categoryId2, ...]
+const CASE_CATEGORY_MAPPING = {
+  // This will be populated from the CSV data
+  // Example entries based on CSV:
+  "rec08elFBXXtIfXZi": ["restore-volume-definition"],
+  "rec0TpqaffljCfzOt": ["facial-balancing"],
+  "rec0lge1CHglEWB82": ["eyelid-eye-area-concerns"],
+  "rec0vtYW6DbL0Nz25": ["restore-volume-definition"],
+  "rec1atkwdW9rEqA33": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  "rec2734jRXc52jRHd": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "rec2CqT3cRL4p13J2": ["improve-skin-texture-tone"],
+  "rec2GQ9BFULvmPHKl": ["eyelid-eye-area-concerns"],
+  "rec2ZBN2Uealy89aw": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "rec2ifF0nw6oQMU9G": ["improve-skin-texture-tone"],
+  "rec2vsw2A0s4velkc": ["improve-skin-texture-tone"],
+  "rec3nlXo8g3pnssf2": ["facial-balancing"],
+  "rec46iZ4beP8MW7jJ": ["restore-volume-definition"],
+  "rec4ErbyocyeYfmHy": ["facial-balancing", "restore-volume-definition"],
+  "rec4fpYFlvr49A9DQ": ["improve-skin-texture-tone"],
+  "rec4l7yDxjWjTkisH": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "rec4yP12V0I7GkNk0": ["restore-volume-definition"],
+  "rec5F1HsxdGipHKE3": ["improve-skin-texture-tone"],
+  "rec5hc3kQeX9L0870": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "rec5s1iIct9IMSBAA": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "rec6GP10sGtIeXI3L": ["restore-volume-definition"],
+  "rec6mpM562H6S3z1k": ["facial-balancing"],
+  "rec7B93y3h7k00gCg": ["reduce-dark-spots-discoloration", "unwanted-hair-removal"],
+  "rec7DQBFkPkqPx7QU": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  "rec7Ps49y18PkHR2B": ["restore-volume-definition"],
+  "rec7XvQ4PypuwELEE": ["restore-volume-definition"],
+  "rec8HOCYK6kGOw9Rg": ["improve-skin-texture-tone"],
+  "rec8Pp2wACf60MRDG": ["eyelid-eye-area-concerns"],
+  "rec8Xy1Z2ni0PX1Pm": ["restore-volume-definition", "improve-skin-texture-tone"],
+  "rec8oAUgDoE5dOW2z": ["restore-volume-definition"],
+  "rec90gBqPjUjBzuNE": ["facial-balancing"],
+  "rec9uePVK7wQZBjey": ["improve-skin-texture-tone"],
+  "recARtfgj2ySzuC5S": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "recAexYUr4jXiGmTC": ["facial-balancing", "restore-volume-definition"],
+  "recAjJLwfkIaiTNp2": ["facial-balancing", "restore-volume-definition"],
+  "recBQUDh0L61EBq02": ["restore-volume-definition"],
+  "recBsG9wJH2qKf451": ["improve-skin-texture-tone"],
+  "recCkYKBe6zzlKqa5": ["facial-balancing"],
+  "recDAOWBhchSdBuNe": ["eyelid-eye-area-concerns"],
+  "recDI1rQMOmgftRzP": ["improve-skin-texture-tone"],
+  "recDazoE3e3MXDtVg": ["facial-balancing"],
+  "recDy7C8dUf4kBz5d": ["restore-volume-definition"],
+  "recEEd9bNK0HFEx7q": ["improve-skin-texture-tone", "reduce-dark-spots-discoloration"],
+  "recEsdzQYjCmEy2KZ": ["restore-volume-definition"],
+  "recEwPIQH7y50WaHW": ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  "recEySwzh8YSQfSJh": ["improve-skin-texture-tone"],
+  "recFBxQziSNGXfSJe": ["eyelid-eye-area-concerns"],
+  "recFYm60eVxovSsxJ": ["improve-skin-texture-tone"],
+  "recFwufUHnC60oZ7t": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "recFyiZqHM0D3SdUH": ["improve-skin-texture-tone"],
+  "recFzqrRez2uhMK7p": ["restore-volume-definition"],
+  "recG8ZoEk1MDp6CaG": ["improve-skin-texture-tone"],
+  "recGAKWoTCtk9nifB": ["restore-volume-definition"],
+  "recGKmLqj2i74jqXO": ["restore-volume-definition"],
+  "recGLGC0RNiVMZwje": ["improve-skin-texture-tone"],
+  "recGS91fpf9suCUhI": ["improve-skin-texture-tone"],
+  "recH85gKwK0jkwW56": ["facial-balancing"],
+  "recHE5gtVtGQe5FP0": ["smooth-wrinkles-lines", "restore-volume-definition"],
+  "recHUxAPzgduPhz52": ["eyelid-eye-area-concerns"],
+  "recHgyAffHULS8Pzf": ["eyelid-eye-area-concerns"],
+  "recHkYXJuU13Zd8PK": ["improve-skin-texture-tone"],
+  "recI6fnyfUcPBULuv": ["facial-balancing"],
+  "recITWpEtALmDztqr": ["smooth-wrinkles-lines"],
+  "recIfsf45CHSrZjjr": ["facial-balancing"],
+  "recJYK1Mr6LXxrlt1": ["facial-balancing"],
+  "recJpAlijbaiCnabw": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  "recJqv5n5I5Sc3vep": ["improve-skin-texture-tone"],
+  "recL4OUGPvZj8ztOc": ["reduce-dark-spots-discoloration"],
+  "recLM7Hv6ip1g5JkC": ["improve-skin-texture-tone"],
+  "recLVToCtcqE8PtqE": ["restore-volume-definition", "improve-skin-texture-tone"],
+  "recLd6TIaKDSjyfnF": ["facial-balancing"],
+  "recLiEXtGdqbwGClp": ["restore-volume-definition"],
+  "recN1Hbs50QgZgxQK": ["restore-volume-definition"],
+  "recN7epp9z7dCvNo7": ["improve-skin-texture-tone"],
+  "recNoy8fYNHPrMJnO": ["improve-skin-texture-tone"],
+  "recNxtvVkfM6wIbn5": ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  "recObiye7WXlfV5AB": ["improve-skin-texture-tone"],
+  "recOpojB5zUyWRFYq": ["facial-balancing"],
+  "recOyBrkyZwwJ1S0w": ["eyelid-eye-area-concerns"],
+  "recOzMAfbQLdyj0pk": ["facial-balancing"],
+  "recPL3MPe8g400jV6": ["restore-volume-definition"],
+  "recPLgIfyPHMoOBFs": ["restore-volume-definition"],
+  "recPNLhyWgsNfUeQU": ["improve-skin-texture-tone"],
+  "recPeVAFCYuHEcrs1": ["eyelid-eye-area-concerns"],
+  "recPeXtFJinA94env": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "recQAAfXQpTQLuJdL": ["improve-skin-texture-tone"],
+  "recQOYS1r8g2QsELA": ["restore-volume-definition"],
+  "recQaJw1OpbhMrgfU": ["improve-skin-texture-tone"],
+  "recRVKr2A5BUZM2jt": ["restore-volume-definition"],
+  "recRWhIKJdSGH5iNi": ["facial-balancing"],
+  "recSEntcPxuGiYAm6": ["facial-balancing"],
+  "recSNi15VWPB3PDwU": ["facial-balancing"],
+  "recSvpoCu6sSjzv3F": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  "recTzzrGAOpXr21EV": ["restore-volume-definition"],
+  "recUOVZa6W2KZ0gm4": ["restore-volume-definition"],
+  "recURzdg3sM9tJZbi": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "recUXUBEPg7z0Ta6B": ["improve-skin-texture-tone"],
+  "recUZXcmjuHGb7hDZ": ["eyelid-eye-area-concerns"],
+  "recUqgRGXd1F9rYFR": ["restore-volume-definition"],
+  "recUrFMXVLkxiTIK6": ["facial-balancing"],
+  "recV37RRK7kSKjVug": ["facial-balancing", "improve-skin-texture-tone"],
+  "recVAEz7Cvx50m0no": ["facial-balancing", "restore-volume-definition"],
+  "recVlEc05yi7BzPCA": ["improve-skin-texture-tone"],
+  "recVr90ML5qDGpqr1": ["facial-balancing"],
+  "recVyBWsS4pPmbjqa": ["facial-balancing"],
+  "recW30FSgmeCmNTHh": ["facial-balancing", "smooth-wrinkles-lines"],
+  "recW9Wu74qZWF56wi": ["smooth-wrinkles-lines"],
+  "recWBFCWAZmstER0s": ["improve-skin-texture-tone"],
+  "recWqhtAhG8UK6qlt": ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  "recWwH2qqcMeoumQi": ["restore-volume-definition"],
+  "recX5Ugv9bYGafcLz": ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  "recX6nIQTSQzpbRf2": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "recX8fpi4sKiMbVjE": ["facial-balancing", "improve-skin-texture-tone"],
+  "recXUq7HQP9OJIawU": ["improve-skin-texture-tone", "clear-acne-minimize-pores"],
+  "recXWbmo42zOd9Mch": ["facial-balancing"],
+  "recXliMUxm8xUqUTS": ["restore-volume-definition"],
+  "recY4UBtk4mI7OtuG": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "recYHGC8Zuf3RQOjq": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "recYNu8T6nwDRGl7P": ["restore-volume-definition"],
+  "recYfha7wV8CDu2QI": ["restore-volume-definition"],
+  "recYjY7WKsBNNEzJ4": ["improve-skin-texture-tone"],
+  "recZYsKwCgdoClypF": ["restore-volume-definition"],
+  "reca2WnfVwkffvwQ8": ["restore-volume-definition"],
+  "recb6AfUJDmUicgMf": ["facial-balancing"],
+  "recb6VX1xzMkEWNDb": ["restore-volume-definition"],
+  "recbDNhFYwuvbmwkF": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "recbLeA234skLNQcV": ["restore-volume-definition"],
+  "recbWwMQqc7nTF8ED": ["facial-balancing"],
+  "recbbZa92ig9DBLRJ": ["restore-volume-definition"],
+  "recclSfDQJRzA5ztq": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "recddW1VaQw9NOLXG": ["restore-volume-definition", "improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "recdnVbtjlNcf5gbs": ["smooth-wrinkles-lines"],
+  "recdqGEUH108CeYlz": ["facial-balancing"],
+  "receXGWIUcKPr7idv": ["improve-skin-texture-tone"],
+  "receceTP4EZjHhrYp": ["body-contouring-fat-reduction"],
+  "recf8Ho2s14QhuUSa": ["improve-skin-texture-tone"],
+  "recfAou41aYczf0FP": ["facial-balancing"],
+  "recfCBcAN1ciyBTbU": ["facial-balancing"],
+  "recfPeRPnp50IDW1Z": ["smooth-wrinkles-lines"],
+  "recfb0tbad1JsrGLH": ["facial-balancing"],
+  "recfbUndrNj2Oe6gD": ["facial-balancing", "smooth-wrinkles-lines"],
+  "recgCbAoLI777gpwb": ["restore-volume-definition"],
+  "recgdd5uyqS5vgW0x": ["improve-skin-texture-tone"],
+  "recgyEK5LD6suWzbh": ["improve-skin-texture-tone"],
+  "rechhaGf1RMFChTnq": ["improve-skin-texture-tone"],
+  "rechlMc5hzxYBrPE3": ["facial-balancing"],
+  "rechqJh7tFVTGxorY": ["restore-volume-definition"],
+  "reciE0fcDkrPx8PCz": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "reciIqHry3RtoflYv": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "reciN6ujbd4RbiecQ": ["restore-volume-definition"],
+  "reciZ29TeybjNbDAq": ["smooth-wrinkles-lines"],
+  "reciuSusMZxBcPQIF": ["facial-balancing"],
+  "recj1KjwPmirgcSXt": ["facial-balancing"],
+  "recjiUWKVycta7zkh": ["restore-volume-definition"],
+  "reck64zaDMfgO5DNT": ["facial-balancing"],
+  "reckQn2J5UPi2X5Fg": ["improve-skin-texture-tone"],
+  "recl6i681c0Ppck5T": ["eyelid-eye-area-concerns"],
+  "reclJntsa0gSM2o8S": ["restore-volume-definition"],
+  "reclaWwuMgkAPwOe4": ["restore-volume-definition"],
+  "recm4aK5sIImkvDIc": ["facial-balancing", "smooth-wrinkles-lines"],
+  "recmn9C12s00Fnjjp": ["facial-balancing"],
+  "recnGnZfFVtNSi4vH": ["reduce-dark-spots-discoloration"],
+  "recnJCFafLDdTWHqX": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "recnoyDWJsacV0CXO": ["smooth-wrinkles-lines"],
+  "recnp712Kc8Hx95SP": ["smooth-wrinkles-lines"],
+  "reco0fP0fWlHHuoUE": ["restore-volume-definition"],
+  "recoCTikbsHYm5zyE": ["facial-balancing"],
+  "recoH8bByi19k5orU": ["improve-skin-texture-tone"],
+  "recoUs9XIZWStoI6X": ["facial-balancing"],
+  "recoV8QYMHSCOMDS5": ["facial-balancing"],
+  "recoh2n38zA7uycSH": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  "recpQFltIq03zT6P0": ["facial-balancing"],
+  "recplDjkqUMGOppYZ": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "recqs5nTkSXOZ7YYV": ["facial-balancing"],
+  "recrEuVSGTZzIUsZ2": ["restore-volume-definition"],
+  "recrTqUFzfLHx0usK": ["facial-balancing", "smooth-wrinkles-lines"],
+  "recryEg4u5PkBXAjb": ["restore-volume-definition", "improve-skin-texture-tone"],
+  "recs3VC9NonG9FWUa": ["facial-balancing"],
+  "recsJxremsml0rwXv": ["improve-skin-texture-tone"],
+  "recsQULXGvLt4LQUm": ["facial-balancing"],
+  "recsYeygjt7Qe4IDM": ["facial-balancing"],
+  "recsbQfx2x4NZlxOJ": ["facial-balancing"],
+  "recsnCp7YtUXYGbQa": ["improve-skin-texture-tone"],
+  "rectFfW51bgYEWO6W": ["restore-volume-definition"],
+  "rectMqeTvWRkcQsK4": ["restore-volume-definition"],
+  "recu7NpLpUUT5ntiy": ["facial-balancing", "restore-volume-definition"],
+  "recuYpylvaPcqDoNP": ["eyelid-eye-area-concerns"],
+  "recuukhGcqUjfCL9Q": ["restore-volume-definition", "improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "recvCndjzK1OZD8kz": ["facial-balancing", "restore-volume-definition"],
+  "recvSz776om40f1m8": ["body-contouring-fat-reduction"],
+  "recvWshJ89JSrz7XC": ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  "recvYIypJRmGysJRW": ["restore-volume-definition"],
+  "recvp7xuZA6Fz313a": ["restore-volume-definition"],
+  "recw0hTcHU5ZRWB9a": ["smooth-wrinkles-lines"],
+  "recwbhunGR3nICNh4": ["improve-skin-texture-tone"],
+  "recwd1qV71M4rnSEV": ["improve-skin-texture-tone"],
+  "recx8X4omgnYMXpKJ": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  "recxBxN7w3ISMZ83H": ["restore-volume-definition"],
+  "recxDCtziA9a0yKDw": ["smooth-wrinkles-lines", "improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "recxU0FpEDYRVz06l": ["facial-balancing"],
+  "recxycQc4hulKpsmn": ["body-contouring-fat-reduction"],
+  "recyHYbBp8xUetx7f": ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  "recyd3FegGye3aaCh": ["restore-volume-definition"],
+  "recz4feOXQ4x4puBJ": ["restore-volume-definition"],
+  "recz9RI2wXb4qCNEV": ["eyelid-eye-area-concerns"],
+  "reczAhYBCgBNiHoeb": ["improve-skin-texture-tone"],
+  "reczG29LktxBlh6eV": ["smooth-wrinkles-lines"],
+  "reczHnOWx2sCiv2QK": ["smooth-wrinkles-lines"],
+  "reczgDgGmKO6Vslap": ["facial-balancing"],
+  "reczqLstrRQPrKwgf": ["eyelid-eye-area-concerns"],
+  "reczwBf9Db8VH7NJE": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  "reczxqJp3zNylgxaR": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+};
+
 function getMatchingCasesForItem(item) {
   // If item is a category, match by category keywords
   if (item.type === "category") {
@@ -10012,6 +10861,13 @@ function getMatchingCasesForItem(item) {
         return caseItem;
       })
       .filter((caseItem) => {
+        // FIRST: Check if case has explicit category mapping from CSV
+        const caseCategories = CASE_CATEGORY_MAPPING[caseItem.id];
+        if (caseCategories && caseCategories.includes(item.id)) {
+          return true; // Direct match from CSV mapping
+        }
+
+        // SECOND: Fall back to keyword matching if no CSV mapping
         // Check if case matches this category
         const caseNameLower = (caseItem.name || "").toLowerCase();
         const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(
@@ -11323,12 +12179,13 @@ async function showCaseDetail(caseItem, returnScreen = null) {
               displayImage ||
               "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='400' height='300' fill='%23FFD291'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-family='Arial' font-size='20' fill='%23212121'%3EBefore/After Image%3C/text%3E%3C/svg%3E"
             }" alt="Before and After" class="case-before-after" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'400\\' height=\\'300\\'%3E%3Crect width=\\'400\\' height=\\'300\\' fill=\\'%23FFD291\\'/%3E%3Ctext x=\\'50%25\\' y=\\'50%25\\' text-anchor=\\'middle\\' dy=\\'.3em\\' font-family=\\'Arial\\' font-size=\\'20\\' fill=\\'%23212121\\'%3EBefore/After Image%3C/text%3E%3C/svg%3E'">
+            <h2 class="case-headline">${escapeHtml(caseItem.headline)}</h2>
             <div class="case-modality-badge">
                 <span class="modality-icon">${modality.icon}</span>
                 <span class="modality-name">${modality.name}</span>
+                <span class="modality-separator">•</span>
                 <span class="modality-category">${modality.category}</span>
             </div>
-            <h2 class="case-headline">${escapeHtml(caseItem.headline)}</h2>
             <div class="case-patient">${escapeHtml(caseItem.patient)}</div>
             <p class="case-story">${escapeHtml(caseItem.story)}</p>
             
@@ -12100,6 +12957,48 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (topRightButtons) {
     topRightButtons.classList.remove("visible");
   }
+  
+  // Set up global event delegation for age input error clearing
+  // This ensures it works regardless of when the element is created
+  document.addEventListener("input", function(e) {
+    if (e.target && e.target.id === "patient-age") {
+      const ageValue = parseInt(e.target.value);
+      if (ageValue && ageValue >= 18) {
+        hideInputError(e.target);
+        e.target.classList.remove("input-error");
+      }
+    }
+  });
+  
+  document.addEventListener("change", function(e) {
+    if (e.target && e.target.id === "patient-age") {
+      const ageValue = parseInt(e.target.value);
+      if (ageValue && ageValue >= 18) {
+        hideInputError(e.target);
+        e.target.classList.remove("input-error");
+      }
+    }
+    
+    // Clear skin type error when selected
+    if (e.target && e.target.name === "skin-type" && e.target.checked) {
+      // Find the section containing this input
+      const skinTypeSection = e.target.closest('.demographic-section');
+      if (skinTypeSection) {
+        const errorMsg = skinTypeSection.querySelector('.input-error-message');
+        if (errorMsg) errorMsg.remove();
+      }
+    }
+    
+    // Clear sun response error when selected
+    if (e.target && e.target.name === "sun-response" && e.target.checked) {
+      // Find the section containing this input
+      const sunResponseSection = e.target.closest('.demographic-section');
+      if (sunResponseSection) {
+        const errorMsg = sunResponseSection.querySelector('.input-error-message');
+        if (errorMsg) errorMsg.remove();
+      }
+    }
+  });
 
   // ========================================================================
   // SET UP NAVIGATION EVENT LISTENERS (after DOM is ready)
@@ -12549,14 +13448,13 @@ function updateFloatingCTA() {
     if (floatingCTA) floatingCTA.classList.remove("visible");
   }
 
-  // Show results-cta-footer ONLY on case detail screen AND treatment detail screen
-  // Hide it on all early screens: home teaser, onboarding, form, lead capture, and results screens
+  // Show results-cta-footer on case detail screen, treatment detail screen, AND results screen
+  // Hide it on all early screens: home teaser, onboarding, form, lead capture
   if (resultsCTAFooter) {
     if (
-      (caseDetailActive || treatmentDetailActive) &&
+      (caseDetailActive || treatmentDetailActive || resultsScreenActive) &&
       !formScreenActive &&
       !leadCaptureActive &&
-      !resultsScreenActive &&
       !homeTeaserActive &&
       !onboardingActive
     ) {

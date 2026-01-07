@@ -531,17 +531,20 @@
             <div class="form-step" data-step="3" id="form-step-3">
               <div class="form-section">
                 <!-- Age Input -->
-                <div class="age-input-container">
-                  <input
-                    type="number"
-                    id="patient-age"
-                    name="age"
-                    min="18"
-                    max="100"
-                    placeholder="Enter your age"
-                    class="age-input"
-                    required
-                  />
+                <div class="demographic-section">
+                  <label class="demographic-label">What is your age?</label>
+                  <div class="age-input-container">
+                    <input
+                      type="number"
+                      id="patient-age"
+                      name="age"
+                      min="18"
+                      max="100"
+                      placeholder="Enter your age"
+                      class="age-input"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <!-- Skin Type -->
@@ -552,14 +555,29 @@
                   <div class="demographic-cards">
                     <label class="demographic-card">
                       <input type="radio" name="skin-type" value="dry" />
+                      <img
+                        src="skin type icons/often dry.svg"
+                        alt="Dry skin"
+                        class="skin-type-icon"
+                      />
                       <span>Dry</span>
                     </label>
                     <label class="demographic-card">
                       <input type="radio" name="skin-type" value="oily" />
+                      <img
+                        src="skin type icons/often oily.svg"
+                        alt="Oily skin"
+                        class="skin-type-icon"
+                      />
                       <span>Oily</span>
                     </label>
                     <label class="demographic-card">
                       <input type="radio" name="skin-type" value="balanced" />
+                      <img
+                        src="skin type icons/balanced.svg"
+                        alt="Balanced skin"
+                        class="skin-type-icon"
+                      />
                       <span>Balanced</span>
                     </label>
                     <label class="demographic-card">
@@ -567,6 +585,11 @@
                         type="radio"
                         name="skin-type"
                         value="combination"
+                      />
+                      <img
+                        src="skin type icons/combination.svg"
+                        alt="Combination skin"
+                        class="skin-type-icon"
                       />
                       <span>Combination</span>
                     </label>
@@ -585,20 +608,11 @@
                         name="sun-response"
                         value="always-burns"
                       />
-                      <div class="sun-response-icon">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-                          />
-                        </svg>
-                      </div>
+                      <img
+                        src="sun response icons/always-burns.svg"
+                        alt="Always Burns"
+                        class="sun-response-icon"
+                      />
                       <span>Always Burns</span>
                     </label>
                     <label class="sun-response-card">
@@ -607,20 +621,11 @@
                         name="sun-response"
                         value="usually-burns"
                       />
-                      <div class="sun-response-icon">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-                          />
-                        </svg>
-                      </div>
+                      <img
+                        src="sun response icons/usually-burns.svg"
+                        alt="Usually Burns"
+                        class="sun-response-icon"
+                      />
                       <span>Usually Burns</span>
                     </label>
                     <label class="sun-response-card">
@@ -629,26 +634,11 @@
                         name="sun-response"
                         value="sometimes-tans"
                       />
-                      <div class="sun-response-icon">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <circle cx="12" cy="12" r="5" />
-                          <line x1="12" y1="1" x2="12" y2="3" />
-                          <line x1="12" y1="21" x2="12" y2="23" />
-                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                          <line x1="1" y1="12" x2="3" y2="12" />
-                          <line x1="21" y1="12" x2="23" y2="12" />
-                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                        </svg>
-                      </div>
+                      <img
+                        src="sun response icons/sometimes-tans.svg"
+                        alt="Sometimes Tans"
+                        class="sun-response-icon"
+                      />
                       <span>Sometimes Tans</span>
                     </label>
                     <label class="sun-response-card">
@@ -657,26 +647,11 @@
                         name="sun-response"
                         value="usually-tans"
                       />
-                      <div class="sun-response-icon">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <circle cx="12" cy="12" r="5" />
-                          <line x1="12" y1="1" x2="12" y2="3" />
-                          <line x1="12" y1="21" x2="12" y2="23" />
-                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                          <line x1="1" y1="12" x2="3" y2="12" />
-                          <line x1="21" y1="12" x2="23" y2="12" />
-                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                        </svg>
-                      </div>
+                      <img
+                        src="sun response icons/usually-tans.svg"
+                        alt="Usually Tans"
+                        class="sun-response-icon"
+                      />
                       <span>Usually Tans</span>
                     </label>
                     <label class="sun-response-card">
@@ -685,26 +660,11 @@
                         name="sun-response"
                         value="always-tans"
                       />
-                      <div class="sun-response-icon">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <circle cx="12" cy="12" r="5" />
-                          <line x1="12" y1="1" x2="12" y2="3" />
-                          <line x1="12" y1="21" x2="12" y2="23" />
-                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                          <line x1="1" y1="12" x2="3" y2="12" />
-                          <line x1="21" y1="12" x2="23" y2="12" />
-                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                        </svg>
-                      </div>
+                      <img
+                        src="sun response icons/always-tans.svg"
+                        alt="Always Tans"
+                        class="sun-response-icon"
+                      />
                       <span>Always Tans</span>
                     </label>
                     <label class="sun-response-card">
@@ -713,26 +673,11 @@
                         name="sun-response"
                         value="rarely-burns"
                       />
-                      <div class="sun-response-icon">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <circle cx="12" cy="12" r="5" />
-                          <line x1="12" y1="1" x2="12" y2="3" />
-                          <line x1="12" y1="21" x2="12" y2="23" />
-                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                          <line x1="1" y1="12" x2="3" y2="12" />
-                          <line x1="21" y1="12" x2="23" y2="12" />
-                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                        </svg>
-                      </div>
+                      <img
+                        src="sun response icons/rarely-burns.svg"
+                        alt="Rarely Burns"
+                        class="sun-response-icon"
+                      />
                       <span>Rarely Burns</span>
                     </label>
                   </div>
