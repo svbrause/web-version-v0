@@ -393,10 +393,11 @@ function updateProviderSection(brand) {
   if (isUniqueAesthetics) {
     // Compact provider section for landing page
     const provider = brand.providers[0];
+    console.log("🎨 Populating provider section with:", provider);
     providerSection.innerHTML = `
       <div class="provider-compact">
         <div class="provider-compact-image">
-          <img src="${provider.image}" alt="${provider.name}" class="provider-compact-img" onerror="this.style.display='none'">
+          <img src="${provider.image}" alt="${provider.name}" class="provider-compact-img" onerror="console.error('Failed to load provider image:', '${provider.image}'); this.style.display='none';">
         </div>
         <div class="provider-compact-info">
           <h3 class="provider-compact-name">${provider.name}</h3>
@@ -405,6 +406,10 @@ function updateProviderSection(brand) {
         </div>
       </div>
     `;
+    console.log(
+      "✅ Provider section populated:",
+      providerSection.innerHTML.substring(0, 100)
+    );
   } else {
     // Full provider section for other brands
     const providersHTML = brand.providers
@@ -513,7 +518,9 @@ function updateHeaderBar(brand) {
     // Update existing header bar if it exists (from HTML)
     if (headerBar) {
       // Try both .logo-image and .brand-header-logo img selectors
-      const logoImg = headerBar.querySelector(".logo-image") || headerBar.querySelector(".brand-header-logo img");
+      const logoImg =
+        headerBar.querySelector(".logo-image") ||
+        headerBar.querySelector(".brand-header-logo img");
       if (logoImg) {
         logoImg.src = brand.logo;
         logoImg.alt = brand.logoAlt;

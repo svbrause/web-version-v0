@@ -1081,6 +1081,64 @@ body {
   flex-wrap: wrap;
 }
 
+.nav-back-btn,
+.nav-continue-btn,
+.nav-skip-btn {
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-family: "Montserrat", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-back-btn {
+  background: #f5f5f5;
+  color: #212121;
+  flex: 0 0 auto;
+}
+
+.nav-back-btn:hover {
+  background: #eee;
+}
+
+.nav-continue-btn {
+  background: #212121;
+  color: white;
+  flex: 1;
+  min-width: 140px;
+}
+
+.nav-continue-btn:hover:not(:disabled) {
+  background: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-continue-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.nav-continue-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nav-skip-btn {
+  background: transparent;
+  color: #888;
+  font-weight: 500;
+  padding: 14px 12px;
+  font-size: 14px;
+}
+
+.nav-skip-btn:hover {
+  color: #212121;
+}
+
 .form-step-button {
   padding: 14px 20px;
   border-radius: 12px;
@@ -1151,6 +1209,18 @@ body {
     gap: 10px;
     padding: 14px 16px;
     padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .nav-back-btn,
+  .nav-continue-btn,
+  .nav-skip-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .nav-continue-btn {
+    flex: 1;
+    min-width: 120px;
   }
   
   .form-steps-indicator {
@@ -1267,6 +1337,14 @@ body {
 
 .form-section {
   margin-bottom: 32px;
+}
+
+.demographic-section {
+  margin-bottom: 32px;
+}
+
+.demographic-section:last-child {
+  margin-bottom: 0;
 }
 
 .section-title {
@@ -1814,6 +1892,7 @@ body {
   height: 0;
 }
 
+.demographic-card span,
 .demographic-card .card-label {
   display: block;
   font-size: 15px;
@@ -1827,8 +1906,10 @@ body {
   background: var(--color-accent-light, #ffd4e5);
 }
 
+.demographic-card:has(input:checked) span,
 .demographic-card:has(input:checked) .card-label {
   font-weight: 600;
+  color: var(--color-primary, #212121);
 }
 
 /* Sun Response Grid - Modern Mobile */
@@ -1838,11 +1919,12 @@ body {
   gap: 10px;
 }
 
+.sun-response-card,
 .sun-response-option {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 14px 8px;
   background: #f8f8f8;
   border: 2px solid transparent;
@@ -1852,15 +1934,18 @@ body {
   text-align: center;
 }
 
+.sun-response-card:hover,
 .sun-response-option:hover {
   background: #f0f0f0;
   border-color: #ddd;
 }
 
+.sun-response-card:active,
 .sun-response-option:active {
   transform: scale(0.97);
 }
 
+.sun-response-card input[type="radio"],
 .sun-response-option input[type="radio"] {
   position: absolute;
   opacity: 0;
@@ -1868,20 +1953,24 @@ body {
   height: 0;
 }
 
+.sun-response-icon,
 .sun-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 24px;
   height: 24px;
+  color: #424242;
 }
 
+.sun-response-icon svg,
 .sun-icon svg {
   width: 100%;
   height: 100%;
   stroke: currentColor;
 }
 
+.sun-response-card span,
 .sun-label {
   font-size: 12px;
   font-weight: 500;
@@ -1889,11 +1978,14 @@ body {
   line-height: 1.3;
 }
 
+.sun-response-card:has(input:checked),
 .sun-response-option:has(input:checked) {
   background: var(--color-accent-light, #ffd4e5);
   border-color: var(--color-primary, #212121);
 }
 
+.sun-response-card:has(input:checked) span,
+.sun-response-card:has(input:checked) .sun-response-icon,
 .sun-response-option:has(input:checked) .sun-label {
   color: var(--color-primary, #212121);
   font-weight: 600;
@@ -1960,6 +2052,7 @@ body {
   transform: scale(1.05);
 }
 
+.skin-tone-option span,
 .skin-tone-label {
   font-size: 11px;
   color: var(--color-text-secondary, #666);
@@ -1968,6 +2061,7 @@ body {
   transition: color 0.2s ease;
 }
 
+.skin-tone-option:has(input:checked) span,
 .skin-tone-option:has(input:checked) .skin-tone-label {
   color: var(--color-text-primary, #212121);
   font-weight: 600;
@@ -9351,6 +9445,7 @@ body.brand-uniqueAestheticsPink .case-treatment-badge {
   border-top: 1px solid #e8e8e8;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  display: none; /* Hidden by default, only shown on specific screens */
 }
 
 @media (min-width: 600px) {
