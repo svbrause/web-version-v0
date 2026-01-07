@@ -227,7 +227,19 @@
       });
     </script>
   </head>
-  <body>
+  <body class="brand-uniqueAestheticsPink">
+    <!-- Brand Header Bar -->
+    <div class="brand-header-bar">
+      <div class="brand-header-logo">
+        <img
+          src="https://www.datocms-assets.com/163832/1753199215-unique_physique.svg"
+          alt="Unique Aesthetics & Wellness Logo"
+          class="logo-image"
+        />
+      </div>
+      <button class="exit-button" onclick="showOnboarding()">×</button>
+    </div>
+
     <!-- Top Right Buttons - Global -->
     <div class="top-right-buttons" id="top-right-buttons">
       <button class="my-cases-button" onclick="showMyCases()" title="My Goals">
@@ -239,7 +251,11 @@
       <div id="home-teaser" class="screen active">
         <div class="teaser-container">
           <div class="teaser-logo">
-            <img src="image.png" alt="Company Logo" class="logo-image" />
+            <img
+              src="https://www.datocms-assets.com/163832/1753199215-unique_physique.svg"
+              alt="Unique Aesthetics & Wellness Logo"
+              class="logo-image"
+            />
           </div>
           <h1 class="teaser-title">Discover Your Perfect Treatment</h1>
           <p class="teaser-subtitle">
@@ -310,6 +326,11 @@
               ></span>
               <span>Exclusive Offers</span>
             </div>
+          </div>
+
+          <!-- Provider Section (for Unique Aesthetics brands) -->
+          <div class="provider-section" id="provider-section">
+            <!-- Content will be populated by branding.js -->
           </div>
 
           <button
@@ -460,330 +481,533 @@
         </div>
       </div>
 
-      <!-- Concerns Selection Screen (comes before goals/age) -->
-      <div id="concerns-selection-screen" class="screen">
+      <!-- Concerns Selection Screen (hidden, kept for backward compatibility) -->
+      <div id="concerns-selection-screen" class="screen" style="display: none">
         <div class="concerns-screen-container">
-          <!-- Header Section -->
-          <div class="concerns-header">
-            <h1 class="concerns-title">Select Your Aesthetic Concerns</h1>
-            <p class="concerns-subtitle">
-              Tap the + buttons on the body to select areas you'd like to
-              address
-            </p>
-            <div class="concerns-controls">
-              <a href="#" class="concerns-link" id="how-to-use-link"
-                >How to Use</a
-              >
-              <a href="#" class="concerns-link" id="switch-gender-link"
-                >Switch to Male</a
-              >
-            </div>
-          </div>
-
-          <!-- Body Selector Section (embedded directly) -->
-          <div class="embedded-body-selector" id="embedded-body-selector">
-            <!-- Body selector content will be injected here -->
-          </div>
-
-          <!-- Footer Section with selection count and continue button -->
-          <div class="concerns-footer">
-            <div class="concerns-selection-count">
-              <span id="concerns-count">0</span> of 3 concerns selected
-            </div>
-            <div
-              id="selected-concerns-display"
-              class="selected-concerns-display"
-              style="display: none;"
-            ></div>
-            <button
-              type="button"
-              class="cta-button primary"
-              id="proceed-to-goals-btn"
-              onclick="proceedToGoalsAndAge()"
-              disabled
-            >
-              Continue to Goals
-            </button>
-          </div>
-
-          <div
-            id="region-issue-rows"
-            class="region-issue-container"
-            style="display: none"
-          >
-            <!-- Hidden - kept for backward compatibility with form submission -->
-          </div>
+          <div id="concern-categories-grid-old"></div>
         </div>
       </div>
 
-      <!-- Form Screen (Goals & Age) -->
+      <!-- Form Screen (Multi-Step) -->
       <div id="form-screen" class="screen">
         <div class="form-container">
-          <!-- Process Indicator -->
-          <div class="process-indicator">
-            <div class="process-step active">
-              <div class="step-number">1</div>
-              <div class="step-label">AI Consult</div>
-            </div>
-            <div class="process-connector"></div>
-            <div class="process-step">
-              <div class="step-number">2</div>
-              <div class="step-label">In-Clinic Consult</div>
-            </div>
-          </div>
-
-          <h1 class="form-title">Your Goals & Details</h1>
-          <p class="form-subtitle">
-            Help us personalize your treatment recommendations
+          <!-- Dynamic Title and Subtitle -->
+          <h1 class="form-title" id="form-step-title">
+            What would you like to improve?
+          </h1>
+          <p class="form-subtitle" id="form-step-subtitle">
+            Select up to 3 main concerns that matter most to you
           </p>
 
           <form id="aesthetic-form">
-            <!-- Selected Concerns Summary (editable) -->
-            <div class="form-section">
-              <div
-                id="selected-concerns-summary"
-                class="selected-concerns-summary"
-              >
-                <!-- Will be populated with selected concerns -->
-              </div>
-              <button
-                type="button"
-                class="body-selector-button"
-                id="open-body-selector-button"
-                onclick="openBodySelector()"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  style="margin-right: 8px"
+            <!-- Step 1: What would you like to improve? (Concerns Selection) -->
+            <div class="form-step" data-step="1" id="form-step-1">
+              <div class="concerns-screen-container">
+                <!-- Warning message for max selections -->
+                <div
+                  class="concern-warning-message"
+                  id="concern-warning-message"
+                  style="display: none"
                 >
-                  <path
-                    d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
-                  ></path>
-                </svg>
-                Select Concerns on Body
-              </button>
-              <div
-                id="selected-concerns-display"
-                class="selected-concerns-display"
-                style="display: none;"
-              ></div>
-              <div
-                id="region-issue-rows"
-                class="region-issue-container"
-                style="display: none"
-              >
-                <!-- Hidden - kept for backward compatibility with form submission -->
+                  <span id="concern-warning-text"
+                    >Please select up to 3 concerns</span
+                  >
+                </div>
+
+                <!-- Concern categories grid (populated by JavaScript) -->
+                <div id="concern-categories-grid"></div>
               </div>
             </div>
 
-            <!-- Age Input -->
-            <div class="form-section">
-              <h2 class="section-title">Your Age</h2>
-              <div class="age-input-container">
-                <input
-                  type="number"
-                  id="patient-age"
-                  name="age"
-                  min="18"
-                  max="100"
-                  placeholder="Enter your age"
-                  class="age-input"
-                  required
-                />
+            <!-- Step 2: Which Areas Are You Most Concerned About? -->
+            <div class="form-step" data-step="2" id="form-step-2">
+              <div class="form-section">
+                <div id="areas-of-concern-grid"></div>
               </div>
             </div>
 
-            <!-- Overall Goals (with visual examples) -->
-            <div class="form-section">
-              <h2 class="section-title">Your Goals</h2>
-              <p class="section-subtitle">
-                (Select all that apply)
+            <!-- Step 3: Your Details (Age + Essential Demographics) -->
+            <div class="form-step" data-step="3" id="form-step-3">
+              <div class="form-section">
+                <!-- Age Input -->
+                <div class="age-input-container">
+                  <input
+                    type="number"
+                    id="patient-age"
+                    name="age"
+                    min="18"
+                    max="100"
+                    placeholder="Enter your age"
+                    class="age-input"
+                    required
+                  />
+                </div>
+
+                <!-- Skin Type -->
+                <div class="demographic-section">
+                  <label class="demographic-label"
+                    >What is your skin type?</label
+                  >
+                  <div class="demographic-cards">
+                    <label class="demographic-card">
+                      <input type="radio" name="skin-type" value="dry" />
+                      <span>Dry</span>
+                    </label>
+                    <label class="demographic-card">
+                      <input type="radio" name="skin-type" value="oily" />
+                      <span>Oily</span>
+                    </label>
+                    <label class="demographic-card">
+                      <input type="radio" name="skin-type" value="balanced" />
+                      <span>Balanced</span>
+                    </label>
+                    <label class="demographic-card">
+                      <input
+                        type="radio"
+                        name="skin-type"
+                        value="combination"
+                      />
+                      <span>Combination</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Sun Response -->
+                <div class="demographic-section">
+                  <label class="demographic-label"
+                    >How does your skin respond to the sun?</label
+                  >
+                  <div class="sun-response-grid">
+                    <label class="sun-response-card">
+                      <input
+                        type="radio"
+                        name="sun-response"
+                        value="always-burns"
+                      />
+                      <div class="sun-response-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path
+                            d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                          />
+                        </svg>
+                      </div>
+                      <span>Always Burns</span>
+                    </label>
+                    <label class="sun-response-card">
+                      <input
+                        type="radio"
+                        name="sun-response"
+                        value="usually-burns"
+                      />
+                      <div class="sun-response-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path
+                            d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                          />
+                        </svg>
+                      </div>
+                      <span>Usually Burns</span>
+                    </label>
+                    <label class="sun-response-card">
+                      <input
+                        type="radio"
+                        name="sun-response"
+                        value="sometimes-tans"
+                      />
+                      <div class="sun-response-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <circle cx="12" cy="12" r="5" />
+                          <line x1="12" y1="1" x2="12" y2="3" />
+                          <line x1="12" y1="21" x2="12" y2="23" />
+                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                          <line x1="1" y1="12" x2="3" y2="12" />
+                          <line x1="21" y1="12" x2="23" y2="12" />
+                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                      </div>
+                      <span>Sometimes Tans</span>
+                    </label>
+                    <label class="sun-response-card">
+                      <input
+                        type="radio"
+                        name="sun-response"
+                        value="usually-tans"
+                      />
+                      <div class="sun-response-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <circle cx="12" cy="12" r="5" />
+                          <line x1="12" y1="1" x2="12" y2="3" />
+                          <line x1="12" y1="21" x2="12" y2="23" />
+                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                          <line x1="1" y1="12" x2="3" y2="12" />
+                          <line x1="21" y1="12" x2="23" y2="12" />
+                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                      </div>
+                      <span>Usually Tans</span>
+                    </label>
+                    <label class="sun-response-card">
+                      <input
+                        type="radio"
+                        name="sun-response"
+                        value="always-tans"
+                      />
+                      <div class="sun-response-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <circle cx="12" cy="12" r="5" />
+                          <line x1="12" y1="1" x2="12" y2="3" />
+                          <line x1="12" y1="21" x2="12" y2="23" />
+                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                          <line x1="1" y1="12" x2="3" y2="12" />
+                          <line x1="21" y1="12" x2="23" y2="12" />
+                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                      </div>
+                      <span>Always Tans</span>
+                    </label>
+                    <label class="sun-response-card">
+                      <input
+                        type="radio"
+                        name="sun-response"
+                        value="rarely-burns"
+                      />
+                      <div class="sun-response-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <circle cx="12" cy="12" r="5" />
+                          <line x1="12" y1="1" x2="12" y2="3" />
+                          <line x1="12" y1="21" x2="12" y2="23" />
+                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                          <line x1="1" y1="12" x2="3" y2="12" />
+                          <line x1="21" y1="12" x2="23" y2="12" />
+                          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                      </div>
+                      <span>Rarely Burns</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: Optional Information -->
+            <div class="form-step" data-step="4" id="form-step-4">
+              <div class="form-section">
+                <!-- Skin Tone -->
+                <div class="demographic-section">
+                  <label class="demographic-label"
+                    >What is your skin tone?</label
+                  >
+                  <div class="skin-tone-scale">
+                    <label class="skin-tone-option">
+                      <input type="radio" name="skin-tone" value="light" />
+                      <div
+                        class="skin-tone-swatch"
+                        style="background: #f4d4b4"
+                      ></div>
+                      <span>Light</span>
+                    </label>
+                    <label class="skin-tone-option">
+                      <input type="radio" name="skin-tone" value="fair" />
+                      <div
+                        class="skin-tone-swatch"
+                        style="background: #e6c19a"
+                      ></div>
+                      <span>Fair</span>
+                    </label>
+                    <label class="skin-tone-option">
+                      <input type="radio" name="skin-tone" value="medium" />
+                      <div
+                        class="skin-tone-swatch"
+                        style="background: #d4a574"
+                      ></div>
+                      <span>Medium</span>
+                    </label>
+                    <label class="skin-tone-option">
+                      <input type="radio" name="skin-tone" value="tan" />
+                      <div
+                        class="skin-tone-swatch"
+                        style="background: #b8864f"
+                      ></div>
+                      <span>Tan</span>
+                    </label>
+                    <label class="skin-tone-option">
+                      <input type="radio" name="skin-tone" value="brown" />
+                      <div
+                        class="skin-tone-swatch"
+                        style="background: #8b6f3d"
+                      ></div>
+                      <span>Brown</span>
+                    </label>
+                    <label class="skin-tone-option">
+                      <input type="radio" name="skin-tone" value="deep" />
+                      <div
+                        class="skin-tone-swatch"
+                        style="background: #5c3d1f"
+                      ></div>
+                      <span>Deep</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Ethnic Background -->
+                <div class="demographic-section">
+                  <label class="demographic-label"
+                    >What is your ethnic background?</label
+                  >
+                  <div class="ethnic-pills">
+                    <label class="ethnic-pill">
+                      <input
+                        type="radio"
+                        name="ethnic-background"
+                        value="asian"
+                      />
+                      <span>Asian</span>
+                    </label>
+                    <label class="ethnic-pill">
+                      <input
+                        type="radio"
+                        name="ethnic-background"
+                        value="black"
+                      />
+                      <span>Black</span>
+                    </label>
+                    <label class="ethnic-pill">
+                      <input
+                        type="radio"
+                        name="ethnic-background"
+                        value="hispanic-latino"
+                      />
+                      <span>Hispanic/Latino</span>
+                    </label>
+                    <label class="ethnic-pill">
+                      <input
+                        type="radio"
+                        name="ethnic-background"
+                        value="middle-eastern"
+                      />
+                      <span>Middle Eastern</span>
+                    </label>
+                    <label class="ethnic-pill">
+                      <input
+                        type="radio"
+                        name="ethnic-background"
+                        value="white"
+                      />
+                      <span>White</span>
+                    </label>
+                    <label class="ethnic-pill">
+                      <input
+                        type="radio"
+                        name="ethnic-background"
+                        value="mixed"
+                      />
+                      <span>Mixed</span>
+                    </label>
+                    <label class="ethnic-pill">
+                      <input
+                        type="radio"
+                        name="ethnic-background"
+                        value="other"
+                      />
+                      <span>Other</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Previous Treatments -->
+                <div class="demographic-section">
+                  <label class="demographic-label"
+                    >Have you had any previous aesthetic treatments?
+                    (Optional)</label
+                  >
+                  <div class="treatment-chips">
+                    <label class="treatment-chip">
+                      <input
+                        type="checkbox"
+                        name="previous-treatments"
+                        value="botox"
+                      />
+                      <span>Botox</span>
+                    </label>
+                    <label class="treatment-chip">
+                      <input
+                        type="checkbox"
+                        name="previous-treatments"
+                        value="filler"
+                      />
+                      <span>Filler</span>
+                    </label>
+                    <label class="treatment-chip">
+                      <input
+                        type="checkbox"
+                        name="previous-treatments"
+                        value="laser"
+                      />
+                      <span>Laser</span>
+                    </label>
+                    <label class="treatment-chip">
+                      <input
+                        type="checkbox"
+                        name="previous-treatments"
+                        value="chemical-peel"
+                      />
+                      <span>Chemical Peel</span>
+                    </label>
+                    <label class="treatment-chip">
+                      <input
+                        type="checkbox"
+                        name="previous-treatments"
+                        value="microneedling"
+                      />
+                      <span>Microneedling</span>
+                    </label>
+                    <label class="treatment-chip">
+                      <input
+                        type="checkbox"
+                        name="previous-treatments"
+                        value="none"
+                      />
+                      <span>None</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 5: Your Goals (Hidden) -->
+            <div
+              class="form-step"
+              data-step="5"
+              id="form-step-5"
+              style="display: none"
+            >
+              <div class="form-section">
+                <div class="goals-visual-grid" id="goals-visual-grid">
+                  <!-- Goal cards will be populated by JavaScript -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 6: Review & Confirm -->
+            <div class="form-step" data-step="6" id="form-step-6">
+              <div class="form-section">
+                <div class="review-section" data-section="concerns">
+                  <h3 class="review-section-title">Your Selected Concerns</h3>
+                  <div id="review-concerns-summary"></div>
+                </div>
+
+                <div class="review-section" data-section="areas">
+                  <h3 class="review-section-title">Areas of Concern</h3>
+                  <div id="review-areas-summary"></div>
+                </div>
+
+                <div class="review-section" data-section="details">
+                  <h3 class="review-section-title">Your Details</h3>
+                  <div id="review-details-summary"></div>
+                </div>
+
+                <div
+                  class="review-section"
+                  data-section="goals"
+                  style="display: none"
+                >
+                  <h3 class="review-section-title">Your Goals</h3>
+                  <div id="review-goals-summary"></div>
+                </div>
+
+                <div class="review-section" data-section="optional">
+                  <h3 class="review-section-title">Optional Information</h3>
+                  <div id="review-optional-summary"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fixed Bottom Navigation -->
+            <div class="form-step-navigation">
+              <!-- Progress Bar -->
+              <div class="form-steps-indicator">
+                <div class="form-step-segment" data-step="1"></div>
+                <div class="form-step-segment" data-step="2"></div>
+                <div class="form-step-segment" data-step="3"></div>
+                <div class="form-step-segment" data-step="4"></div>
+                <div
+                  class="form-step-segment"
+                  data-step="5"
+                  style="display: none"
+                ></div>
+                <div class="form-step-segment" data-step="6"></div>
+              </div>
+
+              <!-- Navigation Buttons -->
+              <div class="form-navigation-buttons">
+                <button type="button" class="nav-back-btn" id="nav-back-btn">
+                  Back
+                </button>
                 <button
                   type="button"
-                  class="goals-help-link"
-                  onclick="showGoalsExplainer()"
+                  class="nav-continue-btn"
+                  id="nav-continue-btn"
                 >
-                  What do these mean?
+                  Continue
                 </button>
-              </p>
-              <div class="goals-visual-grid" id="goals-visual-grid">
-                <!-- Goal cards will be populated by JavaScript with example photos -->
-                <label class="goal-visual-card" data-goal="facial-balancing">
-                  <input
-                    type="checkbox"
-                    name="overall-goals"
-                    value="facial-balancing"
-                  />
-                  <div class="goal-card-image" id="goal-image-facial-balancing">
-                    <div class="goal-image-placeholder">
-                      <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                      >
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                        <line x1="9" y1="9" x2="9.01" y2="9" />
-                        <line x1="15" y1="9" x2="15.01" y2="9" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="goal-card-content">
-                    <span class="goal-card-title">Facial Balancing</span>
-                    <span class="goal-card-description"
-                      >Enhance symmetry and proportions</span
-                    >
-                  </div>
-                  <div class="goal-card-check">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  </div>
-                </label>
-
-                <label class="goal-visual-card" data-goal="anti-aging">
-                  <input
-                    type="checkbox"
-                    name="overall-goals"
-                    value="anti-aging"
-                  />
-                  <div class="goal-card-image" id="goal-image-anti-aging">
-                    <div class="goal-image-placeholder">
-                      <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                      >
-                        <path
-                          d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
-                        ></path>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="goal-card-content">
-                    <span class="goal-card-title">Anti-Aging</span>
-                    <span class="goal-card-description"
-                      >Reduce wrinkles and restore volume</span
-                    >
-                  </div>
-                  <div class="goal-card-check">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  </div>
-                </label>
-
-                <label class="goal-visual-card" data-goal="skin-rejuvenation">
-                  <input
-                    type="checkbox"
-                    name="overall-goals"
-                    value="skin-rejuvenation"
-                  />
-                  <div
-                    class="goal-card-image"
-                    id="goal-image-skin-rejuvenation"
-                  >
-                    <div class="goal-image-placeholder">
-                      <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                      >
-                        <path
-                          d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="goal-card-content">
-                    <span class="goal-card-title">Skin Rejuvenation</span>
-                    <span class="goal-card-description"
-                      >Improve texture, tone, and clarity</span
-                    >
-                  </div>
-                  <div class="goal-card-check">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  </div>
-                </label>
-
-                <label class="goal-visual-card" data-goal="natural-look">
-                  <input
-                    type="checkbox"
-                    name="overall-goals"
-                    value="natural-look"
-                  />
-                  <div class="goal-card-image" id="goal-image-natural-look">
-                    <div class="goal-image-placeholder">
-                      <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                      >
-                        <path
-                          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                        ></path>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="goal-card-content">
-                    <span class="goal-card-title">Natural Look</span>
-                    <span class="goal-card-description"
-                      >Subtle enhancements that refresh</span
-                    >
-                  </div>
-                  <div class="goal-card-check">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  </div>
-                </label>
+                <button
+                  type="button"
+                  class="nav-skip-btn"
+                  id="nav-skip-btn"
+                  style="display: none"
+                >
+                  Skip
+                </button>
               </div>
             </div>
 
@@ -792,15 +1016,6 @@
               class="validation-message"
               style="display: none"
             ></div>
-
-            <button
-              type="submit"
-              class="submit-button"
-              id="submit-button"
-              disabled
-            >
-              Next
-            </button>
           </form>
         </div>
       </div>
@@ -823,7 +1038,9 @@
                 />
               </svg>
             </div>
-            <h1 class="lead-capture-title">Great News!</h1>
+            <h1 class="lead-capture-title" id="lead-capture-title">
+              Great News!
+            </h1>
             <p class="lead-capture-subtitle" id="lead-capture-message">
               We found <strong id="treatment-count">multiple</strong> treatment
               options for your concerns!
@@ -835,12 +1052,13 @@
             <div class="preview-items" id="lead-capture-preview-items">
               <!-- Will be populated dynamically -->
             </div>
+            <div id="lead-capture-thumbnails" class="lead-capture-thumbnails">
+              <!-- Preview thumbnails will be populated dynamically -->
+            </div>
           </div>
 
           <div class="lead-capture-form-section">
-            <h2 class="lead-form-title">
-              Get your personalized results
-            </h2>
+            <h2 class="lead-form-title">Get your personalized results</h2>
             <p class="lead-form-subtitle">
               Enter your details to see your treatment recommendations
             </p>
@@ -927,10 +1145,7 @@
         <div class="results-container">
           <!-- Header -->
           <div class="results-header">
-            <h1 class="results-title">Your Personalized Results</h1>
-            <p class="results-subtitle">
-              Based on your concerns, here are our recommendations
-            </p>
+            <h1 class="results-title">Browse by Concern</h1>
           </div>
 
           <!-- Concern Tabs -->
@@ -942,22 +1157,38 @@
           <div class="results-content" id="results-content">
             <!-- Content for each concern will be dynamically populated -->
           </div>
+        </div>
+      </div>
 
-          <!-- Sticky CTA Footer -->
-          <div class="results-cta-footer">
-            <div class="results-cta-discount" id="results-cta-discount">
-              <span class="discount-badge">🎁 $50 OFF</span>
-              <span class="discount-text">Your first consultation</span>
-            </div>
-            <button class="results-cta-button" onclick="requestConsultation()">
-              <span class="cta-icon">✨</span>
-              Book Your Free Consultation
+      <!-- Treatment Detail Screen -->
+      <div id="treatment-detail-screen" class="screen">
+        <div class="treatment-detail-container">
+          <div class="treatment-detail-header">
+            <button class="back-button" onclick="goBackToResults()">
+              ← Back
             </button>
-            <p class="results-cta-note">
-              Free consultation • Expert analysis • No obligation
-            </p>
+            <h1 class="treatment-detail-title" id="treatment-detail-title"></h1>
+            <p
+              class="treatment-detail-subtitle"
+              id="treatment-detail-subtitle"
+            ></p>
+          </div>
+          <div class="treatment-detail-content" id="treatment-detail-content">
+            <!-- Treatment options and cases will be populated dynamically -->
           </div>
         </div>
+      </div>
+
+      <!-- Sticky CTA Footer (outside results-screen so it stays visible) -->
+      <div class="results-cta-footer" id="results-cta-footer">
+        <div class="results-cta-discount" id="results-cta-discount">
+          <span class="discount-badge">🎁 $50 OFF</span>
+          <span class="discount-text">Your first consultation</span>
+        </div>
+        <button class="results-cta-button" onclick="requestConsultation()">
+          <span class="cta-icon">✨</span>
+          Book Your Free Consultation
+        </button>
       </div>
 
       <!-- Issue/Goal Detail Screen (kept for backward compatibility) -->
@@ -1027,82 +1258,6 @@
               Favorited
             </button>
           </div>
-
-          <!-- Horizontal Case Carousel -->
-          <div id="case-carousel" class="case-carousel">
-            <div id="case-carousel-track" class="case-carousel-track">
-              <!-- Cases will be dynamically inserted here -->
-            </div>
-            <button
-              class="carousel-nav carousel-prev"
-              onclick="scrollCarousel(-1)"
-            >
-              ‹
-            </button>
-            <button
-              class="carousel-nav carousel-next"
-              onclick="scrollCarousel(1)"
-            >
-              ›
-            </button>
-          </div>
-
-          <!-- CTA Buttons -->
-          <div class="gallery-cta">
-            <div class="gallery-cta-header">
-              <h3 class="gallery-cta-title">Ready to Transform Your Look?</h3>
-              <p class="gallery-cta-subtitle">
-                Get a comprehensive facial analysis and personalized treatment
-                plan designed just for you
-              </p>
-            </div>
-            <button class="cta-button primary" onclick="requestConsultation()">
-              <span class="cta-icon">✨</span>
-              Get My Personalized Treatment Plan
-            </button>
-            <button class="cta-button secondary" onclick="requestMoreInfo()">
-              Learn More About Treatments
-            </button>
-
-            <!-- Active Discount Display -->
-            <div class="gallery-discount-active" id="gallery-discount-active">
-              <div class="discount-active-content">
-                <span class="discount-active-icon">🎁</span>
-                <div class="discount-active-info">
-                  <span
-                    class="discount-active-amount"
-                    id="gallery-discount-amount"
-                    >$50 OFF</span
-                  >
-                  <span class="discount-active-text" id="gallery-discount-text"
-                    >applied to your consultation</span
-                  >
-                </div>
-                <button
-                  class="discount-redeem-btn"
-                  onclick="showDiscountDetails()"
-                >
-                  Redeem
-                </button>
-              </div>
-            </div>
-
-            <p class="gallery-cta-note">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                />
-              </svg>
-              Free consultation • Expert analysis • Personalized recommendations
-            </p>
-          </div>
         </div>
       </div>
 
@@ -1113,188 +1268,28 @@
             ← Back
           </button>
           <div id="case-detail-content">
-            <!-- Case detail content will be dynamically inserted here -->
+            <!-- Case details will be populated dynamically -->
           </div>
         </div>
       </div>
 
-      <!-- My Goals Screen -->
+      <!-- My Cases Screen -->
       <div id="my-cases-screen" class="screen">
         <div class="my-cases-container">
           <div class="my-cases-header">
-            <button class="back-button" onclick="closeMyCases()">← Back</button>
-            <h1 class="my-cases-title">Summary</h1>
+            <h1 class="my-cases-title">My Goals</h1>
+            <p class="my-cases-subtitle">
+              Track your saved cases and treatment goals
+            </p>
           </div>
           <div id="my-cases-content">
-            <!-- Content will be dynamically inserted -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Remove Goal Confirmation Modal -->
-      <div id="remove-goal-modal" class="modal-overlay">
-        <div class="modal-container" style="max-width: 400px">
-          <div class="modal-header">
-            <h2 class="modal-title">Remove from Goals?</h2>
-            <button class="modal-close" onclick="closeRemoveGoalModal()">
-              ×
-            </button>
-          </div>
-          <div class="modal-form" style="padding: 24px">
-            <p
-              style="
-                font-size: 16px;
-                color: #424242;
-                margin-bottom: 24px;
-                line-height: 1.6;
-              "
-            >
-              Are you sure you want to remove
-              <strong id="remove-goal-name"></strong> from your goals?
-            </p>
-            <div class="form-actions">
-              <button
-                type="button"
-                class="modal-cancel-button"
-                onclick="closeRemoveGoalModal()"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                class="modal-submit-button"
-                id="confirm-remove-goal-button"
-                onclick="confirmRemoveGoal()"
-              >
-                Remove
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Request More Information Modal -->
-      <div id="request-info-modal" class="modal-overlay">
-        <div class="modal-container">
-          <div class="modal-header">
-            <h2 class="modal-title">Request More Information</h2>
-            <button class="modal-close" onclick="closeRequestModal()">×</button>
-          </div>
-          <form id="request-info-form" class="modal-form">
-            <div class="form-field">
-              <label for="request-name">Full Name *</label>
-              <input
-                type="text"
-                id="request-name"
-                name="name"
-                required
-                placeholder="Enter your full name"
-              />
-            </div>
-            <div class="form-field">
-              <label for="request-email">Email Address *</label>
-              <input
-                type="email"
-                id="request-email"
-                name="email"
-                required
-                placeholder="Enter your email"
-              />
-            </div>
-            <div class="form-field">
-              <label for="request-phone">Phone Number</label>
-              <input
-                type="tel"
-                id="request-phone"
-                name="phone"
-                placeholder="(555) 123-4567"
-              />
-            </div>
-            <div class="form-field">
-              <label for="request-message">Message</label>
-              <textarea
-                id="request-message"
-                name="message"
-                rows="4"
-                placeholder="Tell us what you'd like to learn more about..."
-              ></textarea>
-            </div>
-            <div class="form-actions">
-              <button
-                type="button"
-                class="modal-cancel-button"
-                onclick="closeRequestModal()"
-              >
-                Cancel
-              </button>
-              <button type="submit" class="modal-submit-button">
-                Submit Request
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Discount Details Modal -->
-    <div id="discount-details-modal" class="modal-overlay">
-      <div class="modal-container" style="max-width: 480px">
-        <div class="modal-header">
-          <h2 class="modal-title">Your Special Offer</h2>
-          <button class="modal-close" onclick="closeDiscountModal()">×</button>
-        </div>
-        <div class="modal-form" style="padding: 24px">
-          <div id="discount-modal-content">
-            <!-- Content will be populated dynamically -->
+            <!-- Saved cases will be populated dynamically -->
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Goals Explainer Modal (accessible from any screen) -->
-    <div id="goals-explainer-modal" class="goals-explainer-modal">
-      <div class="goals-explainer-content">
-        <button
-          type="button"
-          class="goals-explainer-close"
-          onclick="closeGoalsExplainer()"
-        >
-          ×
-        </button>
-        <h2>Understanding Your Aesthetic Goals</h2>
-        <p class="goals-explainer-intro">
-          Each goal represents a different approach to aesthetic enhancement.
-          Here's what they mean:
-        </p>
-
-        <div class="goal-explainer-cards" id="goal-explainer-cards">
-          <!-- Will be populated by JavaScript with examples -->
-        </div>
-
-        <button
-          type="button"
-          class="goals-explainer-done"
-          onclick="closeGoalsExplainer()"
-        >
-          Got it!
-        </button>
-      </div>
-    </div>
-
-    <!-- Floating Consultation CTA -->
-    <div id="floating-consultation-cta" class="floating-consultation-cta">
-      <button class="floating-cta-button" onclick="requestConsultation()">
-        <span class="floating-cta-icon">✨</span>
-        <span class="floating-cta-text">Claim Offers</span>
-      </button>
-    </div>
-
-    <!-- Body Selector Screen (Full Screen) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="body-selector/css/reset.css" />
-    <link rel="stylesheet" href="body-selector/css/main.css" />
-    <script src="body-selector/js/body-selector-integration.js"></script>
-    <script src="custom-dropdown.js"></script>
+    <!-- Main JavaScript Files -->
     <script src="branding.js"></script>
     <script src="app.js"></script>
   </body>

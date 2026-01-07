@@ -1217,6 +1217,12 @@ function getIconSVG(iconName, size = 16) {
     skin: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
     target: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
     calendar: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+    gift: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>`,
+    sun: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`,
+    droplet: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>`,
+    zap: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
+    shield: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+    plus: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
   };
   return icons[iconName] || icons.star;
 }
@@ -1334,6 +1340,31 @@ const treatmentModalities = {
     category: "Energy-Based",
   },
   Everesse: {
+    name: "RF Treatment",
+    icon: getIconSVG("lightning", 16),
+    category: "Energy-Based",
+  },
+  "Heat/Energy": {
+    name: "RF Treatment",
+    icon: getIconSVG("lightning", 16),
+    category: "Energy-Based",
+  },
+  Heat: {
+    name: "RF Treatment",
+    icon: getIconSVG("lightning", 16),
+    category: "Energy-Based",
+  },
+  Energy: {
+    name: "RF Treatment",
+    icon: getIconSVG("lightning", 16),
+    category: "Energy-Based",
+  },
+  RF: {
+    name: "RF Treatment",
+    icon: getIconSVG("lightning", 16),
+    category: "Energy-Based",
+  },
+  Radiofrequency: {
     name: "RF Treatment",
     icon: getIconSVG("lightning", 16),
     category: "Energy-Based",
@@ -1474,6 +1505,120 @@ const treatmentModalities = {
     category: "Topical",
   },
 };
+
+// Surgical treatment keywords to filter out
+const SURGICAL_KEYWORDS = [
+  'jaw reduction',
+  'jaw surgery',
+  'rhinoplasty',
+  'blepharoplasty',
+  'facelift',
+  'necklift',
+  'browlift',
+  'lip lift',
+  'lip release',
+  'canthopexy',
+  'facial implant',
+  'buccal fat removal',
+  'liposuction',
+  'surgery',
+  'surgical',
+  'implant',
+  'reduction surgery'
+];
+
+/**
+ * Check if a case involves surgical treatment
+ * @param {Object} caseItem - The case object
+ * @returns {boolean} - True if the case involves surgical treatment
+ */
+function isSurgicalCase(caseItem) {
+  if (!caseItem) return false;
+  
+  const caseName = typeof caseItem.name === 'string' 
+    ? caseItem.name.toLowerCase() 
+    : String(caseItem.name || '').toLowerCase();
+  const treatment = typeof caseItem.treatment === 'string'
+    ? caseItem.treatment.toLowerCase()
+    : String(caseItem.treatment || '').toLowerCase();
+  
+  // Handle matchingCriteria - it might be an array, string, or other type
+  let matchingCriteria = [];
+  if (Array.isArray(caseItem.matchingCriteria)) {
+    matchingCriteria = caseItem.matchingCriteria.map(c => {
+      if (typeof c === 'string') return c.toLowerCase();
+      return String(c || '').toLowerCase();
+    });
+  } else if (typeof caseItem.matchingCriteria === 'string') {
+    matchingCriteria = [caseItem.matchingCriteria.toLowerCase()];
+  } else if (caseItem.matchingCriteria) {
+    matchingCriteria = [String(caseItem.matchingCriteria).toLowerCase()];
+  }
+  
+  // Handle solved field - it might be a string, array, or other type
+  let solvedArray = [];
+  if (Array.isArray(caseItem.solved)) {
+    solvedArray = caseItem.solved.map(s => {
+      if (typeof s === 'string') return s.toLowerCase();
+      return String(s || '').toLowerCase();
+    });
+  } else if (typeof caseItem.solved === 'string') {
+    solvedArray = [caseItem.solved.toLowerCase()];
+  } else if (caseItem.solved) {
+    // Try to convert to string
+    solvedArray = [String(caseItem.solved).toLowerCase()];
+  }
+  
+  // Check case name
+  for (const keyword of SURGICAL_KEYWORDS) {
+    if (caseName.includes(keyword)) {
+      return true;
+    }
+  }
+  
+  // Check treatment field
+  for (const keyword of SURGICAL_KEYWORDS) {
+    if (treatment.includes(keyword)) {
+      return true;
+    }
+  }
+  
+  // Check matching criteria
+  for (const criteria of matchingCriteria) {
+    for (const keyword of SURGICAL_KEYWORDS) {
+      if (criteria.includes(keyword)) {
+        return true;
+      }
+    }
+  }
+  
+  // Check solved field
+  for (const solved of solvedArray) {
+    for (const keyword of SURGICAL_KEYWORDS) {
+      if (solved.includes(keyword)) {
+        return true;
+      }
+    }
+  }
+  
+  // Check if treatment modality is surgical
+  const modality = getTreatmentModality(caseItem.name);
+  if (modality && modality.category === "Surgical") {
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Filter out surgical cases from an array of cases
+ * @param {Array} cases - Array of case objects
+ * @returns {Array} - Filtered array with only non-surgical cases
+ */
+function filterNonSurgicalCases(cases) {
+  if (!cases || !Array.isArray(cases)) return [];
+  return cases.filter(caseItem => !isSurgicalCase(caseItem));
+}
 
 // Extract treatment name from case title (e.g., "Resolve X with Filler" -> "Filler")
 function extractTreatmentName(caseName) {
@@ -1833,12 +1978,192 @@ function generateBriefIssueDescription(issueName) {
 }
 
 // User selections storage
+// High-level concern categories that match Photos table structure
+const HIGH_LEVEL_CONCERNS = [
+  // Face Group
+  {
+    id: "facial-balancing",
+    name: "Facial Balancing",
+    description: "Harmonize facial features and proportions",
+    icon: "balance",
+    group: "Face",
+    treatmentHint: "Dermal Fillers • Botox • Sculptra",
+    mapsToPhotos: [
+      "facial-balancing", "facial-harmony", "proportions", "symmetry", 
+      "brow-asymmetry", "asymmetry", "resolve-brow", "brow-balance", "facial-symmetry",
+      "balance-brow", "balance-brows", "balance-chin", "balance-jawline", "balance-lip", "balance-lips",
+      "asymmetric-brow", "asymmetric-brows", "asymmetric-chin", "asymmetric-jawline", "asymmetric-lip", "asymmetric-lips",
+      "resolve-asymmetry", "correct-asymmetry", "brow-ptosis", "crooked-nose", "straighten-nose",
+      "balance", "balanced", "balancing", "asymmetric", "asymmetrical",
+      "droopy-tip", "dorsal-hump", "nasal-tip", "rhinoplasty", "over-projected", "gummy-smile",
+      "long-philtral-column", "philtral", "wide-chin", "under-rotated", "nose-rotation",
+      "over-filled", "overfill"
+    ],
+    mapsToSpecificIssues: [
+      "facial-asymmetry", "proportions", "harmony", "balance", "brow-asymmetry", 
+      "asymmetric-lips", "asymmetric-chin", "asymmetric-jawline", "crooked-nose", "brow-ptosis",
+      "droopy-tip", "dorsal-hump", "nasal-tip-too-narrow", "over-projected-chin",
+      "gummy-smile", "long-philtral-column", "wide-chin", "under-rotated",
+      "lower-cheeks-over-filled"
+    ]
+  },
+  {
+    id: "smooth-wrinkles-lines",
+    name: "Smooth Wrinkles & Lines",
+    description: "Reduce fine lines and wrinkles around your face",
+    icon: "wrinkles",
+    group: "Face",
+    treatmentHint: "Botox • Xeomin • Dysport",
+    mapsToPhotos: ["smoothen-wrinkles", "neurotoxin", "botox", "wrinkle-reduction", "wrinkles", "lines", "smooth"],
+    mapsToSpecificIssues: [
+      "11s", "forehead-lines", "glabella", "crow-feet", "lip-lines", "frown-lines",
+      "under-eye-wrinkles", "neck-lines", "smile-lines", "nasolabial-lines", "marionette-lines",
+      "bunny-lines", "perioral-wrinkles"
+    ]
+  },
+  {
+    id: "restore-volume-definition",
+    name: "Restore Volume & Definition",
+    description: "Add fullness and structure to your face",
+    icon: "volume",
+    group: "Face",
+    treatmentHint: "Dermal Fillers • Sculptra",
+    mapsToPhotos: [
+      "restore-volume", "fillers", "volume-restoration", "sculptra", 
+      "define-jawline", "enhance-jawline", "jawline-definition", "jawline-contour", "wide-jawline",
+      "volume", "hollow", "flatten", "depletion", "thin", "narrow", "sulcus", "prejowl",
+      "cheekbone", "cheekbone-fullness", "labiomental", "labiomental-groove"
+    ],
+    mapsToSpecificIssues: [
+      "hollow-cheeks", "under-eye-hollows", "thin-lips", "weak-chin", "volume-loss", 
+      "ill-defined-jawline", "asymmetric-jawline", "mid-cheek-flattening", 
+      "lower-cheek-volume-depletion", "under-eye-hollow", "upper-eye-hollow",
+      "temporal-hollow", "flat-forehead", "lacking-philtral-column", "prejowl-sulcus",
+      "narrow-jawline", "retruded-chin", "cheekbone-not-prominent",
+      "deep-labiomental-groove", "shallow-labiomental-groove"
+    ]
+  },
+  {
+    id: "improve-skin-texture-tone",
+    name: "Improve Skin Texture & Tone",
+    description: "Even out skin, reduce pores, improve clarity",
+    icon: "texture",
+    group: "Face",
+    treatmentHint: "Chemical Peels • Microneedling",
+    mapsToPhotos: [
+      "improve-skin-texture", "chemical-peel", "microneedling", "skin-texture",
+      "skin-laxity", "tighten-skin", "scars", "blackheads", "oily-skin", "dry-skin",
+      "neck", "submental", "platysmal", "neck-lines",
+      "red-spots", "cheilosis", "dry-lips"
+    ],
+    mapsToSpecificIssues: [
+      "large-pores", "uneven-texture", "dull-skin", "rough-skin",
+      "skin-laxity", "loose-skin", "scars", "blackheads", "oily-skin", "dry-skin",
+      "excess-skin", "neck-excess-skin", "loose-neck-skin", "platysmal-bands",
+      "excess-submental-fullness", "jowls", "red-spots", "dry-lips"
+    ]
+  },
+  {
+    id: "reduce-dark-spots-discoloration",
+    name: "Reduce Dark Spots & Discoloration",
+    description: "Fade hyperpigmentation, age spots, and sun damage",
+    icon: "spots",
+    group: "Face",
+    treatmentHint: "IPL • Laser Treatments",
+    mapsToPhotos: ["reduce-dark-spots", "ipl", "laser", "pigmentation"],
+    mapsToSpecificIssues: ["age-spots", "sun-damage", "hyperpigmentation", "melasma", "dark-spots"]
+  },
+  {
+    id: "clear-acne-minimize-pores",
+    name: "Clear Acne & Minimize Pores",
+    description: "Treat active acne and reduce scarring",
+    icon: "acne",
+    group: "Face",
+    treatmentHint: "Acne Treatments • Facials",
+    mapsToPhotos: ["acne-treatment", "clear-acne", "pore-minimizing"],
+    mapsToSpecificIssues: ["acne", "acne-scarring", "large-pores", "clogged-pores"]
+  },
+  {
+    id: "eyelid-eye-area-concerns",
+    name: "Eyelid & Eye Area Concerns",
+    description: "Address drooping eyelids, excess skin, bags, and dark circles",
+    icon: "eyes",
+    group: "Face",
+    treatmentHint: "Blepharoplasty • Fillers • Energy Treatments",
+    mapsToPhotos: [
+      "eyelid", "eyelids", "upper-eyelid", "lower-eyelid", "blepharoplasty",
+      "eye-droop", "eye-bags", "under-eye", "dark-circles", "canthal-tilt"
+    ],
+    mapsToSpecificIssues: [
+      "upper-eyelid-droop", "lower-eyelid-excess-skin", "excess-upper-eyelid-skin",
+      "lower-eyelid-bags", "under-eye-dark-circles", "negative-canthal-tilt",
+      "upper-eyelid-droop", "lower-eyelid-sag"
+    ]
+  },
+  // Body Group
+  {
+    id: "body-contouring-fat-reduction",
+    name: "Body Contouring & Fat Reduction",
+    description: "Shape and contour your body",
+    icon: "body",
+    group: "Body",
+    treatmentHint: "CoolSculpting • Body Treatments",
+    mapsToPhotos: ["body-contouring", "fat-reduction", "coolsculpting"],
+    mapsToSpecificIssues: ["stubborn-fat", "love-handles", "double-chin", "excess-fat"]
+  },
+  {
+    id: "unwanted-hair-removal",
+    name: "Unwanted Hair Removal",
+    description: "Remove hair from face or body",
+    icon: "hair",
+    group: "Body",
+    treatmentHint: "Laser Hair Removal • IPL",
+    mapsToPhotos: ["hair-removal", "laser-hair-removal", "ipl-hair"],
+    mapsToSpecificIssues: ["unwanted-hair", "facial-hair", "body-hair"]
+  },
+  // Wellness Group
+  {
+    id: "wellness-longevity",
+    name: "Wellness & Longevity",
+    description: "Hormone balance, energy, and vitality",
+    icon: "wellness",
+    group: "Wellness",
+    treatmentHint: "Hormone Therapy • IV Therapy",
+    mapsToPhotos: ["wellness", "longevity", "hormone-therapy"],
+    mapsToSpecificIssues: ["hormone-imbalance", "energy", "vitality", "longevity"]
+  }
+];
+
+// Areas of Concern for filtering cases
+const AREAS_OF_CONCERN = [
+  { id: "forehead", name: "Forehead", icon: "forehead" },
+  { id: "eyes", name: "Eyes", icon: "eyes" },
+  { id: "cheeks", name: "Cheeks", icon: "cheeks" },
+  { id: "nose", name: "Nose", icon: "nose" },
+  { id: "mouth-lips", name: "Mouth & Lips", icon: "lips" },
+  { id: "jawline", name: "Jawline", icon: "jawline" },
+  { id: "chin", name: "Chin", icon: "chin" },
+  { id: "neck", name: "Neck", icon: "neck" },
+  { id: "chest", name: "Chest", icon: "chest" },
+  { id: "hands", name: "Hands", icon: "hands" },
+  { id: "body", name: "Body", icon: "body" }
+];
+
 let userSelections = {
   age: null,
   overallGoals: [],
   selectedAreas: [],
   selectedIssues: [],
+  selectedConcernCategories: [], // New: high-level categories
+  skinType: null, // New: demographics
+  sunResponse: null,
+  skinTone: null,
+  ethnicBackground: null,
+  previousTreatments: [],
 };
+
+// Immediately expose userSelections to window for global access
+window.userSelections = userSelections;
 
 // Track which issues have cases with photos
 let issuesWithPhotos = new Set();
@@ -2418,6 +2743,13 @@ async function loadCasesFromAirtable() {
         // Ensure beforeAfter is always an image (not PDF), fallback to thumbnail
         const finalBeforeAfter = beforeAfter || thumbnail || null;
 
+        // Get demographic fields from Airtable
+        const age = fields["Age"] ? parseInt(fields["Age"], 10) : patientAge;
+        const skinTone = fields["Skin Tone"] || null;
+        const ethnicBackground = fields["Ethnic Background"] || null;
+        const skinType = fields["Skin Type"] || null;
+        const sunResponse = fields["Sun Response"] || null;
+
         const caseItem = {
           id: record.id,
           name: name,
@@ -2430,12 +2762,17 @@ async function loadCasesFromAirtable() {
             `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='400' height='300' fill='%23FFD291'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-family='Arial' font-size='20' fill='%23212121'%3EBefore/After Image%3C/text%3E%3C/svg%3E`,
           headline: headline,
           patient: patient,
-          patientAge: patientAge,
+          patientAge: age, // Use Age field if available, fallback to patientAge
           story: story,
           solved: solved.length > 0 ? solved : ["Aesthetic improvement"],
           treatment: treatment,
           matchingCriteria: matchingCriteria,
           directMatchingIssues: directMatchingIssues, // Direct issue names from "Matching" field
+          // Demographic fields from photo analysis
+          skinTone: skinTone,
+          ethnicBackground: ethnicBackground,
+          skinType: skinType,
+          sunResponse: sunResponse,
           commonForAge: null, // Will be calculated based on age
         };
         caseData.push(caseItem);
@@ -3644,6 +3981,182 @@ function calculateCommonForAge(caseItem, userAge) {
   }
 }
 
+// Vector-based demographic matching system
+// Converts demographics to vectors and calculates similarity scores
+
+// Demographic value mappings for vector conversion
+const DEMOGRAPHIC_VECTORS = {
+  skinTone: {
+    'light': 0.0,
+    'fair': 0.2,
+    'medium': 0.4,
+    'tan': 0.6,
+    'brown': 0.8,
+    'deep': 1.0
+  },
+  skinType: {
+    'dry': 0.0,
+    'balanced': 0.33,
+    'combination': 0.67,
+    'oily': 1.0
+  },
+  sunResponse: {
+    'always burns': 0.0,
+    'usually burns': 0.2,
+    'sometimes tans': 0.4,
+    'usually tans': 0.6,
+    'always tans': 0.8,
+    'rarely burns': 1.0
+  },
+  ethnicBackground: {
+    'white': 0.0,
+    'asian': 0.2,
+    'hispanic/latino': 0.4,
+    'middle eastern': 0.6,
+    'mixed': 0.7,
+    'other': 0.8,
+    'black': 1.0
+  }
+};
+
+// Weights for each demographic dimension (sum should be ~1.0)
+const DEMOGRAPHIC_WEIGHTS = {
+  age: 0.25,           // 25% weight
+  skinTone: 0.25,      // 25% weight
+  ethnicBackground: 0.20, // 20% weight
+  skinType: 0.15,      // 15% weight
+  sunResponse: 0.15    // 15% weight
+};
+
+/**
+ * Convert user demographics to a vector representation
+ * @param {Object} userSelections - User's demographic selections
+ * @returns {Object} Vector representation with normalized values
+ */
+function userDemographicsToVector(userSelections) {
+  const vector = {
+    age: null,
+    skinTone: null,
+    ethnicBackground: null,
+    skinType: null,
+    sunResponse: null
+  };
+  
+  // Normalize age to 0-1 scale (assuming age range 18-80)
+  if (userSelections.age) {
+    vector.age = Math.max(0, Math.min(1, (userSelections.age - 18) / (80 - 18)));
+  }
+  
+  // Map categorical values to numerical vectors
+  if (userSelections.skinTone && DEMOGRAPHIC_VECTORS.skinTone[userSelections.skinTone] !== undefined) {
+    vector.skinTone = DEMOGRAPHIC_VECTORS.skinTone[userSelections.skinTone];
+  }
+  
+  if (userSelections.ethnicBackground && DEMOGRAPHIC_VECTORS.ethnicBackground[userSelections.ethnicBackground] !== undefined) {
+    vector.ethnicBackground = DEMOGRAPHIC_VECTORS.ethnicBackground[userSelections.ethnicBackground];
+  }
+  
+  if (userSelections.skinType && DEMOGRAPHIC_VECTORS.skinType[userSelections.skinType] !== undefined) {
+    vector.skinType = DEMOGRAPHIC_VECTORS.skinType[userSelections.skinType];
+  }
+  
+  if (userSelections.sunResponse && DEMOGRAPHIC_VECTORS.sunResponse[userSelections.sunResponse] !== undefined) {
+    vector.sunResponse = DEMOGRAPHIC_VECTORS.sunResponse[userSelections.sunResponse];
+  }
+  
+  return vector;
+}
+
+/**
+ * Convert case demographics to a vector representation
+ * @param {Object} caseItem - Case item with demographic fields
+ * @returns {Object} Vector representation with normalized values
+ */
+function caseDemographicsToVector(caseItem) {
+  const vector = {
+    age: null,
+    skinTone: null,
+    ethnicBackground: null,
+    skinType: null,
+    sunResponse: null
+  };
+  
+  // Normalize age to 0-1 scale (assuming age range 18-80)
+  if (caseItem.patientAge) {
+    vector.age = Math.max(0, Math.min(1, (caseItem.patientAge - 18) / (80 - 18)));
+  }
+  
+  // Map categorical values to numerical vectors
+  if (caseItem.skinTone && DEMOGRAPHIC_VECTORS.skinTone[caseItem.skinTone] !== undefined) {
+    vector.skinTone = DEMOGRAPHIC_VECTORS.skinTone[caseItem.skinTone];
+  }
+  
+  if (caseItem.ethnicBackground && DEMOGRAPHIC_VECTORS.ethnicBackground[caseItem.ethnicBackground] !== undefined) {
+    vector.ethnicBackground = DEMOGRAPHIC_VECTORS.ethnicBackground[caseItem.ethnicBackground];
+  }
+  
+  if (caseItem.skinType && DEMOGRAPHIC_VECTORS.skinType[caseItem.skinType] !== undefined) {
+    vector.skinType = DEMOGRAPHIC_VECTORS.skinType[caseItem.skinType];
+  }
+  
+  if (caseItem.sunResponse && DEMOGRAPHIC_VECTORS.sunResponse[caseItem.sunResponse] !== undefined) {
+    vector.sunResponse = DEMOGRAPHIC_VECTORS.sunResponse[caseItem.sunResponse];
+  }
+  
+  return vector;
+}
+
+/**
+ * Calculate weighted cosine similarity between two demographic vectors
+ * @param {Object} userVector - User's demographic vector
+ * @param {Object} caseVector - Case's demographic vector
+ * @returns {number} Similarity score from 0 to 1
+ */
+function calculateDemographicSimilarity(userVector, caseVector) {
+  let weightedSum = 0;
+  let totalWeight = 0;
+  
+  // Calculate similarity for each dimension
+  Object.keys(DEMOGRAPHIC_WEIGHTS).forEach(dimension => {
+    const weight = DEMOGRAPHIC_WEIGHTS[dimension];
+    const userValue = userVector[dimension];
+    const caseValue = caseVector[dimension];
+    
+    // Only calculate if both values exist
+    if (userValue !== null && userValue !== undefined && 
+        caseValue !== null && caseValue !== undefined) {
+      // Calculate similarity: 1 - absolute difference (closer = more similar)
+      const similarity = 1 - Math.abs(userValue - caseValue);
+      weightedSum += similarity * weight;
+      totalWeight += weight;
+    }
+  });
+  
+  // If no dimensions matched, return 0
+  if (totalWeight === 0) {
+    return 0;
+  }
+  
+  // Normalize by total weight to get 0-1 score
+  return weightedSum / totalWeight;
+}
+
+/**
+ * Calculate demographic match percentage for a case
+ * @param {Object} caseItem - Case item with demographic fields
+ * @param {Object} userSelections - User's demographic selections
+ * @returns {number} Match percentage (0-100)
+ */
+function calculateDemographicMatchPercentage(caseItem, userSelections) {
+  const userVector = userDemographicsToVector(userSelections);
+  const caseVector = caseDemographicsToVector(caseItem);
+  
+  const similarity = calculateDemographicSimilarity(userVector, caseVector);
+  
+  // Convert to percentage and round
+  return Math.round(similarity * 100);
+}
+
 // Filter cases by age (within ±15 years by default)
 function filterCasesByAge(cases, userAge, ageRange = 15) {
   if (!userAge) return cases;
@@ -3660,51 +4173,430 @@ function calculateMatchingScore(caseItem, userSelections) {
   let score = 0;
   const maxScore = 100;
 
-  // Age match (40 points max)
+  // Age match (30 points max)
   if (userSelections.age && caseItem.patientAge) {
     const ageDiff = Math.abs(caseItem.patientAge - userSelections.age);
     if (ageDiff === 0) {
-      score += 40;
-    } else if (ageDiff <= 2) {
-      score += 35;
-    } else if (ageDiff <= 5) {
       score += 30;
-    } else if (ageDiff <= 10) {
+    } else if (ageDiff <= 2) {
       score += 25;
-    } else if (ageDiff <= 15) {
+    } else if (ageDiff <= 5) {
       score += 20;
-    } else {
+    } else if (ageDiff <= 10) {
+      score += 15;
+    } else if (ageDiff <= 15) {
       score += 10;
+    } else {
+      score += 5;
     }
   } else if (!userSelections.age || !caseItem.patientAge) {
-    score += 20; // Partial credit if age data missing
+    score += 15; // Partial credit if age data missing
   }
 
-  // Interest match (60 points max)
-  const allSelections = [
-    ...userSelections.overallGoals,
-    ...userSelections.selectedIssues.map((issue) =>
-      issue
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "")
-    ),
-  ];
+  // High-level category match (50 points max)
+  if (userSelections.selectedConcernCategories && userSelections.selectedConcernCategories.length > 0) {
+    const caseNameLower = (caseItem.name || "").toLowerCase();
+    const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(c => c.toLowerCase());
+    
+    let categoryMatches = 0;
+    userSelections.selectedConcernCategories.forEach(categoryId => {
+      const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+      if (category) {
+        // Check if case name matches category keywords
+        const nameMatch = category.mapsToPhotos.some(keyword => 
+          caseNameLower.includes(keyword.toLowerCase())
+        );
+        // Check if matching criteria matches
+        const criteriaMatch = category.mapsToPhotos.some(keyword =>
+          matchingCriteriaLower.some(criteria => criteria.includes(keyword.toLowerCase()))
+        );
+        if (nameMatch || criteriaMatch) {
+          categoryMatches++;
+        }
+      }
+    });
+    
+    if (categoryMatches > 0) {
+      const matchRatio = categoryMatches / userSelections.selectedConcernCategories.length;
+      score += Math.round(matchRatio * 50);
+    }
+  }
 
-  if (allSelections.length > 0 && caseItem.matchingCriteria.length > 0) {
-    const matchingCount = caseItem.matchingCriteria.filter((criteria) =>
-      allSelections.includes(criteria)
-    ).length;
+  // Demographic match using vector-based similarity (30 points max)
+  const demographicMatchPercentage = calculateDemographicMatchPercentage(caseItem, userSelections);
+  const demographicScore = (demographicMatchPercentage / 100) * 30; // Convert percentage to 30-point scale
+  score += demographicScore;
+  
+  // Store the match percentage on the case item for display
+  caseItem.demographicMatchPercentage = demographicMatchPercentage;
 
-    const totalCriteria = caseItem.matchingCriteria.length;
-    const matchRatio =
-      matchingCount / Math.max(totalCriteria, allSelections.length);
-    score += Math.round(matchRatio * 60);
-  } else if (allSelections.length === 0) {
-    score += 30; // Partial credit if no selections
+  // Legacy: Interest match for backward compatibility (if no categories selected)
+  if (!userSelections.selectedConcernCategories || userSelections.selectedConcernCategories.length === 0) {
+    const allSelections = [
+      ...userSelections.overallGoals,
+      ...(userSelections.selectedIssues || []).map((issue) =>
+        issue
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "")
+      ),
+    ];
+
+    if (allSelections.length > 0 && caseItem.matchingCriteria.length > 0) {
+      const matchingCount = caseItem.matchingCriteria.filter((criteria) =>
+        allSelections.includes(criteria)
+      ).length;
+
+      const totalCriteria = caseItem.matchingCriteria.length;
+      const matchRatio =
+        matchingCount / Math.max(totalCriteria, allSelections.length);
+      score += Math.round(matchRatio * 50);
+    } else if (allSelections.length === 0) {
+      score += 25; // Partial credit if no selections
+    }
   }
 
   return Math.min(score, maxScore);
+}
+
+/**
+ * Get area tags for a treatment group (which facial/body areas it relates to)
+ * Returns an array of area names like ["Eyes", "Forehead"]
+ * This is shown to help users understand which area each suggestion addresses
+ */
+function getTreatmentGroupRelevance(group, userSelections) {
+  const areas = [];
+  const caseNameLower = (group.suggestion || "").toLowerCase();
+  
+  // Map keywords to areas - order matters (more specific first)
+  // This helps identify which facial/body area each suggestion addresses
+  const areaKeywords = [
+    // Eyes area (most specific first)
+    { keywords: ['brow ptosis', 'brow asymmetry', 'brow droop', 'brow lift', 'brow balance'], area: 'Eyes' },
+    { keywords: ['under eye', 'under-eye', 'under eye', 'eyelid', 'eyelids', 'upper eyelid', 'lower eyelid'], area: 'Eyes' },
+    { keywords: ['brow', 'brows', 'eyebrow', 'eyebrows', 'eye', 'eyes', 'ptosis'], area: 'Eyes' },
+    // Forehead area
+    { keywords: ['forehead', 'temple', 'temples', 'glabella', '11s'], area: 'Forehead' },
+    // Cheeks area
+    { keywords: ['cheek', 'cheeks', 'cheekbone', 'mid cheek'], area: 'Cheeks' },
+    // Nose area
+    { keywords: ['nose', 'nasal', 'nasal tip', 'dorsal hump'], area: 'Nose' },
+    // Mouth & Lips area
+    { keywords: ['lip', 'lips', 'mouth', 'philtral', 'gummy smile'], area: 'Mouth & Lips' },
+    // Jawline area
+    { keywords: ['jawline', 'jaw', 'wide jawline', 'define jawline'], area: 'Jawline' },
+    // Chin area
+    { keywords: ['chin', 'retruded chin', 'labiomental'], area: 'Chin' },
+    // Neck area
+    { keywords: ['neck', 'neck lines', 'neck wrinkles'], area: 'Neck' }
+  ];
+  
+  // Check which areas this suggestion relates to (based on keywords in the name)
+  const matchedAreas = new Set();
+  for (const { keywords, area } of areaKeywords) {
+    for (const keyword of keywords) {
+      if (caseNameLower.includes(keyword)) {
+        matchedAreas.add(area);
+        break; // Found a match for this area, move to next area
+      }
+    }
+  }
+  
+  // Return all matched areas (not just user-selected ones, since we want to show which area each suggestion addresses)
+  return Array.from(matchedAreas);
+}
+
+/**
+ * Get detailed breakdown of similarity score for a case
+ * Returns an object with score breakdown and explanations
+ */
+function getSimilarityScoreBreakdown(caseItem, userSelections) {
+  const breakdown = {
+    totalScore: caseItem.demographicMatchPercentage || 0,
+    components: [],
+    totalWeight: 0
+  };
+  
+  const userVector = userDemographicsToVector(userSelections);
+  const caseVector = caseDemographicsToVector(caseItem);
+  
+  // First pass: calculate all similarities and contributions
+  const componentData = [];
+  let totalWeight = 0;
+  
+  // Age component
+  if (userVector.age !== null && caseVector.age !== null) {
+    const ageDiff = Math.abs(userSelections.age - caseItem.patientAge);
+    const vectorDiff = Math.abs(userVector.age - caseVector.age);
+    const similarity = 1 - vectorDiff; // 0-1 scale
+    const similarityPercent = Math.round(similarity * 100);
+    const weight = DEMOGRAPHIC_WEIGHTS.age;
+    const rawContribution = similarity * weight;
+    totalWeight += weight;
+    
+    componentData.push({
+      field: 'Age',
+      userValue: `${userSelections.age} years`,
+      caseValue: `${caseItem.patientAge} years`,
+      difference: ageDiff === 0 ? 'Exact match' : `${ageDiff} year${ageDiff !== 1 ? 's' : ''} difference`,
+      similarity: similarityPercent,
+      weight: Math.round(weight * 100),
+      rawContribution: rawContribution
+    });
+  }
+  
+  // Skin tone component
+  if (userVector.skinTone !== null && caseVector.skinTone !== null) {
+    const vectorDiff = Math.abs(userVector.skinTone - caseVector.skinTone);
+    const similarity = 1 - vectorDiff;
+    const similarityPercent = Math.round(similarity * 100);
+    const weight = DEMOGRAPHIC_WEIGHTS.skinTone;
+    const rawContribution = similarity * weight;
+    totalWeight += weight;
+    
+    componentData.push({
+      field: 'Complexion',
+      userValue: userSelections.skinTone,
+      caseValue: caseItem.skinTone,
+      difference: userSelections.skinTone === caseItem.skinTone ? 'Exact match' : 'Similar',
+      similarity: similarityPercent,
+      weight: Math.round(weight * 100),
+      rawContribution: rawContribution
+    });
+  }
+  
+  // Ethnic background component
+  if (userVector.ethnicBackground !== null && caseVector.ethnicBackground !== null) {
+    const vectorDiff = Math.abs(userVector.ethnicBackground - caseVector.ethnicBackground);
+    const similarity = 1 - vectorDiff;
+    const similarityPercent = Math.round(similarity * 100);
+    const weight = DEMOGRAPHIC_WEIGHTS.ethnicBackground;
+    const rawContribution = similarity * weight;
+    totalWeight += weight;
+    
+    componentData.push({
+      field: 'Background',
+      userValue: userSelections.ethnicBackground,
+      caseValue: caseItem.ethnicBackground,
+      difference: userSelections.ethnicBackground === caseItem.ethnicBackground ? 'Exact match' : 'Similar',
+      similarity: similarityPercent,
+      weight: Math.round(weight * 100),
+      rawContribution: rawContribution
+    });
+  }
+  
+  // Skin type component
+  if (userVector.skinType !== null && caseVector.skinType !== null) {
+    const vectorDiff = Math.abs(userVector.skinType - caseVector.skinType);
+    const similarity = 1 - vectorDiff;
+    const similarityPercent = Math.round(similarity * 100);
+    const weight = DEMOGRAPHIC_WEIGHTS.skinType;
+    const rawContribution = similarity * weight;
+    totalWeight += weight;
+    
+    componentData.push({
+      field: 'Skin Type',
+      userValue: userSelections.skinType,
+      caseValue: caseItem.skinType,
+      difference: userSelections.skinType === caseItem.skinType ? 'Exact match' : 'Similar',
+      similarity: similarityPercent,
+      weight: Math.round(weight * 100),
+      rawContribution: rawContribution
+    });
+  }
+  
+  // Sun response component
+  if (userVector.sunResponse !== null && caseVector.sunResponse !== null) {
+    const vectorDiff = Math.abs(userVector.sunResponse - caseVector.sunResponse);
+    const similarity = 1 - vectorDiff;
+    const similarityPercent = Math.round(similarity * 100);
+    const weight = DEMOGRAPHIC_WEIGHTS.sunResponse;
+    const rawContribution = similarity * weight;
+    totalWeight += weight;
+    
+    componentData.push({
+      field: 'Sun Response',
+      userValue: userSelections.sunResponse,
+      caseValue: caseItem.sunResponse,
+      difference: userSelections.sunResponse === caseItem.sunResponse ? 'Exact match' : 'Similar',
+      similarity: similarityPercent,
+      weight: Math.round(weight * 100),
+      rawContribution: rawContribution
+    });
+  }
+  
+  // Second pass: calculate final contributions (normalized by total weight)
+  breakdown.totalWeight = totalWeight;
+  componentData.forEach(comp => {
+    // Contribution to final score = (rawContribution / totalWeight) * 100
+    const finalContribution = totalWeight > 0 ? (comp.rawContribution / totalWeight) * 100 : 0;
+    
+    breakdown.components.push({
+      field: comp.field,
+      userValue: comp.userValue,
+      caseValue: comp.caseValue,
+      difference: comp.difference,
+      similarity: comp.similarity,
+      weight: comp.weight,
+      contribution: Math.round(finalContribution)
+    });
+  });
+  
+  return breakdown;
+}
+
+// Get match indicators for a case
+// excludeAreasAndConcerns: if true, only return demographic matches (for case cards)
+function getMatchIndicators(caseItem, userSelections, excludeAreasAndConcerns = false) {
+  const indicators = [];
+  
+  // Age match
+  if (userSelections.age && caseItem.patientAge) {
+    const ageDiff = Math.abs(caseItem.patientAge - userSelections.age);
+    if (ageDiff <= 5) {
+      indicators.push({ type: "age", text: `Similar age (${caseItem.patientAge})` });
+    }
+  }
+  
+  // Skin tone/complexion match
+  if (userSelections.skinTone && caseItem.skinTone) {
+    if (userSelections.skinTone === caseItem.skinTone) {
+      indicators.push({ type: "skin-tone", text: "Similar complexion" });
+    }
+  }
+  
+  // Ethnic background match
+  if (userSelections.ethnicBackground && caseItem.ethnicBackground) {
+    if (userSelections.ethnicBackground === caseItem.ethnicBackground) {
+      indicators.push({ type: "ethnic-background", text: "Similar background" });
+    }
+  }
+  
+  // Skin type match
+  if (userSelections.skinType && caseItem.skinType) {
+    if (userSelections.skinType === caseItem.skinType) {
+      indicators.push({ type: "skin-type", text: "Similar skin type" });
+    }
+  }
+  
+  // Sun response match
+  if (userSelections.sunResponse && caseItem.sunResponse) {
+    if (userSelections.sunResponse === caseItem.sunResponse) {
+      indicators.push({ type: "sun-response", text: "Similar sun response" });
+    }
+  }
+  
+  // Only include area/concern matches if not excluded (for treatment group cards)
+  if (!excludeAreasAndConcerns) {
+    // Category match
+    if (userSelections.selectedConcernCategories && userSelections.selectedConcernCategories.length > 0) {
+      const caseNameLower = (caseItem.name || "").toLowerCase();
+      userSelections.selectedConcernCategories.forEach(categoryId => {
+        const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+        if (category && category.mapsToPhotos.some(keyword => caseNameLower.includes(keyword.toLowerCase()))) {
+          indicators.push({ type: "concern", text: `Matches: ${category.name}` });
+        }
+      });
+    }
+    
+    // Area match - show which specific areas this case relates to
+    const caseNameLower = (caseItem.name || "").toLowerCase();
+    const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(c => 
+      typeof c === 'string' ? c.toLowerCase() : String(c || '').toLowerCase()
+    );
+    
+    // Map of keywords to area names for inference (matching AREAS_OF_CONCERN)
+    const areaKeywords = {
+      'forehead': 'Forehead',
+      'brow': 'Eyes', // Brow relates to Eyes area
+      'brows': 'Eyes',
+      'eyebrow': 'Eyes',
+      'eyebrows': 'Eyes',
+      'brow ptosis': 'Eyes',
+      'ptosis': 'Eyes',
+      'eye': 'Eyes',
+      'eyes': 'Eyes',
+      'under eye': 'Eyes',
+      'under-eye': 'Eyes',
+      'eyelid': 'Eyes',
+      'eyelids': 'Eyes',
+      'cheek': 'Cheeks',
+      'cheeks': 'Cheeks',
+      'nose': 'Nose',
+      'lip': 'Mouth & Lips',
+      'lips': 'Mouth & Lips',
+      'mouth': 'Mouth & Lips',
+      'jawline': 'Jawline',
+      'jaw': 'Jawline',
+      'chin': 'Chin',
+      'neck': 'Neck',
+      'temple': 'Forehead',
+      'temples': 'Forehead'
+    };
+    
+    // Find matching areas from user selections
+    const matchedAreas = new Set();
+    if (userSelections.selectedAreas && userSelections.selectedAreas.length > 0) {
+      userSelections.selectedAreas.forEach(areaId => {
+        const area = AREAS_OF_CONCERN.find(a => a.id === areaId);
+        if (area) {
+          const areaNameLower = area.name.toLowerCase();
+          if (caseNameLower.includes(areaNameLower) || 
+              matchingCriteriaLower.some(c => c.includes(areaNameLower) || c.includes(areaId))) {
+            matchedAreas.add(area.name);
+          }
+        }
+      });
+    }
+    
+    // Also infer areas from case name keywords
+    // This helps show which area the case relates to based on keywords in the name
+    // Always show inferred area to help user understand which area the case addresses
+    for (const [keyword, areaName] of Object.entries(areaKeywords)) {
+      if (caseNameLower.includes(keyword)) {
+        // Find the area ID for this area name
+        const area = AREAS_OF_CONCERN.find(a => a.name === areaName);
+        if (area) {
+          // Always add inferred area to show which area this case relates to
+          matchedAreas.add(areaName);
+        }
+      }
+    }
+    
+    // Add area indicators
+    Array.from(matchedAreas).forEach(areaName => {
+      indicators.push({ type: "area", text: areaName });
+    });
+  }
+  
+  return indicators;
+}
+
+/**
+ * Get match indicators for a group of cases (aggregated from all cases in the group)
+ * @param {Array} cases - Array of case objects
+ * @param {Object} userSelections - User's selections
+ * @returns {Array} - Array of match indicator objects
+ */
+function getGroupMatchIndicators(cases, userSelections) {
+  if (!cases || cases.length === 0) return [];
+  
+  const indicators = new Map(); // Use Map to avoid duplicates
+  
+  // Check each case and collect unique indicators
+  cases.forEach(caseItem => {
+    const caseIndicators = getMatchIndicators(caseItem, userSelections);
+    caseIndicators.forEach(ind => {
+      // Use type+text as key to avoid duplicates
+      const key = `${ind.type}-${ind.text}`;
+      if (!indicators.has(key)) {
+        indicators.set(key, ind);
+      }
+    });
+  });
+  
+  // Convert to array and limit to most relevant ones
+  return Array.from(indicators.values()).slice(0, 3);
 }
 
 // Onboarding navigation
@@ -3780,9 +4672,336 @@ function showHomeTeaser() {
   showOnboarding();
 }
 
+// Initialize high-level concern category cards
+function initializeConcernCategories() {
+  // Try to find grid in form-step-1 first, then fall back to old location
+  const formStep1 = document.getElementById("form-step-1");
+  let grid = formStep1 ? formStep1.querySelector("#concern-categories-grid") : null;
+  if (!grid) {
+    grid = document.getElementById("concern-categories-grid");
+  }
+  if (!grid) {
+    console.warn("concern-categories-grid not found");
+    return;
+  }
+
+  grid.innerHTML = "";
+
+  // Group concerns by their group field
+  const groupedConcerns = {};
+  HIGH_LEVEL_CONCERNS.forEach((category) => {
+    const group = category.group || "Other";
+    if (!groupedConcerns[group]) {
+      groupedConcerns[group] = [];
+    }
+    groupedConcerns[group].push(category);
+  });
+
+  // Render each group with a header
+  Object.keys(groupedConcerns).forEach((groupName) => {
+    // Create group header
+    const groupHeader = document.createElement("div");
+    groupHeader.className = "concern-group-header";
+    groupHeader.textContent = groupName;
+    grid.appendChild(groupHeader);
+
+    // Create group container
+    const groupContainer = document.createElement("div");
+    groupContainer.className = "concern-group-container";
+
+    // Render cards for this group
+    groupedConcerns[groupName].forEach((category) => {
+      const card = document.createElement("div");
+      card.className = "concern-category-card";
+      card.dataset.categoryId = category.id;
+      
+      const isSelected = userSelections.selectedConcernCategories.includes(category.id);
+      if (isSelected) {
+        card.classList.add("selected");
+      }
+
+      // Icon SVG based on category
+      const iconSvg = getCategoryIcon(category.icon);
+
+      card.innerHTML = `
+        <div class="category-card-icon">${iconSvg}</div>
+        <div class="category-card-content">
+          <h3 class="category-card-title">${category.name}</h3>
+          <p class="category-card-description">${category.description}</p>
+        </div>
+        <div class="category-card-check">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      `;
+
+      card.addEventListener("click", () => toggleConcernCategory(category.id));
+      groupContainer.appendChild(card);
+    });
+
+    grid.appendChild(groupContainer);
+  });
+
+  updateConcernSelectionCount();
+  updateProceedToGoalsButton();
+}
+
+// Initialize areas of concern selection
+// Map area IDs to icon filenames in the area icons folder
+const AREA_ICON_MAP = {
+  "forehead": "eyebrows.png", // Use eyebrows icon for forehead
+  "eyes": "eyes.png",
+  "cheeks": "cheeks.png",
+  "nose": "nose.png",
+  "mouth-lips": "lips.png",
+  "jawline": "jawline.png",
+  "chin": "jawline.png", // Use jawline icon as fallback
+  "neck": null, // No icon available
+  "chest": null, // No icon available
+  "hands": null, // No icon available
+  "body": null // No icon available
+};
+
+function initializeAreasOfConcern() {
+  const grid = document.getElementById("areas-of-concern-grid");
+  if (!grid) {
+    console.warn("areas-of-concern-grid not found");
+    return;
+  }
+
+  grid.innerHTML = "";
+
+  AREAS_OF_CONCERN.forEach((area) => {
+    const card = document.createElement("div");
+    card.className = "area-of-concern-card";
+    card.dataset.areaId = area.id;
+    
+    const isSelected = userSelections.selectedAreas && userSelections.selectedAreas.includes(area.id);
+    if (isSelected) {
+      card.classList.add("selected");
+    }
+
+    // Get icon filename for this area
+    const iconFilename = AREA_ICON_MAP[area.id];
+    
+    // Use PNG icon if available, otherwise fallback to SVG
+    let iconHtml = '';
+    if (iconFilename) {
+      iconHtml = `<img src="area icons/${iconFilename}" alt="${area.name}" class="area-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display: none;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 8v8M8 12h8"></path>
+        </svg>`;
+    } else {
+      // Fallback SVG for areas without icons
+      iconHtml = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 8v8M8 12h8"></path>
+      </svg>`;
+    }
+
+    card.innerHTML = `
+      <div class="area-card-icon">${iconHtml}</div>
+      <div class="area-card-content">
+        <h3 class="area-card-title">${area.name}</h3>
+      </div>
+      <div class="area-card-check">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+    `;
+
+    card.addEventListener("click", () => toggleAreaOfConcern(area.id));
+    grid.appendChild(card);
+  });
+}
+
+// Toggle area of concern selection
+function toggleAreaOfConcern(areaId) {
+  if (!userSelections.selectedAreas) {
+    userSelections.selectedAreas = [];
+  }
+  
+  const index = userSelections.selectedAreas.indexOf(areaId);
+  if (index > -1) {
+    userSelections.selectedAreas.splice(index, 1);
+  } else {
+    userSelections.selectedAreas.push(areaId);
+  }
+  
+  // Update window.userSelections
+  if (window.userSelections) {
+    window.userSelections.selectedAreas = userSelections.selectedAreas;
+  }
+  
+  // Update UI
+  const card = document.querySelector(`[data-area-id="${areaId}"]`);
+  if (card) {
+    card.classList.toggle("selected", userSelections.selectedAreas.includes(areaId));
+  }
+  
+  // Collect form data to keep in sync
+  if (typeof collectFormData === "function") {
+    collectFormData();
+  }
+}
+
+// Get icon SVG for category
+function getCategoryIcon(iconType) {
+  const icons = {
+    wrinkles: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+    </svg>`,
+    volume: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+    </svg>`,
+    texture: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M8 12h8M12 8v8"></path>
+    </svg>`,
+    spots: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"></circle>
+      <circle cx="8" cy="8" r="2"></circle>
+      <circle cx="16" cy="16" r="2"></circle>
+    </svg>`,
+    acne: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"></circle>
+      <circle cx="8" cy="8" r="1.5"></circle>
+      <circle cx="16" cy="8" r="1.5"></circle>
+      <circle cx="12" cy="16" r="1.5"></circle>
+    </svg>`,
+    body: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+    </svg>`,
+    hair: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 2v20M2 12h20"></path>
+    </svg>`,
+    balance: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 2v20M2 12h20"></path>
+      <circle cx="8" cy="8" r="2"></circle>
+      <circle cx="16" cy="8" r="2"></circle>
+      <circle cx="8" cy="16" r="2"></circle>
+      <circle cx="16" cy="16" r="2"></circle>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>`,
+    wellness: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+    </svg>`,
+    eyes: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>`
+  };
+  return icons[iconType] || icons.wrinkles;
+}
+
+// Toggle concern category selection
+function toggleConcernCategory(categoryId) {
+  // Ensure selectedConcernCategories is initialized
+  if (!userSelections.selectedConcernCategories) {
+    userSelections.selectedConcernCategories = [];
+  }
+  
+  const index = userSelections.selectedConcernCategories.indexOf(categoryId);
+  const maxSelections = 3;
+  
+  console.log("toggleConcernCategory called for:", categoryId, "current selections:", userSelections.selectedConcernCategories);
+
+  if (index > -1) {
+    // Deselect
+    userSelections.selectedConcernCategories.splice(index, 1);
+    // Hide warning when deselecting
+    hideConcernWarning();
+  } else {
+    // Select (if under limit)
+    if (userSelections.selectedConcernCategories.length < maxSelections) {
+      userSelections.selectedConcernCategories.push(categoryId);
+      // Hide warning when successfully selecting
+      hideConcernWarning();
+    } else {
+      showConcernWarning(`Please select up to ${maxSelections} concerns.`);
+      return;
+    }
+  }
+
+  // Update UI
+  const card = document.querySelector(`[data-category-id="${categoryId}"]`);
+  if (card) {
+    card.classList.toggle("selected", index === -1);
+  }
+
+  updateConcernSelectionCount();
+  
+  // Directly update button disabled state
+  const btn = document.getElementById("proceed-to-goals-btn");
+  if (btn) {
+    const count = userSelections.selectedConcernCategories.length;
+    btn.disabled = count === 0;
+    console.log("Button disabled:", btn.disabled, "count:", count);
+  }
+  
+  console.log("After toggle - selectedConcernCategories:", userSelections.selectedConcernCategories, "length:", userSelections.selectedConcernCategories.length);
+}
+
+// Update concern selection count display
+function updateConcernSelectionCount() {
+  const countEl = document.getElementById("concerns-count");
+  if (countEl) {
+    const count = userSelections.selectedConcernCategories.length;
+    countEl.textContent = count;
+  }
+}
+
+// Show concern warning message
+function showConcernWarning(message) {
+  const warningEl = document.getElementById("concern-warning-message");
+  const warningText = document.getElementById("concern-warning-text");
+  if (warningEl && warningText) {
+    warningText.textContent = message;
+    warningEl.style.display = "flex";
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+      hideConcernWarning();
+    }, 4000);
+  }
+}
+
+// Hide concern warning message
+function hideConcernWarning() {
+  const warningEl = document.getElementById("concern-warning-message");
+  if (warningEl) {
+    warningEl.style.display = "none";
+  }
+}
+
+// Handle start button click with error handling
+function handleStartButtonClick() {
+  try {
+    if (typeof startForm === "function") {
+      startForm();
+    } else if (typeof showOnboarding === "function") {
+      showOnboarding();
+    } else {
+      console.error("Neither startForm nor showOnboarding functions are available");
+      alert("Please refresh the page and try again.");
+    }
+  } catch (error) {
+    console.error("Error in handleStartButtonClick:", error);
+    alert("An error occurred. Please refresh the page and try again.");
+  }
+}
+
 function startForm() {
   console.log("startForm called");
-  trackEvent("form_started", { step: "concerns_selection" });
+  try {
+    if (typeof trackEvent === "function") {
+      trackEvent("form_started", { step: "concerns_selection" });
+    }
+  } catch (e) {
+    console.warn("Error tracking event:", e);
+  }
 
   // Hide onboarding and home teaser, show concerns selection screen
   const onboarding = document.getElementById("onboarding");
@@ -3807,69 +5026,406 @@ function startForm() {
     console.log("Removed active from homeTeaser");
   }
 
+  // Show form screen and go to step 1 (concerns selection)
   if (formScreen) {
-    formScreen.classList.remove("active");
-  }
-
-  if (concernsScreen) {
-    concernsScreen.classList.add("active");
-    console.log("Added active to concerns-selection-screen");
-    scrollToTop();
-
-    // Set up concerns selection screen
-    try {
-      initializeRegionIssueRows();
-      console.log("initializeRegionIssueRows completed");
-    } catch (e) {
-      console.error("Error in initializeRegionIssueRows:", e);
+    formScreen.classList.add("active");
+    console.log("Added active to form-screen");
+    
+    if (typeof scrollToTop === "function") {
+      scrollToTop();
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    // Update proceed button state
-    updateProceedToGoalsButton();
+    // Navigate to step 1 (concerns selection) first, then initialize
+    setTimeout(() => {
+      goToFormStep(1);
+      updateFormNavigation(1);
+      
+      // Initialize high-level concern categories after step is visible
+      setTimeout(() => {
+        try {
+          if (typeof initializeConcernCategories === "function") {
+            initializeConcernCategories();
+            console.log("initializeConcernCategories completed");
+            // Update button state after initialization
+            if (typeof updateProceedToGoalsButton === "function") {
+              updateProceedToGoalsButton();
+            }
+          } else {
+            console.error("initializeConcernCategories function not found");
+          }
+        } catch (e) {
+          console.error("Error in initializeConcernCategories:", e);
+        }
+      }, 50);
+    }, 100);
   } else {
-    console.error("Concerns selection screen not found");
+    console.error("Form screen not found");
+  }
+}
+
+// Update proceed button state based on category selections
+function updateProceedToGoalsButton() {
+  // Update the old button if it exists (for backward compatibility)
+  const oldBtn = document.getElementById("proceed-to-goals-btn");
+  if (oldBtn) {
+    const selections = (window.userSelections && window.userSelections.selectedConcernCategories) || userSelections.selectedConcernCategories || [];
+    oldBtn.disabled = selections.length === 0;
+  }
+  
+  // Update the shared navigation button when on step 1
+  const navContinueBtn = document.getElementById("nav-continue-btn");
+  if (navContinueBtn) {
+    const selections = (window.userSelections && window.userSelections.selectedConcernCategories) || userSelections.selectedConcernCategories || [];
+    navContinueBtn.disabled = selections.length === 0;
+    console.log("Updated nav continue button - selections:", selections.length, "disabled:", navContinueBtn.disabled);
+  }
+}
+
+// Multi-step form navigation
+function goToFormStep(stepNumber) {
+  console.log("goToFormStep called:", stepNumber);
+  
+  // Hide all steps and screens
+  document.querySelectorAll('.form-step').forEach(step => {
+    step.classList.remove('active');
+  });
+  
+  // Hide concerns selection screen if it exists separately
+  const concernsScreen = document.getElementById('concerns-selection-screen');
+  if (concernsScreen) {
+    concernsScreen.classList.remove('active');
+  }
+  
+  // Show form screen
+  const formScreen = document.getElementById('form-screen');
+  if (formScreen) {
+    formScreen.classList.add('active');
+  }
+  
+  // Show target step
+  const targetStep = document.getElementById(`form-step-${stepNumber}`);
+  if (targetStep) {
+    targetStep.classList.add('active');
+  }
+  
+  // Update step indicators
+  // Update Instagram Stories-style progress segments
+  document.querySelectorAll('.form-step-segment').forEach((segment, index) => {
+    const stepNum = index + 1;
+    segment.classList.remove('active', 'completed');
+    if (stepNum === stepNumber) {
+      segment.classList.add('active');
+    } else if (stepNum < stepNumber) {
+      segment.classList.add('completed');
+    }
+  });
+  
+  // Update title and subtitle based on step
+  const titles = {
+    1: { title: "What would you like to improve?", subtitle: "Select up to 3 main concerns that matter most to you" },
+    2: { title: "Which Areas Are You Most Concerned About?", subtitle: "Select all areas that apply to help us show you the most relevant results" },
+    3: { title: "Your Details", subtitle: "Help us personalize your treatment recommendations" },
+    4: { title: "Optional Information", subtitle: "The more you share, the better we can match you with similar results" },
+    5: { title: "Your Goals", subtitle: "Select all that apply to help us understand your priorities" },
+    6: { title: "Review & Confirm", subtitle: "Please review your information before submitting" }
+  };
+  
+  const stepInfo = titles[stepNumber] || titles[1];
+  const titleEl = document.getElementById('form-step-title');
+  const subtitleEl = document.getElementById('form-step-subtitle');
+  
+  if (titleEl) titleEl.textContent = stepInfo.title;
+  if (subtitleEl) subtitleEl.textContent = stepInfo.subtitle;
+  
+  // Update shared navigation bar
+  updateFormNavigation(stepNumber);
+  
+  // Hide concern warning when navigating away from step 1
+  if (stepNumber !== 1 && typeof hideConcernWarning === "function") {
+    hideConcernWarning();
+  }
+  
+  // Scroll to top of page
+  if (typeof scrollToTop === "function") {
+    scrollToTop();
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  // Collect form data when navigating between steps to keep data in sync
+  collectFormData();
+  
+  // Populate review step when navigating to it
+  if (stepNumber === 6) {
+    setTimeout(() => {
+      populateReviewStep();
+    }, 100);
+  }
+  
+  // Initialize areas of concern when navigating to step 2
+  if (stepNumber === 2) {
+    setTimeout(() => {
+      initializeAreasOfConcern();
+    }, 100);
+  }
+}
+
+// Collect form data in real-time and update userSelections
+function collectFormData() {
+  // Collect age
+  const ageInput = document.getElementById("patient-age");
+  if (ageInput && ageInput.value) {
+    const ageValue = parseInt(ageInput.value);
+    if (!isNaN(ageValue)) {
+      userSelections.age = ageValue;
+      if (window.userSelections) {
+        window.userSelections.age = ageValue;
+      }
+    }
+  }
+  
+  // Collect skin type
+  const skinTypeInput = document.querySelector('input[name="skin-type"]:checked');
+  if (skinTypeInput) {
+    userSelections.skinType = skinTypeInput.value;
+    if (window.userSelections) {
+      window.userSelections.skinType = skinTypeInput.value;
+    }
+  }
+  
+  // Collect sun response
+  const sunResponseInput = document.querySelector('input[name="sun-response"]:checked');
+  if (sunResponseInput) {
+    userSelections.sunResponse = sunResponseInput.value;
+    if (window.userSelections) {
+      window.userSelections.sunResponse = sunResponseInput.value;
+    }
+  }
+  
+  // Collect skin tone (optional)
+  const skinToneInput = document.querySelector('input[name="skin-tone"]:checked');
+  if (skinToneInput) {
+    userSelections.skinTone = skinToneInput.value;
+    if (window.userSelections) {
+      window.userSelections.skinTone = skinToneInput.value;
+    }
+  }
+  
+  // Collect ethnic background (optional) - check for radio buttons first
+  const ethnicBackgroundRadio = document.querySelector('input[name="ethnic-background"]:checked');
+  if (ethnicBackgroundRadio) {
+    userSelections.ethnicBackground = ethnicBackgroundRadio.value;
+    if (window.userSelections) {
+      window.userSelections.ethnicBackground = ethnicBackgroundRadio.value;
+    }
+  } else {
+    // Fall back to select dropdown
+    const ethnicBackgroundSelect = document.getElementById("ethnic-background");
+    if (ethnicBackgroundSelect && ethnicBackgroundSelect.value) {
+      userSelections.ethnicBackground = ethnicBackgroundSelect.value;
+      if (window.userSelections) {
+        window.userSelections.ethnicBackground = ethnicBackgroundSelect.value;
+      }
+    }
+  }
+  
+  // Collect previous treatments (optional)
+  const previousTreatmentsInputs = document.querySelectorAll('input[name="previous-treatments"]:checked');
+  if (previousTreatmentsInputs.length > 0) {
+    userSelections.previousTreatments = Array.from(previousTreatmentsInputs).map(cb => cb.value);
+    if (window.userSelections) {
+      window.userSelections.previousTreatments = userSelections.previousTreatments;
+    }
+  }
+  
+  // Collect goals
+  const goalsInputs = document.querySelectorAll('input[name="overall-goals"]:checked');
+  if (goalsInputs.length > 0) {
+    userSelections.overallGoals = Array.from(goalsInputs).map(cb => cb.value);
+    if (window.userSelections) {
+      window.userSelections.overallGoals = userSelections.overallGoals;
+    }
+  } else {
+    // Clear goals if none selected
+    userSelections.overallGoals = [];
+    if (window.userSelections) {
+      window.userSelections.overallGoals = [];
+    }
+  }
+  
+  console.log("Form data collected:", {
+    age: userSelections.age,
+    skinType: userSelections.skinType,
+    sunResponse: userSelections.sunResponse,
+    goals: userSelections.overallGoals,
+    skinTone: userSelections.skinTone,
+    ethnicBackground: userSelections.ethnicBackground
+  });
+}
+
+// Update the shared navigation bar based on current step
+function updateFormNavigation(stepNumber) {
+  const navBackBtn = document.getElementById('nav-back-btn');
+  const navSkipBtn = document.getElementById('nav-skip-btn');
+  const navContinueBtn = document.getElementById('nav-continue-btn');
+  
+  if (!navBackBtn || !navSkipBtn || !navContinueBtn) return;
+  
+  // Reset all buttons
+  navBackBtn.style.display = 'none';
+  navSkipBtn.style.display = 'none';
+  navContinueBtn.style.display = 'none';
+  navContinueBtn.textContent = 'Continue →';
+  navContinueBtn.type = 'button';
+  navContinueBtn.onclick = null;
+  // Remove any HTML onclick attributes to prevent conflicts
+  navBackBtn.removeAttribute('onclick');
+  navSkipBtn.removeAttribute('onclick');
+  navContinueBtn.removeAttribute('onclick');
+  
+  switch(stepNumber) {
+    case 1:
+      // Step 1: Only Continue button (concerns selection)
+      navContinueBtn.style.display = 'block';
+      navContinueBtn.onclick = () => goToFormStep(2);
+      break;
+      
+    case 2:
+      // Step 2: Areas of Concern - Back, Skip, and Continue buttons
+      navBackBtn.style.display = 'block';
+      navBackBtn.onclick = () => goToFormStep(1);
+      navSkipBtn.style.display = 'block';
+      navSkipBtn.onclick = () => goToFormStep(3);
+      navContinueBtn.style.display = 'block';
+      navContinueBtn.onclick = () => goToFormStep(3);
+      break;
+      
+    case 3:
+      // Step 3: Your Details - Back and Continue buttons
+      navBackBtn.style.display = 'block';
+      navBackBtn.onclick = () => goToFormStep(2);
+      navSkipBtn.style.display = 'block';
+      navSkipBtn.onclick = () => goToFormStep(6); // Skip to review (step 5 hidden)
+      navContinueBtn.style.display = 'block';
+      navContinueBtn.onclick = () => goToFormStep(4);
+      break;
+      
+    case 4:
+      // Step 4: Optional Information - Back and Continue buttons
+      navBackBtn.style.display = 'block';
+      navBackBtn.onclick = () => goToFormStep(3);
+      navContinueBtn.style.display = 'block';
+      navContinueBtn.onclick = () => goToFormStep(6); // Skip step 5 (goals hidden)
+      break;
+      
+    case 5:
+      // Step 5: Your Goals - HIDDEN (Back and Continue buttons - should not be reached)
+      navBackBtn.style.display = 'block';
+      navBackBtn.onclick = () => goToFormStep(4);
+      navContinueBtn.style.display = 'block';
+      navContinueBtn.textContent = 'Review & Submit →';
+      navContinueBtn.onclick = () => goToFormStep(6);
+      break;
+      
+    case 6:
+      // Step 6: Review - Back and Submit buttons
+      navBackBtn.style.display = 'block';
+      navBackBtn.onclick = () => goToFormStep(4); // Go back to step 4 (step 5 hidden)
+      navContinueBtn.style.display = 'block';
+      navContinueBtn.textContent = 'Get My Results';
+      navContinueBtn.type = 'button';
+      navContinueBtn.onclick = () => {
+        // Trigger form submission
+        const form = document.getElementById('aesthetic-form');
+        if (form) {
+          form.requestSubmit();
+        }
+      };
+      break;
   }
 }
 
 // Proceed from concerns selection to goals/age screen
 function proceedToGoalsAndAge() {
-  // Validate that at least one concern is selected
-  const actualIssueCount = (window.userSelections && window.userSelections.selectedIssues && window.userSelections.selectedIssues.length > 0) 
-    ? window.userSelections.selectedIssues.length 
-    : totalIssueSelections;
-  
-  if (actualIssueCount === 0) {
-    alert("Please select at least one concern to continue.");
-    return;
-  }
+  console.log("proceedToGoalsAndAge called");
+  try {
+    // Validate that at least one concern category is selected
+    if (!userSelections.selectedConcernCategories || userSelections.selectedConcernCategories.length === 0) {
+      alert("Please select at least one concern to continue.");
+      return;
+    }
 
-  trackEvent("concerns_selected", { 
-    issueCount: actualIssueCount,
-    issues: window.userSelections?.selectedIssues || []
-  });
+    // Map selected categories to issues for backward compatibility
+    userSelections.selectedIssues = [];
+    userSelections.selectedConcernCategories.forEach(categoryId => {
+      const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+      if (category) {
+        // Add category name as issue for matching
+        userSelections.selectedIssues.push(category.name);
+        // Also add mapped specific issues for compatibility
+        category.mapsToSpecificIssues.forEach(issue => {
+          if (!userSelections.selectedIssues.includes(issue)) {
+            userSelections.selectedIssues.push(issue);
+          }
+        });
+      }
+    });
 
-  // Hide concerns screen, show goals/age screen
-  const concernsScreen = document.getElementById("concerns-selection-screen");
-  const formScreen = document.getElementById("form-screen");
+    // Update window.userSelections for consistency
+    if (window.userSelections) {
+      window.userSelections.selectedIssues = userSelections.selectedIssues;
+      window.userSelections.selectedConcernCategories = userSelections.selectedConcernCategories;
+    }
 
-  if (concernsScreen) {
-    concernsScreen.classList.remove("active");
-  }
+    // Track event with error handling
+    try {
+      if (typeof trackEvent === "function") {
+        trackEvent("concerns_selected", { 
+          categoryCount: userSelections.selectedConcernCategories.length,
+          categories: userSelections.selectedConcernCategories,
+          issues: userSelections.selectedIssues
+        });
+      }
+    } catch (e) {
+      console.warn("Error tracking event:", e);
+    }
 
-  if (formScreen) {
-    formScreen.classList.add("active");
-    scrollToTop();
+    // Show form screen if not already visible
+    const formScreen = document.getElementById("form-screen");
+    if (formScreen) {
+      formScreen.classList.add("active");
+    }
 
     // Update selected concerns summary
-    updateSelectedConcernsSummary();
-
-    // Set up form validation
-    try {
-      setupFormValidation();
-      console.log("setupFormValidation completed");
-    } catch (e) {
-      console.error("Error in setupFormValidation:", e);
+    if (typeof updateSelectedConcernsSummary === "function") {
+      updateSelectedConcernsSummary();
+    } else {
+      console.warn("updateSelectedConcernsSummary function not found");
     }
+    
+    // Navigate to step 2 (Areas of Concern)
+    setTimeout(() => {
+      goToFormStep(2);
+      // Ensure navigation is updated
+      updateFormNavigation(2);
+      
+      // Set up form validation
+      try {
+        if (typeof setupFormValidation === "function") {
+          setupFormValidation();
+          console.log("setupFormValidation completed");
+        } else {
+          console.warn("setupFormValidation function not found");
+        }
+      } catch (e) {
+        console.error("Error in setupFormValidation:", e);
+      }
+    }, 100);
+  } catch (error) {
+    console.error("Error in proceedToGoalsAndAge:", error);
+    alert("An error occurred. Please try again.");
   }
 }
 
@@ -3907,16 +5463,213 @@ function updateProceedToGoalsButton() {
   }
 }
 
+// Populate review step with all user selections
+function populateReviewStep() {
+  // First, collect form data to ensure we have the latest values
+  collectFormData();
+  
+  // Debug: Log current userSelections state
+  console.log("populateReviewStep - Current userSelections:", {
+    age: userSelections.age,
+    skinType: userSelections.skinType,
+    sunResponse: userSelections.sunResponse,
+    overallGoals: userSelections.overallGoals,
+    selectedConcernCategories: userSelections.selectedConcernCategories
+  });
+  console.log("populateReviewStep - window.userSelections:", window.userSelections);
+  
+  // Review Concerns
+  const concernsContainer = document.getElementById('review-concerns-summary');
+  if (concernsContainer) {
+    const categories = (window.userSelections && window.userSelections.selectedConcernCategories) 
+      || userSelections.selectedConcernCategories 
+      || [];
+    if (categories.length > 0) {
+      const categoryNames = categories.map(categoryId => {
+        const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+        return category ? category.name : categoryId;
+      });
+      concernsContainer.innerHTML = categoryNames.map(name => `
+        <div class="review-item">
+          <span class="review-item-icon">${getIconSVG("check", 14)}</span>
+          <span class="review-item-text">${escapeHtml(name)}</span>
+        </div>
+      `).join('');
+    } else {
+      concernsContainer.innerHTML = '<p class="review-empty">No concerns selected</p>';
+    }
+  }
+  
+  // Review Areas of Concern
+  const areasContainer = document.getElementById('review-areas-summary');
+  if (areasContainer) {
+    const areas = (window.userSelections && window.userSelections.selectedAreas) 
+      || userSelections.selectedAreas 
+      || [];
+    if (areas.length > 0) {
+      const areaNames = areas.map(areaId => {
+        const area = AREAS_OF_CONCERN.find(a => a.id === areaId);
+        return area ? area.name : areaId;
+      });
+      areasContainer.innerHTML = areaNames.map(name => `
+        <div class="review-item">
+          <span class="review-item-icon">${getIconSVG("check", 14)}</span>
+          <span class="review-item-text">${escapeHtml(name)}</span>
+        </div>
+      `).join('');
+    } else {
+      areasContainer.innerHTML = '<p class="review-empty">No areas selected</p>';
+    }
+  }
+  
+  // Review Details (Age, Skin Type, Sun Response)
+  const detailsContainer = document.getElementById('review-details-summary');
+  if (detailsContainer) {
+    // Get values from both sources, prioritizing window.userSelections
+    const age = (window.userSelections && window.userSelections.age) 
+      || userSelections.age 
+      || null;
+    const skinType = (window.userSelections && window.userSelections.skinType) 
+      || userSelections.skinType 
+      || null;
+    const sunResponse = (window.userSelections && window.userSelections.sunResponse) 
+      || userSelections.sunResponse 
+      || null;
+    
+    // Format labels
+    const ageLabel = age ? age.toString() : 'Not provided';
+    const skinTypeLabel = skinType 
+      ? skinType.charAt(0).toUpperCase() + skinType.slice(1).replace(/-/g, ' ') 
+      : 'Not provided';
+    const sunResponseLabel = sunResponse 
+      ? sunResponse.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') 
+      : 'Not provided';
+    
+    detailsContainer.innerHTML = `
+      <div class="review-item">
+        <span class="review-item-label">Age:</span>
+        <span class="review-item-value">${ageLabel}</span>
+      </div>
+      <div class="review-item">
+        <span class="review-item-label">Skin Type:</span>
+        <span class="review-item-value">${skinTypeLabel}</span>
+      </div>
+      <div class="review-item">
+        <span class="review-item-label">Sun Response:</span>
+        <span class="review-item-value">${sunResponseLabel}</span>
+      </div>
+    `;
+  }
+  
+  // Review Optional Information (Skin Tone, Ethnic Background, Previous Treatments)
+  const optionalContainer = document.getElementById('review-optional-summary');
+  if (optionalContainer) {
+    const skinTone = (window.userSelections && window.userSelections.skinTone) 
+      || userSelections.skinTone 
+      || null;
+    const ethnicBackground = (window.userSelections && window.userSelections.ethnicBackground) 
+      || userSelections.ethnicBackground 
+      || null;
+    const previousTreatments = (window.userSelections && window.userSelections.previousTreatments) 
+      || userSelections.previousTreatments 
+      || [];
+    
+    // Format labels
+    const skinToneLabel = skinTone 
+      ? skinTone.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') 
+      : null;
+    const ethnicBackgroundLabel = ethnicBackground 
+      ? ethnicBackground.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') 
+      : null;
+    
+    const optionalItems = [];
+    
+    if (skinToneLabel) {
+      optionalItems.push(`
+        <div class="review-item">
+          <span class="review-item-label">Skin Tone:</span>
+          <span class="review-item-value">${escapeHtml(skinToneLabel)}</span>
+        </div>
+      `);
+    }
+    
+    if (ethnicBackgroundLabel) {
+      optionalItems.push(`
+        <div class="review-item">
+          <span class="review-item-label">Ethnic Background:</span>
+          <span class="review-item-value">${escapeHtml(ethnicBackgroundLabel)}</span>
+        </div>
+      `);
+    }
+    
+    if (previousTreatments.length > 0) {
+      const treatmentsLabel = previousTreatments.map(t => {
+        return t.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      }).join(', ');
+      optionalItems.push(`
+        <div class="review-item">
+          <span class="review-item-label">Previous Treatments:</span>
+          <span class="review-item-value">${escapeHtml(treatmentsLabel)}</span>
+        </div>
+      `);
+    }
+    
+    if (optionalItems.length > 0) {
+      optionalContainer.innerHTML = optionalItems.join('');
+    } else {
+      optionalContainer.innerHTML = '<p class="review-empty">No optional information provided</p>';
+    }
+  }
+  
+  // Review Goals
+  const goalsContainer = document.getElementById('review-goals-summary');
+  if (goalsContainer) {
+    const goals = (window.userSelections && window.userSelections.overallGoals) 
+      || userSelections.overallGoals 
+      || [];
+    if (goals && goals.length > 0) {
+      const goalLabels = {
+        "facial-balancing": "Facial Balancing",
+        "anti-aging": "Anti-Aging",
+        "skin-rejuvenation": "Skin Rejuvenation",
+        "natural-look": "Natural Look"
+      };
+      const goalNames = goals.map(g => goalLabels[g] || g);
+      goalsContainer.innerHTML = goalNames.map(name => `
+        <div class="review-item">
+          <span class="review-item-icon">${getIconSVG("check", 14)}</span>
+          <span class="review-item-text">${escapeHtml(name)}</span>
+        </div>
+      `).join('');
+    } else {
+      goalsContainer.innerHTML = '<p class="review-empty">No goals selected</p>';
+    }
+  }
+}
+
 // Update selected concerns summary on goals/age screen
 function updateSelectedConcernsSummary() {
   const summary = document.getElementById("selected-concerns-summary");
   if (!summary) return;
 
+  // Prioritize high-level categories over mapped sub-issues
+  const selectedCategories = (window.userSelections && window.userSelections.selectedConcernCategories) 
+    ? window.userSelections.selectedConcernCategories 
+    : [];
+  
   const selectedIssues = (window.userSelections && window.userSelections.selectedIssues) 
     ? window.userSelections.selectedIssues 
     : [];
 
-  if (selectedIssues.length === 0) {
+  // If we have categories, show those; otherwise fall back to issues for backward compatibility
+  const itemsToShow = selectedCategories.length > 0 
+    ? selectedCategories.map(categoryId => {
+        const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+        return category ? category.name : categoryId;
+      })
+    : selectedIssues;
+
+  if (itemsToShow.length === 0) {
     summary.innerHTML = '<p style="color: #999; font-style: italic;">No concerns selected</p>';
     return;
   }
@@ -3929,10 +5682,10 @@ function updateSelectedConcernsSummary() {
           Edit
         </button>
       </div>
-      ${selectedIssues.map(issue => `
+      ${itemsToShow.map(item => `
         <div class="concern-summary-item">
           <span class="concern-summary-icon">${getIconSVG("check", 14)}</span>
-          <span class="concern-summary-name">${escapeHtml(issue)}</span>
+          <span class="concern-summary-name">${escapeHtml(item)}</span>
         </div>
       `).join("")}
     </div>
@@ -3943,9 +5696,11 @@ function updateSelectedConcernsSummary() {
 window.startForm = startForm;
 window.showHomeTeaser = showHomeTeaser;
 window.showOnboarding = showOnboarding;
+window.handleStartButtonClick = handleStartButtonClick;
 window.nextOnboardingSlide = nextOnboardingSlide;
 window.proceedToGoalsAndAge = proceedToGoalsAndAge;
 window.goBackToConcernsSelection = goBackToConcernsSelection;
+window.goToFormStep = goToFormStep;
 window.updateProceedToGoalsButton = updateProceedToGoalsButton;
 window.updateSelectedConcernsSummary = updateSelectedConcernsSummary;
 window.scrollToTop = scrollToTop;
@@ -3961,6 +5716,9 @@ window.closeRequestModal = closeRequestModal;
 window.toggleCaseGoal = toggleCaseGoal;
 window.goBackToGallery = goBackToGallery;
 window.goBackToForm = goBackToForm;
+window.goBackToResults = goBackToResults;
+window.showTreatmentDetail = showTreatmentDetail;
+window.showTreatmentCases = showTreatmentCases;
 window.addRegionIssueRow = addRegionIssueRow;
 window.removeRegionIssueRow = removeRegionIssueRow;
 window.updateIssueDropdown = updateIssueDropdown;
@@ -4031,20 +5789,18 @@ function updateIssueSelectionCount() {
     });
   }
 
-  // Enable/disable submit button - require age, at least one goal AND one concern
+  // Enable/disable submit button - require age and at least one concern (goals removed for now)
   // Don't show validation messages here - only show on submit attempt
   const submitButton = document.getElementById("submit-button");
 
   if (submitButton) {
     const ageInput = document.getElementById("patient-age");
     const hasAge = ageInput && ageInput.value && parseInt(ageInput.value) >= 18;
-    const goalsSelected =
-      document.querySelectorAll('input[name="overall-goals"]:checked').length >
-      0;
+    // Goals requirement removed - goals section is hidden
     const hasConcerns = totalIssueSelections > 0;
 
-    // Require age, a goal, and a concern
-    const isValid = hasAge && goalsSelected && hasConcerns;
+    // Require age and a concern (goals not required)
+    const isValid = hasAge && hasConcerns;
     submitButton.disabled = !isValid;
   }
 
@@ -4306,16 +6062,27 @@ function setupFormValidation() {
       // When an issue is selected, update all other dropdowns to remove it
       updateAllIssueDropdowns();
     } else if (e.target.name === "overall-goals") {
+      // Collect goals data in real-time
+      collectFormData();
       updateIssueSelectionCount(); // This will also check goals and update submit button
     } else if (e.target.id === "patient-age") {
+      // Collect age data in real-time
+      collectFormData();
       updateIssueSelectionCount(); // This will also check age and update submit button
+    } else if (e.target.name === "skin-type" || e.target.name === "sun-response") {
+      // Collect demographic data in real-time
+      collectFormData();
+    } else if (e.target.name === "skin-tone" || e.target.name === "ethnic-background" || e.target.name === "previous-treatments") {
+      // Collect optional demographic data in real-time
+      collectFormData();
     }
   });
 
-  // Also listen for input events on age field for real-time validation
+  // Also listen for input events on age field for real-time validation and data collection
   const ageInput = document.getElementById("patient-age");
   if (ageInput) {
     ageInput.addEventListener("input", function () {
+      collectFormData(); // Collect data in real-time
       updateIssueSelectionCount();
     });
   }
@@ -4346,6 +6113,31 @@ document
       window.userSelections.overallGoals = userSelections.overallGoals;
     }
 
+    // Collect demographic data
+    const skinTypeInput = document.querySelector('input[name="skin-type"]:checked');
+    userSelections.skinType = skinTypeInput ? skinTypeInput.value : null;
+
+    const sunResponseInput = document.querySelector('input[name="sun-response"]:checked');
+    userSelections.sunResponse = sunResponseInput ? sunResponseInput.value : null;
+
+    const skinToneInput = document.querySelector('input[name="skin-tone"]:checked');
+    userSelections.skinTone = skinToneInput ? skinToneInput.value : null;
+
+    const ethnicBackgroundSelect = document.getElementById("ethnic-background");
+    userSelections.ethnicBackground = ethnicBackgroundSelect ? ethnicBackgroundSelect.value : null;
+
+    const previousTreatmentsInputs = document.querySelectorAll('input[name="previous-treatments"]:checked');
+    userSelections.previousTreatments = Array.from(previousTreatmentsInputs).map(cb => cb.value);
+
+    // Update window.userSelections
+    if (window.userSelections) {
+      window.userSelections.skinType = userSelections.skinType;
+      window.userSelections.sunResponse = userSelections.sunResponse;
+      window.userSelections.skinTone = userSelections.skinTone;
+      window.userSelections.ethnicBackground = userSelections.ethnicBackground;
+      window.userSelections.previousTreatments = userSelections.previousTreatments;
+    }
+
     // Validate all fields - show message only on submit attempt
     const validationMessage = document.getElementById("validation-message");
     let hasError = false;
@@ -4361,18 +6153,25 @@ document
           "Please enter a valid age (must be 18 or older) to continue.";
       }
     }
-    // Check goals
-    else if (userSelections.overallGoals.length === 0) {
-      hasError = true;
-      errorMessage = "Please select at least one goal to continue.";
-    }
-    // Check concerns - use actual selected issues count (from body selector or dropdowns)
+    // Goals check removed - goals section is hidden for now
+    // Check concerns - use category selections or actual selected issues count
+    const hasCategorySelections = userSelections.selectedConcernCategories && userSelections.selectedConcernCategories.length > 0;
     const actualIssueCount = (window.userSelections && window.userSelections.selectedIssues && window.userSelections.selectedIssues.length > 0) 
       ? window.userSelections.selectedIssues.length 
       : totalIssueSelections;
-    if (actualIssueCount === 0) {
+    if (!hasCategorySelections && actualIssueCount === 0) {
       hasError = true;
       errorMessage = "Please select at least one concern to continue.";
+    }
+
+    // Check required demographics
+    if (!userSelections.skinType) {
+      hasError = true;
+      errorMessage = "Please select your skin type to continue.";
+    }
+    if (!userSelections.sunResponse) {
+      hasError = true;
+      errorMessage = "Please select how your skin responds to sun to continue.";
     }
 
     // Show validation message if there's an error
@@ -4453,44 +6252,113 @@ function showEarlyLeadCapture() {
   // Scroll to top
   scrollToTop();
 
-  // Count available treatments for their concerns
+  // Get selected categories or fall back to issues
+  const categories = userSelections.selectedConcernCategories || [];
   const selectedIssues = userSelections.selectedIssues || [];
+  
+  // Count available treatments and collect matching cases for previews
   let totalCases = 0;
-  selectedIssues.forEach((issue) => {
-    const matchingCases = getMatchingCasesForItem({
-      type: "issue",
-      name: issue,
+  let allMatchingCases = [];
+  
+  // Use categories if available
+  if (categories.length > 0) {
+    categories.forEach((categoryId) => {
+      const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+      if (category) {
+        const matchingCases = getMatchingCasesForItem({
+          type: "category",
+          name: category.name,
+          id: categoryId,
+          mapsToSpecificIssues: category.mapsToSpecificIssues
+        });
+        console.log(`Found ${matchingCases.length} cases for category: ${category.name}`);
+        totalCases += matchingCases.length;
+        allMatchingCases = allMatchingCases.concat(matchingCases);
+      }
     });
-    totalCases += matchingCases.length;
-  });
+  } else {
+    selectedIssues.forEach((issue) => {
+      const matchingCases = getMatchingCasesForItem({
+        type: "issue",
+        name: issue,
+      });
+      console.log(`Found ${matchingCases.length} cases for issue: ${issue}`);
+      totalCases += matchingCases.length;
+      allMatchingCases = allMatchingCases.concat(matchingCases);
+    });
+  }
+  
+  console.log(`Total matching cases found: ${totalCases}, Unique cases: ${allMatchingCases.length}`);
 
   // Update the treatment count message
   const countEl = document.getElementById("treatment-count");
   if (countEl) {
     if (totalCases > 0) {
-      countEl.textContent = `${totalCases}+`;
+      countEl.textContent = `${totalCases}`;
     } else {
       countEl.textContent = "personalized";
     }
   }
+  
+  // Update the title to be personalized based on first concern
+  const titleEl = document.getElementById("lead-capture-title");
+  if (titleEl && categories.length > 0) {
+    const firstCategory = HIGH_LEVEL_CONCERNS.find(c => c.id === categories[0]);
+    if (firstCategory) {
+      titleEl.textContent = `Perfect Results for ${firstCategory.name}!`;
+    }
+  }
+
+  // Populate preview thumbnails with real case images
+  const thumbnailsContainer = document.getElementById("lead-capture-thumbnails");
+  if (thumbnailsContainer) {
+    if (allMatchingCases.length > 0) {
+      // Get unique cases (avoid duplicates)
+      const uniqueCases = allMatchingCases.filter((c, i, arr) => 
+        arr.findIndex(x => x.id === c.id) === i
+      ).slice(0, 3);
+      
+      console.log(`Displaying ${uniqueCases.length} preview thumbnails`);
+      
+      thumbnailsContainer.innerHTML = uniqueCases.map(caseItem => {
+        // Use beforeAfter as fallback if thumbnail doesn't exist
+        const imageUrl = caseItem.thumbnail || caseItem.beforeAfter || '';
+        console.log(`Case: ${caseItem.name}, Image: ${imageUrl ? 'found' : 'missing'}`);
+        return `
+          <div class="preview-thumbnail">
+            <img src="${imageUrl}" alt="${caseItem.name || 'Case preview'}" 
+                 onerror="console.error('Image failed to load:', '${imageUrl}'); this.parentElement.style.display='none';" />
+          </div>
+        `;
+      }).join("");
+    } else {
+      // Show placeholder if no cases
+      console.warn("No matching cases found for preview");
+      thumbnailsContainer.innerHTML = '<div class="preview-thumbnail"><div style="background: #f0f0f0; width: 100%; height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">Preview</div></div>';
+    }
+  }
 
   // Populate preview items with their selected concerns
-  const previewContainer = document.getElementById(
-    "lead-capture-preview-items"
-  );
+  const previewContainer = document.getElementById("lead-capture-preview-items");
   if (previewContainer) {
-    previewContainer.innerHTML = selectedIssues
+    // Use categories if available
+    const itemsToShow = categories.length > 0 
+      ? categories.map(id => {
+          const cat = HIGH_LEVEL_CONCERNS.find(c => c.id === id);
+          return cat ? cat.name : id;
+        })
+      : selectedIssues;
+    
+    previewContainer.innerHTML = itemsToShow
       .slice(0, 3)
-      .map(
-        (issue) => `
-      <div class="preview-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        ${getIssuePositiveSuggestion(issue)}
-      </div>
-    `
-      )
+      .map((item) => `
+        <div class="preview-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          ${categories.length > 0 ? item : getIssuePositiveSuggestion(item)}
+        </div>
+      `)
       .join("");
 
     // Add "and more" if there are additional items
@@ -4519,6 +6387,7 @@ function showEarlyLeadCapture() {
   setupEarlyLeadForm();
 
   trackEvent("lead_capture_shown", {
+    categoryCount: categories.length,
     issueCount: selectedIssues.length,
     treatmentCount: totalCases,
   });
@@ -4634,30 +6503,47 @@ function setupEarlyLeadForm() {
     setupPhoneInput(phoneInput);
   }
 
+  // Remove any existing handlers to avoid duplicates
+  form.onsubmit = null;
+  const submitBtn = document.getElementById("lead-submit-btn");
+  const skipBtn = document.getElementById("lead-skip-btn");
+
   // Set up form submit handler
-  form.onsubmit = function (e) {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
+    e.stopPropagation();
+    console.log("Form submitted via form.onsubmit");
     handleLeadFormSubmit();
-  };
+    return false;
+  });
 
   // Also set up direct click handler on submit button as backup
-  const submitBtn = document.getElementById("lead-submit-btn");
   if (submitBtn) {
     submitBtn.onclick = function (e) {
       e.preventDefault();
+      e.stopPropagation();
+      console.log("Form submitted via button click");
       handleLeadFormSubmit();
+      return false;
     };
   }
 
   // Set up skip button handler
-  const skipBtn = document.getElementById("lead-skip-btn");
   if (skipBtn) {
-    skipBtn.onclick = function () {
+    skipBtn.onclick = function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("Skip button clicked");
       skipLeadCapture();
+      return false;
     };
   }
 
-  console.log("Early lead form setup complete");
+  console.log("Early lead form setup complete", {
+    form: !!form,
+    submitBtn: !!submitBtn,
+    skipBtn: !!skipBtn
+  });
 }
 
 function skipLeadCapture() {
@@ -4702,42 +6588,257 @@ async function proceedToResults() {
 // Track active results tab
 let activeResultsTab = 0;
 
+// Store treatment groups for each concern (for detail page navigation)
+let treatmentGroupsByConcern = {};
+
+// Extract concern/issue from case name (removes treatment)
+// Examples: "Resolve Brow Asymmetry With Threadlift" -> "Resolve Brow Asymmetry"
+// "Resolve Wide Jawline With Jawline" -> "Resolve Wide Jawline"
+function extractConcernFromCaseName(caseName) {
+  if (!caseName) return "General Concern";
+  
+  const name = caseName.toLowerCase();
+  
+  // Remove common treatment method suffixes
+  const patterns = [
+    // Remove "with [treatment]" patterns - expanded to include energy-based treatments
+    { pattern: /\s+with\s+(threadlift|thread\s+lift|neurotoxin|botox|xeomin|dysport|dermal\s+fillers?|filler|sculptra|physiq|everesse|coolsculpting|ipl|laser|microneedling|chemical\s+peel|heat|energy|heat\/energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|microneedling|hydrafacial).*$/i, replacement: '' },
+    // Remove "with [body part]" patterns (e.g., "with jawline", "with brow")
+    { pattern: /\s+with\s+(jawline|brow|brows|cheek|cheeks|forehead|neck|chin|lips|lip|eyes|eye|nose|temple|temples).*$/i, replacement: '' },
+    // Remove standalone treatment terms at the end (e.g., "Heat/energy", "RF", "Laser")
+    { pattern: /\s+(heat\/energy|heat\s*\/\s*energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|microneedling|hydrafacial|ipl|laser|botox|filler|threadlift)$/i, replacement: '' },
+    // Remove "using X" patterns
+    { pattern: /\s+using\s+.*$/i, replacement: '' },
+    // Remove "via X" patterns
+    { pattern: /\s+via\s+.*$/i, replacement: '' },
+  ];
+  
+  let concern = caseName;
+  patterns.forEach(({ pattern, replacement }) => {
+    concern = concern.replace(pattern, replacement).trim();
+  });
+  
+  // Capitalize first letter of each word
+  concern = concern.split(' ').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  ).join(' ');
+  
+  return concern || "General Concern";
+}
+
+// Body parts that should not be extracted as treatments
+const BODY_PARTS = new Set([
+  'jawline', 'brow', 'brows', 'cheek', 'cheeks', 'forehead', 'neck', 'chin',
+  'lips', 'lip', 'eyes', 'eye', 'nose', 'temple', 'temples', 'under eye',
+  'under-eye', 'upper eyelid', 'lower eyelid', 'mid cheek', 'lateral cheek'
+]);
+
+// Map body part + treatment combinations to actual treatments
+const BODY_PART_TREATMENT_MAP = {
+  'jawline filler': 'Dermal Fillers',
+  'jawline fillers': 'Dermal Fillers',
+  'brow lift': 'Threadlift',
+  'brow thread': 'Threadlift',
+  'cheek filler': 'Dermal Fillers',
+  'cheek fillers': 'Dermal Fillers',
+  'lip filler': 'Dermal Fillers',
+  'lip fillers': 'Dermal Fillers',
+  'neck filler': 'Dermal Fillers',
+  'neck fillers': 'Dermal Fillers',
+};
+
+// Extract treatment from case name
+// Examples: "Resolve Brow Asymmetry With Threadlift" -> "Threadlift"
+// "Resolve Wide Jawline With Jawline" -> should extract actual treatment, not "Jawline"
+// "Resolve Wide Jawline With Dermal Fillers" -> "Dermal Fillers"
+function extractTreatmentFromCaseName(caseName) {
+  if (!caseName) return "General Treatment";
+  
+  // Try to extract treatment using getTreatmentModality first
+  // This searches for treatment names in the case name
+  const modality = getTreatmentModality(caseName);
+  if (modality && modality.name && modality.name !== "Treatment") {
+    return modality.name;
+  }
+  
+  // Fallback: extract from "with X" pattern
+  let withMatch = caseName.match(/\s+with\s+([^,]+?)(?:\s+for|\s+to|$)/i);
+  
+  // Also check for treatments at the end without "with" (e.g., "Resolve X Heat/energy")
+  if (!withMatch) {
+    const endTreatmentMatch = caseName.match(/\s+(heat\/energy|heat\s*\/\s*energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|hydrafacial|ipl|laser|botox|filler|threadlift)$/i);
+    if (endTreatmentMatch) {
+      withMatch = [null, endTreatmentMatch[1]];
+    }
+  }
+  
+  if (withMatch) {
+    let treatment = withMatch[1].trim().toLowerCase();
+    
+    // Check if it's a body part + treatment combination (e.g., "jawline filler")
+    if (BODY_PART_TREATMENT_MAP[treatment]) {
+      return BODY_PART_TREATMENT_MAP[treatment];
+    }
+    
+    // Check if it's just a body part (should not be a treatment)
+    const words = treatment.split(/\s+/);
+    if (words.length === 1 && BODY_PARTS.has(treatment)) {
+      // It's just a body part, try to find treatment elsewhere in the name
+      // or return a generic treatment
+      const fullModality = getTreatmentModality(caseName);
+      if (fullModality && fullModality.name && fullModality.name !== "Treatment") {
+        return fullModality.name;
+      }
+      return "General Treatment";
+    }
+    
+    // Check if it contains a body part but also a treatment word
+    // e.g., "jawline filler" -> extract "filler"
+    const treatmentWords = ['filler', 'fillers', 'thread', 'threadlift', 'botox', 'neurotoxin', 
+                            'sculptra', 'coolsculpting', 'ipl', 'laser', 'microneedling', 'peel',
+                            'heat', 'energy', 'heat/energy', 'heat/ energy', 'rf', 'radiofrequency', 
+                            'radio frequency', 'thermage', 'ultherapy', 'morpheus', 'hydrafacial'];
+    for (const treatmentWord of treatmentWords) {
+      if (treatment.includes(treatmentWord)) {
+        const extractedModality = getTreatmentModality(treatmentWord);
+        if (extractedModality && extractedModality.name && extractedModality.name !== "Treatment") {
+          return extractedModality.name;
+        }
+      }
+    }
+    
+    // Normalize "heat/energy" variations
+    const normalizedTreatment = treatment.replace(/\s*\/\s*/g, '/').toLowerCase();
+    if (normalizedTreatment === 'heat/energy' || normalizedTreatment === 'heat/ energy') {
+      const heatEnergyModality = getTreatmentModality('Heat/Energy');
+      if (heatEnergyModality && heatEnergyModality.name && heatEnergyModality.name !== "Treatment") {
+        return heatEnergyModality.name;
+      }
+    }
+    
+    // Try to match with treatmentModalities using the extracted text
+    const extractedModality = getTreatmentModality(treatment);
+    if (extractedModality && extractedModality.name && extractedModality.name !== "Treatment") {
+      return extractedModality.name;
+    }
+    
+    // If it's not a body part and not a known treatment, return as-is (capitalized)
+    if (!BODY_PARTS.has(treatment) && !words.some(w => BODY_PARTS.has(w))) {
+      treatment = treatment.split(/\s+/).map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      ).join(' ');
+      return treatment;
+    }
+  }
+  
+  return "General Treatment";
+}
+
+// Group cases by concern first, then by treatment within each concern
+function groupCasesByTreatmentSuggestion(cases) {
+  // Filter out surgical cases first
+  const nonSurgicalCases = filterNonSurgicalCases(cases);
+  
+  // First level: group by concern
+  const concernGroups = {};
+  
+  nonSurgicalCases.forEach(caseItem => {
+    const concern = extractConcernFromCaseName(caseItem.name);
+    const treatment = extractTreatmentFromCaseName(caseItem.name);
+    
+    if (!concernGroups[concern]) {
+      concernGroups[concern] = {
+        concern: concern,
+        treatments: {} // Second level: group by treatment
+      };
+    }
+    
+    if (!concernGroups[concern].treatments[treatment]) {
+      concernGroups[concern].treatments[treatment] = [];
+    }
+    
+    concernGroups[concern].treatments[treatment].push(caseItem);
+  });
+  
+  // Convert to array format for rendering
+  // Each concern becomes a group with its treatments
+  const groups = Object.values(concernGroups).map(concernGroup => {
+    const treatments = Object.keys(concernGroup.treatments);
+    const allCases = Object.values(concernGroup.treatments).flat();
+    
+    return {
+      suggestion: concernGroup.concern, // This is the concern name
+      cases: allCases,
+      treatments: treatments.sort(), // List of treatments for this concern
+      treatmentsByCase: concernGroup.treatments // Detailed treatment grouping
+    };
+  });
+  
+  return groups.sort((a, b) => b.cases.length - a.cases.length);
+}
+
 function populateResultsScreen() {
+  // Use high-level categories if available, otherwise fall back to selected issues
+  const categories = userSelections.selectedConcernCategories || [];
   const selectedIssues = userSelections.selectedIssues || [];
   
-  if (selectedIssues.length === 0) {
-    console.warn("No selected issues for results screen");
+  // If we have categories, use those; otherwise use issues
+  const itemsToShow = categories.length > 0 
+    ? categories.map(id => {
+        const category = HIGH_LEVEL_CONCERNS.find(c => c.id === id);
+        return category ? { type: 'category', name: category.name, id: id } : null;
+      }).filter(Boolean)
+    : selectedIssues.map(issue => ({ type: 'issue', name: issue }));
+  
+  if (itemsToShow.length === 0) {
+    console.warn("No selected concerns for results screen");
     return;
   }
 
   // Populate tabs
   const tabsContainer = document.getElementById("results-tabs");
   if (tabsContainer) {
-    tabsContainer.innerHTML = selectedIssues.map((issue, index) => `
-      <button class="results-tab ${index === 0 ? 'active' : ''}" 
-              onclick="switchResultsTab(${index})" 
-              data-index="${index}">
-        ${issue}
-      </button>
-    `).join('');
+    tabsContainer.innerHTML = itemsToShow.map((item, index) => {
+      // Get case count for this category/issue
+      const matchingCases = getMatchingCasesForItem(item);
+      const caseCount = matchingCases.length;
+      return `
+        <button class="results-tab ${index === 0 ? 'active' : ''}" 
+                onclick="switchResultsTab(${index})" 
+                data-index="${index}">
+          ${item.name}${caseCount > 0 ? ` (${caseCount})` : ''}
+        </button>
+      `;
+    }).join('');
   }
 
   // Populate content sections for each concern
   const contentContainer = document.getElementById("results-content");
   if (contentContainer) {
-    contentContainer.innerHTML = selectedIssues.map((issue, index) => {
-      const description = generateIssueGoalDescription({ type: 'issue', name: issue });
-      const matchingCases = getMatchingCasesForItem({ type: 'issue', name: issue });
-      const casesToShow = matchingCases.slice(0, 4); // Show up to 4 cases
+    contentContainer.innerHTML = itemsToShow.map((item, index) => {
+      const description = item.type === 'category' 
+        ? HIGH_LEVEL_CONCERNS.find(c => c.id === item.id)?.description || ''
+        : generateIssueGoalDescription(item);
+      const matchingCases = getMatchingCasesForItem(item);
+      
+      // Group cases by treatment suggestion
+      const treatmentGroups = groupCasesByTreatmentSuggestion(matchingCases);
+      
+      // Store treatment groups for this concern (for detail page)
+      const concernKey = item.type === 'category' ? item.id : item.name;
+      treatmentGroupsByConcern[concernKey] = {
+        item: item,
+        treatmentGroups: treatmentGroups
+      };
       
       // Get prevalence info
       const userAge = userSelections.age || 35;
-      const prevalenceInfo = getPrevalenceDescription(issue, userAge);
+      const prevalenceInfo = item.type === 'issue' ? getPrevalenceDescription(item.name, userAge) : null;
       
       return `
         <div class="results-concern-section ${index === 0 ? 'active' : ''}" data-index="${index}">
           <div class="concern-overview">
-            <h2 class="concern-name">${issue}</h2>
+            <h2 class="concern-name">${item.name}</h2>
             <p class="concern-description">${description}</p>
             ${prevalenceInfo ? `
               <div class="concern-prevalence">
@@ -4750,22 +6851,40 @@ function populateResultsScreen() {
             ` : ''}
           </div>
 
-          <div class="treatments-section">
-            <h3 class="treatments-title">Common Treatments</h3>
-            <div class="treatments-list">
-              ${getTreatmentsForIssue(issue).map(t => `<span class="treatment-tag">${t}</span>`).join('')}
-            </div>
-          </div>
-
-          <div class="cases-section">
-            <div class="cases-section-header">
-              <h3 class="cases-title">Real Patient Results</h3>
-              <span class="cases-count">${matchingCases.length} case${matchingCases.length !== 1 ? 's' : ''}</span>
-            </div>
-            
-            ${casesToShow.length > 0 ? `
-              <div class="case-preview-grid">
-                ${casesToShow.map(caseItem => renderCasePreviewCard(caseItem)).join('')}
+          <div class="treatment-groups-section">
+            ${treatmentGroups.length > 0 ? `
+              <div class="treatment-groups-grid">
+                ${treatmentGroups.map((group, groupIndex) => {
+                  // Get area tags for this treatment group (which areas it relates to)
+                  const areaTags = getTreatmentGroupRelevance(group, userSelections);
+                  const areaHtml = areaTags.length > 0 ? `
+                    <div class="treatment-group-relevance">
+                      <span class="relevance-label">Area:</span>
+                      ${areaTags.map(area => `<span class="relevance-tag">${escapeHtml(area)}</span>`).join('')}
+                    </div>
+                  ` : '';
+                  
+                  return `
+                  <div class="treatment-group-card" onclick="showTreatmentDetail('${escapeHtml(item.type)}', '${escapeHtml(item.id || item.name)}', ${groupIndex})">
+                    <div class="treatment-group-header">
+                      <h3 class="treatment-group-title">${escapeHtml(group.suggestion)}</h3>
+                      <span class="treatment-group-count">${group.cases.length} case${group.cases.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    ${areaHtml}
+                    <div class="treatment-group-preview">
+                      ${group.cases.slice(0, 3).map(caseItem => {
+                        const imageUrl = caseItem.beforeAfter || caseItem.thumbnail;
+                        return `<img src="${imageUrl}" alt="${escapeHtml(caseItem.name)}" class="treatment-group-preview-image" onerror="this.style.display='none'">`;
+                      }).join('')}
+                      ${group.cases.length > 3 ? `<div class="treatment-group-more">+${group.cases.length - 3}</div>` : ''}
+                    </div>
+                    <div class="treatment-group-treatments">
+                      ${group.treatments.slice(0, 3).map(t => `<span class="treatment-tag-small">${escapeHtml(t)}</span>`).join('')}
+                      ${group.treatments.length > 3 ? `<span class="treatment-tag-small">+${group.treatments.length - 3} more</span>` : ''}
+                    </div>
+                  </div>
+                  `;
+                }).join('')}
               </div>
             ` : `
               <div class="no-cases-message">
@@ -4804,9 +6923,133 @@ function switchResultsTab(index) {
   }
 }
 
-function renderCasePreviewCard(caseItem) {
+// Show treatment detail page with treatment selection
+function showTreatmentDetail(itemType, itemId, groupIndex) {
+  const concernKey = itemId;
+  const concernData = treatmentGroupsByConcern[concernKey];
+  
+  if (!concernData || !concernData.treatmentGroups[groupIndex]) {
+    console.error("Treatment group not found");
+    return;
+  }
+  
+  const group = concernData.treatmentGroups[groupIndex];
+  const item = concernData.item;
+  
+  // Hide results screen, show treatment detail screen
+  document.getElementById("results-screen")?.classList.remove("active");
+  document.getElementById("treatment-detail-screen")?.classList.add("active");
+  
+  // Update title
+  const titleEl = document.getElementById("treatment-detail-title");
+  const subtitleEl = document.getElementById("treatment-detail-subtitle");
+  if (titleEl) titleEl.textContent = group.suggestion;
+  if (subtitleEl) subtitleEl.textContent = `${group.cases.length} patient result${group.cases.length !== 1 ? 's' : ''}`;
+  
+  // Directly show all cases - skip treatment selection step
+  const contentEl = document.getElementById("treatment-detail-content");
+  if (contentEl) {
+    // Pass the group suggestion as page context to simplify case titles
+    contentEl.innerHTML = `
+      <div class="treatment-cases-grid">
+        ${group.cases.map(caseItem => renderCasePreviewCard(caseItem, group.suggestion)).join('')}
+      </div>
+    `;
+  }
+  
+  // Update CTA footer visibility
+  updateFloatingCTA();
+  
+  scrollToTop();
+}
+
+// Show cases for a specific treatment
+function showTreatmentCases(concernKey, groupIndex, treatmentName) {
+  const concernData = treatmentGroupsByConcern[concernKey];
+  
+  if (!concernData || !concernData.treatmentGroups[groupIndex]) {
+    console.error("Treatment group not found");
+    return;
+  }
+  
+  const group = concernData.treatmentGroups[groupIndex];
+  
+  // Filter cases by treatment - use treatmentsByCase if available
+  let filteredCases = [];
+  if (group.treatmentsByCase && group.treatmentsByCase[treatmentName]) {
+    filteredCases = group.treatmentsByCase[treatmentName];
+  } else {
+    // Fallback: filter by extracting treatment from case name
+    filteredCases = group.cases.filter(caseItem => {
+      const caseTreatment = extractTreatmentFromCaseName(caseItem.name);
+      return caseTreatment === treatmentName;
+    });
+  }
+  
+  // Update title
+  const titleEl = document.getElementById("treatment-detail-title");
+  const subtitleEl = document.getElementById("treatment-detail-subtitle");
+  if (titleEl) titleEl.textContent = `${group.suggestion} - ${treatmentName}`;
+  if (subtitleEl) subtitleEl.textContent = `${filteredCases.length} patient result${filteredCases.length !== 1 ? 's' : ''}`;
+  
+  // Populate with cases
+  const contentEl = document.getElementById("treatment-detail-content");
+  if (contentEl) {
+    contentEl.innerHTML = `
+      <div class="treatment-cases-grid">
+        ${filteredCases.map(caseItem => renderCasePreviewCard(caseItem)).join('')}
+      </div>
+    `;
+  }
+  
+  scrollToTop();
+}
+
+// Go back to results screen
+function goBackToResults() {
+  document.getElementById("treatment-detail-screen")?.classList.remove("active");
+  document.getElementById("results-screen")?.classList.add("active");
+  scrollToTop();
+}
+
+// Helper function to extract just the treatment name from a case name
+// e.g., "Resolve Brow Ptosis with Microneedling" -> "Microneedling"
+function extractTreatmentFromCaseNameForDisplay(caseName) {
+  if (!caseName) return caseName;
+  
+  // Look for "with [Treatment]" pattern
+  const withMatch = caseName.match(/\s+with\s+(.+)$/i);
+  if (withMatch && withMatch[1]) {
+    return withMatch[1].trim();
+  }
+  
+  // Look for " - [Treatment]" pattern
+  const dashMatch = caseName.match(/\s+-\s+(.+)$/);
+  if (dashMatch && dashMatch[1]) {
+    return dashMatch[1].trim();
+  }
+  
+  // Fallback: return original name
+  return caseName;
+}
+
+function renderCasePreviewCard(caseItem, pageContext = null) {
   const imageUrl = caseItem.beforeAfter || caseItem.thumbnail;
+  // Only show demographic matches on case cards (exclude areas and concerns)
+  const matchIndicators = getMatchIndicators(caseItem, userSelections, true);
+  const matchIndicatorsHtml = matchIndicators.length > 0 ? `
+    <div class="case-match-indicators">
+      ${matchIndicators.map(ind => `<span class="match-indicator match-${ind.type}">✓ ${ind.text}</span>`).join('')}
+    </div>
+  ` : '';
   const treatments = (caseItem.treatments || []).slice(0, 2);
+  
+  // If pageContext is provided (e.g., "Resolve Brow Ptosis"), simplify the case name to just show treatment
+  let displayTitle = caseItem.name;
+  if (pageContext) {
+    const extractedTreatment = extractTreatmentFromCaseNameForDisplay(caseItem.name);
+    displayTitle = extractedTreatment;
+  }
   
   // Get matching goals to display as tags
   const goalLabels = {
@@ -4854,7 +7097,13 @@ function renderCasePreviewCard(caseItem) {
         <div class="case-preview-image placeholder">Before/After</div>
       `}
       <div class="case-preview-content">
-        <h4 class="case-preview-title">${caseItem.name}</h4>
+        <div class="case-preview-header">
+          <h4 class="case-preview-title">${escapeHtml(displayTitle)}</h4>
+          ${caseItem.demographicMatchPercentage !== undefined && caseItem.demographicMatchPercentage !== null ? `
+            <div class="case-match-percentage">${caseItem.demographicMatchPercentage}% match</div>
+          ` : ''}
+        </div>
+        ${matchIndicatorsHtml}
         ${goalTagsHtml}
         ${treatments.length > 0 ? `
           <div class="case-preview-treatments">
@@ -4875,8 +7124,13 @@ function renderCasePreviewCard(caseItem) {
 function showCaseFromResults(caseId) {
   const caseItem = caseData.find(c => c.id === caseId);
   if (caseItem) {
-    // Set return screen to results
-    caseDetailReturnScreen = "results";
+    // Check if we're coming from treatment detail screen or results screen
+    const treatmentDetailActive = document.getElementById("treatment-detail-screen")?.classList.contains("active");
+    if (treatmentDetailActive) {
+      caseDetailReturnScreen = "treatment-detail";
+    } else {
+      caseDetailReturnScreen = "results";
+    }
     showCaseDetail(caseItem);
   }
 }
@@ -4950,6 +7204,19 @@ window.populateResultsScreen = populateResultsScreen;
 // Expose functions globally for onclick handlers
 window.skipLeadCapture = skipLeadCapture;
 window.proceedToResults = proceedToResults;
+
+// Expose concern category functions globally
+window.toggleConcernCategory = toggleConcernCategory;
+window.initializeConcernCategories = initializeConcernCategories;
+window.initializeAreasOfConcern = initializeAreasOfConcern;
+window.toggleAreaOfConcern = toggleAreaOfConcern;
+window.proceedToGoalsAndAge = proceedToGoalsAndAge;
+window.startForm = startForm;
+window.handleStartButtonClick = handleStartButtonClick;
+window.filterGalleryByConcern = filterGalleryByConcern;
+
+// Initialize userSelections on window for global access
+window.userSelections = userSelections;
 
 // Map goals to related issues
 const goalToIssuesMap = {
@@ -5937,7 +8204,7 @@ function requestConsultation() {
                 ? `
                 <div class="consultation-discount-section">
                   <div class="consultation-discount-badge">
-                    <span class="consultation-discount-icon">🎁</span>
+                    <span class="consultation-discount-icon">${getIconSVG("gift", 16)}</span>
                     <div class="consultation-discount-info">
                       <span class="consultation-discount-amount">$${
                         discount.amount
@@ -6997,6 +9264,96 @@ const issueNameMappings = {
 };
 
 function getMatchingCasesForItem(item) {
+  // If item is a category, match by category keywords
+  if (item.type === 'category') {
+    const category = HIGH_LEVEL_CONCERNS.find(c => c.id === item.id);
+    if (!category) return [];
+    
+    return caseData
+      .map(caseItem => {
+        const score = calculateMatchingScore(caseItem, userSelections);
+        caseItem.matchingScore = score;
+        return caseItem;
+      })
+      .filter(caseItem => {
+        // Check if case matches this category
+        const caseNameLower = (caseItem.name || "").toLowerCase();
+        const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(c => c.toLowerCase());
+        
+        // Helper function to normalize keywords (handle hyphens and spaces)
+        const normalizeKeyword = (keyword) => keyword.toLowerCase().replace(/[-_\s]+/g, '[-\\s_]*');
+        
+        const nameMatch = category.mapsToPhotos.some(keyword => {
+          const keywordLower = keyword.toLowerCase();
+          // Direct match
+          if (caseNameLower.includes(keywordLower)) return true;
+          // Match with normalized keyword (handles hyphens/spaces)
+          const normalized = normalizeKeyword(keyword);
+          const regex = new RegExp(normalized, 'i');
+          return regex.test(caseNameLower);
+        });
+        
+        const criteriaMatch = category.mapsToPhotos.some(keyword => {
+          const keywordLower = keyword.toLowerCase();
+          return matchingCriteriaLower.some(criteria => {
+            if (criteria.includes(keywordLower)) return true;
+            // Match with normalized keyword
+            const normalized = normalizeKeyword(keyword);
+            const regex = new RegExp(normalized, 'i');
+            return regex.test(criteria);
+          });
+        });
+        
+        // Also check mapsToSpecificIssues against case's solved issues and matching criteria
+        let issueMatch = false;
+        if (category.mapsToSpecificIssues && category.mapsToSpecificIssues.length > 0) {
+          const solvedIssuesLower = (caseItem.solved || []).map(issue => 
+            typeof issue === 'string' ? issue.toLowerCase() : String(issue || '').toLowerCase()
+          );
+          const directMatchingIssuesLower = (caseItem.directMatchingIssues || []).map(issue => 
+            typeof issue === 'string' ? issue.toLowerCase() : String(issue || '').toLowerCase()
+          );
+          const allCaseIssuesLower = [...solvedIssuesLower, ...directMatchingIssuesLower, ...matchingCriteriaLower];
+          
+          issueMatch = category.mapsToSpecificIssues.some(issueKeyword => {
+            const issueKeywordLower = issueKeyword.toLowerCase();
+            return allCaseIssuesLower.some(caseIssue => {
+              // Direct match
+              if (caseIssue.includes(issueKeywordLower) || issueKeywordLower.includes(caseIssue)) return true;
+              // Normalized match
+              const normalized = normalizeKeyword(issueKeyword);
+              const regex = new RegExp(normalized, 'i');
+              return regex.test(caseIssue);
+            });
+          });
+        }
+        
+        // Filter by selected areas if any are selected
+        let areaMatch = true;
+        if (userSelections.selectedAreas && userSelections.selectedAreas.length > 0) {
+          const caseName = caseItem.name || "";
+          const caseNameLower = caseName.toLowerCase();
+          const matchingCriteria = (caseItem.matchingCriteria || []).map(c => c.toLowerCase());
+          
+          // Check if any selected area matches the case
+          areaMatch = userSelections.selectedAreas.some(areaId => {
+            const area = AREAS_OF_CONCERN.find(a => a.id === areaId);
+            if (!area) return false;
+            
+            const areaNameLower = area.name.toLowerCase();
+            // Check if area name appears in case name or matching criteria
+            return caseNameLower.includes(areaNameLower) || 
+                   matchingCriteria.some(c => c.includes(areaNameLower) || c.includes(areaId));
+          });
+        }
+        
+        return (nameMatch || criteriaMatch || issueMatch) && areaMatch;
+      })
+      .filter(caseItem => !isSurgicalCase(caseItem)) // Filter out surgical cases
+      .sort((a, b) => (b.matchingScore || 0) - (a.matchingScore || 0));
+  }
+  
+  // Otherwise, use existing logic for issues
   let matchingCases = [];
 
   if (item.type === "issue") {
@@ -7125,7 +9482,10 @@ function getMatchingCasesForItem(item) {
 
   matchingCases.sort((a, b) => (b.matchingScore || 0) - (a.matchingScore || 0));
 
-  return matchingCases.slice(0, 10); // Limit to 10 for preview
+  // Filter out surgical cases before returning
+  const nonSurgicalCases = filterNonSurgicalCases(matchingCases);
+  
+  return nonSurgicalCases.slice(0, 10); // Limit to 10 for preview
 }
 
 function generateIssueGoalDescription(item) {
@@ -7514,8 +9874,14 @@ function displayGallery(cases) {
   document.getElementById("form-screen").classList.remove("active");
   document.getElementById("gallery-toc").classList.add("active");
 
-  // Store cases for filtering
-  allCasesForFiltering = cases;
+  // Store cases for filtering (filter out surgical cases)
+  allCasesForFiltering = filterNonSurgicalCases(cases);
+  
+  // Reset concern filter
+  activeGalleryConcern = 'all';
+  
+  // Populate concern filter chips
+  populateGalleryConcernFilters();
 
   // Display with current filter
   const currentFilter =
@@ -7532,6 +9898,71 @@ function displayGallery(cases) {
   updateDiscountDisplays();
 }
 
+// Gallery concern filter
+let activeGalleryConcern = 'all';
+
+function filterGalleryByConcern(concernId) {
+  activeGalleryConcern = concernId;
+  
+  // Update active chip
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.classList.remove('active');
+    if (chip.dataset.filter === concernId) {
+      chip.classList.add('active');
+    }
+  });
+  
+  // Re-filter cases with current view filter (all/read/favorited)
+  const activeViewFilter = document.querySelector('.gallery-filters .filter-button.active');
+  const viewFilter = activeViewFilter ? activeViewFilter.dataset.filter : 'all';
+  filterCases(viewFilter);
+}
+
+function populateGalleryConcernFilters() {
+  const filtersContainer = document.getElementById('gallery-concern-filters');
+  if (!filtersContainer) return;
+  
+  const categories = userSelections.selectedConcernCategories || [];
+  
+  // Count all cases first
+  let totalCases = 0;
+  const categoryCounts = {};
+  
+  categories.forEach(categoryId => {
+    const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+    if (category) {
+      const matchingCases = getMatchingCasesForItem({
+        type: 'category',
+        name: category.name,
+        id: categoryId,
+        mapsToSpecificIssues: category.mapsToSpecificIssues
+      });
+      categoryCounts[categoryId] = matchingCases.length;
+      totalCases += matchingCases.length;
+    }
+  });
+  
+  // Update "All" count
+  const allCount = document.getElementById('all-count');
+  if (allCount) {
+    allCount.textContent = totalCases > 0 ? `(${totalCases})` : '';
+  }
+  
+  // Add category chips
+  categories.forEach(categoryId => {
+    const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+    if (category) {
+      const count = categoryCounts[categoryId] || 0;
+      const chip = document.createElement('button');
+      chip.className = 'filter-chip';
+      chip.dataset.filter = categoryId;
+      chip.onclick = () => filterGalleryByConcern(categoryId);
+      chip.innerHTML = `${category.name} <span class="chip-count">${count}</span>`;
+      filtersContainer.appendChild(chip);
+    }
+  });
+}
+
 function filterCases(filterType) {
   // Update active filter button
   document.querySelectorAll(".filter-button").forEach((btn) => {
@@ -7542,6 +9973,21 @@ function filterCases(filterType) {
   });
 
   let filteredCases = allCasesForFiltering;
+  
+  // First filter by concern if not "all"
+  if (activeGalleryConcern !== 'all') {
+    const category = HIGH_LEVEL_CONCERNS.find(c => c.id === activeGalleryConcern);
+    if (category) {
+      const concernCases = getMatchingCasesForItem({
+        type: 'category',
+        name: category.name,
+        id: activeGalleryConcern,
+        mapsToSpecificIssues: category.mapsToSpecificIssues
+      });
+      const concernCaseIds = new Set(concernCases.map(c => c.id));
+      filteredCases = filteredCases.filter(c => concernCaseIds.has(c.id));
+    }
+  }
 
   if (filterType === "read") {
     filteredCases = allCasesForFiltering.filter((c) => isCaseRead(c.id));
@@ -7962,13 +10408,19 @@ async function showCaseDetail(caseItem, returnScreen = null) {
     caseDetailReturnScreen = returnScreen;
   }
 
+  // Ensure matching score and demographic percentage are calculated
+  if (caseItem.demographicMatchPercentage === undefined || caseItem.demographicMatchPercentage === null) {
+    calculateMatchingScore(caseItem, userSelections);
+  }
+
   // Scroll to top
   scrollToTop();
 
   // Hide all screens
-  document.getElementById("gallery-toc").classList.remove("active");
-  document.getElementById("issue-detail-screen").classList.remove("active");
+  document.getElementById("gallery-toc")?.classList.remove("active");
+  document.getElementById("issue-detail-screen")?.classList.remove("active");
   document.getElementById("results-screen")?.classList.remove("active");
+  document.getElementById("treatment-detail-screen")?.classList.remove("active");
   document.getElementById("case-detail").classList.add("active");
 
   // Update floating CTA
@@ -8140,6 +10592,65 @@ async function showCaseDetail(caseItem, returnScreen = null) {
                 </div>
             </div>
             
+            ${(() => {
+              // Add similarity score explanation if demographic match percentage exists
+              if (caseItem.demographicMatchPercentage !== undefined && caseItem.demographicMatchPercentage !== null) {
+                const breakdown = getSimilarityScoreBreakdown(caseItem, userSelections);
+                if (breakdown.components.length > 0) {
+                  // Calculate sum of contributions to verify
+                  const totalContribution = breakdown.components.reduce((sum, comp) => sum + comp.contribution, 0);
+                  
+                  return `
+                    <div class="case-similarity-breakdown">
+                      <div class="similarity-header">
+                        <h3 class="similarity-title">Similarity Score: ${breakdown.totalScore}%</h3>
+                        <p class="similarity-description">This score shows how closely this patient's profile matches yours. Each demographic factor is compared and weighted by importance, then combined to create the final score.</p>
+                      </div>
+                      <div class="similarity-calculation-explanation">
+                        <p class="calculation-intro"><strong>How it's calculated:</strong> For each factor, we calculate how similar you are (0-100%), multiply by that factor's weight, then divide by the total weight of all available factors.</p>
+                      </div>
+                      <div class="similarity-components">
+                        ${breakdown.components.map(component => `
+                          <div class="similarity-component">
+                            <div class="component-header">
+                              <span class="component-field">${component.field}</span>
+                            </div>
+                            <div class="component-details">
+                              <div class="component-comparison">
+                                <span class="component-value">You: ${component.userValue}</span>
+                                <span class="component-separator">→</span>
+                                <span class="component-value">Patient: ${component.caseValue}</span>
+                              </div>
+                              <div class="component-difference">${component.difference}</div>
+                              <div class="component-calculation">
+                                <div class="calculation-step">
+                                  <span class="calc-label">Similarity:</span>
+                                  <span class="calc-value">${component.similarity}%</span>
+                                </div>
+                                <div class="calculation-step">
+                                  <span class="calc-label">Weight:</span>
+                                  <span class="calc-value">${component.weight}%</span>
+                                </div>
+                                <div class="calculation-step calculation-result">
+                                  <span class="calc-label">Contributes:</span>
+                                  <span class="calc-value">${component.contribution}% to total</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        `).join('')}
+                      </div>
+                      <div class="similarity-summary">
+                        <p><strong>Total:</strong> ${breakdown.components.map(c => `${c.contribution}%`).join(' + ')} = <strong>${breakdown.totalScore}%</strong></p>
+                        <p class="similarity-note-text">Only factors where both you and the patient have data are included. Missing data doesn't lower your score—we only compare what's available.</p>
+                      </div>
+                    </div>
+                  `;
+                }
+              }
+              return '';
+            })()}
+            
             <div class="case-detail-cta">
                 ${(() => {
                   const discount = getCaseDiscount(caseItem);
@@ -8147,7 +10658,7 @@ async function showCaseDetail(caseItem, returnScreen = null) {
                     ? `
                     <div class="case-detail-discount-offer">
                       <div class="case-detail-discount-badge">
-                        <span class="case-detail-discount-icon">🎁</span>
+                        <span class="case-detail-discount-icon">${getIconSVG("gift", 16)}</span>
                         <div class="case-detail-discount-info">
                           <span class="case-detail-discount-amount">$${discount.amount} OFF</span>
                           <span class="case-detail-discount-desc">${discount.description}</span>
@@ -8163,7 +10674,7 @@ async function showCaseDetail(caseItem, returnScreen = null) {
                     Get a comprehensive facial analysis and treatment recommendations tailored specifically to your concerns and goals.
                 </p>
                 <button class="case-detail-cta-button" onclick="requestConsultation()">
-                    <span>✨</span>
+                    ${getIconSVG("sparkle", 16)}
                     Get My Personalized Treatment Plan
                 </button>
             </div>
@@ -8217,6 +10728,8 @@ function goBackToGallery() {
     showMyCases(); // Refresh the list
   } else if (returnScreen === "results") {
     document.getElementById("results-screen").classList.add("active");
+  } else if (returnScreen === "treatment-detail") {
+    document.getElementById("treatment-detail-screen").classList.add("active");
   } else {
     document.getElementById("gallery-toc").classList.add("active");
     // Refresh gallery to show updated indicators - use existing filtered cases
@@ -8785,6 +11298,36 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (topRightButtons) {
     topRightButtons.classList.remove("visible");
   }
+
+  // ========================================================================
+  // SET UP NAVIGATION EVENT LISTENERS (after DOM is ready)
+  // ========================================================================
+  
+  // Start button on home screen
+  const startButton = document.getElementById("start-button");
+  if (startButton) {
+    startButton.addEventListener("click", function(e) {
+      e.preventDefault();
+      console.log("Start button clicked");
+      startForm();
+    });
+    console.log("✓ Start button listener attached");
+  } else {
+    console.warn("Start button not found");
+  }
+
+  // Proceed to goals button on concerns screen
+  const proceedBtn = document.getElementById("proceed-to-goals-btn");
+  if (proceedBtn) {
+    proceedBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      console.log("Proceed to goals button clicked");
+      proceedToGoalsAndAge();
+    });
+    console.log("✓ Proceed button listener attached");
+  } else {
+    console.warn("Proceed button not found");
+  }
 });
 
 // Export all cases to markdown format for Notion
@@ -9025,7 +11568,7 @@ function showDiscountDetails() {
   content.innerHTML = `
     <div class="discount-modal-display">
       <div class="discount-modal-badge">
-        <span class="discount-modal-icon">🎁</span>
+        <span class="discount-modal-icon">${getIconSVG("gift", 16)}</span>
         <div class="discount-modal-amount">$${discount.amount} OFF</div>
         <div class="discount-modal-label">${discount.description}</div>
       </div>
@@ -9137,7 +11680,7 @@ function getDiscountBadgeHTML(caseItem) {
 
   return `
     <div class="case-discount-badge" onclick="event.stopPropagation(); showDiscountDetails()">
-      <span class="case-discount-icon">🎁</span>
+      <span class="case-discount-icon">${getIconSVG("gift", 16)}</span>
       <span class="case-discount-amount">$${discount.amount} OFF</span>
     </div>
   `;
@@ -9157,9 +11700,10 @@ window.closeDiscountModal = closeDiscountModal;
  */
 function updateFloatingCTA() {
   const floatingCTA = document.getElementById("floating-consultation-cta");
-  if (!floatingCTA) return;
-
-  // Show on gallery, case detail, my cases, and issue detail screens
+  const resultsCTAFooter = document.getElementById("results-cta-footer");
+  
+  // Show on gallery, my cases, and issue detail screens
+  // Hide on case detail - we want to show the results-cta-footer instead
   const galleryActive = document
     .getElementById("gallery-toc")
     ?.classList.contains("active");
@@ -9172,11 +11716,34 @@ function updateFloatingCTA() {
   const issueDetailActive = document
     .getElementById("issue-detail-screen")
     ?.classList.contains("active");
+  const resultsScreenActive = document
+    .getElementById("results-screen")
+    ?.classList.contains("active");
+  const treatmentDetailActive = document
+    .getElementById("treatment-detail-screen")
+    ?.classList.contains("active");
+  const formScreenActive = document
+    .getElementById("form-screen")
+    ?.classList.contains("active");
+  const leadCaptureActive = document
+    .getElementById("lead-capture-screen")
+    ?.classList.contains("active");
 
-  if (galleryActive || caseDetailActive || myCasesActive || issueDetailActive) {
-    floatingCTA.classList.add("visible");
+  // Show floating CTA on gallery, my cases, and issue detail (but NOT case detail, results screen, or treatment detail)
+  if ((galleryActive || myCasesActive || issueDetailActive) && !resultsScreenActive && !caseDetailActive && !treatmentDetailActive) {
+    if (floatingCTA) floatingCTA.classList.add("visible");
   } else {
-    floatingCTA.classList.remove("visible");
+    if (floatingCTA) floatingCTA.classList.remove("visible");
+  }
+
+  // Show results-cta-footer ONLY on case detail screen AND treatment detail screen
+  // Hide it on results screen, form-screen, and lead-capture-screen
+  if (resultsCTAFooter) {
+    if ((caseDetailActive || treatmentDetailActive) && !formScreenActive && !leadCaptureActive && !resultsScreenActive) {
+      resultsCTAFooter.style.display = "block";
+    } else {
+      resultsCTAFooter.style.display = "none";
+    }
   }
 }
 
@@ -9225,3 +11792,195 @@ if (document.readyState === "loading") {
   setupFloatingCTA();
   updateDiscountDisplays();
 }
+
+// ============================================================================
+// CONCERN MAPPING ANALYSIS
+// ============================================================================
+
+/**
+ * Analyze concern mapping and generate nested list
+ * Run this in browser console: analyzeConcernMapping()
+ */
+function analyzeConcernMapping() {
+  console.log("=== CONCERN MAPPING ANALYSIS ===\n");
+  
+  if (!caseData || caseData.length === 0) {
+    console.warn("No case data available. Make sure cases are loaded from Airtable.");
+    return;
+  }
+  
+  // Extract all unique concerns from case names
+  const concernMap = new Map(); // concern -> { cases: [], treatments: Set, categories: Set }
+  
+  caseData.forEach(caseItem => {
+    const concern = extractConcernFromCaseName(caseItem.name);
+    const treatment = extractTreatmentFromCaseName(caseItem.name);
+    
+    if (!concernMap.has(concern)) {
+      concernMap.set(concern, {
+        cases: [],
+        treatments: new Set(),
+        categories: new Set()
+      });
+    }
+    
+    const concernData = concernMap.get(concern);
+    concernData.cases.push(caseItem);
+    concernData.treatments.add(treatment);
+    
+    // Find which high-level categories this concern maps to
+    HIGH_LEVEL_CONCERNS.forEach(category => {
+      const caseNameLower = (caseItem.name || "").toLowerCase();
+      const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(c => c.toLowerCase());
+      
+      const nameMatch = category.mapsToPhotos.some(keyword => 
+        caseNameLower.includes(keyword.toLowerCase())
+      );
+      const criteriaMatch = category.mapsToPhotos.some(keyword =>
+        matchingCriteriaLower.some(criteria => criteria.includes(keyword.toLowerCase()))
+      );
+      
+      if (nameMatch || criteriaMatch) {
+        concernData.categories.add(category.name);
+      }
+    });
+  });
+  
+  // Group concerns by high-level category
+  const categoryMap = new Map();
+  
+  HIGH_LEVEL_CONCERNS.forEach(category => {
+    categoryMap.set(category.name, {
+      category: category,
+      concerns: []
+    });
+  });
+  
+  concernMap.forEach((data, concern) => {
+    // If concern maps to multiple categories, add to all of them
+    if (data.categories.size === 0) {
+      // Unmapped concern - add to "Uncategorized"
+      if (!categoryMap.has("Uncategorized")) {
+        categoryMap.set("Uncategorized", {
+          category: { name: "Uncategorized", id: "uncategorized" },
+          concerns: []
+        });
+      }
+      categoryMap.get("Uncategorized").concerns.push({
+        concern: concern,
+        caseCount: data.cases.length,
+        treatments: Array.from(data.treatments).sort()
+      });
+    } else {
+      data.categories.forEach(categoryName => {
+        if (categoryMap.has(categoryName)) {
+          categoryMap.get(categoryName).concerns.push({
+            concern: concern,
+            caseCount: data.cases.length,
+            treatments: Array.from(data.treatments).sort()
+          });
+        }
+      });
+    }
+  });
+  
+  // Generate nested list output
+  console.log("NESTED CONCERN MAPPING:\n");
+  console.log("=".repeat(60));
+  
+  categoryMap.forEach((categoryData, categoryName) => {
+    if (categoryData.concerns.length === 0) return;
+    
+    console.log(`\n📁 ${categoryName}`);
+    console.log(`   Description: ${categoryData.category.description || "N/A"}`);
+    console.log(`   Maps to Photos: ${categoryData.category.mapsToPhotos?.join(", ") || "N/A"}`);
+    console.log(`   Total Concerns: ${categoryData.concerns.length}`);
+    console.log("");
+    
+    // Sort concerns by case count (descending)
+    const sortedConcerns = categoryData.concerns.sort((a, b) => b.caseCount - a.caseCount);
+    
+    sortedConcerns.forEach(({ concern, caseCount, treatments }) => {
+      console.log(`   ├─ ${concern}`);
+      console.log(`   │  Cases: ${caseCount}`);
+      console.log(`   │  Treatments: ${treatments.join(", ") || "None"}`);
+      
+      // Show sample case names
+      const sampleCases = concernMap.get(concern).cases.slice(0, 3).map(c => c.name);
+      if (sampleCases.length > 0) {
+        console.log(`   │  Sample cases:`);
+        sampleCases.forEach(caseName => {
+          console.log(`   │    • ${caseName}`);
+        });
+      }
+      console.log("");
+    });
+  });
+  
+  // Summary statistics
+  console.log("\n" + "=".repeat(60));
+  console.log("SUMMARY STATISTICS:\n");
+  console.log(`Total Cases Analyzed: ${caseData.length}`);
+  console.log(`Unique Concerns Found: ${concernMap.size}`);
+  console.log(`High-Level Categories: ${HIGH_LEVEL_CONCERNS.length}`);
+  
+  // Find concerns that map to multiple categories
+  const multiMapped = Array.from(concernMap.entries())
+    .filter(([_, data]) => data.categories.size > 1)
+    .map(([concern, data]) => ({
+      concern,
+      categories: Array.from(data.categories),
+      caseCount: data.cases.length
+    }));
+  
+  if (multiMapped.length > 0) {
+    console.log(`\n⚠️  Concerns Mapping to Multiple Categories (${multiMapped.length}):`);
+    multiMapped.forEach(({ concern, categories, caseCount }) => {
+      console.log(`   • ${concern} (${caseCount} cases) → ${categories.join(", ")}`);
+    });
+  }
+  
+  // Find unmapped concerns
+  const unmapped = Array.from(concernMap.entries())
+    .filter(([_, data]) => data.categories.size === 0)
+    .map(([concern, data]) => ({
+      concern,
+      caseCount: data.cases.length
+    }));
+  
+  if (unmapped.length > 0) {
+    console.log(`\n⚠️  Unmapped Concerns (${unmapped.length}):`);
+    unmapped.forEach(({ concern, caseCount }) => {
+      console.log(`   • ${concern} (${caseCount} cases)`);
+    });
+  }
+  
+  // Find concerns with body parts as treatments
+  const bodyPartIssues = Array.from(concernMap.entries())
+    .filter(([_, data]) => {
+      return Array.from(data.treatments).some(t => 
+        BODY_PARTS.has(t.toLowerCase()) || t === "General Treatment"
+      );
+    })
+    .map(([concern, data]) => ({
+      concern,
+      problematicTreatments: Array.from(data.treatments).filter(t => 
+        BODY_PARTS.has(t.toLowerCase()) || t === "General Treatment"
+      ),
+      caseCount: data.cases.length
+    }));
+  
+  if (bodyPartIssues.length > 0) {
+    console.log(`\n⚠️  Concerns with Problematic Treatments (${bodyPartIssues.length}):`);
+    bodyPartIssues.forEach(({ concern, problematicTreatments, caseCount }) => {
+      console.log(`   • ${concern} (${caseCount} cases)`);
+      console.log(`     Problematic: ${problematicTreatments.join(", ")}`);
+    });
+  }
+  
+  console.log("\n" + "=".repeat(60));
+  console.log("\nTo run this analysis again, call: analyzeConcernMapping()");
+}
+
+// Make analysis function globally accessible
+window.analyzeConcernMapping = analyzeConcernMapping;
