@@ -126,3 +126,4 @@ Once deployed:
 3. Set up environment variables if needed (in Vercel dashboard → Settings → Environment Variables)
 4. Configure custom domain if desired (in Vercel dashboard → Settings → Domains)
 
+

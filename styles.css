@@ -878,6 +878,13 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   max-width: 600px;
   margin: 0 auto;
+  width: 100%;
+}
+
+/* Ensure form container is wide enough for 2 columns on step 2 */
+#form-step-2 .form-container,
+.form-container #form-step-2 {
+  max-width: 100%;
 }
 
 @media (max-width: 480px) {
@@ -985,6 +992,7 @@ body {
   border-radius: 2px;
   overflow: hidden;
   position: relative;
+  transition: background 0.3s ease;
 }
 
 .form-step-progress {
@@ -993,6 +1001,16 @@ body {
   background: #212121;
   border-radius: 2px;
   transition: width 0.3s ease;
+}
+
+/* Update segment background directly when active or completed */
+.form-step-segment.active {
+  background: #212121;
+  animation: progressFill 0.3s ease;
+}
+
+.form-step-segment.completed {
+  background: #212121;
 }
 
 .form-step-segment.active .form-step-progress {
@@ -1251,10 +1269,10 @@ body {
 
 /* Review Step Styles */
 .review-section {
-  margin-bottom: 32px;
-  padding: 20px;
-  background: #f8f8f8;
-  border-radius: 12px;
+  margin-bottom: 24px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
 }
 
 /* Hide goals section in review - can be re-enabled by removing this rule */
@@ -1263,58 +1281,156 @@ body {
 }
 
 .review-section-title {
-  font-size: 18px;
-  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
   color: #212121;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  letter-spacing: -0.2px;
+  text-transform: uppercase;
+  font-size: 13px;
+  opacity: 0.7;
 }
 
 .review-items {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 0;
 }
 
 .review-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
+  gap: 12px;
+  padding: 14px 16px;
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid #e8e8e8;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.review-item:hover {
+  border-color: #d0d0d0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
 }
 
 .review-item-icon {
   flex-shrink: 0;
-  color: #10b981;
+  color: var(--color-primary, #ff6b9d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+body.brand-uniqueAestheticsPink .review-item-icon {
+  color: #ff6b9d;
+}
+
+body.brand-uniqueAestheticsTeal .review-item-icon {
+  color: #00b4a6;
 }
 
 .review-item-text {
+  font-family: "Montserrat", sans-serif;
   font-size: 15px;
   color: #212121;
   font-weight: 500;
+  line-height: 1.4;
 }
 
 .review-item-label {
-  font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
   color: #666;
   font-weight: 500;
-  min-width: 120px;
+  min-width: 140px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  opacity: 0.8;
 }
 
 .review-item-value {
+  font-family: "Montserrat", sans-serif;
   font-size: 15px;
   color: #212121;
-  font-weight: 500;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .review-empty {
   color: #999;
   font-style: italic;
-  padding: 12px;
+  padding: 20px;
   text-align: center;
+  background: white;
+  border-radius: 12px;
+  border: 1px dashed #e8e8e8;
+  font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Review summary containers */
+#review-concerns-summary,
+#review-areas-summary,
+#review-details-summary,
+#review-optional-summary,
+#review-goals-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Add spacing between review sections */
+.review-section + .review-section {
+  margin-top: 28px;
+}
+
+/* Remove bottom margin from last review section */
+.review-section:last-of-type {
+  margin-bottom: 0;
+}
+
+/* Improve form section spacing on review step */
+#form-step-6 .form-section {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+/* Responsive styles for review step */
+@media (max-width: 480px) {
+  .review-section-title {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .review-item {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .review-item-label {
+    min-width: 110px;
+    font-size: 12px;
+  }
+
+  .review-item-text,
+  .review-item-value {
+    font-size: 14px;
+  }
+
+  .review-item-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .review-section + .review-section {
+    margin-top: 24px;
+  }
 }
 
 .review-edit-button {
@@ -1337,6 +1453,12 @@ body {
 
 .form-section {
   margin-bottom: 32px;
+  width: 100%;
+}
+
+#form-step-2 .form-section {
+  width: 100%;
+  max-width: 100%;
 }
 
 .demographic-section {
@@ -1874,6 +1996,10 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .demographic-card:hover {
@@ -1890,6 +2016,13 @@ body {
   opacity: 0;
   width: 0;
   height: 0;
+}
+
+.skin-type-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: block;
 }
 
 .demographic-card span,
@@ -1955,12 +2088,11 @@ body {
 
 .sun-response-icon,
 .sun-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  color: #424242;
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  object-fit: contain;
 }
 
 .sun-response-icon svg,
@@ -2275,20 +2407,34 @@ body {
 }
 
 .validation-message {
-  margin-top: 16px;
+  margin: 16px 20px;
   margin-bottom: 8px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 500;
   line-height: 1.5;
   display: none;
+  font-family: "Montserrat", sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .validation-message.error {
   background: #ffebee;
   color: #c62828;
-  border: 1px solid #ef5350;
+  border: 2px solid #ef5350;
 }
 
 /* Gallery Table of Contents */
@@ -3187,6 +3333,16 @@ body {
   gap: 4px;
 }
 
+/* Age input error state */
+.age-input.input-error {
+  border-color: #d32f2f;
+}
+
+.age-input.input-error:focus {
+  border-color: #d32f2f;
+  outline-color: #d32f2f;
+}
+
 .consultation-submit {
   display: flex;
   align-items: center;
@@ -3775,38 +3931,49 @@ body {
 }
 
 .case-modality-badge {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  background: white;
-  border: 3px solid #212121;
-  display: flex;
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 10;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  background: #f8f8f8;
+  color: #666;
+  border: 1px solid #e8e8e8;
+  font-family: "Montserrat", sans-serif;
 }
 
 .case-modality-badge .modality-icon {
-  font-size: 24px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  color: #666;
+}
+
+.case-modality-badge .modality-icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 .case-modality-badge .modality-name {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 500;
+  color: #424242;
+}
+
+.case-modality-badge .modality-separator {
+  font-size: 12px;
+  color: #999;
+  margin: 0 2px;
 }
 
 .case-modality-badge .modality-category {
   font-size: 12px;
-  font-weight: 500;
-  color: #666;
-  margin-left: 8px;
-  padding-left: 8px;
-  border-left: 1px solid #ccc;
+  font-weight: 400;
+  color: #888;
 }
 
 .case-before-after {
@@ -4195,10 +4362,11 @@ body {
    ============================================================================ */
 
 #lead-capture-screen {
-  padding: 20px;
+  padding: 16px;
   display: none;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
 }
 
 #lead-capture-screen.active {
@@ -4210,19 +4378,19 @@ body {
   width: 100%;
   background: white;
   border-radius: 24px;
-  padding: 40px 32px;
+  padding: 24px 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 .lead-capture-header {
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .lead-capture-icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 24px;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
   background: linear-gradient(
     135deg,
     var(--color-accent, #ffa2c7) 0%,
@@ -4240,14 +4408,17 @@ body.brand-uniqueAestheticsPink .lead-capture-icon {
 
 .lead-capture-icon svg {
   color: var(--color-text-primary, #000);
+  width: 24px;
+  height: 24px;
 }
 
 .lead-capture-title {
   font-family: var(--font-heading, "Playfair Display"), serif;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--color-text-primary, #000);
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
 }
 
 body.brand-uniqueAestheticsPink .lead-capture-title {
@@ -4255,10 +4426,10 @@ body.brand-uniqueAestheticsPink .lead-capture-title {
 }
 
 .lead-capture-subtitle {
-  font-size: 18px;
+  font-size: 15px;
   color: #424242;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .lead-capture-subtitle strong {
@@ -4268,44 +4439,70 @@ body.brand-uniqueAestheticsPink .lead-capture-title {
 
 .lead-capture-preview {
   background: #f9f9f9;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 32px;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
 }
 
 .preview-label {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   color: #666;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.lead-capture-thumbnails {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.lead-capture-thumbnails .preview-thumbnail {
+  flex-shrink: 0;
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lead-capture-thumbnails .preview-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .preview-items {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   justify-content: center;
 }
 
 .preview-item {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 4px;
+  padding: 6px 10px;
   background: white;
   border: 1px solid #e8e8e8;
-  border-radius: 20px;
-  font-size: 13px;
+  border-radius: 16px;
+  font-size: 12px;
   font-weight: 500;
   color: #212121;
 }
 
 .preview-item svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   color: #2e7d32;
+  flex-shrink: 0;
 }
 
 .lead-capture-form-section {
@@ -4313,22 +4510,22 @@ body.brand-uniqueAestheticsPink .lead-capture-title {
 }
 
 .lead-form-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #212121;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 }
 
 .lead-form-subtitle {
-  font-size: 14px;
+  font-size: 13px;
   color: #666;
-  margin: 0 0 20px 0;
+  margin: 0 0 16px 0;
 }
 
 .early-lead-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .lead-form-field {
@@ -4338,10 +4535,10 @@ body.brand-uniqueAestheticsPink .lead-capture-title {
 .lead-input,
 .lead-email-input {
   width: 100%;
-  padding: 16px 20px;
+  padding: 12px 16px;
   border: 2px solid var(--color-border, #e8e8e8);
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 15px;
   font-family: "Montserrat", sans-serif;
   transition: all 0.2s ease;
   text-align: left;
@@ -4370,12 +4567,12 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
 
 .lead-submit-button {
   width: 100%;
-  padding: 16px 24px;
+  padding: 12px 20px;
   background: var(--color-primary, #000);
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 600;
   font-family: "Montserrat", sans-serif;
   cursor: pointer;
@@ -7963,6 +8160,16 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   animation: slideDown 0.3s ease-out;
 }
 
+.concern-warning-message.error {
+  background: #ffebee;
+  border: 2px solid #ef5350;
+  color: #c62828;
+}
+
+.concern-warning-message.error svg {
+  color: #ef5350;
+}
+
 .concern-warning-message svg {
   flex-shrink: 0;
   color: #ffc107;
@@ -8448,11 +8655,33 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
 
 /* Areas of Concern Grid */
 .areas-of-concern-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 18px !important;
+  row-gap: 18px !important;
+  column-gap: 18px !important;
   margin: 24px 0;
   padding: 0 4px;
+  width: 100%;
+  max-width: 100% !important;
+}
+
+/* Ensure form section doesn't constrain the grid */
+#form-step-2 .form-section,
+#form-step-2 .areas-of-concern-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Force 2 columns for areas grid - override any other rules */
+#areas-of-concern-grid.areas-of-concern-grid,
+div#areas-of-concern-grid,
+.form-step[data-step="2"] #areas-of-concern-grid,
+#form-step-2 #areas-of-concern-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  grid-auto-flow: row !important;
+  gap: 18px !important;
 }
 
 .area-of-concern-card {
@@ -8469,6 +8698,10 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   gap: 8px;
   text-align: center;
   min-height: 100px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .area-of-concern-card:hover {
@@ -8485,13 +8718,13 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
 
 .area-card-icon {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-accent-light, #ffd4e5);
-  border-radius: 10px;
+  border-radius: 12px;
   color: var(--color-primary, #000000);
   position: relative;
   overflow: hidden;
@@ -8501,7 +8734,7 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 4px;
+  padding: 6px;
 }
 
 .area-of-concern-card.selected .area-card-icon {
@@ -8515,7 +8748,7 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
 }
 
 .area-card-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-text-primary, #000000);
   margin: 0;
@@ -8552,8 +8785,19 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
 
 @media (max-width: 600px) {
   .areas-of-concern-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+    row-gap: 14px !important;
+    column-gap: 14px !important;
+  }
+
+  #areas-of-concern-grid.areas-of-concern-grid,
+  div#areas-of-concern-grid,
+  .form-step[data-step="2"] #areas-of-concern-grid,
+  #form-step-2 #areas-of-concern-grid {
+    gap: 14px !important;
+    row-gap: 14px !important;
+    column-gap: 14px !important;
   }
 
   .area-of-concern-card {
@@ -8562,16 +8806,16 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   }
 
   .area-card-icon {
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
   }
 
   .area-icon-image {
-    padding: 3px;
+    padding: 5px;
   }
 
   .area-card-title {
-    font-size: 13px;
+    font-size: 15px;
   }
 }
 
@@ -8948,6 +9192,8 @@ body.brand-uniqueAestheticsPink .results-tab.active {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+  max-width: 360px;
+  margin: 0 auto;
 }
 
 .treatment-group-card {
@@ -8958,6 +9204,9 @@ body.brand-uniqueAestheticsPink .results-tab.active {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .treatment-group-card:hover {
@@ -8987,8 +9236,8 @@ body.brand-uniqueAestheticsPink .results-tab.active {
   font-size: 12px;
   font-weight: 600;
   color: var(--color-text-muted, #666);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none;
+  letter-spacing: 0.3px;
 }
 
 .relevance-tag {
@@ -9018,6 +9267,7 @@ body.brand-uniqueAestheticsPink .results-tab.active {
   color: var(--color-text-muted, #666);
   background: var(--color-accent-light, #ffd4e5);
   padding: 4px 10px;
+  white-space: nowrap;
   border-radius: 12px;
 }
 
@@ -9088,10 +9338,34 @@ body.brand-uniqueAestheticsPink .results-tab.active {
 .treatment-group-preview {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
-  height: 80px;
+  margin-bottom: 0;
+  height: 140px;
   overflow: hidden;
   border-radius: 8px;
+}
+
+.treatment-group-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border, #e8e8e8);
+}
+
+.treatment-group-cta {
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary, #212121);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s ease;
+}
+
+.treatment-group-card:hover .treatment-group-cta {
+  color: var(--color-accent, #ffa2c7);
 }
 
 .treatment-group-preview-image {
@@ -9099,6 +9373,12 @@ body.brand-uniqueAestheticsPink .results-tab.active {
   object-fit: cover;
   border-radius: 8px;
   min-width: 0;
+}
+
+@media (min-width: 600px) {
+  .treatment-group-preview {
+    height: 160px;
+  }
 }
 
 .treatment-group-more {
@@ -9136,6 +9416,14 @@ body.brand-uniqueAestheticsPink .results-tab.active {
   margin: 0 auto;
   padding: 20px;
   padding-bottom: 100px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.treatment-detail-content {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .treatment-detail-title {
@@ -9221,6 +9509,16 @@ body.brand-uniqueAestheticsPink .results-tab.active {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 16px;
+}
+
+@media (min-width: 600px) {
+  .treatment-cases-grid {
+    padding: 0 24px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -9278,6 +9576,9 @@ body.brand-uniqueAestheticsPink .results-tab.active {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .case-preview-card:hover {
@@ -9288,9 +9589,15 @@ body.brand-uniqueAestheticsPink .results-tab.active {
 
 .case-preview-image {
   width: 100%;
-  height: 160px;
+  height: 240px;
   object-fit: cover;
   background: linear-gradient(135deg, #f3f3f3 0%, #e8e8e8 100%);
+}
+
+@media (min-width: 600px) {
+  .case-preview-image {
+    height: 280px;
+  }
 }
 
 .case-preview-image.placeholder {
