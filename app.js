@@ -1508,23 +1508,23 @@ const treatmentModalities = {
 
 // Surgical treatment keywords to filter out
 const SURGICAL_KEYWORDS = [
-  'jaw reduction',
-  'jaw surgery',
-  'rhinoplasty',
-  'blepharoplasty',
-  'facelift',
-  'necklift',
-  'browlift',
-  'lip lift',
-  'lip release',
-  'canthopexy',
-  'facial implant',
-  'buccal fat removal',
-  'liposuction',
-  'surgery',
-  'surgical',
-  'implant',
-  'reduction surgery'
+  "jaw reduction",
+  "jaw surgery",
+  "rhinoplasty",
+  "blepharoplasty",
+  "facelift",
+  "necklift",
+  "browlift",
+  "lip lift",
+  "lip release",
+  "canthopexy",
+  "facial implant",
+  "buccal fat removal",
+  "liposuction",
+  "surgery",
+  "surgical",
+  "implant",
+  "reduction surgery",
 ];
 
 /**
@@ -1534,55 +1534,57 @@ const SURGICAL_KEYWORDS = [
  */
 function isSurgicalCase(caseItem) {
   if (!caseItem) return false;
-  
-  const caseName = typeof caseItem.name === 'string' 
-    ? caseItem.name.toLowerCase() 
-    : String(caseItem.name || '').toLowerCase();
-  const treatment = typeof caseItem.treatment === 'string'
-    ? caseItem.treatment.toLowerCase()
-    : String(caseItem.treatment || '').toLowerCase();
-  
+
+  const caseName =
+    typeof caseItem.name === "string"
+      ? caseItem.name.toLowerCase()
+      : String(caseItem.name || "").toLowerCase();
+  const treatment =
+    typeof caseItem.treatment === "string"
+      ? caseItem.treatment.toLowerCase()
+      : String(caseItem.treatment || "").toLowerCase();
+
   // Handle matchingCriteria - it might be an array, string, or other type
   let matchingCriteria = [];
   if (Array.isArray(caseItem.matchingCriteria)) {
-    matchingCriteria = caseItem.matchingCriteria.map(c => {
-      if (typeof c === 'string') return c.toLowerCase();
-      return String(c || '').toLowerCase();
+    matchingCriteria = caseItem.matchingCriteria.map((c) => {
+      if (typeof c === "string") return c.toLowerCase();
+      return String(c || "").toLowerCase();
     });
-  } else if (typeof caseItem.matchingCriteria === 'string') {
+  } else if (typeof caseItem.matchingCriteria === "string") {
     matchingCriteria = [caseItem.matchingCriteria.toLowerCase()];
   } else if (caseItem.matchingCriteria) {
     matchingCriteria = [String(caseItem.matchingCriteria).toLowerCase()];
   }
-  
+
   // Handle solved field - it might be a string, array, or other type
   let solvedArray = [];
   if (Array.isArray(caseItem.solved)) {
-    solvedArray = caseItem.solved.map(s => {
-      if (typeof s === 'string') return s.toLowerCase();
-      return String(s || '').toLowerCase();
+    solvedArray = caseItem.solved.map((s) => {
+      if (typeof s === "string") return s.toLowerCase();
+      return String(s || "").toLowerCase();
     });
-  } else if (typeof caseItem.solved === 'string') {
+  } else if (typeof caseItem.solved === "string") {
     solvedArray = [caseItem.solved.toLowerCase()];
   } else if (caseItem.solved) {
     // Try to convert to string
     solvedArray = [String(caseItem.solved).toLowerCase()];
   }
-  
+
   // Check case name
   for (const keyword of SURGICAL_KEYWORDS) {
     if (caseName.includes(keyword)) {
       return true;
     }
   }
-  
+
   // Check treatment field
   for (const keyword of SURGICAL_KEYWORDS) {
     if (treatment.includes(keyword)) {
       return true;
     }
   }
-  
+
   // Check matching criteria
   for (const criteria of matchingCriteria) {
     for (const keyword of SURGICAL_KEYWORDS) {
@@ -1591,7 +1593,7 @@ function isSurgicalCase(caseItem) {
       }
     }
   }
-  
+
   // Check solved field
   for (const solved of solvedArray) {
     for (const keyword of SURGICAL_KEYWORDS) {
@@ -1600,13 +1602,13 @@ function isSurgicalCase(caseItem) {
       }
     }
   }
-  
+
   // Check if treatment modality is surgical
   const modality = getTreatmentModality(caseItem.name);
   if (modality && modality.category === "Surgical") {
     return true;
   }
-  
+
   return false;
 }
 
@@ -1617,7 +1619,7 @@ function isSurgicalCase(caseItem) {
  */
 function filterNonSurgicalCases(cases) {
   if (!cases || !Array.isArray(cases)) return [];
-  return cases.filter(caseItem => !isSurgicalCase(caseItem));
+  return cases.filter((caseItem) => !isSurgicalCase(caseItem));
 }
 
 // Extract treatment name from case title (e.g., "Resolve X with Filler" -> "Filler")
@@ -1989,23 +1991,72 @@ const HIGH_LEVEL_CONCERNS = [
     group: "Face",
     treatmentHint: "Dermal Fillers • Botox • Sculptra",
     mapsToPhotos: [
-      "facial-balancing", "facial-harmony", "proportions", "symmetry", 
-      "brow-asymmetry", "asymmetry", "resolve-brow", "brow-balance", "facial-symmetry",
-      "balance-brow", "balance-brows", "balance-chin", "balance-jawline", "balance-lip", "balance-lips",
-      "asymmetric-brow", "asymmetric-brows", "asymmetric-chin", "asymmetric-jawline", "asymmetric-lip", "asymmetric-lips",
-      "resolve-asymmetry", "correct-asymmetry", "brow-ptosis", "crooked-nose", "straighten-nose",
-      "balance", "balanced", "balancing", "asymmetric", "asymmetrical",
-      "droopy-tip", "dorsal-hump", "nasal-tip", "rhinoplasty", "over-projected", "gummy-smile",
-      "long-philtral-column", "philtral", "wide-chin", "under-rotated", "nose-rotation",
-      "over-filled", "overfill"
+      "facial-balancing",
+      "facial-harmony",
+      "proportions",
+      "symmetry",
+      "brow-asymmetry",
+      "asymmetry",
+      "resolve-brow",
+      "brow-balance",
+      "facial-symmetry",
+      "balance-brow",
+      "balance-brows",
+      "balance-chin",
+      "balance-jawline",
+      "balance-lip",
+      "balance-lips",
+      "asymmetric-brow",
+      "asymmetric-brows",
+      "asymmetric-chin",
+      "asymmetric-jawline",
+      "asymmetric-lip",
+      "asymmetric-lips",
+      "resolve-asymmetry",
+      "correct-asymmetry",
+      "brow-ptosis",
+      "crooked-nose",
+      "straighten-nose",
+      "balance",
+      "balanced",
+      "balancing",
+      "asymmetric",
+      "asymmetrical",
+      "droopy-tip",
+      "dorsal-hump",
+      "nasal-tip",
+      "rhinoplasty",
+      "over-projected",
+      "gummy-smile",
+      "long-philtral-column",
+      "philtral",
+      "wide-chin",
+      "under-rotated",
+      "nose-rotation",
+      "over-filled",
+      "overfill",
     ],
     mapsToSpecificIssues: [
-      "facial-asymmetry", "proportions", "harmony", "balance", "brow-asymmetry", 
-      "asymmetric-lips", "asymmetric-chin", "asymmetric-jawline", "crooked-nose", "brow-ptosis",
-      "droopy-tip", "dorsal-hump", "nasal-tip-too-narrow", "over-projected-chin",
-      "gummy-smile", "long-philtral-column", "wide-chin", "under-rotated",
-      "lower-cheeks-over-filled"
-    ]
+      "facial-asymmetry",
+      "proportions",
+      "harmony",
+      "balance",
+      "brow-asymmetry",
+      "asymmetric-lips",
+      "asymmetric-chin",
+      "asymmetric-jawline",
+      "crooked-nose",
+      "brow-ptosis",
+      "droopy-tip",
+      "dorsal-hump",
+      "nasal-tip-too-narrow",
+      "over-projected-chin",
+      "gummy-smile",
+      "long-philtral-column",
+      "wide-chin",
+      "under-rotated",
+      "lower-cheeks-over-filled",
+    ],
   },
   {
     id: "smooth-wrinkles-lines",
@@ -2014,12 +2065,30 @@ const HIGH_LEVEL_CONCERNS = [
     icon: "wrinkles",
     group: "Face",
     treatmentHint: "Botox • Xeomin • Dysport",
-    mapsToPhotos: ["smoothen-wrinkles", "neurotoxin", "botox", "wrinkle-reduction", "wrinkles", "lines", "smooth"],
+    mapsToPhotos: [
+      "smoothen-wrinkles",
+      "neurotoxin",
+      "botox",
+      "wrinkle-reduction",
+      "wrinkles",
+      "lines",
+      "smooth",
+    ],
     mapsToSpecificIssues: [
-      "11s", "forehead-lines", "glabella", "crow-feet", "lip-lines", "frown-lines",
-      "under-eye-wrinkles", "neck-lines", "smile-lines", "nasolabial-lines", "marionette-lines",
-      "bunny-lines", "perioral-wrinkles"
-    ]
+      "11s",
+      "forehead-lines",
+      "glabella",
+      "crow-feet",
+      "lip-lines",
+      "frown-lines",
+      "under-eye-wrinkles",
+      "neck-lines",
+      "smile-lines",
+      "nasolabial-lines",
+      "marionette-lines",
+      "bunny-lines",
+      "perioral-wrinkles",
+    ],
   },
   {
     id: "restore-volume-definition",
@@ -2029,19 +2098,50 @@ const HIGH_LEVEL_CONCERNS = [
     group: "Face",
     treatmentHint: "Dermal Fillers • Sculptra",
     mapsToPhotos: [
-      "restore-volume", "fillers", "volume-restoration", "sculptra", 
-      "define-jawline", "enhance-jawline", "jawline-definition", "jawline-contour", "wide-jawline",
-      "volume", "hollow", "flatten", "depletion", "thin", "narrow", "sulcus", "prejowl",
-      "cheekbone", "cheekbone-fullness", "labiomental", "labiomental-groove"
+      "restore-volume",
+      "fillers",
+      "volume-restoration",
+      "sculptra",
+      "define-jawline",
+      "enhance-jawline",
+      "jawline-definition",
+      "jawline-contour",
+      "wide-jawline",
+      "volume",
+      "hollow",
+      "flatten",
+      "depletion",
+      "thin",
+      "narrow",
+      "sulcus",
+      "prejowl",
+      "cheekbone",
+      "cheekbone-fullness",
+      "labiomental",
+      "labiomental-groove",
     ],
     mapsToSpecificIssues: [
-      "hollow-cheeks", "under-eye-hollows", "thin-lips", "weak-chin", "volume-loss", 
-      "ill-defined-jawline", "asymmetric-jawline", "mid-cheek-flattening", 
-      "lower-cheek-volume-depletion", "under-eye-hollow", "upper-eye-hollow",
-      "temporal-hollow", "flat-forehead", "lacking-philtral-column", "prejowl-sulcus",
-      "narrow-jawline", "retruded-chin", "cheekbone-not-prominent",
-      "deep-labiomental-groove", "shallow-labiomental-groove"
-    ]
+      "hollow-cheeks",
+      "under-eye-hollows",
+      "thin-lips",
+      "weak-chin",
+      "volume-loss",
+      "ill-defined-jawline",
+      "asymmetric-jawline",
+      "mid-cheek-flattening",
+      "lower-cheek-volume-depletion",
+      "under-eye-hollow",
+      "upper-eye-hollow",
+      "temporal-hollow",
+      "flat-forehead",
+      "lacking-philtral-column",
+      "prejowl-sulcus",
+      "narrow-jawline",
+      "retruded-chin",
+      "cheekbone-not-prominent",
+      "deep-labiomental-groove",
+      "shallow-labiomental-groove",
+    ],
   },
   {
     id: "improve-skin-texture-tone",
@@ -2051,17 +2151,44 @@ const HIGH_LEVEL_CONCERNS = [
     group: "Face",
     treatmentHint: "Chemical Peels • Microneedling",
     mapsToPhotos: [
-      "improve-skin-texture", "chemical-peel", "microneedling", "skin-texture",
-      "skin-laxity", "tighten-skin", "scars", "blackheads", "oily-skin", "dry-skin",
-      "neck", "submental", "platysmal", "neck-lines",
-      "red-spots", "cheilosis", "dry-lips"
+      "improve-skin-texture",
+      "chemical-peel",
+      "microneedling",
+      "skin-texture",
+      "skin-laxity",
+      "tighten-skin",
+      "scars",
+      "blackheads",
+      "oily-skin",
+      "dry-skin",
+      "neck",
+      "submental",
+      "platysmal",
+      "neck-lines",
+      "red-spots",
+      "cheilosis",
+      "dry-lips",
     ],
     mapsToSpecificIssues: [
-      "large-pores", "uneven-texture", "dull-skin", "rough-skin",
-      "skin-laxity", "loose-skin", "scars", "blackheads", "oily-skin", "dry-skin",
-      "excess-skin", "neck-excess-skin", "loose-neck-skin", "platysmal-bands",
-      "excess-submental-fullness", "jowls", "red-spots", "dry-lips"
-    ]
+      "large-pores",
+      "uneven-texture",
+      "dull-skin",
+      "rough-skin",
+      "skin-laxity",
+      "loose-skin",
+      "scars",
+      "blackheads",
+      "oily-skin",
+      "dry-skin",
+      "excess-skin",
+      "neck-excess-skin",
+      "loose-neck-skin",
+      "platysmal-bands",
+      "excess-submental-fullness",
+      "jowls",
+      "red-spots",
+      "dry-lips",
+    ],
   },
   {
     id: "reduce-dark-spots-discoloration",
@@ -2071,7 +2198,13 @@ const HIGH_LEVEL_CONCERNS = [
     group: "Face",
     treatmentHint: "IPL • Laser Treatments",
     mapsToPhotos: ["reduce-dark-spots", "ipl", "laser", "pigmentation"],
-    mapsToSpecificIssues: ["age-spots", "sun-damage", "hyperpigmentation", "melasma", "dark-spots"]
+    mapsToSpecificIssues: [
+      "age-spots",
+      "sun-damage",
+      "hyperpigmentation",
+      "melasma",
+      "dark-spots",
+    ],
   },
   {
     id: "clear-acne-minimize-pores",
@@ -2081,24 +2214,43 @@ const HIGH_LEVEL_CONCERNS = [
     group: "Face",
     treatmentHint: "Acne Treatments • Facials",
     mapsToPhotos: ["acne-treatment", "clear-acne", "pore-minimizing"],
-    mapsToSpecificIssues: ["acne", "acne-scarring", "large-pores", "clogged-pores"]
+    mapsToSpecificIssues: [
+      "acne",
+      "acne-scarring",
+      "large-pores",
+      "clogged-pores",
+    ],
   },
   {
     id: "eyelid-eye-area-concerns",
     name: "Eyelid & Eye Area Concerns",
-    description: "Address drooping eyelids, excess skin, bags, and dark circles",
+    description:
+      "Address drooping eyelids, excess skin, bags, and dark circles",
     icon: "eyes",
     group: "Face",
     treatmentHint: "Blepharoplasty • Fillers • Energy Treatments",
     mapsToPhotos: [
-      "eyelid", "eyelids", "upper-eyelid", "lower-eyelid", "blepharoplasty",
-      "eye-droop", "eye-bags", "under-eye", "dark-circles", "canthal-tilt"
+      "eyelid",
+      "eyelids",
+      "upper-eyelid",
+      "lower-eyelid",
+      "blepharoplasty",
+      "eye-droop",
+      "eye-bags",
+      "under-eye",
+      "dark-circles",
+      "canthal-tilt",
     ],
     mapsToSpecificIssues: [
-      "upper-eyelid-droop", "lower-eyelid-excess-skin", "excess-upper-eyelid-skin",
-      "lower-eyelid-bags", "under-eye-dark-circles", "negative-canthal-tilt",
-      "upper-eyelid-droop", "lower-eyelid-sag"
-    ]
+      "upper-eyelid-droop",
+      "lower-eyelid-excess-skin",
+      "excess-upper-eyelid-skin",
+      "lower-eyelid-bags",
+      "under-eye-dark-circles",
+      "negative-canthal-tilt",
+      "upper-eyelid-droop",
+      "lower-eyelid-sag",
+    ],
   },
   // Body Group
   {
@@ -2109,7 +2261,12 @@ const HIGH_LEVEL_CONCERNS = [
     group: "Body",
     treatmentHint: "CoolSculpting • Body Treatments",
     mapsToPhotos: ["body-contouring", "fat-reduction", "coolsculpting"],
-    mapsToSpecificIssues: ["stubborn-fat", "love-handles", "double-chin", "excess-fat"]
+    mapsToSpecificIssues: [
+      "stubborn-fat",
+      "love-handles",
+      "double-chin",
+      "excess-fat",
+    ],
   },
   {
     id: "unwanted-hair-removal",
@@ -2119,7 +2276,7 @@ const HIGH_LEVEL_CONCERNS = [
     group: "Body",
     treatmentHint: "Laser Hair Removal • IPL",
     mapsToPhotos: ["hair-removal", "laser-hair-removal", "ipl-hair"],
-    mapsToSpecificIssues: ["unwanted-hair", "facial-hair", "body-hair"]
+    mapsToSpecificIssues: ["unwanted-hair", "facial-hair", "body-hair"],
   },
   // Wellness Group
   {
@@ -2130,8 +2287,13 @@ const HIGH_LEVEL_CONCERNS = [
     group: "Wellness",
     treatmentHint: "Hormone Therapy • IV Therapy",
     mapsToPhotos: ["wellness", "longevity", "hormone-therapy"],
-    mapsToSpecificIssues: ["hormone-imbalance", "energy", "vitality", "longevity"]
-  }
+    mapsToSpecificIssues: [
+      "hormone-imbalance",
+      "energy",
+      "vitality",
+      "longevity",
+    ],
+  },
 ];
 
 // Areas of Concern for filtering cases
@@ -2146,7 +2308,7 @@ const AREAS_OF_CONCERN = [
   { id: "neck", name: "Neck", icon: "neck" },
   { id: "chest", name: "Chest", icon: "chest" },
   { id: "hands", name: "Hands", icon: "hands" },
-  { id: "body", name: "Body", icon: "body" }
+  { id: "body", name: "Body", icon: "body" },
 ];
 
 let userSelections = {
@@ -3987,45 +4149,45 @@ function calculateCommonForAge(caseItem, userAge) {
 // Demographic value mappings for vector conversion
 const DEMOGRAPHIC_VECTORS = {
   skinTone: {
-    'light': 0.0,
-    'fair': 0.2,
-    'medium': 0.4,
-    'tan': 0.6,
-    'brown': 0.8,
-    'deep': 1.0
+    light: 0.0,
+    fair: 0.2,
+    medium: 0.4,
+    tan: 0.6,
+    brown: 0.8,
+    deep: 1.0,
   },
   skinType: {
-    'dry': 0.0,
-    'balanced': 0.33,
-    'combination': 0.67,
-    'oily': 1.0
+    dry: 0.0,
+    balanced: 0.33,
+    combination: 0.67,
+    oily: 1.0,
   },
   sunResponse: {
-    'always burns': 0.0,
-    'usually burns': 0.2,
-    'sometimes tans': 0.4,
-    'usually tans': 0.6,
-    'always tans': 0.8,
-    'rarely burns': 1.0
+    "always burns": 0.0,
+    "usually burns": 0.2,
+    "sometimes tans": 0.4,
+    "usually tans": 0.6,
+    "always tans": 0.8,
+    "rarely burns": 1.0,
   },
   ethnicBackground: {
-    'white': 0.0,
-    'asian': 0.2,
-    'hispanic/latino': 0.4,
-    'middle eastern': 0.6,
-    'mixed': 0.7,
-    'other': 0.8,
-    'black': 1.0
-  }
+    white: 0.0,
+    asian: 0.2,
+    "hispanic/latino": 0.4,
+    "middle eastern": 0.6,
+    mixed: 0.7,
+    other: 0.8,
+    black: 1.0,
+  },
 };
 
 // Weights for each demographic dimension (sum should be ~1.0)
 const DEMOGRAPHIC_WEIGHTS = {
-  age: 0.25,           // 25% weight
-  skinTone: 0.25,      // 25% weight
-  ethnicBackground: 0.20, // 20% weight
-  skinType: 0.15,      // 15% weight
-  sunResponse: 0.15    // 15% weight
+  age: 0.25, // 25% weight
+  skinTone: 0.25, // 25% weight
+  ethnicBackground: 0.2, // 20% weight
+  skinType: 0.15, // 15% weight
+  sunResponse: 0.15, // 15% weight
 };
 
 /**
@@ -4039,31 +4201,49 @@ function userDemographicsToVector(userSelections) {
     skinTone: null,
     ethnicBackground: null,
     skinType: null,
-    sunResponse: null
+    sunResponse: null,
   };
-  
+
   // Normalize age to 0-1 scale (assuming age range 18-80)
   if (userSelections.age) {
-    vector.age = Math.max(0, Math.min(1, (userSelections.age - 18) / (80 - 18)));
+    vector.age = Math.max(
+      0,
+      Math.min(1, (userSelections.age - 18) / (80 - 18))
+    );
   }
-  
+
   // Map categorical values to numerical vectors
-  if (userSelections.skinTone && DEMOGRAPHIC_VECTORS.skinTone[userSelections.skinTone] !== undefined) {
+  if (
+    userSelections.skinTone &&
+    DEMOGRAPHIC_VECTORS.skinTone[userSelections.skinTone] !== undefined
+  ) {
     vector.skinTone = DEMOGRAPHIC_VECTORS.skinTone[userSelections.skinTone];
   }
-  
-  if (userSelections.ethnicBackground && DEMOGRAPHIC_VECTORS.ethnicBackground[userSelections.ethnicBackground] !== undefined) {
-    vector.ethnicBackground = DEMOGRAPHIC_VECTORS.ethnicBackground[userSelections.ethnicBackground];
+
+  if (
+    userSelections.ethnicBackground &&
+    DEMOGRAPHIC_VECTORS.ethnicBackground[userSelections.ethnicBackground] !==
+      undefined
+  ) {
+    vector.ethnicBackground =
+      DEMOGRAPHIC_VECTORS.ethnicBackground[userSelections.ethnicBackground];
   }
-  
-  if (userSelections.skinType && DEMOGRAPHIC_VECTORS.skinType[userSelections.skinType] !== undefined) {
+
+  if (
+    userSelections.skinType &&
+    DEMOGRAPHIC_VECTORS.skinType[userSelections.skinType] !== undefined
+  ) {
     vector.skinType = DEMOGRAPHIC_VECTORS.skinType[userSelections.skinType];
   }
-  
-  if (userSelections.sunResponse && DEMOGRAPHIC_VECTORS.sunResponse[userSelections.sunResponse] !== undefined) {
-    vector.sunResponse = DEMOGRAPHIC_VECTORS.sunResponse[userSelections.sunResponse];
+
+  if (
+    userSelections.sunResponse &&
+    DEMOGRAPHIC_VECTORS.sunResponse[userSelections.sunResponse] !== undefined
+  ) {
+    vector.sunResponse =
+      DEMOGRAPHIC_VECTORS.sunResponse[userSelections.sunResponse];
   }
-  
+
   return vector;
 }
 
@@ -4078,31 +4258,48 @@ function caseDemographicsToVector(caseItem) {
     skinTone: null,
     ethnicBackground: null,
     skinType: null,
-    sunResponse: null
+    sunResponse: null,
   };
-  
+
   // Normalize age to 0-1 scale (assuming age range 18-80)
   if (caseItem.patientAge) {
-    vector.age = Math.max(0, Math.min(1, (caseItem.patientAge - 18) / (80 - 18)));
+    vector.age = Math.max(
+      0,
+      Math.min(1, (caseItem.patientAge - 18) / (80 - 18))
+    );
   }
-  
+
   // Map categorical values to numerical vectors
-  if (caseItem.skinTone && DEMOGRAPHIC_VECTORS.skinTone[caseItem.skinTone] !== undefined) {
+  if (
+    caseItem.skinTone &&
+    DEMOGRAPHIC_VECTORS.skinTone[caseItem.skinTone] !== undefined
+  ) {
     vector.skinTone = DEMOGRAPHIC_VECTORS.skinTone[caseItem.skinTone];
   }
-  
-  if (caseItem.ethnicBackground && DEMOGRAPHIC_VECTORS.ethnicBackground[caseItem.ethnicBackground] !== undefined) {
-    vector.ethnicBackground = DEMOGRAPHIC_VECTORS.ethnicBackground[caseItem.ethnicBackground];
+
+  if (
+    caseItem.ethnicBackground &&
+    DEMOGRAPHIC_VECTORS.ethnicBackground[caseItem.ethnicBackground] !==
+      undefined
+  ) {
+    vector.ethnicBackground =
+      DEMOGRAPHIC_VECTORS.ethnicBackground[caseItem.ethnicBackground];
   }
-  
-  if (caseItem.skinType && DEMOGRAPHIC_VECTORS.skinType[caseItem.skinType] !== undefined) {
+
+  if (
+    caseItem.skinType &&
+    DEMOGRAPHIC_VECTORS.skinType[caseItem.skinType] !== undefined
+  ) {
     vector.skinType = DEMOGRAPHIC_VECTORS.skinType[caseItem.skinType];
   }
-  
-  if (caseItem.sunResponse && DEMOGRAPHIC_VECTORS.sunResponse[caseItem.sunResponse] !== undefined) {
+
+  if (
+    caseItem.sunResponse &&
+    DEMOGRAPHIC_VECTORS.sunResponse[caseItem.sunResponse] !== undefined
+  ) {
     vector.sunResponse = DEMOGRAPHIC_VECTORS.sunResponse[caseItem.sunResponse];
   }
-  
+
   return vector;
 }
 
@@ -4115,28 +4312,32 @@ function caseDemographicsToVector(caseItem) {
 function calculateDemographicSimilarity(userVector, caseVector) {
   let weightedSum = 0;
   let totalWeight = 0;
-  
+
   // Calculate similarity for each dimension
-  Object.keys(DEMOGRAPHIC_WEIGHTS).forEach(dimension => {
+  Object.keys(DEMOGRAPHIC_WEIGHTS).forEach((dimension) => {
     const weight = DEMOGRAPHIC_WEIGHTS[dimension];
     const userValue = userVector[dimension];
     const caseValue = caseVector[dimension];
-    
+
     // Only calculate if both values exist
-    if (userValue !== null && userValue !== undefined && 
-        caseValue !== null && caseValue !== undefined) {
+    if (
+      userValue !== null &&
+      userValue !== undefined &&
+      caseValue !== null &&
+      caseValue !== undefined
+    ) {
       // Calculate similarity: 1 - absolute difference (closer = more similar)
       const similarity = 1 - Math.abs(userValue - caseValue);
       weightedSum += similarity * weight;
       totalWeight += weight;
     }
   });
-  
+
   // If no dimensions matched, return 0
   if (totalWeight === 0) {
     return 0;
   }
-  
+
   // Normalize by total weight to get 0-1 score
   return weightedSum / totalWeight;
 }
@@ -4150,9 +4351,9 @@ function calculateDemographicSimilarity(userVector, caseVector) {
 function calculateDemographicMatchPercentage(caseItem, userSelections) {
   const userVector = userDemographicsToVector(userSelections);
   const caseVector = caseDemographicsToVector(caseItem);
-  
+
   const similarity = calculateDemographicSimilarity(userVector, caseVector);
-  
+
   // Convert to percentage and round
   return Math.round(similarity * 100);
 }
@@ -4194,44 +4395,58 @@ function calculateMatchingScore(caseItem, userSelections) {
   }
 
   // High-level category match (50 points max)
-  if (userSelections.selectedConcernCategories && userSelections.selectedConcernCategories.length > 0) {
+  if (
+    userSelections.selectedConcernCategories &&
+    userSelections.selectedConcernCategories.length > 0
+  ) {
     const caseNameLower = (caseItem.name || "").toLowerCase();
-    const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(c => c.toLowerCase());
-    
+    const matchingCriteriaLower = (caseItem.matchingCriteria || []).map((c) =>
+      c.toLowerCase()
+    );
+
     let categoryMatches = 0;
-    userSelections.selectedConcernCategories.forEach(categoryId => {
-      const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+    userSelections.selectedConcernCategories.forEach((categoryId) => {
+      const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === categoryId);
       if (category) {
         // Check if case name matches category keywords
-        const nameMatch = category.mapsToPhotos.some(keyword => 
+        const nameMatch = category.mapsToPhotos.some((keyword) =>
           caseNameLower.includes(keyword.toLowerCase())
         );
         // Check if matching criteria matches
-        const criteriaMatch = category.mapsToPhotos.some(keyword =>
-          matchingCriteriaLower.some(criteria => criteria.includes(keyword.toLowerCase()))
+        const criteriaMatch = category.mapsToPhotos.some((keyword) =>
+          matchingCriteriaLower.some((criteria) =>
+            criteria.includes(keyword.toLowerCase())
+          )
         );
         if (nameMatch || criteriaMatch) {
           categoryMatches++;
         }
       }
     });
-    
+
     if (categoryMatches > 0) {
-      const matchRatio = categoryMatches / userSelections.selectedConcernCategories.length;
+      const matchRatio =
+        categoryMatches / userSelections.selectedConcernCategories.length;
       score += Math.round(matchRatio * 50);
     }
   }
 
   // Demographic match using vector-based similarity (30 points max)
-  const demographicMatchPercentage = calculateDemographicMatchPercentage(caseItem, userSelections);
+  const demographicMatchPercentage = calculateDemographicMatchPercentage(
+    caseItem,
+    userSelections
+  );
   const demographicScore = (demographicMatchPercentage / 100) * 30; // Convert percentage to 30-point scale
   score += demographicScore;
-  
+
   // Store the match percentage on the case item for display
   caseItem.demographicMatchPercentage = demographicMatchPercentage;
 
   // Legacy: Interest match for backward compatibility (if no categories selected)
-  if (!userSelections.selectedConcernCategories || userSelections.selectedConcernCategories.length === 0) {
+  if (
+    !userSelections.selectedConcernCategories ||
+    userSelections.selectedConcernCategories.length === 0
+  ) {
     const allSelections = [
       ...userSelections.overallGoals,
       ...(userSelections.selectedIssues || []).map((issue) =>
@@ -4267,30 +4482,70 @@ function calculateMatchingScore(caseItem, userSelections) {
 function getTreatmentGroupRelevance(group, userSelections) {
   const areas = [];
   const caseNameLower = (group.suggestion || "").toLowerCase();
-  
+
   // Map keywords to areas - order matters (more specific first)
   // This helps identify which facial/body area each suggestion addresses
   const areaKeywords = [
     // Eyes area (most specific first)
-    { keywords: ['brow ptosis', 'brow asymmetry', 'brow droop', 'brow lift', 'brow balance'], area: 'Eyes' },
-    { keywords: ['under eye', 'under-eye', 'under eye', 'eyelid', 'eyelids', 'upper eyelid', 'lower eyelid'], area: 'Eyes' },
-    { keywords: ['brow', 'brows', 'eyebrow', 'eyebrows', 'eye', 'eyes', 'ptosis'], area: 'Eyes' },
+    {
+      keywords: [
+        "brow ptosis",
+        "brow asymmetry",
+        "brow droop",
+        "brow lift",
+        "brow balance",
+      ],
+      area: "Eyes",
+    },
+    {
+      keywords: [
+        "under eye",
+        "under-eye",
+        "under eye",
+        "eyelid",
+        "eyelids",
+        "upper eyelid",
+        "lower eyelid",
+      ],
+      area: "Eyes",
+    },
+    {
+      keywords: [
+        "brow",
+        "brows",
+        "eyebrow",
+        "eyebrows",
+        "eye",
+        "eyes",
+        "ptosis",
+      ],
+      area: "Eyes",
+    },
     // Forehead area
-    { keywords: ['forehead', 'temple', 'temples', 'glabella', '11s'], area: 'Forehead' },
+    {
+      keywords: ["forehead", "temple", "temples", "glabella", "11s"],
+      area: "Forehead",
+    },
     // Cheeks area
-    { keywords: ['cheek', 'cheeks', 'cheekbone', 'mid cheek'], area: 'Cheeks' },
+    { keywords: ["cheek", "cheeks", "cheekbone", "mid cheek"], area: "Cheeks" },
     // Nose area
-    { keywords: ['nose', 'nasal', 'nasal tip', 'dorsal hump'], area: 'Nose' },
+    { keywords: ["nose", "nasal", "nasal tip", "dorsal hump"], area: "Nose" },
     // Mouth & Lips area
-    { keywords: ['lip', 'lips', 'mouth', 'philtral', 'gummy smile'], area: 'Mouth & Lips' },
+    {
+      keywords: ["lip", "lips", "mouth", "philtral", "gummy smile"],
+      area: "Mouth & Lips",
+    },
     // Jawline area
-    { keywords: ['jawline', 'jaw', 'wide jawline', 'define jawline'], area: 'Jawline' },
+    {
+      keywords: ["jawline", "jaw", "wide jawline", "define jawline"],
+      area: "Jawline",
+    },
     // Chin area
-    { keywords: ['chin', 'retruded chin', 'labiomental'], area: 'Chin' },
+    { keywords: ["chin", "retruded chin", "labiomental"], area: "Chin" },
     // Neck area
-    { keywords: ['neck', 'neck lines', 'neck wrinkles'], area: 'Neck' }
+    { keywords: ["neck", "neck lines", "neck wrinkles"], area: "Neck" },
   ];
-  
+
   // Check which areas this suggestion relates to (based on keywords in the name)
   const matchedAreas = new Set();
   for (const { keywords, area } of areaKeywords) {
@@ -4301,7 +4556,7 @@ function getTreatmentGroupRelevance(group, userSelections) {
       }
     }
   }
-  
+
   // Return all matched areas (not just user-selected ones, since we want to show which area each suggestion addresses)
   return Array.from(matchedAreas);
 }
@@ -4314,16 +4569,16 @@ function getSimilarityScoreBreakdown(caseItem, userSelections) {
   const breakdown = {
     totalScore: caseItem.demographicMatchPercentage || 0,
     components: [],
-    totalWeight: 0
+    totalWeight: 0,
   };
-  
+
   const userVector = userDemographicsToVector(userSelections);
   const caseVector = caseDemographicsToVector(caseItem);
-  
+
   // First pass: calculate all similarities and contributions
   const componentData = [];
   let totalWeight = 0;
-  
+
   // Age component
   if (userVector.age !== null && caseVector.age !== null) {
     const ageDiff = Math.abs(userSelections.age - caseItem.patientAge);
@@ -4333,18 +4588,21 @@ function getSimilarityScoreBreakdown(caseItem, userSelections) {
     const weight = DEMOGRAPHIC_WEIGHTS.age;
     const rawContribution = similarity * weight;
     totalWeight += weight;
-    
+
     componentData.push({
-      field: 'Age',
+      field: "Age",
       userValue: `${userSelections.age} years`,
       caseValue: `${caseItem.patientAge} years`,
-      difference: ageDiff === 0 ? 'Exact match' : `${ageDiff} year${ageDiff !== 1 ? 's' : ''} difference`,
+      difference:
+        ageDiff === 0
+          ? "Exact match"
+          : `${ageDiff} year${ageDiff !== 1 ? "s" : ""} difference`,
       similarity: similarityPercent,
       weight: Math.round(weight * 100),
-      rawContribution: rawContribution
+      rawContribution: rawContribution,
     });
   }
-  
+
   // Skin tone component
   if (userVector.skinTone !== null && caseVector.skinTone !== null) {
     const vectorDiff = Math.abs(userVector.skinTone - caseVector.skinTone);
@@ -4353,38 +4611,49 @@ function getSimilarityScoreBreakdown(caseItem, userSelections) {
     const weight = DEMOGRAPHIC_WEIGHTS.skinTone;
     const rawContribution = similarity * weight;
     totalWeight += weight;
-    
+
     componentData.push({
-      field: 'Complexion',
+      field: "Complexion",
       userValue: userSelections.skinTone,
       caseValue: caseItem.skinTone,
-      difference: userSelections.skinTone === caseItem.skinTone ? 'Exact match' : 'Similar',
+      difference:
+        userSelections.skinTone === caseItem.skinTone
+          ? "Exact match"
+          : "Similar",
       similarity: similarityPercent,
       weight: Math.round(weight * 100),
-      rawContribution: rawContribution
+      rawContribution: rawContribution,
     });
   }
-  
+
   // Ethnic background component
-  if (userVector.ethnicBackground !== null && caseVector.ethnicBackground !== null) {
-    const vectorDiff = Math.abs(userVector.ethnicBackground - caseVector.ethnicBackground);
+  if (
+    userVector.ethnicBackground !== null &&
+    caseVector.ethnicBackground !== null
+  ) {
+    const vectorDiff = Math.abs(
+      userVector.ethnicBackground - caseVector.ethnicBackground
+    );
     const similarity = 1 - vectorDiff;
     const similarityPercent = Math.round(similarity * 100);
     const weight = DEMOGRAPHIC_WEIGHTS.ethnicBackground;
     const rawContribution = similarity * weight;
     totalWeight += weight;
-    
+
     componentData.push({
-      field: 'Background',
+      field: "Background",
       userValue: userSelections.ethnicBackground,
       caseValue: caseItem.ethnicBackground,
-      difference: userSelections.ethnicBackground === caseItem.ethnicBackground ? 'Exact match' : 'Similar',
+      difference:
+        userSelections.ethnicBackground === caseItem.ethnicBackground
+          ? "Exact match"
+          : "Similar",
       similarity: similarityPercent,
       weight: Math.round(weight * 100),
-      rawContribution: rawContribution
+      rawContribution: rawContribution,
     });
   }
-  
+
   // Skin type component
   if (userVector.skinType !== null && caseVector.skinType !== null) {
     const vectorDiff = Math.abs(userVector.skinType - caseVector.skinType);
@@ -4393,44 +4662,53 @@ function getSimilarityScoreBreakdown(caseItem, userSelections) {
     const weight = DEMOGRAPHIC_WEIGHTS.skinType;
     const rawContribution = similarity * weight;
     totalWeight += weight;
-    
+
     componentData.push({
-      field: 'Skin Type',
+      field: "Skin Type",
       userValue: userSelections.skinType,
       caseValue: caseItem.skinType,
-      difference: userSelections.skinType === caseItem.skinType ? 'Exact match' : 'Similar',
+      difference:
+        userSelections.skinType === caseItem.skinType
+          ? "Exact match"
+          : "Similar",
       similarity: similarityPercent,
       weight: Math.round(weight * 100),
-      rawContribution: rawContribution
+      rawContribution: rawContribution,
     });
   }
-  
+
   // Sun response component
   if (userVector.sunResponse !== null && caseVector.sunResponse !== null) {
-    const vectorDiff = Math.abs(userVector.sunResponse - caseVector.sunResponse);
+    const vectorDiff = Math.abs(
+      userVector.sunResponse - caseVector.sunResponse
+    );
     const similarity = 1 - vectorDiff;
     const similarityPercent = Math.round(similarity * 100);
     const weight = DEMOGRAPHIC_WEIGHTS.sunResponse;
     const rawContribution = similarity * weight;
     totalWeight += weight;
-    
+
     componentData.push({
-      field: 'Sun Response',
+      field: "Sun Response",
       userValue: userSelections.sunResponse,
       caseValue: caseItem.sunResponse,
-      difference: userSelections.sunResponse === caseItem.sunResponse ? 'Exact match' : 'Similar',
+      difference:
+        userSelections.sunResponse === caseItem.sunResponse
+          ? "Exact match"
+          : "Similar",
       similarity: similarityPercent,
       weight: Math.round(weight * 100),
-      rawContribution: rawContribution
+      rawContribution: rawContribution,
     });
   }
-  
+
   // Second pass: calculate final contributions (normalized by total weight)
   breakdown.totalWeight = totalWeight;
-  componentData.forEach(comp => {
+  componentData.forEach((comp) => {
     // Contribution to final score = (rawContribution / totalWeight) * 100
-    const finalContribution = totalWeight > 0 ? (comp.rawContribution / totalWeight) * 100 : 0;
-    
+    const finalContribution =
+      totalWeight > 0 ? (comp.rawContribution / totalWeight) * 100 : 0;
+
     breakdown.components.push({
       field: comp.field,
       userValue: comp.userValue,
@@ -4438,137 +4716,165 @@ function getSimilarityScoreBreakdown(caseItem, userSelections) {
       difference: comp.difference,
       similarity: comp.similarity,
       weight: comp.weight,
-      contribution: Math.round(finalContribution)
+      contribution: Math.round(finalContribution),
     });
   });
-  
+
   return breakdown;
 }
 
 // Get match indicators for a case
 // excludeAreasAndConcerns: if true, only return demographic matches (for case cards)
-function getMatchIndicators(caseItem, userSelections, excludeAreasAndConcerns = false) {
+function getMatchIndicators(
+  caseItem,
+  userSelections,
+  excludeAreasAndConcerns = false
+) {
   const indicators = [];
-  
+
   // Age match
   if (userSelections.age && caseItem.patientAge) {
     const ageDiff = Math.abs(caseItem.patientAge - userSelections.age);
     if (ageDiff <= 5) {
-      indicators.push({ type: "age", text: `Similar age (${caseItem.patientAge})` });
+      indicators.push({
+        type: "age",
+        text: `Similar age (${caseItem.patientAge})`,
+      });
     }
   }
-  
+
   // Skin tone/complexion match
   if (userSelections.skinTone && caseItem.skinTone) {
     if (userSelections.skinTone === caseItem.skinTone) {
       indicators.push({ type: "skin-tone", text: "Similar complexion" });
     }
   }
-  
+
   // Ethnic background match
   if (userSelections.ethnicBackground && caseItem.ethnicBackground) {
     if (userSelections.ethnicBackground === caseItem.ethnicBackground) {
-      indicators.push({ type: "ethnic-background", text: "Similar background" });
+      indicators.push({
+        type: "ethnic-background",
+        text: "Similar background",
+      });
     }
   }
-  
+
   // Skin type match
   if (userSelections.skinType && caseItem.skinType) {
     if (userSelections.skinType === caseItem.skinType) {
       indicators.push({ type: "skin-type", text: "Similar skin type" });
     }
   }
-  
+
   // Sun response match
   if (userSelections.sunResponse && caseItem.sunResponse) {
     if (userSelections.sunResponse === caseItem.sunResponse) {
       indicators.push({ type: "sun-response", text: "Similar sun response" });
     }
   }
-  
+
   // Only include area/concern matches if not excluded (for treatment group cards)
   if (!excludeAreasAndConcerns) {
     // Category match
-    if (userSelections.selectedConcernCategories && userSelections.selectedConcernCategories.length > 0) {
+    if (
+      userSelections.selectedConcernCategories &&
+      userSelections.selectedConcernCategories.length > 0
+    ) {
       const caseNameLower = (caseItem.name || "").toLowerCase();
-      userSelections.selectedConcernCategories.forEach(categoryId => {
-        const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
-        if (category && category.mapsToPhotos.some(keyword => caseNameLower.includes(keyword.toLowerCase()))) {
-          indicators.push({ type: "concern", text: `Matches: ${category.name}` });
+      userSelections.selectedConcernCategories.forEach((categoryId) => {
+        const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === categoryId);
+        if (
+          category &&
+          category.mapsToPhotos.some((keyword) =>
+            caseNameLower.includes(keyword.toLowerCase())
+          )
+        ) {
+          indicators.push({
+            type: "concern",
+            text: `Matches: ${category.name}`,
+          });
         }
       });
     }
-    
+
     // Area match - show which specific areas this case relates to
     const caseNameLower = (caseItem.name || "").toLowerCase();
-    const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(c => 
-      typeof c === 'string' ? c.toLowerCase() : String(c || '').toLowerCase()
+    const matchingCriteriaLower = (caseItem.matchingCriteria || []).map((c) =>
+      typeof c === "string" ? c.toLowerCase() : String(c || "").toLowerCase()
     );
-    
+
     // Map of keywords to area names for inference (matching AREAS_OF_CONCERN)
     const areaKeywords = {
-      'forehead': 'Forehead',
-      'brow': 'Eyes', // Brow relates to Eyes area
-      'brows': 'Eyes',
-      'eyebrow': 'Eyes',
-      'eyebrows': 'Eyes',
-      'brow ptosis': 'Eyes',
-      'ptosis': 'Eyes',
-      'eye': 'Eyes',
-      'eyes': 'Eyes',
-      'under eye': 'Eyes',
-      'under-eye': 'Eyes',
-      'eyelid': 'Eyes',
-      'eyelids': 'Eyes',
-      'cheek': 'Cheeks',
-      'cheeks': 'Cheeks',
-      'nose': 'Nose',
-      'lip': 'Mouth & Lips',
-      'lips': 'Mouth & Lips',
-      'mouth': 'Mouth & Lips',
-      'jawline': 'Jawline',
-      'jaw': 'Jawline',
-      'chin': 'Chin',
-      'neck': 'Neck',
-      'temple': 'Forehead',
-      'temples': 'Forehead'
+      forehead: "Forehead",
+      brow: "Eyes", // Brow relates to Eyes area
+      brows: "Eyes",
+      eyebrow: "Eyes",
+      eyebrows: "Eyes",
+      "brow ptosis": "Eyes",
+      ptosis: "Eyes",
+      eye: "Eyes",
+      eyes: "Eyes",
+      "under eye": "Eyes",
+      "under-eye": "Eyes",
+      eyelid: "Eyes",
+      eyelids: "Eyes",
+      cheek: "Cheeks",
+      cheeks: "Cheeks",
+      nose: "Nose",
+      lip: "Mouth & Lips",
+      lips: "Mouth & Lips",
+      mouth: "Mouth & Lips",
+      jawline: "Jawline",
+      jaw: "Jawline",
+      chin: "Chin",
+      neck: "Neck",
+      temple: "Forehead",
+      temples: "Forehead",
     };
-    
+
     // Find matching areas from user selections
     const matchedAreas = new Set();
-    if (userSelections.selectedAreas && userSelections.selectedAreas.length > 0) {
-      userSelections.selectedAreas.forEach(areaId => {
-        const area = AREAS_OF_CONCERN.find(a => a.id === areaId);
+    if (
+      userSelections.selectedAreas &&
+      userSelections.selectedAreas.length > 0
+    ) {
+      userSelections.selectedAreas.forEach((areaId) => {
+        const area = AREAS_OF_CONCERN.find((a) => a.id === areaId);
         if (area) {
           const areaNameLower = area.name.toLowerCase();
-          if (caseNameLower.includes(areaNameLower) || 
-              matchingCriteriaLower.some(c => c.includes(areaNameLower) || c.includes(areaId))) {
+          if (
+            caseNameLower.includes(areaNameLower) ||
+            matchingCriteriaLower.some(
+              (c) => c.includes(areaNameLower) || c.includes(areaId)
+            )
+          ) {
             matchedAreas.add(area.name);
           }
         }
       });
     }
-    
+
     // Also infer areas from case name keywords
     // This helps show which area the case relates to based on keywords in the name
     // Always show inferred area to help user understand which area the case addresses
     for (const [keyword, areaName] of Object.entries(areaKeywords)) {
       if (caseNameLower.includes(keyword)) {
         // Find the area ID for this area name
-        const area = AREAS_OF_CONCERN.find(a => a.name === areaName);
+        const area = AREAS_OF_CONCERN.find((a) => a.name === areaName);
         if (area) {
           // Always add inferred area to show which area this case relates to
           matchedAreas.add(areaName);
         }
       }
     }
-    
+
     // Add area indicators
-    Array.from(matchedAreas).forEach(areaName => {
+    Array.from(matchedAreas).forEach((areaName) => {
       indicators.push({ type: "area", text: areaName });
     });
   }
-  
+
   return indicators;
 }
 
@@ -4580,13 +4886,13 @@ function getMatchIndicators(caseItem, userSelections, excludeAreasAndConcerns = 
  */
 function getGroupMatchIndicators(cases, userSelections) {
   if (!cases || cases.length === 0) return [];
-  
+
   const indicators = new Map(); // Use Map to avoid duplicates
-  
+
   // Check each case and collect unique indicators
-  cases.forEach(caseItem => {
+  cases.forEach((caseItem) => {
     const caseIndicators = getMatchIndicators(caseItem, userSelections);
-    caseIndicators.forEach(ind => {
+    caseIndicators.forEach((ind) => {
       // Use type+text as key to avoid duplicates
       const key = `${ind.type}-${ind.text}`;
       if (!indicators.has(key)) {
@@ -4594,7 +4900,7 @@ function getGroupMatchIndicators(cases, userSelections) {
       }
     });
   });
-  
+
   // Convert to array and limit to most relevant ones
   return Array.from(indicators.values()).slice(0, 3);
 }
@@ -4676,7 +4982,9 @@ function showHomeTeaser() {
 function initializeConcernCategories() {
   // Try to find grid in form-step-1 first, then fall back to old location
   const formStep1 = document.getElementById("form-step-1");
-  let grid = formStep1 ? formStep1.querySelector("#concern-categories-grid") : null;
+  let grid = formStep1
+    ? formStep1.querySelector("#concern-categories-grid")
+    : null;
   if (!grid) {
     grid = document.getElementById("concern-categories-grid");
   }
@@ -4714,8 +5022,10 @@ function initializeConcernCategories() {
       const card = document.createElement("div");
       card.className = "concern-category-card";
       card.dataset.categoryId = category.id;
-      
-      const isSelected = userSelections.selectedConcernCategories.includes(category.id);
+
+      const isSelected = userSelections.selectedConcernCategories.includes(
+        category.id
+      );
       if (isSelected) {
         card.classList.add("selected");
       }
@@ -4750,17 +5060,17 @@ function initializeConcernCategories() {
 // Initialize areas of concern selection
 // Map area IDs to icon filenames in the area icons folder
 const AREA_ICON_MAP = {
-  "forehead": "eyebrows.png", // Use eyebrows icon for forehead
-  "eyes": "eyes.png",
-  "cheeks": "cheeks.png",
-  "nose": "nose.png",
+  forehead: "eyebrows.png", // Use eyebrows icon for forehead
+  eyes: "eyes.png",
+  cheeks: "cheeks.png",
+  nose: "nose.png",
   "mouth-lips": "lips.png",
-  "jawline": "jawline.png",
-  "chin": "jawline.png", // Use jawline icon as fallback
-  "neck": null, // No icon available
-  "chest": null, // No icon available
-  "hands": null, // No icon available
-  "body": null // No icon available
+  jawline: "jawline.png",
+  chin: "jawline.png", // Use jawline icon as fallback
+  neck: null, // No icon available
+  chest: null, // No icon available
+  hands: null, // No icon available
+  body: null, // No icon available
 };
 
 function initializeAreasOfConcern() {
@@ -4776,17 +5086,19 @@ function initializeAreasOfConcern() {
     const card = document.createElement("div");
     card.className = "area-of-concern-card";
     card.dataset.areaId = area.id;
-    
-    const isSelected = userSelections.selectedAreas && userSelections.selectedAreas.includes(area.id);
+
+    const isSelected =
+      userSelections.selectedAreas &&
+      userSelections.selectedAreas.includes(area.id);
     if (isSelected) {
       card.classList.add("selected");
     }
 
     // Get icon filename for this area
     const iconFilename = AREA_ICON_MAP[area.id];
-    
+
     // Use PNG icon if available, otherwise fallback to SVG
-    let iconHtml = '';
+    let iconHtml = "";
     if (iconFilename) {
       iconHtml = `<img src="area icons/${iconFilename}" alt="${area.name}" class="area-icon-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display: none;">
@@ -4823,25 +5135,28 @@ function toggleAreaOfConcern(areaId) {
   if (!userSelections.selectedAreas) {
     userSelections.selectedAreas = [];
   }
-  
+
   const index = userSelections.selectedAreas.indexOf(areaId);
   if (index > -1) {
     userSelections.selectedAreas.splice(index, 1);
   } else {
     userSelections.selectedAreas.push(areaId);
   }
-  
+
   // Update window.userSelections
   if (window.userSelections) {
     window.userSelections.selectedAreas = userSelections.selectedAreas;
   }
-  
+
   // Update UI
   const card = document.querySelector(`[data-area-id="${areaId}"]`);
   if (card) {
-    card.classList.toggle("selected", userSelections.selectedAreas.includes(areaId));
+    card.classList.toggle(
+      "selected",
+      userSelections.selectedAreas.includes(areaId)
+    );
   }
-  
+
   // Collect form data to keep in sync
   if (typeof collectFormData === "function") {
     collectFormData();
@@ -4892,7 +5207,7 @@ function getCategoryIcon(iconType) {
     eyes: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
       <circle cx="12" cy="12" r="3"></circle>
-    </svg>`
+    </svg>`,
   };
   return icons[iconType] || icons.wrinkles;
 }
@@ -4903,11 +5218,16 @@ function toggleConcernCategory(categoryId) {
   if (!userSelections.selectedConcernCategories) {
     userSelections.selectedConcernCategories = [];
   }
-  
+
   const index = userSelections.selectedConcernCategories.indexOf(categoryId);
   const maxSelections = 3;
-  
-  console.log("toggleConcernCategory called for:", categoryId, "current selections:", userSelections.selectedConcernCategories);
+
+  console.log(
+    "toggleConcernCategory called for:",
+    categoryId,
+    "current selections:",
+    userSelections.selectedConcernCategories
+  );
 
   if (index > -1) {
     // Deselect
@@ -4933,7 +5253,7 @@ function toggleConcernCategory(categoryId) {
   }
 
   updateConcernSelectionCount();
-  
+
   // Directly update button disabled state
   const btn = document.getElementById("proceed-to-goals-btn");
   if (btn) {
@@ -4941,8 +5261,13 @@ function toggleConcernCategory(categoryId) {
     btn.disabled = count === 0;
     console.log("Button disabled:", btn.disabled, "count:", count);
   }
-  
-  console.log("After toggle - selectedConcernCategories:", userSelections.selectedConcernCategories, "length:", userSelections.selectedConcernCategories.length);
+
+  console.log(
+    "After toggle - selectedConcernCategories:",
+    userSelections.selectedConcernCategories,
+    "length:",
+    userSelections.selectedConcernCategories.length
+  );
 }
 
 // Update concern selection count display
@@ -4984,7 +5309,9 @@ function handleStartButtonClick() {
     } else if (typeof showOnboarding === "function") {
       showOnboarding();
     } else {
-      console.error("Neither startForm nor showOnboarding functions are available");
+      console.error(
+        "Neither startForm nor showOnboarding functions are available"
+      );
       alert("Please refresh the page and try again.");
     }
   } catch (error) {
@@ -5030,7 +5357,7 @@ function startForm() {
   if (formScreen) {
     formScreen.classList.add("active");
     console.log("Added active to form-screen");
-    
+
     if (typeof scrollToTop === "function") {
       scrollToTop();
     } else {
@@ -5041,7 +5368,7 @@ function startForm() {
     setTimeout(() => {
       goToFormStep(1);
       updateFormNavigation(1);
-      
+
       // Initialize high-level concern categories after step is visible
       setTimeout(() => {
         try {
@@ -5070,100 +5397,133 @@ function updateProceedToGoalsButton() {
   // Update the old button if it exists (for backward compatibility)
   const oldBtn = document.getElementById("proceed-to-goals-btn");
   if (oldBtn) {
-    const selections = (window.userSelections && window.userSelections.selectedConcernCategories) || userSelections.selectedConcernCategories || [];
+    const selections =
+      (window.userSelections &&
+        window.userSelections.selectedConcernCategories) ||
+      userSelections.selectedConcernCategories ||
+      [];
     oldBtn.disabled = selections.length === 0;
   }
-  
+
   // Update the shared navigation button when on step 1
   const navContinueBtn = document.getElementById("nav-continue-btn");
   if (navContinueBtn) {
-    const selections = (window.userSelections && window.userSelections.selectedConcernCategories) || userSelections.selectedConcernCategories || [];
+    const selections =
+      (window.userSelections &&
+        window.userSelections.selectedConcernCategories) ||
+      userSelections.selectedConcernCategories ||
+      [];
     navContinueBtn.disabled = selections.length === 0;
-    console.log("Updated nav continue button - selections:", selections.length, "disabled:", navContinueBtn.disabled);
+    console.log(
+      "Updated nav continue button - selections:",
+      selections.length,
+      "disabled:",
+      navContinueBtn.disabled
+    );
   }
 }
 
 // Multi-step form navigation
 function goToFormStep(stepNumber) {
   console.log("goToFormStep called:", stepNumber);
-  
+
   // Hide all steps and screens
-  document.querySelectorAll('.form-step').forEach(step => {
-    step.classList.remove('active');
+  document.querySelectorAll(".form-step").forEach((step) => {
+    step.classList.remove("active");
   });
-  
+
   // Hide concerns selection screen if it exists separately
-  const concernsScreen = document.getElementById('concerns-selection-screen');
+  const concernsScreen = document.getElementById("concerns-selection-screen");
   if (concernsScreen) {
-    concernsScreen.classList.remove('active');
+    concernsScreen.classList.remove("active");
   }
-  
+
   // Show form screen
-  const formScreen = document.getElementById('form-screen');
+  const formScreen = document.getElementById("form-screen");
   if (formScreen) {
-    formScreen.classList.add('active');
+    formScreen.classList.add("active");
   }
-  
+
   // Show target step
   const targetStep = document.getElementById(`form-step-${stepNumber}`);
   if (targetStep) {
-    targetStep.classList.add('active');
+    targetStep.classList.add("active");
   }
-  
+
   // Update step indicators
   // Update Instagram Stories-style progress segments
-  document.querySelectorAll('.form-step-segment').forEach((segment, index) => {
+  document.querySelectorAll(".form-step-segment").forEach((segment, index) => {
     const stepNum = index + 1;
-    segment.classList.remove('active', 'completed');
+    segment.classList.remove("active", "completed");
     if (stepNum === stepNumber) {
-      segment.classList.add('active');
+      segment.classList.add("active");
     } else if (stepNum < stepNumber) {
-      segment.classList.add('completed');
+      segment.classList.add("completed");
     }
   });
-  
+
   // Update title and subtitle based on step
   const titles = {
-    1: { title: "What would you like to improve?", subtitle: "Select up to 3 main concerns that matter most to you" },
-    2: { title: "Which Areas Are You Most Concerned About?", subtitle: "Select all areas that apply to help us show you the most relevant results" },
-    3: { title: "Your Details", subtitle: "Help us personalize your treatment recommendations" },
-    4: { title: "Optional Information", subtitle: "The more you share, the better we can match you with similar results" },
-    5: { title: "Your Goals", subtitle: "Select all that apply to help us understand your priorities" },
-    6: { title: "Review & Confirm", subtitle: "Please review your information before submitting" }
+    1: {
+      title: "What would you like to improve?",
+      subtitle: "Select up to 3 main concerns that matter most to you",
+    },
+    2: {
+      title: "Which Areas Are You Most Concerned About?",
+      subtitle:
+        "Select all areas that apply to help us show you the most relevant results",
+    },
+    3: {
+      title: "Your Details",
+      subtitle: "Help us personalize your treatment recommendations",
+    },
+    4: {
+      title: "Optional Information",
+      subtitle:
+        "The more you share, the better we can match you with similar results",
+    },
+    5: {
+      title: "Your Goals",
+      subtitle: "Select all that apply to help us understand your priorities",
+    },
+    6: {
+      title: "Review & Confirm",
+      subtitle: "Please review your information before submitting",
+    },
   };
-  
+
   const stepInfo = titles[stepNumber] || titles[1];
-  const titleEl = document.getElementById('form-step-title');
-  const subtitleEl = document.getElementById('form-step-subtitle');
-  
+  const titleEl = document.getElementById("form-step-title");
+  const subtitleEl = document.getElementById("form-step-subtitle");
+
   if (titleEl) titleEl.textContent = stepInfo.title;
   if (subtitleEl) subtitleEl.textContent = stepInfo.subtitle;
-  
+
   // Update shared navigation bar
   updateFormNavigation(stepNumber);
-  
+
   // Hide concern warning when navigating away from step 1
   if (stepNumber !== 1 && typeof hideConcernWarning === "function") {
     hideConcernWarning();
   }
-  
+
   // Scroll to top of page
   if (typeof scrollToTop === "function") {
     scrollToTop();
   } else {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
-  
+
   // Collect form data when navigating between steps to keep data in sync
   collectFormData();
-  
+
   // Populate review step when navigating to it
   if (stepNumber === 6) {
     setTimeout(() => {
       populateReviewStep();
     }, 100);
   }
-  
+
   // Initialize areas of concern when navigating to step 2
   if (stepNumber === 2) {
     setTimeout(() => {
@@ -5185,36 +5545,44 @@ function collectFormData() {
       }
     }
   }
-  
+
   // Collect skin type
-  const skinTypeInput = document.querySelector('input[name="skin-type"]:checked');
+  const skinTypeInput = document.querySelector(
+    'input[name="skin-type"]:checked'
+  );
   if (skinTypeInput) {
     userSelections.skinType = skinTypeInput.value;
     if (window.userSelections) {
       window.userSelections.skinType = skinTypeInput.value;
     }
   }
-  
+
   // Collect sun response
-  const sunResponseInput = document.querySelector('input[name="sun-response"]:checked');
+  const sunResponseInput = document.querySelector(
+    'input[name="sun-response"]:checked'
+  );
   if (sunResponseInput) {
     userSelections.sunResponse = sunResponseInput.value;
     if (window.userSelections) {
       window.userSelections.sunResponse = sunResponseInput.value;
     }
   }
-  
+
   // Collect skin tone (optional)
-  const skinToneInput = document.querySelector('input[name="skin-tone"]:checked');
+  const skinToneInput = document.querySelector(
+    'input[name="skin-tone"]:checked'
+  );
   if (skinToneInput) {
     userSelections.skinTone = skinToneInput.value;
     if (window.userSelections) {
       window.userSelections.skinTone = skinToneInput.value;
     }
   }
-  
+
   // Collect ethnic background (optional) - check for radio buttons first
-  const ethnicBackgroundRadio = document.querySelector('input[name="ethnic-background"]:checked');
+  const ethnicBackgroundRadio = document.querySelector(
+    'input[name="ethnic-background"]:checked'
+  );
   if (ethnicBackgroundRadio) {
     userSelections.ethnicBackground = ethnicBackgroundRadio.value;
     if (window.userSelections) {
@@ -5230,20 +5598,27 @@ function collectFormData() {
       }
     }
   }
-  
+
   // Collect previous treatments (optional)
-  const previousTreatmentsInputs = document.querySelectorAll('input[name="previous-treatments"]:checked');
+  const previousTreatmentsInputs = document.querySelectorAll(
+    'input[name="previous-treatments"]:checked'
+  );
   if (previousTreatmentsInputs.length > 0) {
-    userSelections.previousTreatments = Array.from(previousTreatmentsInputs).map(cb => cb.value);
+    userSelections.previousTreatments = Array.from(
+      previousTreatmentsInputs
+    ).map((cb) => cb.value);
     if (window.userSelections) {
-      window.userSelections.previousTreatments = userSelections.previousTreatments;
+      window.userSelections.previousTreatments =
+        userSelections.previousTreatments;
     }
   }
-  
+
   // Collect goals
-  const goalsInputs = document.querySelectorAll('input[name="overall-goals"]:checked');
+  const goalsInputs = document.querySelectorAll(
+    'input[name="overall-goals"]:checked'
+  );
   if (goalsInputs.length > 0) {
-    userSelections.overallGoals = Array.from(goalsInputs).map(cb => cb.value);
+    userSelections.overallGoals = Array.from(goalsInputs).map((cb) => cb.value);
     if (window.userSelections) {
       window.userSelections.overallGoals = userSelections.overallGoals;
     }
@@ -5254,91 +5629,91 @@ function collectFormData() {
       window.userSelections.overallGoals = [];
     }
   }
-  
+
   console.log("Form data collected:", {
     age: userSelections.age,
     skinType: userSelections.skinType,
     sunResponse: userSelections.sunResponse,
     goals: userSelections.overallGoals,
     skinTone: userSelections.skinTone,
-    ethnicBackground: userSelections.ethnicBackground
+    ethnicBackground: userSelections.ethnicBackground,
   });
 }
 
 // Update the shared navigation bar based on current step
 function updateFormNavigation(stepNumber) {
-  const navBackBtn = document.getElementById('nav-back-btn');
-  const navSkipBtn = document.getElementById('nav-skip-btn');
-  const navContinueBtn = document.getElementById('nav-continue-btn');
-  
+  const navBackBtn = document.getElementById("nav-back-btn");
+  const navSkipBtn = document.getElementById("nav-skip-btn");
+  const navContinueBtn = document.getElementById("nav-continue-btn");
+
   if (!navBackBtn || !navSkipBtn || !navContinueBtn) return;
-  
+
   // Reset all buttons
-  navBackBtn.style.display = 'none';
-  navSkipBtn.style.display = 'none';
-  navContinueBtn.style.display = 'none';
-  navContinueBtn.textContent = 'Continue →';
-  navContinueBtn.type = 'button';
+  navBackBtn.style.display = "none";
+  navSkipBtn.style.display = "none";
+  navContinueBtn.style.display = "none";
+  navContinueBtn.textContent = "Continue →";
+  navContinueBtn.type = "button";
   navContinueBtn.onclick = null;
   // Remove any HTML onclick attributes to prevent conflicts
-  navBackBtn.removeAttribute('onclick');
-  navSkipBtn.removeAttribute('onclick');
-  navContinueBtn.removeAttribute('onclick');
-  
-  switch(stepNumber) {
+  navBackBtn.removeAttribute("onclick");
+  navSkipBtn.removeAttribute("onclick");
+  navContinueBtn.removeAttribute("onclick");
+
+  switch (stepNumber) {
     case 1:
       // Step 1: Only Continue button (concerns selection)
-      navContinueBtn.style.display = 'block';
+      navContinueBtn.style.display = "block";
       navContinueBtn.onclick = () => goToFormStep(2);
       break;
-      
+
     case 2:
       // Step 2: Areas of Concern - Back, Skip, and Continue buttons
-      navBackBtn.style.display = 'block';
+      navBackBtn.style.display = "block";
       navBackBtn.onclick = () => goToFormStep(1);
-      navSkipBtn.style.display = 'block';
+      navSkipBtn.style.display = "block";
       navSkipBtn.onclick = () => goToFormStep(3);
-      navContinueBtn.style.display = 'block';
+      navContinueBtn.style.display = "block";
       navContinueBtn.onclick = () => goToFormStep(3);
       break;
-      
+
     case 3:
       // Step 3: Your Details - Back and Continue buttons
-      navBackBtn.style.display = 'block';
+      navBackBtn.style.display = "block";
       navBackBtn.onclick = () => goToFormStep(2);
-      navSkipBtn.style.display = 'block';
+      navSkipBtn.style.display = "block";
       navSkipBtn.onclick = () => goToFormStep(6); // Skip to review (step 5 hidden)
-      navContinueBtn.style.display = 'block';
+      navContinueBtn.style.display = "block";
       navContinueBtn.onclick = () => goToFormStep(4);
       break;
-      
+
     case 4:
       // Step 4: Optional Information - Back and Continue buttons
-      navBackBtn.style.display = 'block';
+      navBackBtn.style.display = "block";
       navBackBtn.onclick = () => goToFormStep(3);
-      navContinueBtn.style.display = 'block';
+      navContinueBtn.style.display = "block";
       navContinueBtn.onclick = () => goToFormStep(6); // Skip step 5 (goals hidden)
       break;
-      
+
     case 5:
       // Step 5: Your Goals - HIDDEN (Back and Continue buttons - should not be reached)
-      navBackBtn.style.display = 'block';
+      navBackBtn.style.display = "block";
       navBackBtn.onclick = () => goToFormStep(4);
-      navContinueBtn.style.display = 'block';
-      navContinueBtn.textContent = 'Review & Submit →';
+      navContinueBtn.style.display = "block";
+      navContinueBtn.textContent = "Review & Submit →";
       navContinueBtn.onclick = () => goToFormStep(6);
       break;
-      
+
     case 6:
       // Step 6: Review - Back and Submit buttons
-      navBackBtn.style.display = 'block';
+      navBackBtn.style.display = "block";
       navBackBtn.onclick = () => goToFormStep(4); // Go back to step 4 (step 5 hidden)
-      navContinueBtn.style.display = 'block';
-      navContinueBtn.textContent = 'Get My Results';
-      navContinueBtn.type = 'button';
+      navContinueBtn.style.display = "block";
+      navContinueBtn.textContent = "Get My Results";
+      navContinueBtn.type = "button";
       navContinueBtn.onclick = () => {
         // Trigger form submission
-        const form = document.getElementById('aesthetic-form');
+        const form = document.getElementById("aesthetic-form");
         if (form) {
           form.requestSubmit();
         }
@@ -5352,20 +5727,23 @@ function proceedToGoalsAndAge() {
   console.log("proceedToGoalsAndAge called");
   try {
     // Validate that at least one concern category is selected
-    if (!userSelections.selectedConcernCategories || userSelections.selectedConcernCategories.length === 0) {
+    if (
+      !userSelections.selectedConcernCategories ||
+      userSelections.selectedConcernCategories.length === 0
+    ) {
       alert("Please select at least one concern to continue.");
       return;
     }
 
     // Map selected categories to issues for backward compatibility
     userSelections.selectedIssues = [];
-    userSelections.selectedConcernCategories.forEach(categoryId => {
-      const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+    userSelections.selectedConcernCategories.forEach((categoryId) => {
+      const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === categoryId);
       if (category) {
         // Add category name as issue for matching
         userSelections.selectedIssues.push(category.name);
         // Also add mapped specific issues for compatibility
-        category.mapsToSpecificIssues.forEach(issue => {
+        category.mapsToSpecificIssues.forEach((issue) => {
           if (!userSelections.selectedIssues.includes(issue)) {
             userSelections.selectedIssues.push(issue);
           }
@@ -5376,16 +5754,17 @@ function proceedToGoalsAndAge() {
     // Update window.userSelections for consistency
     if (window.userSelections) {
       window.userSelections.selectedIssues = userSelections.selectedIssues;
-      window.userSelections.selectedConcernCategories = userSelections.selectedConcernCategories;
+      window.userSelections.selectedConcernCategories =
+        userSelections.selectedConcernCategories;
     }
 
     // Track event with error handling
     try {
       if (typeof trackEvent === "function") {
-        trackEvent("concerns_selected", { 
+        trackEvent("concerns_selected", {
           categoryCount: userSelections.selectedConcernCategories.length,
           categories: userSelections.selectedConcernCategories,
-          issues: userSelections.selectedIssues
+          issues: userSelections.selectedIssues,
         });
       }
     } catch (e) {
@@ -5404,13 +5783,13 @@ function proceedToGoalsAndAge() {
     } else {
       console.warn("updateSelectedConcernsSummary function not found");
     }
-    
+
     // Navigate to step 2 (Areas of Concern)
     setTimeout(() => {
       goToFormStep(2);
       // Ensure navigation is updated
       updateFormNavigation(2);
-      
+
       // Set up form validation
       try {
         if (typeof setupFormValidation === "function") {
@@ -5450,9 +5829,12 @@ function updateProceedToGoalsButton() {
   const proceedBtn = document.getElementById("proceed-to-goals-btn");
   if (!proceedBtn) return;
 
-  const actualIssueCount = (window.userSelections && window.userSelections.selectedIssues && window.userSelections.selectedIssues.length > 0) 
-    ? window.userSelections.selectedIssues.length 
-    : totalIssueSelections;
+  const actualIssueCount =
+    window.userSelections &&
+    window.userSelections.selectedIssues &&
+    window.userSelections.selectedIssues.length > 0
+      ? window.userSelections.selectedIssues.length
+      : totalIssueSelections;
 
   if (actualIssueCount > 0) {
     proceedBtn.disabled = false;
@@ -5467,84 +5849,106 @@ function updateProceedToGoalsButton() {
 function populateReviewStep() {
   // First, collect form data to ensure we have the latest values
   collectFormData();
-  
+
   // Debug: Log current userSelections state
   console.log("populateReviewStep - Current userSelections:", {
     age: userSelections.age,
     skinType: userSelections.skinType,
     sunResponse: userSelections.sunResponse,
     overallGoals: userSelections.overallGoals,
-    selectedConcernCategories: userSelections.selectedConcernCategories
+    selectedConcernCategories: userSelections.selectedConcernCategories,
   });
-  console.log("populateReviewStep - window.userSelections:", window.userSelections);
-  
+  console.log(
+    "populateReviewStep - window.userSelections:",
+    window.userSelections
+  );
+
   // Review Concerns
-  const concernsContainer = document.getElementById('review-concerns-summary');
+  const concernsContainer = document.getElementById("review-concerns-summary");
   if (concernsContainer) {
-    const categories = (window.userSelections && window.userSelections.selectedConcernCategories) 
-      || userSelections.selectedConcernCategories 
-      || [];
+    const categories =
+      (window.userSelections &&
+        window.userSelections.selectedConcernCategories) ||
+      userSelections.selectedConcernCategories ||
+      [];
     if (categories.length > 0) {
-      const categoryNames = categories.map(categoryId => {
-        const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+      const categoryNames = categories.map((categoryId) => {
+        const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === categoryId);
         return category ? category.name : categoryId;
       });
-      concernsContainer.innerHTML = categoryNames.map(name => `
+      concernsContainer.innerHTML = categoryNames
+        .map(
+          (name) => `
         <div class="review-item">
           <span class="review-item-icon">${getIconSVG("check", 14)}</span>
           <span class="review-item-text">${escapeHtml(name)}</span>
         </div>
-      `).join('');
+      `
+        )
+        .join("");
     } else {
-      concernsContainer.innerHTML = '<p class="review-empty">No concerns selected</p>';
+      concernsContainer.innerHTML =
+        '<p class="review-empty">No concerns selected</p>';
     }
   }
-  
+
   // Review Areas of Concern
-  const areasContainer = document.getElementById('review-areas-summary');
+  const areasContainer = document.getElementById("review-areas-summary");
   if (areasContainer) {
-    const areas = (window.userSelections && window.userSelections.selectedAreas) 
-      || userSelections.selectedAreas 
-      || [];
+    const areas =
+      (window.userSelections && window.userSelections.selectedAreas) ||
+      userSelections.selectedAreas ||
+      [];
     if (areas.length > 0) {
-      const areaNames = areas.map(areaId => {
-        const area = AREAS_OF_CONCERN.find(a => a.id === areaId);
+      const areaNames = areas.map((areaId) => {
+        const area = AREAS_OF_CONCERN.find((a) => a.id === areaId);
         return area ? area.name : areaId;
       });
-      areasContainer.innerHTML = areaNames.map(name => `
+      areasContainer.innerHTML = areaNames
+        .map(
+          (name) => `
         <div class="review-item">
           <span class="review-item-icon">${getIconSVG("check", 14)}</span>
           <span class="review-item-text">${escapeHtml(name)}</span>
         </div>
-      `).join('');
+      `
+        )
+        .join("");
     } else {
-      areasContainer.innerHTML = '<p class="review-empty">No areas selected</p>';
+      areasContainer.innerHTML =
+        '<p class="review-empty">No areas selected</p>';
     }
   }
-  
+
   // Review Details (Age, Skin Type, Sun Response)
-  const detailsContainer = document.getElementById('review-details-summary');
+  const detailsContainer = document.getElementById("review-details-summary");
   if (detailsContainer) {
     // Get values from both sources, prioritizing window.userSelections
-    const age = (window.userSelections && window.userSelections.age) 
-      || userSelections.age 
-      || null;
-    const skinType = (window.userSelections && window.userSelections.skinType) 
-      || userSelections.skinType 
-      || null;
-    const sunResponse = (window.userSelections && window.userSelections.sunResponse) 
-      || userSelections.sunResponse 
-      || null;
-    
+    const age =
+      (window.userSelections && window.userSelections.age) ||
+      userSelections.age ||
+      null;
+    const skinType =
+      (window.userSelections && window.userSelections.skinType) ||
+      userSelections.skinType ||
+      null;
+    const sunResponse =
+      (window.userSelections && window.userSelections.sunResponse) ||
+      userSelections.sunResponse ||
+      null;
+
     // Format labels
-    const ageLabel = age ? age.toString() : 'Not provided';
-    const skinTypeLabel = skinType 
-      ? skinType.charAt(0).toUpperCase() + skinType.slice(1).replace(/-/g, ' ') 
-      : 'Not provided';
-    const sunResponseLabel = sunResponse 
-      ? sunResponse.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') 
-      : 'Not provided';
-    
+    const ageLabel = age ? age.toString() : "Not provided";
+    const skinTypeLabel = skinType
+      ? skinType.charAt(0).toUpperCase() + skinType.slice(1).replace(/-/g, " ")
+      : "Not provided";
+    const sunResponseLabel = sunResponse
+      ? sunResponse
+          .split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ")
+      : "Not provided";
+
     detailsContainer.innerHTML = `
       <div class="review-item">
         <span class="review-item-label">Age:</span>
@@ -5560,30 +5964,39 @@ function populateReviewStep() {
       </div>
     `;
   }
-  
+
   // Review Optional Information (Skin Tone, Ethnic Background, Previous Treatments)
-  const optionalContainer = document.getElementById('review-optional-summary');
+  const optionalContainer = document.getElementById("review-optional-summary");
   if (optionalContainer) {
-    const skinTone = (window.userSelections && window.userSelections.skinTone) 
-      || userSelections.skinTone 
-      || null;
-    const ethnicBackground = (window.userSelections && window.userSelections.ethnicBackground) 
-      || userSelections.ethnicBackground 
-      || null;
-    const previousTreatments = (window.userSelections && window.userSelections.previousTreatments) 
-      || userSelections.previousTreatments 
-      || [];
-    
+    const skinTone =
+      (window.userSelections && window.userSelections.skinTone) ||
+      userSelections.skinTone ||
+      null;
+    const ethnicBackground =
+      (window.userSelections && window.userSelections.ethnicBackground) ||
+      userSelections.ethnicBackground ||
+      null;
+    const previousTreatments =
+      (window.userSelections && window.userSelections.previousTreatments) ||
+      userSelections.previousTreatments ||
+      [];
+
     // Format labels
-    const skinToneLabel = skinTone 
-      ? skinTone.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') 
+    const skinToneLabel = skinTone
+      ? skinTone
+          .split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ")
       : null;
-    const ethnicBackgroundLabel = ethnicBackground 
-      ? ethnicBackground.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') 
+    const ethnicBackgroundLabel = ethnicBackground
+      ? ethnicBackground
+          .split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ")
       : null;
-    
+
     const optionalItems = [];
-    
+
     if (skinToneLabel) {
       optionalItems.push(`
         <div class="review-item">
@@ -5592,20 +6005,27 @@ function populateReviewStep() {
         </div>
       `);
     }
-    
+
     if (ethnicBackgroundLabel) {
       optionalItems.push(`
         <div class="review-item">
           <span class="review-item-label">Ethnic Background:</span>
-          <span class="review-item-value">${escapeHtml(ethnicBackgroundLabel)}</span>
+          <span class="review-item-value">${escapeHtml(
+            ethnicBackgroundLabel
+          )}</span>
         </div>
       `);
     }
-    
+
     if (previousTreatments.length > 0) {
-      const treatmentsLabel = previousTreatments.map(t => {
-        return t.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-      }).join(', ');
+      const treatmentsLabel = previousTreatments
+        .map((t) => {
+          return t
+            .split("-")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+        })
+        .join(", ");
       optionalItems.push(`
         <div class="review-item">
           <span class="review-item-label">Previous Treatments:</span>
@@ -5613,36 +6033,43 @@ function populateReviewStep() {
         </div>
       `);
     }
-    
+
     if (optionalItems.length > 0) {
-      optionalContainer.innerHTML = optionalItems.join('');
+      optionalContainer.innerHTML = optionalItems.join("");
     } else {
-      optionalContainer.innerHTML = '<p class="review-empty">No optional information provided</p>';
+      optionalContainer.innerHTML =
+        '<p class="review-empty">No optional information provided</p>';
     }
   }
-  
+
   // Review Goals
-  const goalsContainer = document.getElementById('review-goals-summary');
+  const goalsContainer = document.getElementById("review-goals-summary");
   if (goalsContainer) {
-    const goals = (window.userSelections && window.userSelections.overallGoals) 
-      || userSelections.overallGoals 
-      || [];
+    const goals =
+      (window.userSelections && window.userSelections.overallGoals) ||
+      userSelections.overallGoals ||
+      [];
     if (goals && goals.length > 0) {
       const goalLabels = {
         "facial-balancing": "Facial Balancing",
         "anti-aging": "Anti-Aging",
         "skin-rejuvenation": "Skin Rejuvenation",
-        "natural-look": "Natural Look"
+        "natural-look": "Natural Look",
       };
-      const goalNames = goals.map(g => goalLabels[g] || g);
-      goalsContainer.innerHTML = goalNames.map(name => `
+      const goalNames = goals.map((g) => goalLabels[g] || g);
+      goalsContainer.innerHTML = goalNames
+        .map(
+          (name) => `
         <div class="review-item">
           <span class="review-item-icon">${getIconSVG("check", 14)}</span>
           <span class="review-item-text">${escapeHtml(name)}</span>
         </div>
-      `).join('');
+      `
+        )
+        .join("");
     } else {
-      goalsContainer.innerHTML = '<p class="review-empty">No goals selected</p>';
+      goalsContainer.innerHTML =
+        '<p class="review-empty">No goals selected</p>';
     }
   }
 }
@@ -5653,24 +6080,28 @@ function updateSelectedConcernsSummary() {
   if (!summary) return;
 
   // Prioritize high-level categories over mapped sub-issues
-  const selectedCategories = (window.userSelections && window.userSelections.selectedConcernCategories) 
-    ? window.userSelections.selectedConcernCategories 
-    : [];
-  
-  const selectedIssues = (window.userSelections && window.userSelections.selectedIssues) 
-    ? window.userSelections.selectedIssues 
-    : [];
+  const selectedCategories =
+    window.userSelections && window.userSelections.selectedConcernCategories
+      ? window.userSelections.selectedConcernCategories
+      : [];
+
+  const selectedIssues =
+    window.userSelections && window.userSelections.selectedIssues
+      ? window.userSelections.selectedIssues
+      : [];
 
   // If we have categories, show those; otherwise fall back to issues for backward compatibility
-  const itemsToShow = selectedCategories.length > 0 
-    ? selectedCategories.map(categoryId => {
-        const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
-        return category ? category.name : categoryId;
-      })
-    : selectedIssues;
+  const itemsToShow =
+    selectedCategories.length > 0
+      ? selectedCategories.map((categoryId) => {
+          const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === categoryId);
+          return category ? category.name : categoryId;
+        })
+      : selectedIssues;
 
   if (itemsToShow.length === 0) {
-    summary.innerHTML = '<p style="color: #999; font-style: italic;">No concerns selected</p>';
+    summary.innerHTML =
+      '<p style="color: #999; font-style: italic;">No concerns selected</p>';
     return;
   }
 
@@ -5682,12 +6113,16 @@ function updateSelectedConcernsSummary() {
           Edit
         </button>
       </div>
-      ${itemsToShow.map(item => `
+      ${itemsToShow
+        .map(
+          (item) => `
         <div class="concern-summary-item">
           <span class="concern-summary-icon">${getIconSVG("check", 14)}</span>
           <span class="concern-summary-name">${escapeHtml(item)}</span>
         </div>
-      `).join("")}
+      `
+        )
+        .join("")}
     </div>
   `;
 }
@@ -5737,7 +6172,10 @@ window.showCaseDetailFromOverview = showCaseDetailFromOverview;
 window.showLockedIssueMessage = showLockedIssueMessage;
 window.requestConsultation = requestConsultation;
 window.issueHasPhotos = issueHasPhotos;
-window.initializeCustomDropdowns = initializeCustomDropdowns;
+// initializeCustomDropdowns is defined in custom-dropdown.js, only assign if it exists
+if (typeof initializeCustomDropdowns !== "undefined") {
+  window.initializeCustomDropdowns = initializeCustomDropdowns;
+}
 window.goBackToIssueOverview = goBackToIssueOverview;
 window.showMyCases = showMyCases;
 window.closeMyCases = closeMyCases;
@@ -6069,10 +6507,17 @@ function setupFormValidation() {
       // Collect age data in real-time
       collectFormData();
       updateIssueSelectionCount(); // This will also check age and update submit button
-    } else if (e.target.name === "skin-type" || e.target.name === "sun-response") {
+    } else if (
+      e.target.name === "skin-type" ||
+      e.target.name === "sun-response"
+    ) {
       // Collect demographic data in real-time
       collectFormData();
-    } else if (e.target.name === "skin-tone" || e.target.name === "ethnic-background" || e.target.name === "previous-treatments") {
+    } else if (
+      e.target.name === "skin-tone" ||
+      e.target.name === "ethnic-background" ||
+      e.target.name === "previous-treatments"
+    ) {
       // Collect optional demographic data in real-time
       collectFormData();
     }
@@ -6114,20 +6559,34 @@ document
     }
 
     // Collect demographic data
-    const skinTypeInput = document.querySelector('input[name="skin-type"]:checked');
+    const skinTypeInput = document.querySelector(
+      'input[name="skin-type"]:checked'
+    );
     userSelections.skinType = skinTypeInput ? skinTypeInput.value : null;
 
-    const sunResponseInput = document.querySelector('input[name="sun-response"]:checked');
-    userSelections.sunResponse = sunResponseInput ? sunResponseInput.value : null;
+    const sunResponseInput = document.querySelector(
+      'input[name="sun-response"]:checked'
+    );
+    userSelections.sunResponse = sunResponseInput
+      ? sunResponseInput.value
+      : null;
 
-    const skinToneInput = document.querySelector('input[name="skin-tone"]:checked');
+    const skinToneInput = document.querySelector(
+      'input[name="skin-tone"]:checked'
+    );
     userSelections.skinTone = skinToneInput ? skinToneInput.value : null;
 
     const ethnicBackgroundSelect = document.getElementById("ethnic-background");
-    userSelections.ethnicBackground = ethnicBackgroundSelect ? ethnicBackgroundSelect.value : null;
+    userSelections.ethnicBackground = ethnicBackgroundSelect
+      ? ethnicBackgroundSelect.value
+      : null;
 
-    const previousTreatmentsInputs = document.querySelectorAll('input[name="previous-treatments"]:checked');
-    userSelections.previousTreatments = Array.from(previousTreatmentsInputs).map(cb => cb.value);
+    const previousTreatmentsInputs = document.querySelectorAll(
+      'input[name="previous-treatments"]:checked'
+    );
+    userSelections.previousTreatments = Array.from(
+      previousTreatmentsInputs
+    ).map((cb) => cb.value);
 
     // Update window.userSelections
     if (window.userSelections) {
@@ -6135,7 +6594,8 @@ document
       window.userSelections.sunResponse = userSelections.sunResponse;
       window.userSelections.skinTone = userSelections.skinTone;
       window.userSelections.ethnicBackground = userSelections.ethnicBackground;
-      window.userSelections.previousTreatments = userSelections.previousTreatments;
+      window.userSelections.previousTreatments =
+        userSelections.previousTreatments;
     }
 
     // Validate all fields - show message only on submit attempt
@@ -6155,10 +6615,15 @@ document
     }
     // Goals check removed - goals section is hidden for now
     // Check concerns - use category selections or actual selected issues count
-    const hasCategorySelections = userSelections.selectedConcernCategories && userSelections.selectedConcernCategories.length > 0;
-    const actualIssueCount = (window.userSelections && window.userSelections.selectedIssues && window.userSelections.selectedIssues.length > 0) 
-      ? window.userSelections.selectedIssues.length 
-      : totalIssueSelections;
+    const hasCategorySelections =
+      userSelections.selectedConcernCategories &&
+      userSelections.selectedConcernCategories.length > 0;
+    const actualIssueCount =
+      window.userSelections &&
+      window.userSelections.selectedIssues &&
+      window.userSelections.selectedIssues.length > 0
+        ? window.userSelections.selectedIssues.length
+        : totalIssueSelections;
     if (!hasCategorySelections && actualIssueCount === 0) {
       hasError = true;
       errorMessage = "Please select at least one concern to continue.";
@@ -6197,10 +6662,18 @@ document
     }
 
     // Collect all selections - prioritize body selector selections if they exist
-    if (window.userSelections && window.userSelections.selectedIssues && window.userSelections.selectedIssues.length > 0) {
+    if (
+      window.userSelections &&
+      window.userSelections.selectedIssues &&
+      window.userSelections.selectedIssues.length > 0
+    ) {
       // Use selections from body selector
-      userSelections.selectedAreas = [...(window.userSelections.selectedAreas || [])];
-      userSelections.selectedIssues = [...(window.userSelections.selectedIssues || [])];
+      userSelections.selectedAreas = [
+        ...(window.userSelections.selectedAreas || []),
+      ];
+      userSelections.selectedIssues = [
+        ...(window.userSelections.selectedIssues || []),
+      ];
     } else {
       // Fall back to collecting from dropdown rows
       const rows = document.querySelectorAll(".region-issue-row");
@@ -6245,9 +6718,22 @@ document
 // ============================================================================
 
 function showEarlyLeadCapture() {
-  // Hide form screen, show lead capture
-  document.getElementById("form-screen").classList.remove("active");
-  document.getElementById("lead-capture-screen").classList.add("active");
+  // Hide all screens first
+  document.querySelectorAll(".screen").forEach((screen) => {
+    screen.classList.remove("active");
+  });
+
+  // Show lead capture screen
+  const leadCaptureScreen = document.getElementById("lead-capture-screen");
+  if (leadCaptureScreen) {
+    leadCaptureScreen.classList.add("active");
+    console.log("Lead capture screen shown");
+  } else {
+    console.error("Lead capture screen not found");
+    // Fallback: proceed directly to results
+    proceedToResults();
+    return;
+  }
 
   // Scroll to top
   scrollToTop();
@@ -6255,23 +6741,25 @@ function showEarlyLeadCapture() {
   // Get selected categories or fall back to issues
   const categories = userSelections.selectedConcernCategories || [];
   const selectedIssues = userSelections.selectedIssues || [];
-  
+
   // Count available treatments and collect matching cases for previews
   let totalCases = 0;
   let allMatchingCases = [];
-  
+
   // Use categories if available
   if (categories.length > 0) {
     categories.forEach((categoryId) => {
-      const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+      const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === categoryId);
       if (category) {
         const matchingCases = getMatchingCasesForItem({
           type: "category",
           name: category.name,
           id: categoryId,
-          mapsToSpecificIssues: category.mapsToSpecificIssues
+          mapsToSpecificIssues: category.mapsToSpecificIssues,
         });
-        console.log(`Found ${matchingCases.length} cases for category: ${category.name}`);
+        console.log(
+          `Found ${matchingCases.length} cases for category: ${category.name}`
+        );
         totalCases += matchingCases.length;
         allMatchingCases = allMatchingCases.concat(matchingCases);
       }
@@ -6287,8 +6775,10 @@ function showEarlyLeadCapture() {
       allMatchingCases = allMatchingCases.concat(matchingCases);
     });
   }
-  
-  console.log(`Total matching cases found: ${totalCases}, Unique cases: ${allMatchingCases.length}`);
+
+  console.log(
+    `Total matching cases found: ${totalCases}, Unique cases: ${allMatchingCases.length}`
+  );
 
   // Update the treatment count message
   const countEl = document.getElementById("treatment-count");
@@ -6299,66 +6789,80 @@ function showEarlyLeadCapture() {
       countEl.textContent = "personalized";
     }
   }
-  
+
   // Update the title to be personalized based on first concern
   const titleEl = document.getElementById("lead-capture-title");
   if (titleEl && categories.length > 0) {
-    const firstCategory = HIGH_LEVEL_CONCERNS.find(c => c.id === categories[0]);
+    const firstCategory = HIGH_LEVEL_CONCERNS.find(
+      (c) => c.id === categories[0]
+    );
     if (firstCategory) {
       titleEl.textContent = `Perfect Results for ${firstCategory.name}!`;
     }
   }
 
   // Populate preview thumbnails with real case images
-  const thumbnailsContainer = document.getElementById("lead-capture-thumbnails");
+  const thumbnailsContainer = document.getElementById(
+    "lead-capture-thumbnails"
+  );
   if (thumbnailsContainer) {
     if (allMatchingCases.length > 0) {
       // Get unique cases (avoid duplicates)
-      const uniqueCases = allMatchingCases.filter((c, i, arr) => 
-        arr.findIndex(x => x.id === c.id) === i
-      ).slice(0, 3);
-      
+      const uniqueCases = allMatchingCases
+        .filter((c, i, arr) => arr.findIndex((x) => x.id === c.id) === i)
+        .slice(0, 3);
+
       console.log(`Displaying ${uniqueCases.length} preview thumbnails`);
-      
-      thumbnailsContainer.innerHTML = uniqueCases.map(caseItem => {
-        // Use beforeAfter as fallback if thumbnail doesn't exist
-        const imageUrl = caseItem.thumbnail || caseItem.beforeAfter || '';
-        console.log(`Case: ${caseItem.name}, Image: ${imageUrl ? 'found' : 'missing'}`);
-        return `
+
+      thumbnailsContainer.innerHTML = uniqueCases
+        .map((caseItem) => {
+          // Use beforeAfter as fallback if thumbnail doesn't exist
+          const imageUrl = caseItem.thumbnail || caseItem.beforeAfter || "";
+          console.log(
+            `Case: ${caseItem.name}, Image: ${imageUrl ? "found" : "missing"}`
+          );
+          return `
           <div class="preview-thumbnail">
-            <img src="${imageUrl}" alt="${caseItem.name || 'Case preview'}" 
+            <img src="${imageUrl}" alt="${caseItem.name || "Case preview"}" 
                  onerror="console.error('Image failed to load:', '${imageUrl}'); this.parentElement.style.display='none';" />
           </div>
         `;
-      }).join("");
+        })
+        .join("");
     } else {
       // Show placeholder if no cases
       console.warn("No matching cases found for preview");
-      thumbnailsContainer.innerHTML = '<div class="preview-thumbnail"><div style="background: #f0f0f0; width: 100%; height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">Preview</div></div>';
+      thumbnailsContainer.innerHTML =
+        '<div class="preview-thumbnail"><div style="background: #f0f0f0; width: 100%; height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">Preview</div></div>';
     }
   }
 
   // Populate preview items with their selected concerns
-  const previewContainer = document.getElementById("lead-capture-preview-items");
+  const previewContainer = document.getElementById(
+    "lead-capture-preview-items"
+  );
   if (previewContainer) {
     // Use categories if available
-    const itemsToShow = categories.length > 0 
-      ? categories.map(id => {
-          const cat = HIGH_LEVEL_CONCERNS.find(c => c.id === id);
-          return cat ? cat.name : id;
-        })
-      : selectedIssues;
-    
+    const itemsToShow =
+      categories.length > 0
+        ? categories.map((id) => {
+            const cat = HIGH_LEVEL_CONCERNS.find((c) => c.id === id);
+            return cat ? cat.name : id;
+          })
+        : selectedIssues;
+
     previewContainer.innerHTML = itemsToShow
       .slice(0, 3)
-      .map((item) => `
+      .map(
+        (item) => `
         <div class="preview-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
           ${categories.length > 0 ? item : getIssuePositiveSuggestion(item)}
         </div>
-      `)
+      `
+      )
       .join("");
 
     // Add "and more" if there are additional items
@@ -6427,7 +6931,11 @@ async function handleLeadFormSubmit() {
   }
 
   // Validate phone if provided
-  if (phone && typeof isValidPhoneNumber === 'function' && !isValidPhoneNumber(phone)) {
+  if (
+    phone &&
+    typeof isValidPhoneNumber === "function" &&
+    !isValidPhoneNumber(phone)
+  ) {
     if (phoneInput) {
       phoneInput.style.borderColor = "#d32f2f";
       phoneInput.focus();
@@ -6437,7 +6945,7 @@ async function handleLeadFormSubmit() {
 
   // Format phone if provided
   let formattedPhone = phone;
-  if (phone && typeof formatPhoneNumber === 'function') {
+  if (phone && typeof formatPhoneNumber === "function") {
     formattedPhone = formatPhoneNumber(phone);
   }
 
@@ -6494,11 +7002,11 @@ function setupEarlyLeadForm() {
   // Set up phone and email formatting/validation
   const emailInput = document.getElementById("early-capture-email");
   const phoneInput = document.getElementById("early-capture-phone");
-  
+
   if (emailInput) {
     setupEmailInput(emailInput);
   }
-  
+
   if (phoneInput) {
     setupPhoneInput(phoneInput);
   }
@@ -6509,7 +7017,7 @@ function setupEarlyLeadForm() {
   const skipBtn = document.getElementById("lead-skip-btn");
 
   // Set up form submit handler
-  form.addEventListener('submit', function (e) {
+  form.addEventListener("submit", function (e) {
     e.preventDefault();
     e.stopPropagation();
     console.log("Form submitted via form.onsubmit");
@@ -6542,7 +7050,7 @@ function setupEarlyLeadForm() {
   console.log("Early lead form setup complete", {
     form: !!form,
     submitBtn: !!submitBtn,
-    skipBtn: !!skipBtn
+    skipBtn: !!skipBtn,
   });
 }
 
@@ -6555,18 +7063,19 @@ function skipLeadCapture() {
 async function proceedToResults() {
   console.log("Proceeding to results");
 
-  // Hide lead capture screen
-  const leadScreen = document.getElementById("lead-capture-screen");
-  if (leadScreen) {
-    leadScreen.classList.remove("active");
-    console.log("Lead capture screen hidden");
-  }
+  // Hide all screens first
+  document.querySelectorAll(".screen").forEach((screen) => {
+    screen.classList.remove("active");
+  });
 
   // Show the new consolidated results screen
   const resultsScreen = document.getElementById("results-screen");
   if (resultsScreen) {
     resultsScreen.classList.add("active");
     console.log("Results screen shown");
+  } else {
+    console.error("Results screen not found");
+    return;
   }
 
   // Scroll to top
@@ -6596,55 +7105,86 @@ let treatmentGroupsByConcern = {};
 // "Resolve Wide Jawline With Jawline" -> "Resolve Wide Jawline"
 function extractConcernFromCaseName(caseName) {
   if (!caseName) return "General Concern";
-  
+
   const name = caseName.toLowerCase();
-  
+
   // Remove common treatment method suffixes
   const patterns = [
     // Remove "with [treatment]" patterns - expanded to include energy-based treatments
-    { pattern: /\s+with\s+(threadlift|thread\s+lift|neurotoxin|botox|xeomin|dysport|dermal\s+fillers?|filler|sculptra|physiq|everesse|coolsculpting|ipl|laser|microneedling|chemical\s+peel|heat|energy|heat\/energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|microneedling|hydrafacial).*$/i, replacement: '' },
+    {
+      pattern:
+        /\s+with\s+(threadlift|thread\s+lift|neurotoxin|botox|xeomin|dysport|dermal\s+fillers?|filler|sculptra|physiq|everesse|coolsculpting|ipl|laser|microneedling|chemical\s+peel|heat|energy|heat\/energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|microneedling|hydrafacial).*$/i,
+      replacement: "",
+    },
     // Remove "with [body part]" patterns (e.g., "with jawline", "with brow")
-    { pattern: /\s+with\s+(jawline|brow|brows|cheek|cheeks|forehead|neck|chin|lips|lip|eyes|eye|nose|temple|temples).*$/i, replacement: '' },
+    {
+      pattern:
+        /\s+with\s+(jawline|brow|brows|cheek|cheeks|forehead|neck|chin|lips|lip|eyes|eye|nose|temple|temples).*$/i,
+      replacement: "",
+    },
     // Remove standalone treatment terms at the end (e.g., "Heat/energy", "RF", "Laser")
-    { pattern: /\s+(heat\/energy|heat\s*\/\s*energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|microneedling|hydrafacial|ipl|laser|botox|filler|threadlift)$/i, replacement: '' },
+    {
+      pattern:
+        /\s+(heat\/energy|heat\s*\/\s*energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|microneedling|hydrafacial|ipl|laser|botox|filler|threadlift)$/i,
+      replacement: "",
+    },
     // Remove "using X" patterns
-    { pattern: /\s+using\s+.*$/i, replacement: '' },
+    { pattern: /\s+using\s+.*$/i, replacement: "" },
     // Remove "via X" patterns
-    { pattern: /\s+via\s+.*$/i, replacement: '' },
+    { pattern: /\s+via\s+.*$/i, replacement: "" },
   ];
-  
+
   let concern = caseName;
   patterns.forEach(({ pattern, replacement }) => {
     concern = concern.replace(pattern, replacement).trim();
   });
-  
+
   // Capitalize first letter of each word
-  concern = concern.split(' ').map(word => 
-    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-  ).join(' ');
-  
+  concern = concern
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+
   return concern || "General Concern";
 }
 
 // Body parts that should not be extracted as treatments
 const BODY_PARTS = new Set([
-  'jawline', 'brow', 'brows', 'cheek', 'cheeks', 'forehead', 'neck', 'chin',
-  'lips', 'lip', 'eyes', 'eye', 'nose', 'temple', 'temples', 'under eye',
-  'under-eye', 'upper eyelid', 'lower eyelid', 'mid cheek', 'lateral cheek'
+  "jawline",
+  "brow",
+  "brows",
+  "cheek",
+  "cheeks",
+  "forehead",
+  "neck",
+  "chin",
+  "lips",
+  "lip",
+  "eyes",
+  "eye",
+  "nose",
+  "temple",
+  "temples",
+  "under eye",
+  "under-eye",
+  "upper eyelid",
+  "lower eyelid",
+  "mid cheek",
+  "lateral cheek",
 ]);
 
 // Map body part + treatment combinations to actual treatments
 const BODY_PART_TREATMENT_MAP = {
-  'jawline filler': 'Dermal Fillers',
-  'jawline fillers': 'Dermal Fillers',
-  'brow lift': 'Threadlift',
-  'brow thread': 'Threadlift',
-  'cheek filler': 'Dermal Fillers',
-  'cheek fillers': 'Dermal Fillers',
-  'lip filler': 'Dermal Fillers',
-  'lip fillers': 'Dermal Fillers',
-  'neck filler': 'Dermal Fillers',
-  'neck fillers': 'Dermal Fillers',
+  "jawline filler": "Dermal Fillers",
+  "jawline fillers": "Dermal Fillers",
+  "brow lift": "Threadlift",
+  "brow thread": "Threadlift",
+  "cheek filler": "Dermal Fillers",
+  "cheek fillers": "Dermal Fillers",
+  "lip filler": "Dermal Fillers",
+  "lip fillers": "Dermal Fillers",
+  "neck filler": "Dermal Fillers",
+  "neck fillers": "Dermal Fillers",
 };
 
 // Extract treatment from case name
@@ -6653,84 +7193,131 @@ const BODY_PART_TREATMENT_MAP = {
 // "Resolve Wide Jawline With Dermal Fillers" -> "Dermal Fillers"
 function extractTreatmentFromCaseName(caseName) {
   if (!caseName) return "General Treatment";
-  
+
   // Try to extract treatment using getTreatmentModality first
   // This searches for treatment names in the case name
   const modality = getTreatmentModality(caseName);
   if (modality && modality.name && modality.name !== "Treatment") {
     return modality.name;
   }
-  
+
   // Fallback: extract from "with X" pattern
   let withMatch = caseName.match(/\s+with\s+([^,]+?)(?:\s+for|\s+to|$)/i);
-  
+
   // Also check for treatments at the end without "with" (e.g., "Resolve X Heat/energy")
   if (!withMatch) {
-    const endTreatmentMatch = caseName.match(/\s+(heat\/energy|heat\s*\/\s*energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|hydrafacial|ipl|laser|botox|filler|threadlift)$/i);
+    const endTreatmentMatch = caseName.match(
+      /\s+(heat\/energy|heat\s*\/\s*energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|hydrafacial|ipl|laser|botox|filler|threadlift)$/i
+    );
     if (endTreatmentMatch) {
       withMatch = [null, endTreatmentMatch[1]];
     }
   }
-  
+
   if (withMatch) {
     let treatment = withMatch[1].trim().toLowerCase();
-    
+
     // Check if it's a body part + treatment combination (e.g., "jawline filler")
     if (BODY_PART_TREATMENT_MAP[treatment]) {
       return BODY_PART_TREATMENT_MAP[treatment];
     }
-    
+
     // Check if it's just a body part (should not be a treatment)
     const words = treatment.split(/\s+/);
     if (words.length === 1 && BODY_PARTS.has(treatment)) {
       // It's just a body part, try to find treatment elsewhere in the name
       // or return a generic treatment
       const fullModality = getTreatmentModality(caseName);
-      if (fullModality && fullModality.name && fullModality.name !== "Treatment") {
+      if (
+        fullModality &&
+        fullModality.name &&
+        fullModality.name !== "Treatment"
+      ) {
         return fullModality.name;
       }
       return "General Treatment";
     }
-    
+
     // Check if it contains a body part but also a treatment word
     // e.g., "jawline filler" -> extract "filler"
-    const treatmentWords = ['filler', 'fillers', 'thread', 'threadlift', 'botox', 'neurotoxin', 
-                            'sculptra', 'coolsculpting', 'ipl', 'laser', 'microneedling', 'peel',
-                            'heat', 'energy', 'heat/energy', 'heat/ energy', 'rf', 'radiofrequency', 
-                            'radio frequency', 'thermage', 'ultherapy', 'morpheus', 'hydrafacial'];
+    const treatmentWords = [
+      "filler",
+      "fillers",
+      "thread",
+      "threadlift",
+      "botox",
+      "neurotoxin",
+      "sculptra",
+      "coolsculpting",
+      "ipl",
+      "laser",
+      "microneedling",
+      "peel",
+      "heat",
+      "energy",
+      "heat/energy",
+      "heat/ energy",
+      "rf",
+      "radiofrequency",
+      "radio frequency",
+      "thermage",
+      "ultherapy",
+      "morpheus",
+      "hydrafacial",
+    ];
     for (const treatmentWord of treatmentWords) {
       if (treatment.includes(treatmentWord)) {
         const extractedModality = getTreatmentModality(treatmentWord);
-        if (extractedModality && extractedModality.name && extractedModality.name !== "Treatment") {
+        if (
+          extractedModality &&
+          extractedModality.name &&
+          extractedModality.name !== "Treatment"
+        ) {
           return extractedModality.name;
         }
       }
     }
-    
+
     // Normalize "heat/energy" variations
-    const normalizedTreatment = treatment.replace(/\s*\/\s*/g, '/').toLowerCase();
-    if (normalizedTreatment === 'heat/energy' || normalizedTreatment === 'heat/ energy') {
-      const heatEnergyModality = getTreatmentModality('Heat/Energy');
-      if (heatEnergyModality && heatEnergyModality.name && heatEnergyModality.name !== "Treatment") {
+    const normalizedTreatment = treatment
+      .replace(/\s*\/\s*/g, "/")
+      .toLowerCase();
+    if (
+      normalizedTreatment === "heat/energy" ||
+      normalizedTreatment === "heat/ energy"
+    ) {
+      const heatEnergyModality = getTreatmentModality("Heat/Energy");
+      if (
+        heatEnergyModality &&
+        heatEnergyModality.name &&
+        heatEnergyModality.name !== "Treatment"
+      ) {
         return heatEnergyModality.name;
       }
     }
-    
+
     // Try to match with treatmentModalities using the extracted text
     const extractedModality = getTreatmentModality(treatment);
-    if (extractedModality && extractedModality.name && extractedModality.name !== "Treatment") {
+    if (
+      extractedModality &&
+      extractedModality.name &&
+      extractedModality.name !== "Treatment"
+    ) {
       return extractedModality.name;
     }
-    
+
     // If it's not a body part and not a known treatment, return as-is (capitalized)
-    if (!BODY_PARTS.has(treatment) && !words.some(w => BODY_PARTS.has(w))) {
-      treatment = treatment.split(/\s+/).map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      ).join(' ');
+    if (!BODY_PARTS.has(treatment) && !words.some((w) => BODY_PARTS.has(w))) {
+      treatment = treatment
+        .split(/\s+/)
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(" ");
       return treatment;
     }
   }
-  
+
   return "General Treatment";
 }
 
@@ -6738,42 +7325,42 @@ function extractTreatmentFromCaseName(caseName) {
 function groupCasesByTreatmentSuggestion(cases) {
   // Filter out surgical cases first
   const nonSurgicalCases = filterNonSurgicalCases(cases);
-  
+
   // First level: group by concern
   const concernGroups = {};
-  
-  nonSurgicalCases.forEach(caseItem => {
+
+  nonSurgicalCases.forEach((caseItem) => {
     const concern = extractConcernFromCaseName(caseItem.name);
     const treatment = extractTreatmentFromCaseName(caseItem.name);
-    
+
     if (!concernGroups[concern]) {
       concernGroups[concern] = {
         concern: concern,
-        treatments: {} // Second level: group by treatment
+        treatments: {}, // Second level: group by treatment
       };
     }
-    
+
     if (!concernGroups[concern].treatments[treatment]) {
       concernGroups[concern].treatments[treatment] = [];
     }
-    
+
     concernGroups[concern].treatments[treatment].push(caseItem);
   });
-  
+
   // Convert to array format for rendering
   // Each concern becomes a group with its treatments
-  const groups = Object.values(concernGroups).map(concernGroup => {
+  const groups = Object.values(concernGroups).map((concernGroup) => {
     const treatments = Object.keys(concernGroup.treatments);
     const allCases = Object.values(concernGroup.treatments).flat();
-    
+
     return {
       suggestion: concernGroup.concern, // This is the concern name
       cases: allCases,
       treatments: treatments.sort(), // List of treatments for this concern
-      treatmentsByCase: concernGroup.treatments // Detailed treatment grouping
+      treatmentsByCase: concernGroup.treatments, // Detailed treatment grouping
     };
   });
-  
+
   return groups.sort((a, b) => b.cases.length - a.cases.length);
 }
 
@@ -6781,15 +7368,20 @@ function populateResultsScreen() {
   // Use high-level categories if available, otherwise fall back to selected issues
   const categories = userSelections.selectedConcernCategories || [];
   const selectedIssues = userSelections.selectedIssues || [];
-  
+
   // If we have categories, use those; otherwise use issues
-  const itemsToShow = categories.length > 0 
-    ? categories.map(id => {
-        const category = HIGH_LEVEL_CONCERNS.find(c => c.id === id);
-        return category ? { type: 'category', name: category.name, id: id } : null;
-      }).filter(Boolean)
-    : selectedIssues.map(issue => ({ type: 'issue', name: issue }));
-  
+  const itemsToShow =
+    categories.length > 0
+      ? categories
+          .map((id) => {
+            const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === id);
+            return category
+              ? { type: "category", name: category.name, id: id }
+              : null;
+          })
+          .filter(Boolean)
+      : selectedIssues.map((issue) => ({ type: "issue", name: issue }));
+
   if (itemsToShow.length === 0) {
     console.warn("No selected concerns for results screen");
     return;
@@ -6798,49 +7390,61 @@ function populateResultsScreen() {
   // Populate tabs
   const tabsContainer = document.getElementById("results-tabs");
   if (tabsContainer) {
-    tabsContainer.innerHTML = itemsToShow.map((item, index) => {
-      // Get case count for this category/issue
-      const matchingCases = getMatchingCasesForItem(item);
-      const caseCount = matchingCases.length;
-      return `
-        <button class="results-tab ${index === 0 ? 'active' : ''}" 
+    tabsContainer.innerHTML = itemsToShow
+      .map((item, index) => {
+        // Get case count for this category/issue
+        const matchingCases = getMatchingCasesForItem(item);
+        const caseCount = matchingCases.length;
+        return `
+        <button class="results-tab ${index === 0 ? "active" : ""}" 
                 onclick="switchResultsTab(${index})" 
                 data-index="${index}">
-          ${item.name}${caseCount > 0 ? ` (${caseCount})` : ''}
+          ${item.name}${caseCount > 0 ? ` (${caseCount})` : ""}
         </button>
       `;
-    }).join('');
+      })
+      .join("");
   }
 
   // Populate content sections for each concern
   const contentContainer = document.getElementById("results-content");
   if (contentContainer) {
-    contentContainer.innerHTML = itemsToShow.map((item, index) => {
-      const description = item.type === 'category' 
-        ? HIGH_LEVEL_CONCERNS.find(c => c.id === item.id)?.description || ''
-        : generateIssueGoalDescription(item);
-      const matchingCases = getMatchingCasesForItem(item);
-      
-      // Group cases by treatment suggestion
-      const treatmentGroups = groupCasesByTreatmentSuggestion(matchingCases);
-      
-      // Store treatment groups for this concern (for detail page)
-      const concernKey = item.type === 'category' ? item.id : item.name;
-      treatmentGroupsByConcern[concernKey] = {
-        item: item,
-        treatmentGroups: treatmentGroups
-      };
-      
-      // Get prevalence info
-      const userAge = userSelections.age || 35;
-      const prevalenceInfo = item.type === 'issue' ? getPrevalenceDescription(item.name, userAge) : null;
-      
-      return `
-        <div class="results-concern-section ${index === 0 ? 'active' : ''}" data-index="${index}">
+    contentContainer.innerHTML = itemsToShow
+      .map((item, index) => {
+        const description =
+          item.type === "category"
+            ? HIGH_LEVEL_CONCERNS.find((c) => c.id === item.id)?.description ||
+              ""
+            : generateIssueGoalDescription(item);
+        const matchingCases = getMatchingCasesForItem(item);
+
+        // Group cases by treatment suggestion
+        const treatmentGroups = groupCasesByTreatmentSuggestion(matchingCases);
+
+        // Store treatment groups for this concern (for detail page)
+        const concernKey = item.type === "category" ? item.id : item.name;
+        treatmentGroupsByConcern[concernKey] = {
+          item: item,
+          treatmentGroups: treatmentGroups,
+        };
+
+        // Get prevalence info
+        const userAge = userSelections.age || 35;
+        const prevalenceInfo =
+          item.type === "issue"
+            ? getPrevalenceDescription(item.name, userAge)
+            : null;
+
+        return `
+        <div class="results-concern-section ${
+          index === 0 ? "active" : ""
+        }" data-index="${index}">
           <div class="concern-overview">
             <h2 class="concern-name">${item.name}</h2>
             <p class="concern-description">${description}</p>
-            ${prevalenceInfo ? `
+            ${
+              prevalenceInfo
+                ? `
               <div class="concern-prevalence">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="10"></circle>
@@ -6848,54 +7452,108 @@ function populateResultsScreen() {
                 </svg>
                 ${prevalenceInfo}
               </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
 
           <div class="treatment-groups-section">
-            ${treatmentGroups.length > 0 ? `
+            ${
+              treatmentGroups.length > 0
+                ? `
               <div class="treatment-groups-grid">
-                ${treatmentGroups.map((group, groupIndex) => {
-                  // Get area tags for this treatment group (which areas it relates to)
-                  const areaTags = getTreatmentGroupRelevance(group, userSelections);
-                  const areaHtml = areaTags.length > 0 ? `
+                ${treatmentGroups
+                  .map((group, groupIndex) => {
+                    // Get area tags for this treatment group (which areas it relates to)
+                    const areaTags = getTreatmentGroupRelevance(
+                      group,
+                      userSelections
+                    );
+                    const areaHtml =
+                      areaTags.length > 0
+                        ? `
                     <div class="treatment-group-relevance">
                       <span class="relevance-label">Area:</span>
-                      ${areaTags.map(area => `<span class="relevance-tag">${escapeHtml(area)}</span>`).join('')}
+                      ${areaTags
+                        .map(
+                          (area) =>
+                            `<span class="relevance-tag">${escapeHtml(
+                              area
+                            )}</span>`
+                        )
+                        .join("")}
                     </div>
-                  ` : '';
-                  
-                  return `
-                  <div class="treatment-group-card" onclick="showTreatmentDetail('${escapeHtml(item.type)}', '${escapeHtml(item.id || item.name)}', ${groupIndex})">
+                  `
+                        : "";
+
+                    return `
+                  <div class="treatment-group-card" onclick="showTreatmentDetail('${escapeHtml(
+                    item.type
+                  )}', '${escapeHtml(item.id || item.name)}', ${groupIndex})">
                     <div class="treatment-group-header">
-                      <h3 class="treatment-group-title">${escapeHtml(group.suggestion)}</h3>
-                      <span class="treatment-group-count">${group.cases.length} case${group.cases.length !== 1 ? 's' : ''}</span>
+                      <h3 class="treatment-group-title">${escapeHtml(
+                        group.suggestion
+                      )}</h3>
+                      <span class="treatment-group-count">${
+                        group.cases.length
+                      } case${group.cases.length !== 1 ? "s" : ""}</span>
                     </div>
                     ${areaHtml}
                     <div class="treatment-group-preview">
-                      ${group.cases.slice(0, 3).map(caseItem => {
-                        const imageUrl = caseItem.beforeAfter || caseItem.thumbnail;
-                        return `<img src="${imageUrl}" alt="${escapeHtml(caseItem.name)}" class="treatment-group-preview-image" onerror="this.style.display='none'">`;
-                      }).join('')}
-                      ${group.cases.length > 3 ? `<div class="treatment-group-more">+${group.cases.length - 3}</div>` : ''}
+                      ${group.cases
+                        .slice(0, 3)
+                        .map((caseItem) => {
+                          const imageUrl =
+                            caseItem.beforeAfter || caseItem.thumbnail;
+                          return `<img src="${imageUrl}" alt="${escapeHtml(
+                            caseItem.name
+                          )}" class="treatment-group-preview-image" onerror="this.style.display='none'">`;
+                        })
+                        .join("")}
+                      ${
+                        group.cases.length > 3
+                          ? `<div class="treatment-group-more">+${
+                              group.cases.length - 3
+                            }</div>`
+                          : ""
+                      }
                     </div>
                     <div class="treatment-group-treatments">
-                      ${group.treatments.slice(0, 3).map(t => `<span class="treatment-tag-small">${escapeHtml(t)}</span>`).join('')}
-                      ${group.treatments.length > 3 ? `<span class="treatment-tag-small">+${group.treatments.length - 3} more</span>` : ''}
+                      ${group.treatments
+                        .slice(0, 3)
+                        .map(
+                          (t) =>
+                            `<span class="treatment-tag-small">${escapeHtml(
+                              t
+                            )}</span>`
+                        )
+                        .join("")}
+                      ${
+                        group.treatments.length > 3
+                          ? `<span class="treatment-tag-small">+${
+                              group.treatments.length - 3
+                            } more</span>`
+                          : ""
+                      }
                     </div>
                   </div>
                   `;
-                }).join('')}
+                  })
+                  .join("")}
               </div>
-            ` : `
+            `
+                : `
               <div class="no-cases-message">
                 <h3>No cases available yet</h3>
                 <p>Our providers can discuss treatment options during your consultation.</p>
               </div>
-            `}
+            `
+            }
           </div>
         </div>
       `;
-    }).join('');
+      })
+      .join("");
   }
 
   activeResultsTab = 0;
@@ -6903,19 +7561,19 @@ function populateResultsScreen() {
 
 function switchResultsTab(index) {
   activeResultsTab = index;
-  
+
   // Update tab active states
-  const tabs = document.querySelectorAll('.results-tab');
+  const tabs = document.querySelectorAll(".results-tab");
   tabs.forEach((tab, i) => {
-    tab.classList.toggle('active', i === index);
+    tab.classList.toggle("active", i === index);
   });
-  
+
   // Update content section visibility
-  const sections = document.querySelectorAll('.results-concern-section');
+  const sections = document.querySelectorAll(".results-concern-section");
   sections.forEach((section, i) => {
-    section.classList.toggle('active', i === index);
+    section.classList.toggle("active", i === index);
   });
-  
+
   // Scroll content to top
   const contentContainer = document.getElementById("results-content");
   if (contentContainer) {
@@ -6927,87 +7585,99 @@ function switchResultsTab(index) {
 function showTreatmentDetail(itemType, itemId, groupIndex) {
   const concernKey = itemId;
   const concernData = treatmentGroupsByConcern[concernKey];
-  
+
   if (!concernData || !concernData.treatmentGroups[groupIndex]) {
     console.error("Treatment group not found");
     return;
   }
-  
+
   const group = concernData.treatmentGroups[groupIndex];
   const item = concernData.item;
-  
+
   // Hide results screen, show treatment detail screen
   document.getElementById("results-screen")?.classList.remove("active");
   document.getElementById("treatment-detail-screen")?.classList.add("active");
-  
+
   // Update title
   const titleEl = document.getElementById("treatment-detail-title");
   const subtitleEl = document.getElementById("treatment-detail-subtitle");
   if (titleEl) titleEl.textContent = group.suggestion;
-  if (subtitleEl) subtitleEl.textContent = `${group.cases.length} patient result${group.cases.length !== 1 ? 's' : ''}`;
-  
+  if (subtitleEl)
+    subtitleEl.textContent = `${group.cases.length} patient result${
+      group.cases.length !== 1 ? "s" : ""
+    }`;
+
   // Directly show all cases - skip treatment selection step
   const contentEl = document.getElementById("treatment-detail-content");
   if (contentEl) {
     // Pass the group suggestion as page context to simplify case titles
     contentEl.innerHTML = `
       <div class="treatment-cases-grid">
-        ${group.cases.map(caseItem => renderCasePreviewCard(caseItem, group.suggestion)).join('')}
+        ${group.cases
+          .map((caseItem) => renderCasePreviewCard(caseItem, group.suggestion))
+          .join("")}
       </div>
     `;
   }
-  
+
   // Update CTA footer visibility
   updateFloatingCTA();
-  
+
   scrollToTop();
 }
 
 // Show cases for a specific treatment
 function showTreatmentCases(concernKey, groupIndex, treatmentName) {
   const concernData = treatmentGroupsByConcern[concernKey];
-  
+
   if (!concernData || !concernData.treatmentGroups[groupIndex]) {
     console.error("Treatment group not found");
     return;
   }
-  
+
   const group = concernData.treatmentGroups[groupIndex];
-  
+
   // Filter cases by treatment - use treatmentsByCase if available
   let filteredCases = [];
   if (group.treatmentsByCase && group.treatmentsByCase[treatmentName]) {
     filteredCases = group.treatmentsByCase[treatmentName];
   } else {
     // Fallback: filter by extracting treatment from case name
-    filteredCases = group.cases.filter(caseItem => {
+    filteredCases = group.cases.filter((caseItem) => {
       const caseTreatment = extractTreatmentFromCaseName(caseItem.name);
       return caseTreatment === treatmentName;
     });
   }
-  
+
   // Update title
   const titleEl = document.getElementById("treatment-detail-title");
   const subtitleEl = document.getElementById("treatment-detail-subtitle");
   if (titleEl) titleEl.textContent = `${group.suggestion} - ${treatmentName}`;
-  if (subtitleEl) subtitleEl.textContent = `${filteredCases.length} patient result${filteredCases.length !== 1 ? 's' : ''}`;
-  
+  if (subtitleEl)
+    subtitleEl.textContent = `${filteredCases.length} patient result${
+      filteredCases.length !== 1 ? "s" : ""
+    }`;
+
   // Populate with cases
   const contentEl = document.getElementById("treatment-detail-content");
   if (contentEl) {
     contentEl.innerHTML = `
       <div class="treatment-cases-grid">
-        ${filteredCases.map(caseItem => renderCasePreviewCard(caseItem)).join('')}
+        ${filteredCases
+          .map((caseItem) => renderCasePreviewCard(caseItem))
+          .join("")}
       </div>
     `;
   }
-  
+
   scrollToTop();
 }
 
 // Go back to results screen
 function goBackToResults() {
-  document.getElementById("treatment-detail-screen")?.classList.remove("active");
+  document
+    .getElementById("treatment-detail-screen")
+    ?.classList.remove("active");
   document.getElementById("results-screen")?.classList.add("active");
   scrollToTop();
 }
@@ -7016,19 +7686,19 @@ function goBackToResults() {
 // e.g., "Resolve Brow Ptosis with Microneedling" -> "Microneedling"
 function extractTreatmentFromCaseNameForDisplay(caseName) {
   if (!caseName) return caseName;
-  
+
   // Look for "with [Treatment]" pattern
   const withMatch = caseName.match(/\s+with\s+(.+)$/i);
   if (withMatch && withMatch[1]) {
     return withMatch[1].trim();
   }
-  
+
   // Look for " - [Treatment]" pattern
   const dashMatch = caseName.match(/\s+-\s+(.+)$/);
   if (dashMatch && dashMatch[1]) {
     return dashMatch[1].trim();
   }
-  
+
   // Fallback: return original name
   return caseName;
 }
@@ -7037,80 +7707,113 @@ function renderCasePreviewCard(caseItem, pageContext = null) {
   const imageUrl = caseItem.beforeAfter || caseItem.thumbnail;
   // Only show demographic matches on case cards (exclude areas and concerns)
   const matchIndicators = getMatchIndicators(caseItem, userSelections, true);
-  const matchIndicatorsHtml = matchIndicators.length > 0 ? `
+  const matchIndicatorsHtml =
+    matchIndicators.length > 0
+      ? `
     <div class="case-match-indicators">
-      ${matchIndicators.map(ind => `<span class="match-indicator match-${ind.type}">✓ ${ind.text}</span>`).join('')}
+      ${matchIndicators
+        .map(
+          (ind) =>
+            `<span class="match-indicator match-${ind.type}">✓ ${ind.text}</span>`
+        )
+        .join("")}
     </div>
-  ` : '';
+  `
+      : "";
   const treatments = (caseItem.treatments || []).slice(0, 2);
-  
+
   // If pageContext is provided (e.g., "Resolve Brow Ptosis"), simplify the case name to just show treatment
   let displayTitle = caseItem.name;
   if (pageContext) {
-    const extractedTreatment = extractTreatmentFromCaseNameForDisplay(caseItem.name);
+    const extractedTreatment = extractTreatmentFromCaseNameForDisplay(
+      caseItem.name
+    );
     displayTitle = extractedTreatment;
   }
-  
+
   // Get matching goals to display as tags
   const goalLabels = {
     "facial-balancing": "Facial Balancing",
     "anti-aging": "Anti-Aging",
     "skin-rejuvenation": "Skin Rejuvenation",
-    "natural-look": "Natural Look"
+    "natural-look": "Natural Look",
   };
-  
+
   // Find goals that match this case
   const userGoals = userSelections.overallGoals || [];
   const caseCriteria = caseItem.matchingCriteria || [];
-  
+
   // Get matching goals (user's goals that this case addresses)
-  const matchingGoals = userGoals.filter(goal => caseCriteria.includes(goal));
-  
+  const matchingGoals = userGoals.filter((goal) => caseCriteria.includes(goal));
+
   // Also check for issue matches from the current concern being displayed
   const userIssues = userSelections.selectedIssues || [];
   const caseIssues = caseItem.directMatchingIssues || [];
-  const matchingIssues = userIssues.filter(issue => 
-    caseIssues.some(caseIssue => 
-      caseIssue.toLowerCase() === issue.toLowerCase()
+  const matchingIssues = userIssues.filter((issue) =>
+    caseIssues.some(
+      (caseIssue) => caseIssue.toLowerCase() === issue.toLowerCase()
     )
   );
-  
+
   // Build goal tags HTML
-  let goalTagsHtml = '';
+  let goalTagsHtml = "";
   if (matchingGoals.length > 0) {
-    const goalTags = matchingGoals.slice(0, 2).map(goal => 
-      `<span class="case-goal-tag">${goalLabels[goal] || goal}</span>`
-    ).join('');
+    const goalTags = matchingGoals
+      .slice(0, 2)
+      .map(
+        (goal) =>
+          `<span class="case-goal-tag">${goalLabels[goal] || goal}</span>`
+      )
+      .join("");
     goalTagsHtml = `<div class="case-goal-tags">${goalTags}</div>`;
   } else if (matchingIssues.length > 0) {
     // Show matching issue as a tag if no goal matches
     const issueTag = `<span class="case-goal-tag">${matchingIssues[0]}</span>`;
     goalTagsHtml = `<div class="case-goal-tags">${issueTag}</div>`;
   }
-  
+
   return `
-    <div class="case-preview-card" onclick="showCaseFromResults('${caseItem.id}')">
-      ${imageUrl ? `
+    <div class="case-preview-card" onclick="showCaseFromResults('${
+      caseItem.id
+    }')">
+      ${
+        imageUrl
+          ? `
         <img class="case-preview-image" src="${imageUrl}" alt="Before and after" loading="lazy" 
              onerror="this.classList.add('placeholder'); this.outerHTML='<div class=\\'case-preview-image placeholder\\'>Before/After</div>';">
-      ` : `
+      `
+          : `
         <div class="case-preview-image placeholder">Before/After</div>
-      `}
+      `
+      }
       <div class="case-preview-content">
         <div class="case-preview-header">
           <h4 class="case-preview-title">${escapeHtml(displayTitle)}</h4>
-          ${caseItem.demographicMatchPercentage !== undefined && caseItem.demographicMatchPercentage !== null ? `
+          ${
+            caseItem.demographicMatchPercentage !== undefined &&
+            caseItem.demographicMatchPercentage !== null
+              ? `
             <div class="case-match-percentage">${caseItem.demographicMatchPercentage}% match</div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
         ${matchIndicatorsHtml}
         ${goalTagsHtml}
-        ${treatments.length > 0 ? `
+        ${
+          treatments.length > 0
+            ? `
           <div class="case-preview-treatments">
-            ${treatments.map(t => `<span class="case-treatment-badge">${t}</span>`).join('')}
+            ${treatments
+              .map((t) => `<span class="case-treatment-badge">${t}</span>`)
+              .join("")}
           </div>
-        ` : ''}
-        <button class="case-preview-cta" onclick="showCaseFromResults('${caseItem.id}'); event.stopPropagation();">
+        `
+            : ""
+        }
+        <button class="case-preview-cta" onclick="showCaseFromResults('${
+          caseItem.id
+        }'); event.stopPropagation();">
           <span>View Details</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -7122,10 +7825,12 @@ function renderCasePreviewCard(caseItem, pageContext = null) {
 }
 
 function showCaseFromResults(caseId) {
-  const caseItem = caseData.find(c => c.id === caseId);
+  const caseItem = caseData.find((c) => c.id === caseId);
   if (caseItem) {
     // Check if we're coming from treatment detail screen or results screen
-    const treatmentDetailActive = document.getElementById("treatment-detail-screen")?.classList.contains("active");
+    const treatmentDetailActive = document
+      .getElementById("treatment-detail-screen")
+      ?.classList.contains("active");
     if (treatmentDetailActive) {
       caseDetailReturnScreen = "treatment-detail";
     } else {
@@ -7138,44 +7843,50 @@ function showCaseFromResults(caseId) {
 function getTreatmentsForIssue(issueName) {
   // Map issues to common treatments
   const treatmentMap = {
-    'Forehead Wrinkles': ['Botox', 'Dysport', 'Xeomin'],
-    'Glabella Wrinkles': ['Botox', 'Dysport', 'Dermal Fillers'],
-    'Crow\'s Feet Wrinkles': ['Botox', 'Dysport'],
-    'Nasolabial Folds': ['Dermal Fillers', 'Juvederm', 'Restylane'],
-    'Marionette Lines': ['Dermal Fillers', 'Juvederm'],
-    'Under Eye Dark Circles': ['Under Eye Filler', 'PRP Therapy'],
-    'Under Eye Wrinkles': ['Botox', 'Under Eye Filler'],
-    'Thin Lips': ['Lip Filler', 'Juvederm Volbella'],
-    'Lip Lines': ['Botox', 'Lip Filler'],
-    'Jowls': ['Kybella', 'Thread Lift', 'Morpheus8'],
-    'Double Chin': ['Kybella', 'CoolSculpting'],
-    'Acne Scars': ['Microneedling', 'Chemical Peel', 'Laser'],
-    'Skin Texture': ['Microneedling', 'Chemical Peel', 'HydraFacial'],
-    'Sun Damage': ['IPL', 'Chemical Peel', 'Laser'],
-    'Stubborn Fat': ['CoolSculpting', 'Kybella', 'Liposuction'],
-    'Cellulite': ['Morpheus8', 'QWO', 'Emtone'],
+    "Forehead Wrinkles": ["Botox", "Dysport", "Xeomin"],
+    "Glabella Wrinkles": ["Botox", "Dysport", "Dermal Fillers"],
+    "Crow's Feet Wrinkles": ["Botox", "Dysport"],
+    "Nasolabial Folds": ["Dermal Fillers", "Juvederm", "Restylane"],
+    "Marionette Lines": ["Dermal Fillers", "Juvederm"],
+    "Under Eye Dark Circles": ["Under Eye Filler", "PRP Therapy"],
+    "Under Eye Wrinkles": ["Botox", "Under Eye Filler"],
+    "Thin Lips": ["Lip Filler", "Juvederm Volbella"],
+    "Lip Lines": ["Botox", "Lip Filler"],
+    Jowls: ["Kybella", "Thread Lift", "Morpheus8"],
+    "Double Chin": ["Kybella", "CoolSculpting"],
+    "Acne Scars": ["Microneedling", "Chemical Peel", "Laser"],
+    "Skin Texture": ["Microneedling", "Chemical Peel", "HydraFacial"],
+    "Sun Damage": ["IPL", "Chemical Peel", "Laser"],
+    "Stubborn Fat": ["CoolSculpting", "Kybella", "Liposuction"],
+    Cellulite: ["Morpheus8", "QWO", "Emtone"],
   };
-  
+
   // Check for exact match
   if (treatmentMap[issueName]) {
     return treatmentMap[issueName];
   }
-  
+
   // Check for partial matches
   const issueNameLower = issueName.toLowerCase();
   for (const [key, treatments] of Object.entries(treatmentMap)) {
-    if (key.toLowerCase().includes(issueNameLower) || issueNameLower.includes(key.toLowerCase())) {
+    if (
+      key.toLowerCase().includes(issueNameLower) ||
+      issueNameLower.includes(key.toLowerCase())
+    ) {
       return treatments;
     }
   }
-  
+
   // Default treatments
-  return ['Consultation Required', 'Multiple Options Available'];
+  return ["Consultation Required", "Multiple Options Available"];
 }
 
 function getPrevalenceDescription(issueName, age) {
   // Use the embedded prevalence data if available
-  if (typeof issuePrevalenceData !== 'undefined' && issuePrevalenceData[issueName]) {
+  if (
+    typeof issuePrevalenceData !== "undefined" &&
+    issuePrevalenceData[issueName]
+  ) {
     const data = issuePrevalenceData[issueName];
     const ageGroup = getAgeGroup(age);
     if (data.byAge && data.byAge[ageGroup]) {
@@ -7189,11 +7900,11 @@ function getPrevalenceDescription(issueName, age) {
 }
 
 function getAgeGroup(age) {
-  if (age < 30) return '18-29';
-  if (age < 40) return '30-39';
-  if (age < 50) return '40-49';
-  if (age < 60) return '50-59';
-  return '60+';
+  if (age < 30) return "18-29";
+  if (age < 40) return "30-39";
+  if (age < 50) return "40-49";
+  if (age < 60) return "50-59";
+  return "60+";
 }
 
 // Expose new functions globally
@@ -7570,8 +8281,12 @@ async function renderIssueDetailContent() {
   // Section 1: Explicitly selected issues
   if (explicitIssues.length > 0) {
     // Separate starred (goal-added) issues from regular issues
-    const starredIssues = explicitIssues.filter((issue) => isIssueInGoals(issue));
-    const regularIssues = explicitIssues.filter((issue) => !isIssueInGoals(issue));
+    const starredIssues = explicitIssues.filter((issue) =>
+      isIssueInGoals(issue)
+    );
+    const regularIssues = explicitIssues.filter(
+      (issue) => !isIssueInGoals(issue)
+    );
 
     // Pre-process to assign unique cases to each issue
     const issueCaseMap = new Map();
@@ -7630,7 +8345,9 @@ async function renderIssueDetailContent() {
                         </div>
                     </div>
                     <div class="expert-meta">
-                        <span class="expert-count">${starredIssues.length} concern${starredIssues.length !== 1 ? "s" : ""}</span>
+                        <span class="expert-count">${
+                          starredIssues.length
+                        } concern${starredIssues.length !== 1 ? "s" : ""}</span>
                         <div class="expert-accordion-toggle">
                             ${getIconSVG("arrowRight", 16)}
                         </div>
@@ -7949,10 +8666,10 @@ function toggleExpertPerspective() {
   const accordion = document.querySelector(".expert-perspective-accordion");
   const content = accordion?.querySelector(".expert-perspective-content");
   const toggle = accordion?.querySelector(".expert-accordion-toggle");
-  
+
   if (accordion && content && toggle) {
     const isExpanded = !accordion.classList.contains("collapsed");
-    
+
     if (isExpanded) {
       content.style.display = "none";
       toggle.innerHTML = getIconSVG("arrowRight", 16);
@@ -8004,13 +8721,25 @@ function getCategoryDisplayLabel(category, goalContext = null) {
 function getIssueDiscountTag(issueName) {
   const discount = getPersonalizedDiscount();
   if (!discount) return null;
-  
+
   const issueLower = issueName.toLowerCase();
-  
+
   // Check if issue is injectable-related
-  const injectableKeywords = ["wrinkle", "line", "lip", "volume", "filler", "botox", "crow's feet", "glabella", "forehead"];
-  const isInjectable = injectableKeywords.some(keyword => issueLower.includes(keyword));
-  
+  const injectableKeywords = [
+    "wrinkle",
+    "line",
+    "lip",
+    "volume",
+    "filler",
+    "botox",
+    "crow's feet",
+    "glabella",
+    "forehead",
+  ];
+  const isInjectable = injectableKeywords.some((keyword) =>
+    issueLower.includes(keyword)
+  );
+
   // Determine tag text based on discount type and issue
   if (discount.id === "INJECT50" && isInjectable) {
     return `$${discount.amount} OFF`;
@@ -8077,7 +8806,9 @@ function createIssueCard(
                         <span class="concern-category-label">${categoryLabel}</span>
                         ${(() => {
                           const discountTag = getIssueDiscountTag(issueName);
-                          return discountTag ? `<span class="concern-discount-tag" onclick="event.stopPropagation(); showDiscountDetails()">${discountTag}</span>` : '';
+                          return discountTag
+                            ? `<span class="concern-discount-tag" onclick="event.stopPropagation(); showDiscountDetails()">${discountTag}</span>`
+                            : "";
                         })()}
                     </div>
                     <h3 class="concern-card-title">${actionTitle}</h3>
@@ -8120,7 +8851,9 @@ function createIssueCard(
                     <span class="concern-category-label">${categoryLabel}</span>
                     ${(() => {
                       const discountTag = getIssueDiscountTag(issueName);
-                      return discountTag ? `<span class="concern-discount-tag" onclick="event.stopPropagation(); showDiscountDetails()">${discountTag}</span>` : '';
+                      return discountTag
+                        ? `<span class="concern-discount-tag" onclick="event.stopPropagation(); showDiscountDetails()">${discountTag}</span>`
+                        : "";
                     })()}
                 </div>
                 <h3 class="concern-card-title">${actionTitle}</h3>
@@ -8204,7 +8937,10 @@ function requestConsultation() {
                 ? `
                 <div class="consultation-discount-section">
                   <div class="consultation-discount-badge">
-                    <span class="consultation-discount-icon">${getIconSVG("gift", 16)}</span>
+                    <span class="consultation-discount-icon">${getIconSVG(
+                      "gift",
+                      16
+                    )}</span>
                     <div class="consultation-discount-info">
                       <span class="consultation-discount-amount">$${
                         discount.amount
@@ -8312,7 +9048,7 @@ function requestConsultation() {
     const storedName = sessionStorage.getItem("user_name");
     const storedEmail = sessionStorage.getItem("user_email");
     const storedPhone = sessionStorage.getItem("user_phone");
-    
+
     if (storedName && nameInput) {
       nameInput.value = storedName;
     }
@@ -9265,94 +10001,123 @@ const issueNameMappings = {
 
 function getMatchingCasesForItem(item) {
   // If item is a category, match by category keywords
-  if (item.type === 'category') {
-    const category = HIGH_LEVEL_CONCERNS.find(c => c.id === item.id);
+  if (item.type === "category") {
+    const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === item.id);
     if (!category) return [];
-    
+
     return caseData
-      .map(caseItem => {
+      .map((caseItem) => {
         const score = calculateMatchingScore(caseItem, userSelections);
         caseItem.matchingScore = score;
         return caseItem;
       })
-      .filter(caseItem => {
+      .filter((caseItem) => {
         // Check if case matches this category
         const caseNameLower = (caseItem.name || "").toLowerCase();
-        const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(c => c.toLowerCase());
-        
+        const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(
+          (c) => c.toLowerCase()
+        );
+
         // Helper function to normalize keywords (handle hyphens and spaces)
-        const normalizeKeyword = (keyword) => keyword.toLowerCase().replace(/[-_\s]+/g, '[-\\s_]*');
-        
-        const nameMatch = category.mapsToPhotos.some(keyword => {
+        const normalizeKeyword = (keyword) =>
+          keyword.toLowerCase().replace(/[-_\s]+/g, "[-\\s_]*");
+
+        const nameMatch = category.mapsToPhotos.some((keyword) => {
           const keywordLower = keyword.toLowerCase();
           // Direct match
           if (caseNameLower.includes(keywordLower)) return true;
           // Match with normalized keyword (handles hyphens/spaces)
           const normalized = normalizeKeyword(keyword);
-          const regex = new RegExp(normalized, 'i');
+          const regex = new RegExp(normalized, "i");
           return regex.test(caseNameLower);
         });
-        
-        const criteriaMatch = category.mapsToPhotos.some(keyword => {
+
+        const criteriaMatch = category.mapsToPhotos.some((keyword) => {
           const keywordLower = keyword.toLowerCase();
-          return matchingCriteriaLower.some(criteria => {
+          return matchingCriteriaLower.some((criteria) => {
             if (criteria.includes(keywordLower)) return true;
             // Match with normalized keyword
             const normalized = normalizeKeyword(keyword);
-            const regex = new RegExp(normalized, 'i');
+            const regex = new RegExp(normalized, "i");
             return regex.test(criteria);
           });
         });
-        
+
         // Also check mapsToSpecificIssues against case's solved issues and matching criteria
         let issueMatch = false;
-        if (category.mapsToSpecificIssues && category.mapsToSpecificIssues.length > 0) {
-          const solvedIssuesLower = (caseItem.solved || []).map(issue => 
-            typeof issue === 'string' ? issue.toLowerCase() : String(issue || '').toLowerCase()
+        if (
+          category.mapsToSpecificIssues &&
+          category.mapsToSpecificIssues.length > 0
+        ) {
+          const solvedIssuesLower = (caseItem.solved || []).map((issue) =>
+            typeof issue === "string"
+              ? issue.toLowerCase()
+              : String(issue || "").toLowerCase()
           );
-          const directMatchingIssuesLower = (caseItem.directMatchingIssues || []).map(issue => 
-            typeof issue === 'string' ? issue.toLowerCase() : String(issue || '').toLowerCase()
+          const directMatchingIssuesLower = (
+            caseItem.directMatchingIssues || []
+          ).map((issue) =>
+            typeof issue === "string"
+              ? issue.toLowerCase()
+              : String(issue || "").toLowerCase()
           );
-          const allCaseIssuesLower = [...solvedIssuesLower, ...directMatchingIssuesLower, ...matchingCriteriaLower];
-          
-          issueMatch = category.mapsToSpecificIssues.some(issueKeyword => {
+          const allCaseIssuesLower = [
+            ...solvedIssuesLower,
+            ...directMatchingIssuesLower,
+            ...matchingCriteriaLower,
+          ];
+
+          issueMatch = category.mapsToSpecificIssues.some((issueKeyword) => {
             const issueKeywordLower = issueKeyword.toLowerCase();
-            return allCaseIssuesLower.some(caseIssue => {
+            return allCaseIssuesLower.some((caseIssue) => {
               // Direct match
-              if (caseIssue.includes(issueKeywordLower) || issueKeywordLower.includes(caseIssue)) return true;
+              if (
+                caseIssue.includes(issueKeywordLower) ||
+                issueKeywordLower.includes(caseIssue)
+              )
+                return true;
               // Normalized match
               const normalized = normalizeKeyword(issueKeyword);
-              const regex = new RegExp(normalized, 'i');
+              const regex = new RegExp(normalized, "i");
               return regex.test(caseIssue);
             });
           });
         }
-        
+
         // Filter by selected areas if any are selected
         let areaMatch = true;
-        if (userSelections.selectedAreas && userSelections.selectedAreas.length > 0) {
+        if (
+          userSelections.selectedAreas &&
+          userSelections.selectedAreas.length > 0
+        ) {
           const caseName = caseItem.name || "";
           const caseNameLower = caseName.toLowerCase();
-          const matchingCriteria = (caseItem.matchingCriteria || []).map(c => c.toLowerCase());
-          
+          const matchingCriteria = (caseItem.matchingCriteria || []).map((c) =>
+            c.toLowerCase()
+          );
+
           // Check if any selected area matches the case
-          areaMatch = userSelections.selectedAreas.some(areaId => {
-            const area = AREAS_OF_CONCERN.find(a => a.id === areaId);
+          areaMatch = userSelections.selectedAreas.some((areaId) => {
+            const area = AREAS_OF_CONCERN.find((a) => a.id === areaId);
             if (!area) return false;
-            
+
             const areaNameLower = area.name.toLowerCase();
             // Check if area name appears in case name or matching criteria
-            return caseNameLower.includes(areaNameLower) || 
-                   matchingCriteria.some(c => c.includes(areaNameLower) || c.includes(areaId));
+            return (
+              caseNameLower.includes(areaNameLower) ||
+              matchingCriteria.some(
+                (c) => c.includes(areaNameLower) || c.includes(areaId)
+              )
+            );
           });
         }
-        
+
         return (nameMatch || criteriaMatch || issueMatch) && areaMatch;
       })
-      .filter(caseItem => !isSurgicalCase(caseItem)) // Filter out surgical cases
+      .filter((caseItem) => !isSurgicalCase(caseItem)) // Filter out surgical cases
       .sort((a, b) => (b.matchingScore || 0) - (a.matchingScore || 0));
   }
-  
+
   // Otherwise, use existing logic for issues
   let matchingCases = [];
 
@@ -9484,7 +10249,7 @@ function getMatchingCasesForItem(item) {
 
   // Filter out surgical cases before returning
   const nonSurgicalCases = filterNonSurgicalCases(matchingCases);
-  
+
   return nonSurgicalCases.slice(0, 10); // Limit to 10 for preview
 }
 
@@ -9876,10 +10641,10 @@ function displayGallery(cases) {
 
   // Store cases for filtering (filter out surgical cases)
   allCasesForFiltering = filterNonSurgicalCases(cases);
-  
+
   // Reset concern filter
-  activeGalleryConcern = 'all';
-  
+  activeGalleryConcern = "all";
+
   // Populate concern filter chips
   populateGalleryConcernFilters();
 
@@ -9899,62 +10664,64 @@ function displayGallery(cases) {
 }
 
 // Gallery concern filter
-let activeGalleryConcern = 'all';
+let activeGalleryConcern = "all";
 
 function filterGalleryByConcern(concernId) {
   activeGalleryConcern = concernId;
-  
+
   // Update active chip
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.classList.remove('active');
+  document.querySelectorAll(".filter-chip").forEach((chip) => {
+    chip.classList.remove("active");
     if (chip.dataset.filter === concernId) {
-      chip.classList.add('active');
+      chip.classList.add("active");
     }
   });
-  
+
   // Re-filter cases with current view filter (all/read/favorited)
-  const activeViewFilter = document.querySelector('.gallery-filters .filter-button.active');
-  const viewFilter = activeViewFilter ? activeViewFilter.dataset.filter : 'all';
+  const activeViewFilter = document.querySelector(
+    ".gallery-filters .filter-button.active"
+  );
+  const viewFilter = activeViewFilter ? activeViewFilter.dataset.filter : "all";
   filterCases(viewFilter);
 }
 
 function populateGalleryConcernFilters() {
-  const filtersContainer = document.getElementById('gallery-concern-filters');
+  const filtersContainer = document.getElementById("gallery-concern-filters");
   if (!filtersContainer) return;
-  
+
   const categories = userSelections.selectedConcernCategories || [];
-  
+
   // Count all cases first
   let totalCases = 0;
   const categoryCounts = {};
-  
-  categories.forEach(categoryId => {
-    const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+
+  categories.forEach((categoryId) => {
+    const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === categoryId);
     if (category) {
       const matchingCases = getMatchingCasesForItem({
-        type: 'category',
+        type: "category",
         name: category.name,
         id: categoryId,
-        mapsToSpecificIssues: category.mapsToSpecificIssues
+        mapsToSpecificIssues: category.mapsToSpecificIssues,
       });
       categoryCounts[categoryId] = matchingCases.length;
       totalCases += matchingCases.length;
     }
   });
-  
+
   // Update "All" count
-  const allCount = document.getElementById('all-count');
+  const allCount = document.getElementById("all-count");
   if (allCount) {
-    allCount.textContent = totalCases > 0 ? `(${totalCases})` : '';
+    allCount.textContent = totalCases > 0 ? `(${totalCases})` : "";
   }
-  
+
   // Add category chips
-  categories.forEach(categoryId => {
-    const category = HIGH_LEVEL_CONCERNS.find(c => c.id === categoryId);
+  categories.forEach((categoryId) => {
+    const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === categoryId);
     if (category) {
       const count = categoryCounts[categoryId] || 0;
-      const chip = document.createElement('button');
-      chip.className = 'filter-chip';
+      const chip = document.createElement("button");
+      chip.className = "filter-chip";
       chip.dataset.filter = categoryId;
       chip.onclick = () => filterGalleryByConcern(categoryId);
       chip.innerHTML = `${category.name} <span class="chip-count">${count}</span>`;
@@ -9973,19 +10740,21 @@ function filterCases(filterType) {
   });
 
   let filteredCases = allCasesForFiltering;
-  
+
   // First filter by concern if not "all"
-  if (activeGalleryConcern !== 'all') {
-    const category = HIGH_LEVEL_CONCERNS.find(c => c.id === activeGalleryConcern);
+  if (activeGalleryConcern !== "all") {
+    const category = HIGH_LEVEL_CONCERNS.find(
+      (c) => c.id === activeGalleryConcern
+    );
     if (category) {
       const concernCases = getMatchingCasesForItem({
-        type: 'category',
+        type: "category",
         name: category.name,
         id: activeGalleryConcern,
-        mapsToSpecificIssues: category.mapsToSpecificIssues
+        mapsToSpecificIssues: category.mapsToSpecificIssues,
       });
-      const concernCaseIds = new Set(concernCases.map(c => c.id));
-      filteredCases = filteredCases.filter(c => concernCaseIds.has(c.id));
+      const concernCaseIds = new Set(concernCases.map((c) => c.id));
+      filteredCases = filteredCases.filter((c) => concernCaseIds.has(c.id));
     }
   }
 
@@ -10409,7 +11178,10 @@ async function showCaseDetail(caseItem, returnScreen = null) {
   }
 
   // Ensure matching score and demographic percentage are calculated
-  if (caseItem.demographicMatchPercentage === undefined || caseItem.demographicMatchPercentage === null) {
+  if (
+    caseItem.demographicMatchPercentage === undefined ||
+    caseItem.demographicMatchPercentage === null
+  ) {
     calculateMatchingScore(caseItem, userSelections);
   }
 
@@ -10420,7 +11192,9 @@ async function showCaseDetail(caseItem, returnScreen = null) {
   document.getElementById("gallery-toc")?.classList.remove("active");
   document.getElementById("issue-detail-screen")?.classList.remove("active");
   document.getElementById("results-screen")?.classList.remove("active");
-  document.getElementById("treatment-detail-screen")?.classList.remove("active");
+  document
+    .getElementById("treatment-detail-screen")
+    ?.classList.remove("active");
   document.getElementById("case-detail").classList.add("active");
 
   // Update floating CTA
@@ -10594,23 +11368,36 @@ async function showCaseDetail(caseItem, returnScreen = null) {
             
             ${(() => {
               // Add similarity score explanation if demographic match percentage exists
-              if (caseItem.demographicMatchPercentage !== undefined && caseItem.demographicMatchPercentage !== null) {
-                const breakdown = getSimilarityScoreBreakdown(caseItem, userSelections);
+              if (
+                caseItem.demographicMatchPercentage !== undefined &&
+                caseItem.demographicMatchPercentage !== null
+              ) {
+                const breakdown = getSimilarityScoreBreakdown(
+                  caseItem,
+                  userSelections
+                );
                 if (breakdown.components.length > 0) {
                   // Calculate sum of contributions to verify
-                  const totalContribution = breakdown.components.reduce((sum, comp) => sum + comp.contribution, 0);
-                  
+                  const totalContribution = breakdown.components.reduce(
+                    (sum, comp) => sum + comp.contribution,
+                    0
+                  );
+
                   return `
                     <div class="case-similarity-breakdown">
                       <div class="similarity-header">
-                        <h3 class="similarity-title">Similarity Score: ${breakdown.totalScore}%</h3>
+                        <h3 class="similarity-title">Similarity Score: ${
+                          breakdown.totalScore
+                        }%</h3>
                         <p class="similarity-description">This score shows how closely this patient's profile matches yours. Each demographic factor is compared and weighted by importance, then combined to create the final score.</p>
                       </div>
                       <div class="similarity-calculation-explanation">
                         <p class="calculation-intro"><strong>How it's calculated:</strong> For each factor, we calculate how similar you are (0-100%), multiply by that factor's weight, then divide by the total weight of all available factors.</p>
                       </div>
                       <div class="similarity-components">
-                        ${breakdown.components.map(component => `
+                        ${breakdown.components
+                          .map(
+                            (component) => `
                           <div class="similarity-component">
                             <div class="component-header">
                               <span class="component-field">${component.field}</span>
@@ -10638,17 +11425,23 @@ async function showCaseDetail(caseItem, returnScreen = null) {
                               </div>
                             </div>
                           </div>
-                        `).join('')}
+                        `
+                          )
+                          .join("")}
                       </div>
                       <div class="similarity-summary">
-                        <p><strong>Total:</strong> ${breakdown.components.map(c => `${c.contribution}%`).join(' + ')} = <strong>${breakdown.totalScore}%</strong></p>
+                        <p><strong>Total:</strong> ${breakdown.components
+                          .map((c) => `${c.contribution}%`)
+                          .join(" + ")} = <strong>${
+                    breakdown.totalScore
+                  }%</strong></p>
                         <p class="similarity-note-text">Only factors where both you and the patient have data are included. Missing data doesn't lower your score—we only compare what's available.</p>
                       </div>
                     </div>
                   `;
                 }
               }
-              return '';
+              return "";
             })()}
             
             <div class="case-detail-cta">
@@ -10658,13 +11451,22 @@ async function showCaseDetail(caseItem, returnScreen = null) {
                     ? `
                     <div class="case-detail-discount-offer">
                       <div class="case-detail-discount-badge">
-                        <span class="case-detail-discount-icon">${getIconSVG("gift", 16)}</span>
+                        <span class="case-detail-discount-icon">${getIconSVG(
+                          "gift",
+                          16
+                        )}</span>
                         <div class="case-detail-discount-info">
-                          <span class="case-detail-discount-amount">$${discount.amount} OFF</span>
-                          <span class="case-detail-discount-desc">${discount.description}</span>
+                          <span class="case-detail-discount-amount">$${
+                            discount.amount
+                          } OFF</span>
+                          <span class="case-detail-discount-desc">${
+                            discount.description
+                          }</span>
                         </div>
                       </div>
-                      <p class="case-detail-discount-scarcity">${discount.scarcity} • <button class="discount-link-btn" onclick="showDiscountDetails()">Redeem Now</button></p>
+                      <p class="case-detail-discount-scarcity">${
+                        discount.scarcity
+                      } • <button class="discount-link-btn" onclick="showDiscountDetails()">Redeem Now</button></p>
                     </div>
                   `
                     : "";
@@ -11302,11 +12104,11 @@ document.addEventListener("DOMContentLoaded", async function () {
   // ========================================================================
   // SET UP NAVIGATION EVENT LISTENERS (after DOM is ready)
   // ========================================================================
-  
+
   // Start button on home screen
   const startButton = document.getElementById("start-button");
   if (startButton) {
-    startButton.addEventListener("click", function(e) {
+    startButton.addEventListener("click", function (e) {
       e.preventDefault();
       console.log("Start button clicked");
       startForm();
@@ -11319,7 +12121,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Proceed to goals button on concerns screen
   const proceedBtn = document.getElementById("proceed-to-goals-btn");
   if (proceedBtn) {
-    proceedBtn.addEventListener("click", function(e) {
+    proceedBtn.addEventListener("click", function (e) {
       e.preventDefault();
       console.log("Proceed to goals button clicked");
       proceedToGoalsAndAge();
@@ -11701,7 +12503,7 @@ window.closeDiscountModal = closeDiscountModal;
 function updateFloatingCTA() {
   const floatingCTA = document.getElementById("floating-consultation-cta");
   const resultsCTAFooter = document.getElementById("results-cta-footer");
-  
+
   // Show on gallery, my cases, and issue detail screens
   // Hide on case detail - we want to show the results-cta-footer instead
   const galleryActive = document
@@ -11728,18 +12530,36 @@ function updateFloatingCTA() {
   const leadCaptureActive = document
     .getElementById("lead-capture-screen")
     ?.classList.contains("active");
+  const homeTeaserActive = document
+    .getElementById("home-teaser")
+    ?.classList.contains("active");
+  const onboardingActive = document
+    .getElementById("onboarding")
+    ?.classList.contains("active");
 
   // Show floating CTA on gallery, my cases, and issue detail (but NOT case detail, results screen, or treatment detail)
-  if ((galleryActive || myCasesActive || issueDetailActive) && !resultsScreenActive && !caseDetailActive && !treatmentDetailActive) {
+  if (
+    (galleryActive || myCasesActive || issueDetailActive) &&
+    !resultsScreenActive &&
+    !caseDetailActive &&
+    !treatmentDetailActive
+  ) {
     if (floatingCTA) floatingCTA.classList.add("visible");
   } else {
     if (floatingCTA) floatingCTA.classList.remove("visible");
   }
 
   // Show results-cta-footer ONLY on case detail screen AND treatment detail screen
-  // Hide it on results screen, form-screen, and lead-capture-screen
+  // Hide it on all early screens: home teaser, onboarding, form, lead capture, and results screens
   if (resultsCTAFooter) {
-    if ((caseDetailActive || treatmentDetailActive) && !formScreenActive && !leadCaptureActive && !resultsScreenActive) {
+    if (
+      (caseDetailActive || treatmentDetailActive) &&
+      !formScreenActive &&
+      !leadCaptureActive &&
+      !resultsScreenActive &&
+      !homeTeaserActive &&
+      !onboardingActive
+    ) {
       resultsCTAFooter.style.display = "block";
     } else {
       resultsCTAFooter.style.display = "none";
@@ -11803,59 +12623,65 @@ if (document.readyState === "loading") {
  */
 function analyzeConcernMapping() {
   console.log("=== CONCERN MAPPING ANALYSIS ===\n");
-  
+
   if (!caseData || caseData.length === 0) {
-    console.warn("No case data available. Make sure cases are loaded from Airtable.");
+    console.warn(
+      "No case data available. Make sure cases are loaded from Airtable."
+    );
     return;
   }
-  
+
   // Extract all unique concerns from case names
   const concernMap = new Map(); // concern -> { cases: [], treatments: Set, categories: Set }
-  
-  caseData.forEach(caseItem => {
+
+  caseData.forEach((caseItem) => {
     const concern = extractConcernFromCaseName(caseItem.name);
     const treatment = extractTreatmentFromCaseName(caseItem.name);
-    
+
     if (!concernMap.has(concern)) {
       concernMap.set(concern, {
         cases: [],
         treatments: new Set(),
-        categories: new Set()
+        categories: new Set(),
       });
     }
-    
+
     const concernData = concernMap.get(concern);
     concernData.cases.push(caseItem);
     concernData.treatments.add(treatment);
-    
+
     // Find which high-level categories this concern maps to
-    HIGH_LEVEL_CONCERNS.forEach(category => {
+    HIGH_LEVEL_CONCERNS.forEach((category) => {
       const caseNameLower = (caseItem.name || "").toLowerCase();
-      const matchingCriteriaLower = (caseItem.matchingCriteria || []).map(c => c.toLowerCase());
-      
-      const nameMatch = category.mapsToPhotos.some(keyword => 
+      const matchingCriteriaLower = (caseItem.matchingCriteria || []).map((c) =>
+        c.toLowerCase()
+      );
+
+      const nameMatch = category.mapsToPhotos.some((keyword) =>
         caseNameLower.includes(keyword.toLowerCase())
       );
-      const criteriaMatch = category.mapsToPhotos.some(keyword =>
-        matchingCriteriaLower.some(criteria => criteria.includes(keyword.toLowerCase()))
+      const criteriaMatch = category.mapsToPhotos.some((keyword) =>
+        matchingCriteriaLower.some((criteria) =>
+          criteria.includes(keyword.toLowerCase())
+        )
       );
-      
+
       if (nameMatch || criteriaMatch) {
         concernData.categories.add(category.name);
       }
     });
   });
-  
+
   // Group concerns by high-level category
   const categoryMap = new Map();
-  
-  HIGH_LEVEL_CONCERNS.forEach(category => {
+
+  HIGH_LEVEL_CONCERNS.forEach((category) => {
     categoryMap.set(category.name, {
       category: category,
-      concerns: []
+      concerns: [],
     });
   });
-  
+
   concernMap.forEach((data, concern) => {
     // If concern maps to multiple categories, add to all of them
     if (data.categories.size === 0) {
@@ -11863,121 +12689,138 @@ function analyzeConcernMapping() {
       if (!categoryMap.has("Uncategorized")) {
         categoryMap.set("Uncategorized", {
           category: { name: "Uncategorized", id: "uncategorized" },
-          concerns: []
+          concerns: [],
         });
       }
       categoryMap.get("Uncategorized").concerns.push({
         concern: concern,
         caseCount: data.cases.length,
-        treatments: Array.from(data.treatments).sort()
+        treatments: Array.from(data.treatments).sort(),
       });
     } else {
-      data.categories.forEach(categoryName => {
+      data.categories.forEach((categoryName) => {
         if (categoryMap.has(categoryName)) {
           categoryMap.get(categoryName).concerns.push({
             concern: concern,
             caseCount: data.cases.length,
-            treatments: Array.from(data.treatments).sort()
+            treatments: Array.from(data.treatments).sort(),
           });
         }
       });
     }
   });
-  
+
   // Generate nested list output
   console.log("NESTED CONCERN MAPPING:\n");
   console.log("=".repeat(60));
-  
+
   categoryMap.forEach((categoryData, categoryName) => {
     if (categoryData.concerns.length === 0) return;
-    
+
     console.log(`\n📁 ${categoryName}`);
-    console.log(`   Description: ${categoryData.category.description || "N/A"}`);
-    console.log(`   Maps to Photos: ${categoryData.category.mapsToPhotos?.join(", ") || "N/A"}`);
+    console.log(
+      `   Description: ${categoryData.category.description || "N/A"}`
+    );
+    console.log(
+      `   Maps to Photos: ${
+        categoryData.category.mapsToPhotos?.join(", ") || "N/A"
+      }`
+    );
     console.log(`   Total Concerns: ${categoryData.concerns.length}`);
     console.log("");
-    
+
     // Sort concerns by case count (descending)
-    const sortedConcerns = categoryData.concerns.sort((a, b) => b.caseCount - a.caseCount);
-    
+    const sortedConcerns = categoryData.concerns.sort(
+      (a, b) => b.caseCount - a.caseCount
+    );
+
     sortedConcerns.forEach(({ concern, caseCount, treatments }) => {
       console.log(`   ├─ ${concern}`);
       console.log(`   │  Cases: ${caseCount}`);
       console.log(`   │  Treatments: ${treatments.join(", ") || "None"}`);
-      
+
       // Show sample case names
-      const sampleCases = concernMap.get(concern).cases.slice(0, 3).map(c => c.name);
+      const sampleCases = concernMap
+        .get(concern)
+        .cases.slice(0, 3)
+        .map((c) => c.name);
       if (sampleCases.length > 0) {
         console.log(`   │  Sample cases:`);
-        sampleCases.forEach(caseName => {
+        sampleCases.forEach((caseName) => {
           console.log(`   │    • ${caseName}`);
         });
       }
       console.log("");
     });
   });
-  
+
   // Summary statistics
   console.log("\n" + "=".repeat(60));
   console.log("SUMMARY STATISTICS:\n");
   console.log(`Total Cases Analyzed: ${caseData.length}`);
   console.log(`Unique Concerns Found: ${concernMap.size}`);
   console.log(`High-Level Categories: ${HIGH_LEVEL_CONCERNS.length}`);
-  
+
   // Find concerns that map to multiple categories
   const multiMapped = Array.from(concernMap.entries())
     .filter(([_, data]) => data.categories.size > 1)
     .map(([concern, data]) => ({
       concern,
       categories: Array.from(data.categories),
-      caseCount: data.cases.length
+      caseCount: data.cases.length,
     }));
-  
+
   if (multiMapped.length > 0) {
-    console.log(`\n⚠️  Concerns Mapping to Multiple Categories (${multiMapped.length}):`);
+    console.log(
+      `\n⚠️  Concerns Mapping to Multiple Categories (${multiMapped.length}):`
+    );
     multiMapped.forEach(({ concern, categories, caseCount }) => {
-      console.log(`   • ${concern} (${caseCount} cases) → ${categories.join(", ")}`);
+      console.log(
+        `   • ${concern} (${caseCount} cases) → ${categories.join(", ")}`
+      );
     });
   }
-  
+
   // Find unmapped concerns
   const unmapped = Array.from(concernMap.entries())
     .filter(([_, data]) => data.categories.size === 0)
     .map(([concern, data]) => ({
       concern,
-      caseCount: data.cases.length
+      caseCount: data.cases.length,
     }));
-  
+
   if (unmapped.length > 0) {
     console.log(`\n⚠️  Unmapped Concerns (${unmapped.length}):`);
     unmapped.forEach(({ concern, caseCount }) => {
       console.log(`   • ${concern} (${caseCount} cases)`);
     });
   }
-  
+
   // Find concerns with body parts as treatments
   const bodyPartIssues = Array.from(concernMap.entries())
     .filter(([_, data]) => {
-      return Array.from(data.treatments).some(t => 
-        BODY_PARTS.has(t.toLowerCase()) || t === "General Treatment"
+      return Array.from(data.treatments).some(
+        (t) => BODY_PARTS.has(t.toLowerCase()) || t === "General Treatment"
       );
     })
     .map(([concern, data]) => ({
       concern,
-      problematicTreatments: Array.from(data.treatments).filter(t => 
-        BODY_PARTS.has(t.toLowerCase()) || t === "General Treatment"
+      problematicTreatments: Array.from(data.treatments).filter(
+        (t) => BODY_PARTS.has(t.toLowerCase()) || t === "General Treatment"
       ),
-      caseCount: data.cases.length
+      caseCount: data.cases.length,
     }));
-  
+
   if (bodyPartIssues.length > 0) {
-    console.log(`\n⚠️  Concerns with Problematic Treatments (${bodyPartIssues.length}):`);
+    console.log(
+      `\n⚠️  Concerns with Problematic Treatments (${bodyPartIssues.length}):`
+    );
     bodyPartIssues.forEach(({ concern, problematicTreatments, caseCount }) => {
       console.log(`   • ${concern} (${caseCount} cases)`);
       console.log(`     Problematic: ${problematicTreatments.join(", ")}`);
     });
   }
-  
+
   console.log("\n" + "=".repeat(60));
   console.log("\nTo run this analysis again, call: analyzeConcernMapping()");
 }

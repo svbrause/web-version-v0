@@ -758,22 +758,31 @@ body.brand-uniqueAestheticsTeal .top-right-buttons {
 /* Remove spacing from provider section for Unique Aesthetics brands */
 body.brand-uniqueAestheticsPink #provider-section,
 body.brand-uniqueAestheticsTeal #provider-section {
-  margin: 0;
-  padding: 0;
+  margin: 24px 0;
+  padding: 20px 0;
   border: none;
+  display: block !important;
 }
 
 body.brand-uniqueAestheticsPink .provider-compact,
 body.brand-uniqueAestheticsTeal .provider-compact {
   display: flex;
   align-items: center;
-  gap: 0px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: 0;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 20px;
   margin: 0;
-  box-shadow: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+body.brand-uniqueAestheticsPink .provider-compact:hover,
+body.brand-uniqueAestheticsTeal .provider-compact:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
 body.brand-uniqueAestheticsPink .provider-compact:hover,
@@ -788,7 +797,7 @@ body.brand-uniqueAestheticsTeal .provider-compact:hover {
 
 .provider-compact-img {
   width: 120px;
-  height: 10px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
   border: none;
@@ -895,8 +904,14 @@ body.brand-uniqueAestheticsTeal .teaser-cta {
   body.brand-uniqueAestheticsPink .provider-compact,
   body.brand-uniqueAestheticsTeal .provider-compact {
     gap: 16px;
-    padding: 0;
+    padding: 16px;
     margin: 0;
+  }
+
+  body.brand-uniqueAestheticsPink #provider-section,
+  body.brand-uniqueAestheticsTeal #provider-section {
+    margin: 20px 0;
+    padding: 16px 0;
   }
 
   .provider-compact-img {
