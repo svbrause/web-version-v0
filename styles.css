@@ -237,7 +237,7 @@ body {
   background: white;
   border-radius: 12px;
   color: #212121;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .teaser-feature-card.highlight .feature-card-icon {
@@ -292,7 +292,7 @@ body {
   height: 100px;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .preview-thumbnail img {
@@ -1022,7 +1022,7 @@ body {
     margin: 0;
     height: 2.5px;
   }
-  
+
   .form-step-segment {
     height: 2.5px;
   }
@@ -1203,7 +1203,7 @@ body {
     gap: 0;
     padding: 0;
   }
-  
+
   .form-navigation-buttons {
     flex-direction: row;
     gap: 10px;
@@ -1222,27 +1222,27 @@ body {
     flex: 1;
     min-width: 120px;
   }
-  
+
   .form-steps-indicator {
     padding: 6px 16px;
   }
-  
+
   .form-step-button {
     padding: 12px 16px;
     font-size: 14px;
   }
-  
+
   .form-step-button.primary {
     order: 3;
     max-width: none;
     flex: 1;
   }
-  
+
   .form-step-button.secondary {
     order: 1;
     flex: 0 0 auto;
   }
-  
+
   .form-step-button.skip {
     order: 2;
     flex: 0 0 auto;
@@ -1848,11 +1848,11 @@ body {
   .demographic-label {
     font-size: 15px;
   }
-  
+
   .demographic-helper {
     font-size: 12px;
   }
-  
+
   .demographic-field {
     margin-bottom: 24px;
   }
@@ -2309,13 +2309,13 @@ body {
   top: 20px;
   right: 20px;
   z-index: 100;
-  display: none; /* Hidden by default */
+  display: none !important; /* Hidden by default and always hidden */
   align-items: center;
   gap: 12px;
 }
 
 .top-right-buttons.visible {
-  display: flex;
+  display: none !important; /* Keep hidden even when visible class is added */
 }
 
 /* My Cases Button */
@@ -2487,14 +2487,14 @@ body {
 
 .chip-count {
   padding: 2px 8px;
-  background: rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
 }
 
 .filter-chip.active .chip-count {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .gallery-filters {
@@ -4111,17 +4111,17 @@ body {
   .case-similarity-breakdown {
     padding: 16px;
   }
-  
+
   .similarity-title {
     font-size: 16px;
   }
-  
+
   .component-comparison {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .component-separator {
     display: none;
   }
@@ -8436,7 +8436,7 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   color: var(--color-text-primary, #000000);
   margin-bottom: 8px;
   padding: 0;
-  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-family: var(--font-heading, "Playfair Display", serif);
 }
 
 .concern-group-container {
@@ -8686,7 +8686,7 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   .concerns-title {
     font-size: 20px;
   }
-  
+
   .concerns-navigation {
     padding: 14px 16px;
     padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
@@ -9005,7 +9005,7 @@ body.brand-uniqueAestheticsPink .results-tab.active {
 }
 
 .treatment-group-title {
-  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-family: var(--font-heading, "Playfair Display", serif);
   font-size: 20px;
   font-weight: 600;
   color: var(--color-text-primary, #000000);
@@ -9139,7 +9139,7 @@ body.brand-uniqueAestheticsPink .results-tab.active {
 }
 
 .treatment-detail-title {
-  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-family: var(--font-heading, "Playfair Display", serif);
   font-size: 28px;
   font-weight: 600;
   color: var(--color-text-primary, #000000);
@@ -9198,7 +9198,7 @@ body.brand-uniqueAestheticsPink .results-tab.active {
 }
 
 .treatment-option-name {
-  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-family: var(--font-heading, "Playfair Display", serif);
   font-size: 18px;
   font-weight: 600;
   color: var(--color-text-primary, #000000);
@@ -9227,12 +9227,12 @@ body.brand-uniqueAestheticsPink .results-tab.active {
   .treatment-group-preview {
     height: 60px;
   }
-  
+
   .treatment-option-image {
     width: 80px;
     height: 80px;
   }
-  
+
   .treatment-option-name {
     font-size: 16px;
   }
