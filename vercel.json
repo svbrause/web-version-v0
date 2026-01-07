@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "aesthetic-cases-app",
   "builds": [
     {
       "src": "**/*",
@@ -14,11 +13,3 @@
     }
   ]
 }
-
-
-
-
-
-
-
-
