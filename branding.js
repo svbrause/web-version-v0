@@ -130,13 +130,15 @@ let currentBrand = "uniqueAestheticsPink";
  */
 function initBranding() {
   // Check localStorage for saved brand preference
-  // If no saved preference, default to Unique Aesthetics Pink
+  // Default to Unique Aesthetics Pink unless another brand is specifically saved
   const savedBrand = localStorage.getItem("selectedBrand");
-  if (savedBrand && BRANDS[savedBrand]) {
-    currentBrand = savedBrand;
-  } else {
-    // Default to Unique Aesthetics Pink if no saved preference
+
+  // If saved brand is "default" or not set, use uniqueAestheticsPink as the default
+  if (!savedBrand || savedBrand === "default" || !BRANDS[savedBrand]) {
     currentBrand = "uniqueAestheticsPink";
+    localStorage.setItem("selectedBrand", "uniqueAestheticsPink");
+  } else {
+    currentBrand = savedBrand;
   }
 
   // Apply the current brand
@@ -158,6 +160,15 @@ function applyBrand(brandId) {
     return;
   }
 
+  // Prevent unnecessary brand changes
+  if (currentBrand === brandId) {
+    console.log(
+      `Brand "${brandId}" is already active, skipping re-application`
+    );
+    return;
+  }
+
+  console.log(`Applying brand: ${brandId} (was: ${currentBrand})`);
   currentBrand = brandId;
   localStorage.setItem("selectedBrand", brandId);
 
@@ -300,7 +311,19 @@ function createBrandingToggle() {
 function toggleBrandingPanel() {
   const container = document.getElementById("branding-toggle");
   if (container) {
+    const isExpanding = !container.classList.contains("expanded");
     container.classList.toggle("expanded");
+
+    // When expanding, ensure we're using the correct current brand from localStorage
+    if (isExpanding) {
+      // Re-read from localStorage to ensure we have the correct brand
+      const savedBrand = localStorage.getItem("selectedBrand");
+      if (savedBrand && BRANDS[savedBrand] && savedBrand !== currentBrand) {
+        // If there's a mismatch, sync it (but don't re-apply, just update UI)
+        currentBrand = savedBrand;
+      }
+      updateToggleUI();
+    }
   }
 }
 
@@ -487,8 +510,26 @@ function updateHeaderBar(brand) {
   let headerBar = document.getElementById("brand-header-bar");
 
   if (shouldShowHeader) {
-    // Create header bar if it doesn't exist
-    if (!headerBar) {
+    // Update existing header bar if it exists (from HTML)
+    if (headerBar) {
+      // Try both .logo-image and .brand-header-logo img selectors
+      const logoImg = headerBar.querySelector(".logo-image") || headerBar.querySelector(".brand-header-logo img");
+      if (logoImg) {
+        logoImg.src = brand.logo;
+        logoImg.alt = brand.logoAlt;
+      }
+      const exitButton = headerBar.querySelector(".exit-button");
+      if (exitButton) {
+        // Update onclick if it's a button, or href if it's a link
+        if (exitButton.onclick) {
+          // Keep the onclick handler
+        } else if (exitButton.href !== undefined) {
+          exitButton.href =
+            brand.website || "https://www.myuniqueaesthetics.com/";
+        }
+      }
+    } else {
+      // Create header bar if it doesn't exist
       headerBar = document.createElement("div");
       headerBar.id = "brand-header-bar";
       headerBar.className = "brand-header-bar";
@@ -518,18 +559,6 @@ function updateHeaderBar(brand) {
 
       // Insert header bar at the beginning of body
       document.body.insertBefore(headerBar, document.body.firstChild);
-    } else {
-      // Update existing header bar
-      const logoImg = headerBar.querySelector(".logo-image");
-      if (logoImg) {
-        logoImg.src = brand.logo;
-        logoImg.alt = brand.logoAlt;
-      }
-      const exitButton = headerBar.querySelector("#exit-button");
-      if (exitButton) {
-        exitButton.href =
-          brand.website || "https://www.myuniqueaesthetics.com/";
-      }
     }
 
     // Show the header bar
@@ -571,6 +600,10 @@ function getBrand(brandId) {
 // ============================================================================
 // INITIALIZE ON DOM READY
 // ============================================================================
+
+// Expose functions to global scope for onclick handlers
+window.toggleBrandingPanel = toggleBrandingPanel;
+window.applyBrand = applyBrand;
 
 // Wait for DOM to be ready, then initialize branding
 if (document.readyState === "loading") {

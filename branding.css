@@ -12,15 +12,15 @@
   /* Colors - Default to Unique Aesthetics Pink (overridden by JS if needed) */
   --color-primary: #000000;
   --color-primary-hover: #333333;
-  --color-accent: #FFA2C7;
-  --color-accent-light: #FFD4E5;
-  --color-accent-dark: #E8759E;
-  --color-background: linear-gradient(180deg, #FAF6F0 0%, #F1ECE2 100%);
+  --color-accent: #ffa2c7;
+  --color-accent-light: #ffd4e5;
+  --color-accent-dark: #e8759e;
+  --color-background: linear-gradient(180deg, #faf6f0 0%, #f1ece2 100%);
   --color-card-bg: #ffffff;
   --color-text-primary: #000000;
   --color-text-secondary: #333333;
   --color-text-muted: #666666;
-  --color-border: #E8E4DC;
+  --color-border: #e8e4dc;
   --color-success: #2e7d32;
   --color-success-light: #e8f5e9;
 
@@ -403,15 +403,16 @@ body.brand-uniqueAestheticsPink .brand-option.active {
    ============================================================================ */
 
 .provider-section {
-  margin: 32px 0;
-  padding: 24px 0;
-  border-top: 1px solid var(--color-border);
+  margin: 0 0;
+  padding: 0 0;
+  border-top: 5px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
 }
 
 .provider-section-header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .provider-section-title {
@@ -431,16 +432,16 @@ body.brand-uniqueAestheticsPink .brand-option.active {
 .provider-cards {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0px;
 }
 
 .provider-card {
   display: flex;
-  gap: 20px;
+  gap: 0px;
   background: var(--color-card-bg);
   border: 2px solid var(--color-border);
   border-radius: 16px;
-  padding: 20px;
+  padding: 0px;
   transition: all 0.2s ease;
 }
 
@@ -603,6 +604,11 @@ body.brand-uniqueAestheticsTeal .logo-image {
   max-height: 64px;
 }
 
+/* Show header bar by default for pink branding */
+body.brand-uniqueAestheticsPink .brand-header-bar {
+  display: flex;
+}
+
 body.brand-uniqueAestheticsPink .brand-header-bar,
 body.brand-uniqueAestheticsTeal .brand-header-bar {
   border-bottom-color: var(--color-border);
@@ -628,6 +634,18 @@ body.brand-uniqueAestheticsTeal .teaser-logo {
   display: none !important;
 }
 
+/* Hide large teaser image when provider section is shown */
+body.brand-uniqueAestheticsPink .teaser-image,
+body.brand-uniqueAestheticsTeal .teaser-image {
+  display: none !important;
+}
+
+/* Show provider section by default for Unique Aesthetics brands */
+body.brand-uniqueAestheticsPink #provider-section,
+body.brand-uniqueAestheticsTeal #provider-section {
+  display: block !important;
+}
+
 /* Adjust screen padding when header is present */
 body.brand-uniqueAestheticsPink #home-teaser,
 body.brand-uniqueAestheticsTeal #home-teaser {
@@ -635,6 +653,37 @@ body.brand-uniqueAestheticsTeal #home-teaser {
   padding-bottom: 24px;
   padding-left: 20px;
   padding-right: 20px;
+}
+
+/* Add padding to all screens when header bar is present */
+body.brand-uniqueAestheticsPink .screen.active,
+body.brand-uniqueAestheticsTeal .screen.active {
+  padding-top: 84px;
+}
+
+body.brand-uniqueAestheticsPink #form-screen,
+body.brand-uniqueAestheticsTeal #form-screen {
+  padding-top: 84px;
+}
+
+body.brand-uniqueAestheticsPink #results-screen,
+body.brand-uniqueAestheticsTeal #results-screen {
+  padding-top: 84px;
+}
+
+body.brand-uniqueAestheticsPink #gallery-toc,
+body.brand-uniqueAestheticsTeal #gallery-toc {
+  padding-top: 84px;
+}
+
+body.brand-uniqueAestheticsPink #treatment-detail-screen,
+body.brand-uniqueAestheticsTeal #treatment-detail-screen {
+  padding-top: 84px;
+}
+
+body.brand-uniqueAestheticsPink #case-detail,
+body.brand-uniqueAestheticsTeal #case-detail {
+  padding-top: 84px;
 }
 
 /* Optimize teaser container for single screen view */
@@ -706,16 +755,24 @@ body.brand-uniqueAestheticsTeal .top-right-buttons {
 }
 
 /* Compact provider section for landing page */
+/* Remove spacing from provider section for Unique Aesthetics brands */
+body.brand-uniqueAestheticsPink #provider-section,
+body.brand-uniqueAestheticsTeal #provider-section {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
 body.brand-uniqueAestheticsPink .provider-compact,
 body.brand-uniqueAestheticsTeal .provider-compact {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 0px;
   background: transparent;
   border: none;
   border-radius: 0;
   padding: 0;
-  margin: 16px 0 20px 0;
+  margin: 0;
   box-shadow: none;
 }
 
@@ -731,7 +788,7 @@ body.brand-uniqueAestheticsTeal .provider-compact:hover {
 
 .provider-compact-img {
   width: 120px;
-  height: 120px;
+  height: 10px;
   border-radius: 50%;
   object-fit: cover;
   border: none;
@@ -839,7 +896,7 @@ body.brand-uniqueAestheticsTeal .teaser-cta {
   body.brand-uniqueAestheticsTeal .provider-compact {
     gap: 16px;
     padding: 0;
-    margin: 14px 0 18px 0;
+    margin: 0;
   }
 
   .provider-compact-img {
@@ -957,6 +1014,36 @@ body.brand-uniqueAestheticsTeal .brand-header-bar .exit-button:hover {
 
   body.brand-uniqueAestheticsPink #home-teaser,
   body.brand-uniqueAestheticsTeal #home-teaser {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink .screen.active,
+  body.brand-uniqueAestheticsTeal .screen.active {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #form-screen,
+  body.brand-uniqueAestheticsTeal #form-screen {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #results-screen,
+  body.brand-uniqueAestheticsTeal #results-screen {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #gallery-toc,
+  body.brand-uniqueAestheticsTeal #gallery-toc {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #treatment-detail-screen,
+  body.brand-uniqueAestheticsTeal #treatment-detail-screen {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #case-detail,
+  body.brand-uniqueAestheticsTeal #case-detail {
     padding-top: 76px;
   }
 }
