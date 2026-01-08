@@ -1564,6 +1564,19 @@ const SURGICAL_KEYWORDS = [
 function isSurgicalCase(caseItem) {
   if (!caseItem) return false;
 
+  // FIRST: Check the "Surgical (from General Treatments)" field from Airtable
+  // This is the primary source of truth
+  if (caseItem.surgical !== undefined) {
+    const surgicalValue = String(caseItem.surgical || "").toLowerCase().trim();
+    if (surgicalValue === "surgical") {
+      return true;
+    }
+    if (surgicalValue === "non-surgical" || surgicalValue === "nonsurgical") {
+      return false;
+    }
+  }
+
+  // Fallback to keyword-based detection if field is missing or invalid
   const caseName =
     typeof caseItem.name === "string"
       ? caseItem.name.toLowerCase()
@@ -2941,6 +2954,9 @@ async function loadCasesFromAirtable() {
         const skinType = fields["Skin Type"] || null;
         const sunResponse = fields["Sun Response"] || null;
 
+        // Get surgical status from "Surgical (from General Treatments)" field
+        const surgical = fields["Surgical (from General Treatments)"] || null;
+
         const caseItem = {
           id: record.id,
           name: name,
@@ -2965,6 +2981,7 @@ async function loadCasesFromAirtable() {
           skinType: skinType,
           sunResponse: sunResponse,
           commonForAge: null, // Will be calculated based on age
+          surgical: surgical, // "Surgical" or "Non-Surgical" from Airtable "Surgical (from General Treatments)" field
         };
         caseData.push(caseItem);
         if (index < 3) {
@@ -4514,23 +4531,28 @@ function getTreatmentGroupRelevance(group, userSelections) {
 
   // Map keywords to areas - order matters (more specific first)
   // This helps identify which facial/body area each suggestion addresses
+  // Updated to match Airtable "Area Names" field mapping
   const areaKeywords = [
-    // Eyes area (most specific first)
+    // Forehead area (brow ptosis and asymmetry map to Forehead in Airtable)
     {
       keywords: [
         "brow ptosis",
         "brow asymmetry",
-        "brow droop",
         "brow lift",
         "brow balance",
+        "brow droop",
       ],
-      area: "Eyes",
+      area: "Forehead",
     },
+    {
+      keywords: ["forehead", "temple", "temples", "glabella", "11s", "temporal"],
+      area: "Forehead",
+    },
+    // Eyes area (more specific first)
     {
       keywords: [
         "under eye",
         "under-eye",
-        "under eye",
         "eyelid",
         "eyelids",
         "upper eyelid",
@@ -4549,11 +4571,6 @@ function getTreatmentGroupRelevance(group, userSelections) {
         "ptosis",
       ],
       area: "Eyes",
-    },
-    // Forehead area
-    {
-      keywords: ["forehead", "temple", "temples", "glabella", "11s"],
-      area: "Forehead",
     },
     // Cheeks area
     { keywords: ["cheek", "cheeks", "cheekbone", "mid cheek"], area: "Cheeks" },
@@ -4576,11 +4593,26 @@ function getTreatmentGroupRelevance(group, userSelections) {
   ];
 
   // Check which areas this suggestion relates to (based on keywords in the name)
+  // Check more specific keywords first to avoid double-matching (e.g., "brow ptosis" before "brow")
   const matchedAreas = new Set();
-  for (const { keywords, area } of areaKeywords) {
+  const matchedKeywords = new Set(); // Track matched keywords to avoid substring matches
+  
+  // Sort area keyword groups by longest keyword first (more specific first)
+  const sortedAreaKeywords = areaKeywords.map(({ keywords, area }) => ({
+    keywords: keywords.sort((a, b) => b.length - a.length), // Sort keywords within group by length
+    area
+  }));
+  
+  for (const { keywords, area } of sortedAreaKeywords) {
     for (const keyword of keywords) {
-      if (caseNameLower.includes(keyword)) {
+      // Skip if a more specific keyword that contains this keyword already matched
+      const isSubstringOfMatched = Array.from(matchedKeywords).some(matched => 
+        matched.includes(keyword) && matched !== keyword
+      );
+      
+      if (!isSubstringOfMatched && caseNameLower.includes(keyword)) {
         matchedAreas.add(area);
+        matchedKeywords.add(keyword);
         break; // Found a match for this area, move to next area
       }
     }
@@ -4834,32 +4866,63 @@ function getMatchIndicators(
     );
 
     // Map of keywords to area names for inference (matching AREAS_OF_CONCERN)
+    // Order matters: more specific keywords should come first
     const areaKeywords = {
+      // Forehead area (more specific brow terms first)
+      "brow ptosis": "Forehead", // Brow ptosis maps to Forehead in Airtable
+      "brow asymmetry": "Forehead", // Brow asymmetry maps to Forehead in Airtable
+      "brow lift": "Forehead",
+      "brow balance": "Forehead",
       forehead: "Forehead",
-      brow: "Eyes", // Brow relates to Eyes area
-      brows: "Eyes",
-      eyebrow: "Eyes",
-      eyebrows: "Eyes",
-      "brow ptosis": "Eyes",
-      ptosis: "Eyes",
-      eye: "Eyes",
-      eyes: "Eyes",
+      temple: "Forehead",
+      temples: "Forehead",
+      glabella: "Forehead",
+      temporal: "Forehead",
+      // Eyes area
       "under eye": "Eyes",
       "under-eye": "Eyes",
       eyelid: "Eyes",
       eyelids: "Eyes",
+      "upper eyelid": "Eyes",
+      "lower eyelid": "Eyes",
+      eye: "Eyes",
+      eyes: "Eyes",
+      brow: "Eyes", // General brow (not ptosis/asymmetry) relates to Eyes
+      brows: "Eyes",
+      eyebrow: "Eyes",
+      eyebrows: "Eyes",
+      ptosis: "Eyes", // General ptosis (not brow ptosis) relates to Eyes
+      // Cheeks area
       cheek: "Cheeks",
       cheeks: "Cheeks",
+      cheekbone: "Cheeks",
+      "mid cheek": "Cheeks",
+      // Nose area
       nose: "Nose",
+      nasal: "Nose",
+      "nasal tip": "Nose",
+      "dorsal hump": "Nose",
+      rhino: "Nose",
+      // Mouth & Lips area
       lip: "Mouth & Lips",
       lips: "Mouth & Lips",
       mouth: "Mouth & Lips",
+      philtral: "Mouth & Lips",
+      "gummy smile": "Mouth & Lips",
+      // Jawline area (consolidate chin/jaw to jawline to match Airtable)
       jawline: "Jawline",
       jaw: "Jawline",
-      chin: "Chin",
+      chin: "Jawline", // Chin maps to Jawline in Airtable
+      jowl: "Jawline",
+      jowls: "Jawline",
+      "prejowl": "Jawline",
+      submentum: "Jawline",
+      // Neck area
       neck: "Neck",
-      temple: "Forehead",
-      temples: "Forehead",
+      "neck lines": "Neck",
+      "neck wrinkles": "Neck",
+      platysmal: "Neck",
+      submental: "Neck",
     };
 
     // Find matching areas from user selections
@@ -4887,13 +4950,26 @@ function getMatchIndicators(
     // Also infer areas from case name keywords
     // This helps show which area the case relates to based on keywords in the name
     // Always show inferred area to help user understand which area the case addresses
-    for (const [keyword, areaName] of Object.entries(areaKeywords)) {
-      if (caseNameLower.includes(keyword)) {
+    // Check more specific keywords first to avoid double-matching (e.g., "brow ptosis" before "brow")
+    const allText = [caseNameLower, ...matchingCriteriaLower].join(" ");
+    const matchedKeywords = new Set(); // Track which keywords matched to avoid substring matches
+    
+    // Sort keywords by length (longest first) to check more specific ones first
+    const sortedKeywords = Object.entries(areaKeywords).sort((a, b) => b[0].length - a[0].length);
+    
+    for (const [keyword, areaName] of sortedKeywords) {
+      // Skip if a more specific keyword that contains this keyword already matched
+      const isSubstringOfMatched = Array.from(matchedKeywords).some(matched => 
+        matched.includes(keyword) && matched !== keyword
+      );
+      
+      if (!isSubstringOfMatched && allText.includes(keyword)) {
         // Find the area ID for this area name
         const area = AREAS_OF_CONCERN.find((a) => a.name === areaName);
         if (area) {
           // Always add inferred area to show which area this case relates to
           matchedAreas.add(areaName);
+          matchedKeywords.add(keyword);
         }
       }
     }
@@ -6194,42 +6270,34 @@ function updateFormNavigation(stepNumber) {
       break;
 
     case 2:
-      // Step 2: Areas of Concern - Back, Skip, and Continue buttons (optional step)
+      // Step 2: Areas of Concern - Back and Continue buttons (required step)
       navBackBtn.style.display = "block";
       navBackBtn.onclick = () => {
         hideValidationError();
         goToFormStep(1);
       };
-      navSkipBtn.style.display = "block";
-      navSkipBtn.onclick = () => {
-        hideValidationError();
-        goToFormStep(3);
-      };
+      navSkipBtn.style.display = "none"; // Hide skip button - step is required
       navContinueBtn.style.display = "block";
       navContinueBtn.onclick = () => {
+        // Validate that at least one area is selected
+        const validation = validateStep2();
+        if (!validation.isValid) {
+          showValidationError(validation.message, validation.step);
+          return;
+        }
         hideValidationError();
         goToFormStep(3);
       };
       break;
 
     case 3:
-      // Step 3: Your Details - Back and Continue buttons
+      // Step 3: Your Details - Back and Continue buttons (required step)
       navBackBtn.style.display = "block";
       navBackBtn.onclick = () => {
         hideValidationError();
         goToFormStep(2);
       };
-      navSkipBtn.style.display = "block";
-      navSkipBtn.onclick = () => {
-        // Validate required fields before skipping to review
-        const validation = validateStep3();
-        if (!validation.isValid) {
-          showValidationError(validation.message, validation.step, validation.field);
-          return;
-        }
-        hideValidationError();
-        goToFormStep(6);
-      };
+      navSkipBtn.style.display = "none"; // Hide skip button - step is required
       navContinueBtn.style.display = "block";
       navContinueBtn.onclick = () => {
         // Validate required fields before continuing
@@ -7726,16 +7794,11 @@ function extractConcernFromCaseName(caseName) {
 
   // Remove common treatment method suffixes
   const patterns = [
-    // Remove "with [treatment]" patterns - expanded to include energy-based treatments
+    // Remove "with [treatment]" patterns - comprehensive list of all treatments
+    // This pattern matches "with [any treatment]" and removes everything after "with"
     {
       pattern:
-        /\s+with\s+(threadlift|thread\s+lift|neurotoxin|botox|xeomin|dysport|dermal\s+fillers?|filler|sculptra|physiq|everesse|coolsculpting|ipl|laser|microneedling|chemical\s+peel|heat|energy|heat\/energy|rf|radiofrequency|radio\s+frequency|thermage|ultherapy|morpheus|microneedling|hydrafacial).*$/i,
-      replacement: "",
-    },
-    // Remove "with [body part]" patterns (e.g., "with jawline", "with brow")
-    {
-      pattern:
-        /\s+with\s+(jawline|brow|brows|cheek|cheeks|forehead|neck|chin|lips|lip|eyes|eye|nose|temple|temples).*$/i,
+        /\s+with\s+.*$/i,
       replacement: "",
     },
     // Remove standalone treatment terms at the end (e.g., "Heat/energy", "RF", "Laser")
@@ -8130,24 +8193,28 @@ function populateResultsScreen() {
                       } case${group.cases.length !== 1 ? "s" : ""}</span>
                     </div>
                     ${areaHtml}
-                    <div class="treatment-group-preview">
-                      ${group.cases
-                        .slice(0, 2)
-                        .map((caseItem) => {
-                          const imageUrl =
-                            caseItem.beforeAfter || caseItem.thumbnail;
-                          return `<img src="${imageUrl}" alt="${escapeHtml(
-                            caseItem.name
-                          )}" class="treatment-group-preview-image" onerror="this.style.display='none'">`;
-                        })
-                        .join("")}
-                      ${
-                        group.cases.length > 2
-                          ? `<div class="treatment-group-more">+${
-                              group.cases.length - 2
-                            }</div>`
-                          : ""
-                      }
+                    <div class="treatment-group-preview-wrapper">
+                      <div class="treatment-group-preview" data-group-index="${groupIndex}">
+                        ${group.cases
+                          .map((caseItem) => {
+                            const imageUrl =
+                              caseItem.beforeAfter || caseItem.thumbnail;
+                            return `<img src="${imageUrl}" alt="${escapeHtml(
+                              caseItem.name
+                            )}" class="treatment-group-preview-image" onerror="this.style.display='none'">`;
+                          })
+                          .join("")}
+                      </div>
+                      <button class="treatment-group-scroll-arrow left" onclick="scrollPreviewLeft(this, event)" aria-label="Scroll left" type="button">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M15 18l-6-6 6-6"/>
+                        </svg>
+                      </button>
+                      <button class="treatment-group-scroll-arrow right" onclick="scrollPreviewRight(this, event)" aria-label="Scroll right" type="button">
+                        <svg viewBox="0 0 24 24">
+                          <path d="M9 18l6-6-6-6"/>
+                        </svg>
+                      </button>
                     </div>
                     <div class="treatment-group-footer">
                       <span class="treatment-group-cta">Explore →</span>
@@ -8173,6 +8240,101 @@ function populateResultsScreen() {
   }
 
   activeResultsTab = 0;
+  
+  // Initialize scroll arrows after content is loaded
+  setTimeout(initializeScrollArrows, 100);
+}
+
+// Scroll preview carousel functions
+window.scrollPreviewLeft = function(button, event) {
+  if (event) {
+    event.stopPropagation(); // Prevent card click
+    event.preventDefault();
+  }
+  const wrapper = button.closest('.treatment-group-preview-wrapper');
+  const preview = wrapper.querySelector('.treatment-group-preview');
+  if (preview) {
+    preview.scrollBy({ left: -200, behavior: 'smooth' });
+  }
+};
+
+window.scrollPreviewRight = function(button, event) {
+  if (event) {
+    event.stopPropagation(); // Prevent card click
+    event.preventDefault();
+  }
+  const wrapper = button.closest('.treatment-group-preview-wrapper');
+  const preview = wrapper.querySelector('.treatment-group-preview');
+  if (preview) {
+    preview.scrollBy({ left: 200, behavior: 'smooth' });
+  }
+};
+
+// Update scroll arrow visibility and gradient shadows based on scroll position
+function initializeScrollArrows() {
+  const updateScrollState = (preview) => {
+    const wrapper = preview.closest('.treatment-group-preview-wrapper');
+    if (!wrapper) return;
+    
+    const leftArrow = wrapper.querySelector('.treatment-group-scroll-arrow.left');
+    const rightArrow = wrapper.querySelector('.treatment-group-scroll-arrow.right');
+    
+    // Check if there's content to scroll (content width > container width)
+    const hasScrollableContent = preview.scrollWidth > preview.clientWidth;
+    const isAtStart = preview.scrollLeft <= 1; // Use 1px threshold for rounding
+    const isAtEnd = preview.scrollLeft >= preview.scrollWidth - preview.clientWidth - 1;
+    
+    // Update arrows - show right arrow initially if there's scrollable content
+    if (leftArrow) {
+      if (isAtStart || !hasScrollableContent) {
+        leftArrow.classList.add('hidden');
+      } else {
+        leftArrow.classList.remove('hidden');
+      }
+    }
+    
+    if (rightArrow) {
+      if (isAtEnd || !hasScrollableContent) {
+        rightArrow.classList.add('hidden');
+      } else {
+        rightArrow.classList.remove('hidden');
+      }
+    }
+    
+    // Update gradient shadows - show when there's room to scroll
+    if (isAtStart || !hasScrollableContent) {
+      wrapper.classList.remove('has-scroll-left');
+    } else {
+      wrapper.classList.add('has-scroll-left');
+    }
+    
+    if (isAtEnd || !hasScrollableContent) {
+      wrapper.classList.remove('has-scroll-right');
+    } else {
+      wrapper.classList.add('has-scroll-right');
+    }
+  };
+  
+  document.querySelectorAll('.treatment-group-preview').forEach(preview => {
+    // Small delay to ensure DOM is fully rendered
+    setTimeout(() => {
+      updateScrollState(preview);
+    }, 50);
+    
+    // Update on scroll
+    preview.addEventListener('scroll', () => {
+      updateScrollState(preview);
+    });
+  });
+  
+  // Update on resize
+  const handleResize = () => {
+    document.querySelectorAll('.treatment-group-preview').forEach(preview => {
+      updateScrollState(preview);
+    });
+  };
+  
+  window.addEventListener('resize', handleResize);
 }
 
 function switchResultsTab(index) {
@@ -11910,13 +12072,13 @@ function organizeCasesByArea(cases) {
     userSelections.selectedAreas.forEach((area) => {
       const areaLower = area.toLowerCase();
       const areaKeywords = {
-        Forehead: ["forehead", "brow", "glabella", "temporal"],
-        Eyes: ["eye", "eyelid", "under-eye", "crow"],
-        Cheeks: ["cheek", "cheekbone"],
-        Nose: ["nose", "nasal", "rhino"],
-        Lips: ["lip", "philtral", "gummy"],
-        "Chin/Jaw": ["chin", "jaw", "jawline", "jowl", "masseter"],
-        Neck: ["neck", "platysmal", "submental"],
+        Forehead: ["forehead", "brow ptosis", "brow asymmetry", "brow lift", "glabella", "temporal", "temple"],
+        Eyes: ["eye", "eyelid", "under-eye", "crow", "brow", "ptosis"],
+        Cheeks: ["cheek", "cheekbone", "mid cheek"],
+        Nose: ["nose", "nasal", "rhino", "nasal tip", "dorsal hump"],
+        "Mouth & Lips": ["lip", "lips", "mouth", "philtral", "gummy"],
+        Jawline: ["chin", "jaw", "jawline", "jowl", "jowls", "masseter", "prejowl", "submentum"],
+        Neck: ["neck", "platysmal", "submental", "neck lines", "neck wrinkles"],
         Skin: ["skin", "spot", "scar", "wrinkle", "peel", "laser"],
       };
 
