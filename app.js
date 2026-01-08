@@ -8299,6 +8299,12 @@ function initializeScrollArrows() {
     const wrapper = preview.closest('.treatment-group-preview-wrapper');
     if (!wrapper) return;
     
+    // Only update if the preview is in a visible section
+    const section = wrapper.closest('.results-concern-section');
+    if (section && !section.classList.contains('active')) {
+      return; // Skip hidden sections
+    }
+    
     const leftArrow = wrapper.querySelector('.treatment-group-scroll-arrow.left');
     const rightArrow = wrapper.querySelector('.treatment-group-scroll-arrow.right');
     
@@ -8338,25 +8344,34 @@ function initializeScrollArrows() {
     }
   };
   
-  document.querySelectorAll('.treatment-group-preview').forEach(preview => {
-    // Small delay to ensure DOM is fully rendered
+  // Only process previews in active/visible sections
+  document.querySelectorAll('.results-concern-section.active .treatment-group-preview').forEach(preview => {
+    // Small delay to ensure DOM is fully rendered and dimensions are calculated
     setTimeout(() => {
       updateScrollState(preview);
-    }, 50);
+    }, 100);
     
-    // Update on scroll
-    preview.addEventListener('scroll', () => {
-      updateScrollState(preview);
-    });
+    // Update on scroll - use a flag to prevent duplicate listeners
+    if (!preview.dataset.scrollListenerAttached) {
+      preview.addEventListener('scroll', () => {
+        updateScrollState(preview);
+      }, { passive: true });
+      preview.dataset.scrollListenerAttached = 'true';
+    }
   });
   
   // Update on resize
   const handleResize = () => {
-    document.querySelectorAll('.treatment-group-preview').forEach(preview => {
+    document.querySelectorAll('.results-concern-section.active .treatment-group-preview').forEach(preview => {
       updateScrollState(preview);
     });
   };
   
+  // Remove existing resize listener if any, then add new one
+  if (window._scrollArrowsResizeHandler) {
+    window.removeEventListener('resize', window._scrollArrowsResizeHandler);
+  }
+  window._scrollArrowsResizeHandler = handleResize;
   window.addEventListener('resize', handleResize);
 }
 
@@ -8380,6 +8395,12 @@ function switchResultsTab(index) {
   if (contentContainer) {
     contentContainer.scrollTop = 0;
   }
+
+  // Re-initialize scroll arrows and shadows for the newly visible section
+  // Use a delay to ensure DOM is fully updated
+  setTimeout(() => {
+    initializeScrollArrows();
+  }, 150);
 }
 
 // Show treatment detail page with treatment selection
