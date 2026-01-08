@@ -5897,13 +5897,15 @@ function validateStep3() {
     });
   }
   
-  // Check sun response
-  if (!userSelections.sunResponse) {
+  // Check skin tone (now required)
+  if (!userSelections.skinTone) {
     errors.push({
-      message: "Please select how your skin responds to sun to continue.",
-      field: "sun-response"
+      message: "Please select your skin tone to continue.",
+      field: "skin-tone"
     });
   }
+  
+  // Sun response is now optional - no validation needed
   
   if (errors.length > 0) {
     return {
@@ -5979,15 +5981,17 @@ function validateRequiredFields() {
     if (!targetStep) targetStep = 3;
   }
   
-  // Check sun response
-  if (!userSelections.sunResponse) {
+  // Check skin tone (now required)
+  if (!userSelections.skinTone) {
     errors.push({
-      message: "Please select how your skin responds to sun to continue.",
+      message: "Please select your skin tone to continue.",
       step: 3,
-      field: "sun-response"
+      field: "skin-tone"
     });
     if (!targetStep) targetStep = 3;
   }
+  
+  // Sun response is now optional - no validation needed
   
   return {
     isValid: errors.length === 0,
@@ -6073,6 +6077,28 @@ function showValidationError(message, targetStep, field = null) {
     // Show error inline next to the specific field
     if (field === "patient-age") {
       const ageInput = document.getElementById("patient-age");
+    } else if (field === "skin-tone") {
+      // Show error for skin tone selection
+      const skinToneSection = document.querySelector('.demographic-section:has(.skin-tone-scale)');
+      if (skinToneSection) {
+        let errorEl = skinToneSection.querySelector('.input-error-message');
+        if (!errorEl) {
+          errorEl = document.createElement('div');
+          errorEl.className = 'input-error-message';
+          errorEl.style.color = '#d32f2f';
+          errorEl.style.fontSize = '13px';
+          errorEl.style.marginTop = '8px';
+          const label = skinToneSection.querySelector('.demographic-label');
+          if (label) {
+            label.insertAdjacentElement('afterend', errorEl);
+          }
+        }
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+      }
+    }
+    if (field === "patient-age") {
+      const ageInput = document.getElementById("patient-age");
       if (ageInput) {
         showInputError(ageInput, message);
         ageInput.classList.add("input-error");
@@ -6096,11 +6122,11 @@ function showValidationError(message, targetStep, field = null) {
           label.insertAdjacentElement('afterend', errorDiv);
         }
       }
-    } else if (field === "sun-response") {
-      const sunResponseSection = document.querySelector('#form-step-3 .demographic-section:nth-of-type(3)');
-      if (sunResponseSection) {
+    } else if (field === "skin-tone") {
+      const skinToneSection = document.querySelector('#form-step-3 .demographic-section:has(.skin-tone-scale)');
+      if (skinToneSection) {
         // Remove existing error if any
-        const existingError = sunResponseSection.querySelector('.input-error-message');
+        const existingError = skinToneSection.querySelector('.input-error-message');
         if (existingError) existingError.remove();
         
         // Add error message below the label
@@ -6108,9 +6134,9 @@ function showValidationError(message, targetStep, field = null) {
         errorDiv.className = "input-error-message";
         errorDiv.textContent = message;
         errorDiv.style.cssText = "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
-        const label = sunResponseSection.querySelector('.demographic-label');
+        const label = skinToneSection.querySelector('.demographic-label');
         if (label && label.nextSibling) {
-          sunResponseSection.insertBefore(errorDiv, label.nextSibling);
+          skinToneSection.insertBefore(errorDiv, label.nextSibling);
         } else if (label) {
           label.insertAdjacentElement('afterend', errorDiv);
         }
@@ -6564,7 +6590,7 @@ function populateReviewStep() {
     }
   }
 
-  // Review Details (Age, Skin Type, Sun Response)
+  // Review Details (Age, Skin Type, Skin Tone)
   const detailsContainer = document.getElementById("review-details-summary");
   if (detailsContainer) {
     // Get values from both sources, prioritizing window.userSelections
@@ -6576,6 +6602,10 @@ function populateReviewStep() {
       (window.userSelections && window.userSelections.skinType) ||
       userSelections.skinType ||
       null;
+    const skinTone =
+      (window.userSelections && window.userSelections.skinTone) ||
+      userSelections.skinTone ||
+      null;
     const sunResponse =
       (window.userSelections && window.userSelections.sunResponse) ||
       userSelections.sunResponse ||
@@ -6586,12 +6616,18 @@ function populateReviewStep() {
     const skinTypeLabel = skinType
       ? skinType.charAt(0).toUpperCase() + skinType.slice(1).replace(/-/g, " ")
       : "Not provided";
+    const skinToneLabel = skinTone
+      ? skinTone
+          .split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ")
+      : "Not provided";
     const sunResponseLabel = sunResponse
       ? sunResponse
           .split("-")
           .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
           .join(" ")
-      : "Not provided";
+      : null;
 
     detailsContainer.innerHTML = `
       <div class="review-item">
@@ -6603,19 +6639,21 @@ function populateReviewStep() {
         <span class="review-item-value">${skinTypeLabel}</span>
       </div>
       <div class="review-item">
+        <span class="review-item-label">Skin Tone:</span>
+        <span class="review-item-value">${skinToneLabel}</span>
+      </div>
+      ${sunResponseLabel ? `
+      <div class="review-item">
         <span class="review-item-label">Sun Response:</span>
         <span class="review-item-value">${sunResponseLabel}</span>
       </div>
+      ` : ''}
     `;
   }
 
-  // Review Optional Information (Skin Tone, Ethnic Background, Previous Treatments)
+  // Review Optional Information (Ethnic Background, Previous Treatments)
   const optionalContainer = document.getElementById("review-optional-summary");
   if (optionalContainer) {
-    const skinTone =
-      (window.userSelections && window.userSelections.skinTone) ||
-      userSelections.skinTone ||
-      null;
     const ethnicBackground =
       (window.userSelections && window.userSelections.ethnicBackground) ||
       userSelections.ethnicBackground ||
@@ -6626,12 +6664,6 @@ function populateReviewStep() {
       [];
 
     // Format labels
-    const skinToneLabel = skinTone
-      ? skinTone
-          .split("-")
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(" ")
-      : null;
     const ethnicBackgroundLabel = ethnicBackground
       ? ethnicBackground
           .split("-")
@@ -6640,15 +6672,6 @@ function populateReviewStep() {
       : null;
 
     const optionalItems = [];
-
-    if (skinToneLabel) {
-      optionalItems.push(`
-        <div class="review-item">
-          <span class="review-item-label">Skin Tone:</span>
-          <span class="review-item-value">${escapeHtml(skinToneLabel)}</span>
-        </div>
-      `);
-    }
 
     if (ethnicBackgroundLabel) {
       optionalItems.push(`
@@ -7160,7 +7183,7 @@ function setupFormValidation() {
       }
     } else if (
       e.target.name === "skin-type" ||
-      e.target.name === "sun-response"
+      e.target.name === "skin-tone"
     ) {
       // Collect demographic data in real-time
       collectFormData();
@@ -7173,16 +7196,16 @@ function setupFormValidation() {
           if (errorMsg) errorMsg.remove();
         }
       }
-      if (e.target.name === "sun-response" && e.target.checked) {
+      if (e.target.name === "skin-tone" && e.target.checked) {
         // Find the section containing this input
-        const sunResponseSection = e.target.closest('.demographic-section');
-        if (sunResponseSection) {
-          const errorMsg = sunResponseSection.querySelector('.input-error-message');
+        const skinToneSection = e.target.closest('.demographic-section');
+        if (skinToneSection) {
+          const errorMsg = skinToneSection.querySelector('.input-error-message');
           if (errorMsg) errorMsg.remove();
         }
       }
     } else if (
-      e.target.name === "skin-tone" ||
+      e.target.name === "sun-response" ||
       e.target.name === "ethnic-background" ||
       e.target.name === "previous-treatments"
     ) {
@@ -8167,7 +8190,7 @@ function populateResultsScreen() {
                       areaTags.length > 0
                         ? `
                     <div class="treatment-group-relevance">
-                      <span class="relevance-label">Your Areas of Interest:</span>
+                      <span class="relevance-label">Relevant to your interests:</span>
                       ${areaTags
                         .map(
                           (area) =>
@@ -13151,15 +13174,17 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     }
     
-    // Clear sun response error when selected
-    if (e.target && e.target.name === "sun-response" && e.target.checked) {
+    // Clear skin tone error when selected
+    if (e.target && e.target.name === "skin-tone" && e.target.checked) {
       // Find the section containing this input
-      const sunResponseSection = e.target.closest('.demographic-section');
-      if (sunResponseSection) {
-        const errorMsg = sunResponseSection.querySelector('.input-error-message');
+      const skinToneSection = e.target.closest('.demographic-section');
+      if (skinToneSection) {
+        const errorMsg = skinToneSection.querySelector('.input-error-message');
         if (errorMsg) errorMsg.remove();
       }
     }
+    
+    // Sun response is now optional - no need to clear errors
   });
 
   // ========================================================================
