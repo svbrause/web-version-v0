@@ -668,7 +668,7 @@ body.brand-uniqueAestheticsTeal #form-screen {
 
 body.brand-uniqueAestheticsPink #results-screen,
 body.brand-uniqueAestheticsTeal #results-screen {
-  padding-top: 84px;
+  padding-top: 0;
 }
 
 body.brand-uniqueAestheticsPink #gallery-toc,
@@ -740,7 +740,7 @@ body.brand-uniqueAestheticsTeal #issue-detail-screen {
 
 body.brand-uniqueAestheticsPink #results-screen,
 body.brand-uniqueAestheticsTeal #results-screen {
-  padding-top: 70px;
+  padding-top: 0;
 }
 
 body.brand-uniqueAestheticsPink #concerns-selection-screen,
