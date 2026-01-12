@@ -474,10 +474,11 @@ function showInputError(inputElement, message) {
   errorDiv.textContent = message;
   errorDiv.style.cssText =
     "color: #d32f2f; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;";
-  
+
   // For age input, add to age-input-container if it exists
   if (inputElement.id === "patient-age") {
-    const container = inputElement.closest('.age-input-container') || inputElement.parentNode;
+    const container =
+      inputElement.closest(".age-input-container") || inputElement.parentNode;
     container.appendChild(errorDiv);
   } else {
     inputElement.parentNode.appendChild(errorDiv);
@@ -489,7 +490,7 @@ function showInputError(inputElement, message) {
  */
 function hideInputError(inputElement) {
   if (!inputElement) return;
-  
+
   // Check in direct parent
   const existingError = inputElement.parentNode?.querySelector(
     ".input-error-message"
@@ -497,20 +498,22 @@ function hideInputError(inputElement) {
   if (existingError) {
     existingError.remove();
   }
-  
+
   // Also check in age-input-container if it exists
-  const ageContainer = inputElement.closest('.age-input-container');
+  const ageContainer = inputElement.closest(".age-input-container");
   if (ageContainer) {
-    const errorInContainer = ageContainer.querySelector('.input-error-message');
+    const errorInContainer = ageContainer.querySelector(".input-error-message");
     if (errorInContainer) {
       errorInContainer.remove();
     }
   }
-  
+
   // Also check in demographic-section
-  const demographicSection = inputElement.closest('.demographic-section');
+  const demographicSection = inputElement.closest(".demographic-section");
   if (demographicSection) {
-    const errorInSection = demographicSection.querySelector('.input-error-message');
+    const errorInSection = demographicSection.querySelector(
+      ".input-error-message"
+    );
     if (errorInSection) {
       errorInSection.remove();
     }
@@ -1242,7 +1245,12 @@ function getIconSVG(iconName, size = 16) {
     forehead: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12v2c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-2c0-5.52-4.48-10-10-10z"/><path d="M8 10h.01M16 10h.01M12 10h.01"/></svg>`,
     face: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
     jawline: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 4 6 4 10v4c0 4 4 8 8 8s8-4 8-8v-4c0-4-4-8-8-8z"/><path d="M8 14h8"/></svg>`,
-    neck: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v3c0 1 .5 2 1 3l-1 9h10l-1-9c.5-1 1-2 1-3V7a5 5 0 0 0-5-5z"/></svg>`,
+    chin: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 4 6 4 10v6c0 2 2 4 4 4h8c2 0 4-2 4-4v-6c0-4-4-8-8-8z"/><path d="M10 16h4"/><circle cx="12" cy="12" r="1.5"/></svg>`,
+    neck: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 4 4 4 8v8c0 4 4 6 8 6s8-2 8-6V8c0-4-4-6-8-6z"/><path d="M8 12h8"/><path d="M8 16h8"/></svg>`,
+    chest: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 4 4 4 8v6c0 2 1 3 2 4h12c1-1 2-2 2-4V8c0-4-4-6-8-6z"/><path d="M8 10h8"/><path d="M8 14h8"/></svg>`,
+    hands: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11h-4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2z"/><path d="M6 11h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2z"/><path d="M10 5V3a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"/><path d="M14 5V3a2 2 0 0 0-2-2h0a2 2 0 0 0-2 2v2"/></svg>`,
+    body: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 4 4 4 8v8c0 4 4 6 8 6s8-2 8-6V8c0-4-4-6-8-6z"/><path d="M8 10h8"/><path d="M8 14h8"/><path d="M8 18h8"/></svg>`,
+    arms: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2z"/><path d="M4 10h16"/><path d="M4 14h16"/><circle cx="8" cy="12" r="1"/><circle cx="16" cy="12" r="1"/></svg>`,
     skin: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
     target: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
     calendar: `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
@@ -1567,7 +1575,9 @@ function isSurgicalCase(caseItem) {
   // FIRST: Check the "Surgical (from General Treatments)" field from Airtable
   // This is the primary source of truth
   if (caseItem.surgical !== undefined) {
-    const surgicalValue = String(caseItem.surgical || "").toLowerCase().trim();
+    const surgicalValue = String(caseItem.surgical || "")
+      .toLowerCase()
+      .trim();
     if (surgicalValue === "surgical") {
       return true;
     }
@@ -2350,7 +2360,20 @@ const AREAS_OF_CONCERN = [
   { id: "neck", name: "Neck", icon: "neck" },
   { id: "chest", name: "Chest", icon: "chest" },
   { id: "hands", name: "Hands", icon: "hands" },
+  { id: "arms", name: "Arms", icon: "arms" },
   { id: "body", name: "Body", icon: "body" },
+];
+
+// Configuration: Lock concerns/areas that don't have enough content yet
+// These will be hidden from the online tool but available post-conversion
+const LOCKED_CONCERNS = [
+  // Add concern IDs here to lock them (e.g., "clear-acne-minimize-pores")
+  // Example: "clear-acne-minimize-pores", "unwanted-hair-removal"
+];
+
+const LOCKED_AREAS = [
+  // Add area IDs here to lock them (e.g., "chest", "hands", "body")
+  // Example: "chest", "hands", "body"
 ];
 
 let userSelections = {
@@ -4545,7 +4568,14 @@ function getTreatmentGroupRelevance(group, userSelections) {
       area: "Forehead",
     },
     {
-      keywords: ["forehead", "temple", "temples", "glabella", "11s", "temporal"],
+      keywords: [
+        "forehead",
+        "temple",
+        "temples",
+        "glabella",
+        "11s",
+        "temporal",
+      ],
       area: "Forehead",
     },
     // Eyes area (more specific first)
@@ -4596,20 +4626,20 @@ function getTreatmentGroupRelevance(group, userSelections) {
   // Check more specific keywords first to avoid double-matching (e.g., "brow ptosis" before "brow")
   const matchedAreas = new Set();
   const matchedKeywords = new Set(); // Track matched keywords to avoid substring matches
-  
+
   // Sort area keyword groups by longest keyword first (more specific first)
   const sortedAreaKeywords = areaKeywords.map(({ keywords, area }) => ({
     keywords: keywords.sort((a, b) => b.length - a.length), // Sort keywords within group by length
-    area
+    area,
   }));
-  
+
   for (const { keywords, area } of sortedAreaKeywords) {
     for (const keyword of keywords) {
       // Skip if a more specific keyword that contains this keyword already matched
-      const isSubstringOfMatched = Array.from(matchedKeywords).some(matched => 
-        matched.includes(keyword) && matched !== keyword
+      const isSubstringOfMatched = Array.from(matchedKeywords).some(
+        (matched) => matched.includes(keyword) && matched !== keyword
       );
-      
+
       if (!isSubstringOfMatched && caseNameLower.includes(keyword)) {
         matchedAreas.add(area);
         matchedKeywords.add(keyword);
@@ -4618,8 +4648,24 @@ function getTreatmentGroupRelevance(group, userSelections) {
     }
   }
 
-  // Return all matched areas (not just user-selected ones, since we want to show which area each suggestion addresses)
-  return Array.from(matchedAreas);
+  // Filter to only include areas that the user actually selected
+  const userSelectedAreas = userSelections.selectedAreas || [];
+  if (userSelectedAreas.length === 0) {
+    return []; // No areas selected, return empty
+  }
+
+  // Map user's selected area IDs to area names
+  const userSelectedAreaNames = userSelectedAreas
+    .map((areaId) => {
+      const area = AREAS_OF_CONCERN.find((a) => a.id === areaId);
+      return area ? area.name : null;
+    })
+    .filter((name) => name !== null);
+
+  // Only return areas that match both the suggestion keywords AND user's selections
+  return Array.from(matchedAreas).filter((area) =>
+    userSelectedAreaNames.includes(area)
+  );
 }
 
 /**
@@ -4915,7 +4961,7 @@ function getMatchIndicators(
       chin: "Jawline", // Chin maps to Jawline in Airtable
       jowl: "Jawline",
       jowls: "Jawline",
-      "prejowl": "Jawline",
+      prejowl: "Jawline",
       submentum: "Jawline",
       // Neck area
       neck: "Neck",
@@ -4953,16 +4999,18 @@ function getMatchIndicators(
     // Check more specific keywords first to avoid double-matching (e.g., "brow ptosis" before "brow")
     const allText = [caseNameLower, ...matchingCriteriaLower].join(" ");
     const matchedKeywords = new Set(); // Track which keywords matched to avoid substring matches
-    
+
     // Sort keywords by length (longest first) to check more specific ones first
-    const sortedKeywords = Object.entries(areaKeywords).sort((a, b) => b[0].length - a[0].length);
-    
+    const sortedKeywords = Object.entries(areaKeywords).sort(
+      (a, b) => b[0].length - a[0].length
+    );
+
     for (const [keyword, areaName] of sortedKeywords) {
       // Skip if a more specific keyword that contains this keyword already matched
-      const isSubstringOfMatched = Array.from(matchedKeywords).some(matched => 
-        matched.includes(keyword) && matched !== keyword
+      const isSubstringOfMatched = Array.from(matchedKeywords).some(
+        (matched) => matched.includes(keyword) && matched !== keyword
       );
-      
+
       if (!isSubstringOfMatched && allText.includes(keyword)) {
         // Find the area ID for this area name
         const area = AREAS_OF_CONCERN.find((a) => a.name === areaName);
@@ -5101,9 +5149,14 @@ function initializeConcernCategories() {
 
   grid.innerHTML = "";
 
+  // Filter out locked concerns (these will be available post-conversion)
+  const availableConcerns = HIGH_LEVEL_CONCERNS.filter(
+    (category) => !LOCKED_CONCERNS.includes(category.id)
+  );
+
   // Group concerns by their group field
   const groupedConcerns = {};
-  HIGH_LEVEL_CONCERNS.forEach((category) => {
+  availableConcerns.forEach((category) => {
     const group = category.group || "Other";
     if (!groupedConcerns[group]) {
       groupedConcerns[group] = [];
@@ -5111,8 +5164,16 @@ function initializeConcernCategories() {
     groupedConcerns[group].push(category);
   });
 
-  // Render each group with a header
-  Object.keys(groupedConcerns).forEach((groupName) => {
+  // Render each group with a header - only show Face and Body
+  const groupsToShow = ["Face", "Body"];
+  groupsToShow.forEach((groupName) => {
+    if (
+      !groupedConcerns[groupName] ||
+      groupedConcerns[groupName].length === 0
+    ) {
+      return;
+    }
+
     // Create group header
     const groupHeader = document.createElement("div");
     groupHeader.className = "concern-group-header";
@@ -5164,7 +5225,7 @@ function initializeConcernCategories() {
 }
 
 // Initialize areas of concern selection
-// Map area IDs to icon filenames in the area icons folder
+// Map area IDs to icon filenames in the area icons folder (PNG) or SVG icon names
 const AREA_ICON_MAP = {
   forehead: "eyebrows.png", // Use eyebrows icon for forehead
   eyes: "eyes.png",
@@ -5172,11 +5233,12 @@ const AREA_ICON_MAP = {
   nose: "nose.png",
   "mouth-lips": "lips.png",
   jawline: "jawline.png",
-  chin: "jawline.png", // Use jawline icon as fallback
-  neck: null, // No icon available
-  chest: null, // No icon available
-  hands: null, // No icon available
-  body: null, // No icon available
+  chin: "chin", // Use SVG icon
+  neck: "neck", // Use SVG icon
+  chest: "chest", // Use SVG icon
+  hands: "hands", // Use SVG icon
+  arms: "arms", // Use SVG icon
+  body: "body", // Use SVG icon
 };
 
 function initializeAreasOfConcern() {
@@ -5188,7 +5250,34 @@ function initializeAreasOfConcern() {
 
   grid.innerHTML = "";
 
-  AREAS_OF_CONCERN.forEach((area) => {
+  // Filter out locked areas (these will be available post-conversion)
+  const availableAreas = AREAS_OF_CONCERN.filter(
+    (area) => !LOCKED_AREAS.includes(area.id)
+  );
+
+  // Define which areas belong to Face vs Body
+  const faceAreaIds = [
+    "forehead",
+    "eyes",
+    "cheeks",
+    "nose",
+    "mouth-lips",
+    "jawline",
+    "chin",
+    "neck",
+  ];
+  const bodyAreaIds = ["chest", "hands", "arms", "body"];
+
+  // Group areas by Face and Body
+  const faceAreas = availableAreas.filter((area) =>
+    faceAreaIds.includes(area.id)
+  );
+  const bodyAreas = availableAreas.filter((area) =>
+    bodyAreaIds.includes(area.id)
+  );
+
+  // Helper function to create area card
+  const createAreaCard = (area) => {
     const card = document.createElement("div");
     card.className = "area-of-concern-card";
     card.dataset.areaId = area.id;
@@ -5200,20 +5289,22 @@ function initializeAreasOfConcern() {
       card.classList.add("selected");
     }
 
-    // Get icon filename for this area
+    // Get icon filename or SVG icon name for this area
     const iconFilename = AREA_ICON_MAP[area.id];
 
-    // Use selected icon folder if selected, otherwise use regular icon folder
-    const iconFolder = isSelected ? "area icons - selected" : "area icons";
-
-    // Use PNG icon if available, otherwise fallback to SVG
+    // Use PNG icon if filename ends with .png, otherwise use SVG icon
     let iconHtml = "";
-    if (iconFilename) {
+    if (iconFilename && iconFilename.endsWith(".png")) {
+      // Use selected icon folder if selected, otherwise use regular icon folder
+      const iconFolder = isSelected ? "area icons - selected" : "area icons";
       iconHtml = `<img src="${iconFolder}/${iconFilename}" alt="${area.name}" class="area-icon-image" data-icon-filename="${iconFilename}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display: none;">
           <circle cx="12" cy="12" r="10"></circle>
           <path d="M12 8v8M8 12h8"></path>
         </svg>`;
+    } else if (iconFilename) {
+      // Use SVG icon from getIconSVG function
+      iconHtml = getIconSVG(iconFilename, 32);
     } else {
       // Fallback SVG for areas without icons
       iconHtml = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -5235,8 +5326,38 @@ function initializeAreasOfConcern() {
     `;
 
     card.addEventListener("click", () => toggleAreaOfConcern(area.id));
-    grid.appendChild(card);
-  });
+    return card;
+  };
+
+  // Render Face section
+  if (faceAreas.length > 0) {
+    const faceHeader = document.createElement("div");
+    faceHeader.className = "concern-group-header";
+    faceHeader.textContent = "Face";
+    grid.appendChild(faceHeader);
+
+    const faceContainer = document.createElement("div");
+    faceContainer.className = "concern-group-container";
+    faceAreas.forEach((area) => {
+      faceContainer.appendChild(createAreaCard(area));
+    });
+    grid.appendChild(faceContainer);
+  }
+
+  // Render Body section
+  if (bodyAreas.length > 0) {
+    const bodyHeader = document.createElement("div");
+    bodyHeader.className = "concern-group-header";
+    bodyHeader.textContent = "Body";
+    grid.appendChild(bodyHeader);
+
+    const bodyContainer = document.createElement("div");
+    bodyContainer.className = "concern-group-container";
+    bodyAreas.forEach((area) => {
+      bodyContainer.appendChild(createAreaCard(area));
+    });
+    grid.appendChild(bodyContainer);
+  }
 }
 
 // Toggle area of concern selection
@@ -5245,11 +5366,26 @@ function toggleAreaOfConcern(areaId) {
     userSelections.selectedAreas = [];
   }
 
+  const maxSelections = 3;
   const index = userSelections.selectedAreas.indexOf(areaId);
+
   if (index > -1) {
+    // Deselect
     userSelections.selectedAreas.splice(index, 1);
+    // Hide warning when deselecting
+    hideAreaWarning();
   } else {
-    userSelections.selectedAreas.push(areaId);
+    // Select (if under limit)
+    if (userSelections.selectedAreas.length < maxSelections) {
+      userSelections.selectedAreas.push(areaId);
+      // Hide warning when successfully selecting
+      hideAreaWarning();
+      // Clear validation error if one was shown
+      hideValidationError();
+    } else {
+      showAreaWarning(`Please select up to ${maxSelections} areas.`);
+      return;
+    }
   }
 
   // Update window.userSelections
@@ -5263,20 +5399,23 @@ function toggleAreaOfConcern(areaId) {
     const isSelected = userSelections.selectedAreas.includes(areaId);
     card.classList.toggle("selected", isSelected);
 
-    // Update icon image source based on selection state
+    // Update icon image source based on selection state (for PNG icons)
     const iconImage = card.querySelector(".area-icon-image");
     if (iconImage && iconImage.dataset.iconFilename) {
       const iconFilename = iconImage.dataset.iconFilename;
       const iconFolder = isSelected ? "area icons - selected" : "area icons";
       iconImage.src = `${iconFolder}/${iconFilename}`;
     }
+
+    // For SVG icons, the color will change via CSS based on .selected class
+    // No additional update needed as SVG icons use currentColor
   }
 
   // Collect form data to keep in sync
   if (typeof collectFormData === "function") {
     collectFormData();
   }
-  
+
   // Clear validation error when an area is selected
   if (userSelections.selectedAreas && userSelections.selectedAreas.length > 0) {
     hideValidationError();
@@ -5406,18 +5545,68 @@ function showConcernWarning(message) {
   const warningEl = document.getElementById("concern-warning-message");
   const warningText = document.getElementById("concern-warning-text");
   if (warningEl && warningText) {
-    warningText.textContent = message;
+    warningText.innerHTML = `${message}<br><span style="font-size: 13px; margin-top: 4px; display: block;">In-clinic consultations unlock access to all concerns and areas</span>`;
     warningEl.style.display = "flex";
-    // Auto-hide after 4 seconds
+
+    // Add booking button if it doesn't exist
+    let bookingBtn = warningEl.querySelector(".warning-booking-btn");
+    if (!bookingBtn) {
+      bookingBtn = document.createElement("button");
+      bookingBtn.className = "warning-booking-btn";
+      bookingBtn.innerHTML = "Book In-Clinic Consultation";
+      bookingBtn.onclick = (e) => {
+        e.stopPropagation();
+        requestConsultation();
+      };
+      warningEl.appendChild(bookingBtn);
+    }
+
+    // Auto-hide after 8 seconds (increased to give time to click)
     setTimeout(() => {
       hideConcernWarning();
-    }, 4000);
+    }, 8000);
   }
 }
 
 // Hide concern warning message
 function hideConcernWarning() {
   const warningEl = document.getElementById("concern-warning-message");
+  if (warningEl) {
+    warningEl.style.display = "none";
+  }
+}
+
+// Show area warning message
+function showAreaWarning(message) {
+  const warningEl = document.getElementById("area-warning-message");
+  const warningText = document.getElementById("area-warning-text");
+  if (warningEl && warningText) {
+    warningText.innerHTML = `${message}<br><span style="font-size: 13px; margin-top: 4px; display: block;">In-clinic consultations unlock access to all concerns and areas</span>`;
+    warningEl.style.display = "flex";
+
+    // Add booking button if it doesn't exist
+    let bookingBtn = warningEl.querySelector(".warning-booking-btn");
+    if (!bookingBtn) {
+      bookingBtn = document.createElement("button");
+      bookingBtn.className = "warning-booking-btn";
+      bookingBtn.innerHTML = "Book In-Clinic Consultation";
+      bookingBtn.onclick = (e) => {
+        e.stopPropagation();
+        requestConsultation();
+      };
+      warningEl.appendChild(bookingBtn);
+    }
+
+    // Auto-hide after 8 seconds (increased to give time to click)
+    setTimeout(() => {
+      hideAreaWarning();
+    }, 8000);
+  }
+}
+
+// Hide area warning message
+function hideAreaWarning() {
+  const warningEl = document.getElementById("area-warning-message");
   if (warningEl) {
     warningEl.style.display = "none";
   }
@@ -5559,7 +5748,7 @@ function goToFormStep(stepNumber, skipValidation = false) {
         return; // Prevent navigation
       }
     }
-    
+
     // Validate step 2 requirements before going to step 3
     if (stepNumber === 3) {
       const validation = validateStep2();
@@ -5568,12 +5757,16 @@ function goToFormStep(stepNumber, skipValidation = false) {
         return; // Prevent navigation
       }
     }
-    
+
     // Validate step 3 requirements before going to step 4 or 6
     if (stepNumber === 4 || stepNumber === 6) {
       const validation = validateStep3();
       if (!validation.isValid) {
-        showValidationError(validation.message, validation.step, validation.field);
+        showValidationError(
+          validation.message,
+          validation.step,
+          validation.field
+        );
         return; // Prevent navigation
       }
     }
@@ -5600,7 +5793,7 @@ function goToFormStep(stepNumber, skipValidation = false) {
   const targetStep = document.getElementById(`form-step-${stepNumber}`);
   if (targetStep) {
     targetStep.classList.add("active");
-    
+
     // Set up age input event listener when step 3 is shown
     if (stepNumber === 3) {
       setTimeout(() => {
@@ -5614,13 +5807,15 @@ function goToFormStep(stepNumber, skipValidation = false) {
               ageInput.classList.remove("input-error");
             }
           }
-          
+
           // Remove old listeners by cloning (if needed)
-          const hasListener = ageInput.getAttribute('data-age-listener-attached');
+          const hasListener = ageInput.getAttribute(
+            "data-age-listener-attached"
+          );
           if (!hasListener) {
             ageInput.addEventListener("input", clearAgeError, { once: false });
             ageInput.addEventListener("change", clearAgeError, { once: false });
-            ageInput.setAttribute('data-age-listener-attached', 'true');
+            ageInput.setAttribute("data-age-listener-attached", "true");
           }
         }
       }, 100);
@@ -5648,13 +5843,13 @@ function goToFormStep(stepNumber, skipValidation = false) {
   // Update title and subtitle based on step
   const titles = {
     1: {
-      title: "What would you like to improve?",
+      title: "Start Your Virtual Consultation",
       subtitle: "Select up to 3 main concerns that matter most to you",
     },
     2: {
       title: "Which Areas Are You Most Concerned About?",
       subtitle:
-        "Select all areas that apply to help us show you the most relevant results",
+        "Select up to 3 areas that apply to help us show you the most relevant results",
     },
     3: {
       title: "Your Details",
@@ -5678,9 +5873,19 @@ function goToFormStep(stepNumber, skipValidation = false) {
   const stepInfo = titles[stepNumber] || titles[1];
   const titleEl = document.getElementById("form-step-title");
   const subtitleEl = document.getElementById("form-step-subtitle");
+  const subtitleNoteEl = document.querySelector(".form-subtitle-note");
 
   if (titleEl) titleEl.textContent = stepInfo.title;
   if (subtitleEl) subtitleEl.textContent = stepInfo.subtitle;
+
+  // Show/hide the consultation note for steps 1 and 2
+  if (subtitleNoteEl) {
+    if (stepNumber === 1 || stepNumber === 2) {
+      subtitleNoteEl.style.display = "block";
+    } else {
+      subtitleNoteEl.style.display = "none";
+    }
+  }
 
   // Update shared navigation bar
   updateFormNavigation(stepNumber);
@@ -5845,12 +6050,12 @@ function validateStep1() {
     window.userSelections.selectedIssues.length > 0
       ? window.userSelections.selectedIssues.length
       : 0;
-  
+
   if (!hasCategorySelections && actualIssueCount === 0) {
     return {
       isValid: false,
       message: "Please select at least one concern to continue.",
-      step: 1
+      step: 1,
     };
   }
   return { isValid: true };
@@ -5860,14 +6065,13 @@ function validateStep1() {
 function validateStep2() {
   collectFormData();
   const hasAreaSelections =
-    userSelections.selectedAreas &&
-    userSelections.selectedAreas.length > 0;
-  
+    userSelections.selectedAreas && userSelections.selectedAreas.length > 0;
+
   if (!hasAreaSelections) {
     return {
       isValid: false,
       message: "Please select at least one area to continue.",
-      step: 2
+      step: 2,
     };
   }
   return { isValid: true };
@@ -5877,7 +6081,7 @@ function validateStep2() {
 function validateStep3() {
   collectFormData();
   const errors = [];
-  
+
   // Check age
   const ageValue = userSelections.age;
   if (!ageValue || ageValue < 18) {
@@ -5885,47 +6089,47 @@ function validateStep3() {
       message: !ageValue
         ? "Please enter your age to continue."
         : "Please enter a valid age (must be 18 or older) to continue.",
-      field: "patient-age"
+      field: "patient-age",
     });
   }
-  
+
   // Check skin type
   if (!userSelections.skinType) {
     errors.push({
       message: "Please select your skin type to continue.",
-      field: "skin-type"
+      field: "skin-type",
     });
   }
-  
+
   // Check skin tone (now required)
   if (!userSelections.skinTone) {
     errors.push({
       message: "Please select your skin tone to continue.",
-      field: "skin-tone"
+      field: "skin-tone",
     });
   }
-  
+
   // Sun response is now optional - no validation needed
-  
+
   if (errors.length > 0) {
     return {
       isValid: false,
       message: errors[0].message, // Show first error
       step: 3,
-      field: errors[0].field
+      field: errors[0].field,
     };
   }
-  
+
   return { isValid: true };
 }
 
 // Validate required fields before proceeding to review
 function validateRequiredFields() {
   collectFormData();
-  
+
   const errors = [];
   let targetStep = null;
-  
+
   // Check age
   const ageValue = userSelections.age;
   if (!ageValue || ageValue < 18) {
@@ -5934,11 +6138,11 @@ function validateRequiredFields() {
         ? "Please enter your age to continue."
         : "Please enter a valid age (must be 18 or older) to continue.",
       step: 3,
-      field: "patient-age"
+      field: "patient-age",
     });
     targetStep = 3;
   }
-  
+
   // Check concerns
   const hasCategorySelections =
     userSelections.selectedConcernCategories &&
@@ -5953,50 +6157,49 @@ function validateRequiredFields() {
     errors.push({
       message: "Please select at least one concern to continue.",
       step: 1,
-      field: null
+      field: null,
     });
     if (!targetStep) targetStep = 1;
   }
-  
+
   // Check areas
   const hasAreaSelections =
-    userSelections.selectedAreas &&
-    userSelections.selectedAreas.length > 0;
+    userSelections.selectedAreas && userSelections.selectedAreas.length > 0;
   if (!hasAreaSelections) {
     errors.push({
       message: "Please select at least one area to continue.",
       step: 2,
-      field: null
+      field: null,
     });
     if (!targetStep) targetStep = 2;
   }
-  
+
   // Check skin type
   if (!userSelections.skinType) {
     errors.push({
       message: "Please select your skin type to continue.",
       step: 3,
-      field: "skin-type"
+      field: "skin-type",
     });
     if (!targetStep) targetStep = 3;
   }
-  
+
   // Check skin tone (now required)
   if (!userSelections.skinTone) {
     errors.push({
       message: "Please select your skin tone to continue.",
       step: 3,
-      field: "skin-tone"
+      field: "skin-tone",
     });
     if (!targetStep) targetStep = 3;
   }
-  
+
   // Sun response is now optional - no validation needed
-  
+
   return {
     isValid: errors.length === 0,
     errors: errors,
-    targetStep: targetStep
+    targetStep: targetStep,
   };
 }
 
@@ -6011,10 +6214,12 @@ function showValidationError(message, targetStep, field = null) {
       concernWarningEl.style.display = "flex";
       concernWarningEl.className = "concern-warning-message error";
       // Don't auto-hide validation errors
-      
+
       // Scroll to top of concerns section (not the bottom)
       setTimeout(() => {
-        const concernsContainer = document.querySelector('.concerns-screen-container');
+        const concernsContainer = document.querySelector(
+          ".concerns-screen-container"
+        );
         if (concernsContainer) {
           concernsContainer.scrollIntoView({
             behavior: "smooth",
@@ -6023,7 +6228,7 @@ function showValidationError(message, targetStep, field = null) {
         }
       }, 100);
     }
-    
+
     // Highlight concern category cards if no concerns selected
     setTimeout(() => {
       const hasCategorySelections =
@@ -6035,10 +6240,12 @@ function showValidationError(message, targetStep, field = null) {
         window.userSelections.selectedIssues.length > 0
           ? window.userSelections.selectedIssues.length
           : 0;
-      
+
       if (!hasCategorySelections && actualIssueCount === 0) {
         // Add visual indicator to concern selection area
-        const concernsContainer = document.querySelector('.concern-categories-grid');
+        const concernsContainer = document.querySelector(
+          ".concern-categories-grid"
+        );
         if (concernsContainer) {
           concernsContainer.style.border = "2px solid #ef5350";
           concernsContainer.style.borderRadius = "12px";
@@ -6048,30 +6255,30 @@ function showValidationError(message, targetStep, field = null) {
     }, 200);
     return; // Early return for step 1
   }
-  
+
   // For step 2, show error at the top of the areas section
   if (targetStep === 2) {
     // Create or use a validation message element at the top of step 2
-    const formSection = document.querySelector('#form-step-2 .form-section');
-    let step2ErrorEl = document.getElementById('step-2-validation-error');
-    
+    const formSection = document.querySelector("#form-step-2 .form-section");
+    let step2ErrorEl = document.getElementById("step-2-validation-error");
+
     if (!step2ErrorEl && formSection) {
-      step2ErrorEl = document.createElement('div');
-      step2ErrorEl.id = 'step-2-validation-error';
-      step2ErrorEl.className = 'validation-message error';
+      step2ErrorEl = document.createElement("div");
+      step2ErrorEl.id = "step-2-validation-error";
+      step2ErrorEl.className = "validation-message error";
       formSection.insertBefore(step2ErrorEl, formSection.firstChild);
     }
-    
+
     if (step2ErrorEl) {
       step2ErrorEl.textContent = message;
-      step2ErrorEl.style.display = 'block';
+      step2ErrorEl.style.display = "block";
       // No scrolling - error is already visible at the top
     }
-    
+
     // Don't add red outline - just show the error message
     return; // Early return for step 2
   }
-  
+
   // For step 3, show inline errors next to specific fields (like email validation)
   if (targetStep === 3) {
     // Show error inline next to the specific field
@@ -6079,22 +6286,24 @@ function showValidationError(message, targetStep, field = null) {
       const ageInput = document.getElementById("patient-age");
     } else if (field === "skin-tone") {
       // Show error for skin tone selection
-      const skinToneSection = document.querySelector('.demographic-section:has(.skin-tone-scale)');
+      const skinToneSection = document.querySelector(
+        ".demographic-section:has(.skin-tone-scale)"
+      );
       if (skinToneSection) {
-        let errorEl = skinToneSection.querySelector('.input-error-message');
+        let errorEl = skinToneSection.querySelector(".input-error-message");
         if (!errorEl) {
-          errorEl = document.createElement('div');
-          errorEl.className = 'input-error-message';
-          errorEl.style.color = '#d32f2f';
-          errorEl.style.fontSize = '13px';
-          errorEl.style.marginTop = '8px';
-          const label = skinToneSection.querySelector('.demographic-label');
+          errorEl = document.createElement("div");
+          errorEl.className = "input-error-message";
+          errorEl.style.color = "#d32f2f";
+          errorEl.style.fontSize = "13px";
+          errorEl.style.marginTop = "8px";
+          const label = skinToneSection.querySelector(".demographic-label");
           if (label) {
-            label.insertAdjacentElement('afterend', errorEl);
+            label.insertAdjacentElement("afterend", errorEl);
           }
         }
         errorEl.textContent = message;
-        errorEl.style.display = 'block';
+        errorEl.style.display = "block";
       }
     }
     if (field === "patient-age") {
@@ -6104,41 +6313,51 @@ function showValidationError(message, targetStep, field = null) {
         ageInput.classList.add("input-error");
       }
     } else if (field === "skin-type") {
-      const skinTypeSection = document.querySelector('#form-step-3 .demographic-section:nth-of-type(2)');
+      const skinTypeSection = document.querySelector(
+        "#form-step-3 .demographic-section:nth-of-type(2)"
+      );
       if (skinTypeSection) {
         // Remove existing error if any
-        const existingError = skinTypeSection.querySelector('.input-error-message');
+        const existingError = skinTypeSection.querySelector(
+          ".input-error-message"
+        );
         if (existingError) existingError.remove();
-        
+
         // Add error message below the label
         const errorDiv = document.createElement("div");
         errorDiv.className = "input-error-message";
         errorDiv.textContent = message;
-        errorDiv.style.cssText = "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
-        const label = skinTypeSection.querySelector('.demographic-label');
+        errorDiv.style.cssText =
+          "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
+        const label = skinTypeSection.querySelector(".demographic-label");
         if (label && label.nextSibling) {
           skinTypeSection.insertBefore(errorDiv, label.nextSibling);
         } else if (label) {
-          label.insertAdjacentElement('afterend', errorDiv);
+          label.insertAdjacentElement("afterend", errorDiv);
         }
       }
     } else if (field === "skin-tone") {
-      const skinToneSection = document.querySelector('#form-step-3 .demographic-section:has(.skin-tone-scale)');
+      const skinToneSection = document.querySelector(
+        "#form-step-3 .demographic-section:has(.skin-tone-scale)"
+      );
       if (skinToneSection) {
         // Remove existing error if any
-        const existingError = skinToneSection.querySelector('.input-error-message');
+        const existingError = skinToneSection.querySelector(
+          ".input-error-message"
+        );
         if (existingError) existingError.remove();
-        
+
         // Add error message below the label
         const errorDiv = document.createElement("div");
         errorDiv.className = "input-error-message";
         errorDiv.textContent = message;
-        errorDiv.style.cssText = "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
-        const label = skinToneSection.querySelector('.demographic-label');
+        errorDiv.style.cssText =
+          "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
+        const label = skinToneSection.querySelector(".demographic-label");
         if (label && label.nextSibling) {
           skinToneSection.insertBefore(errorDiv, label.nextSibling);
         } else if (label) {
-          label.insertAdjacentElement('afterend', errorDiv);
+          label.insertAdjacentElement("afterend", errorDiv);
         }
       }
     } else {
@@ -6147,50 +6366,63 @@ function showValidationError(message, targetStep, field = null) {
       if (!userSelections.age || userSelections.age < 18) {
         const ageInput = document.getElementById("patient-age");
         if (ageInput) {
-          const errorMsg = !userSelections.age ? "Please enter your age to continue." : "Please enter a valid age (must be 18 or older) to continue.";
+          const errorMsg = !userSelections.age
+            ? "Please enter your age to continue."
+            : "Please enter a valid age (must be 18 or older) to continue.";
           showInputError(ageInput, errorMsg);
           ageInput.classList.add("input-error");
         }
       } else if (!userSelections.skinType) {
-        const skinTypeSection = document.querySelector('#form-step-3 .demographic-section:nth-of-type(2)');
+        const skinTypeSection = document.querySelector(
+          "#form-step-3 .demographic-section:nth-of-type(2)"
+        );
         if (skinTypeSection) {
-          const existingError = skinTypeSection.querySelector('.input-error-message');
+          const existingError = skinTypeSection.querySelector(
+            ".input-error-message"
+          );
           if (existingError) existingError.remove();
           const errorDiv = document.createElement("div");
           errorDiv.className = "input-error-message";
           errorDiv.textContent = "Please select your skin type to continue.";
-          errorDiv.style.cssText = "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
-          const label = skinTypeSection.querySelector('.demographic-label');
+          errorDiv.style.cssText =
+            "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
+          const label = skinTypeSection.querySelector(".demographic-label");
           if (label) {
-            label.insertAdjacentElement('afterend', errorDiv);
+            label.insertAdjacentElement("afterend", errorDiv);
           }
         }
       } else if (!userSelections.sunResponse) {
-        const sunResponseSection = document.querySelector('#form-step-3 .demographic-section:nth-of-type(3)');
+        const sunResponseSection = document.querySelector(
+          "#form-step-3 .demographic-section:nth-of-type(3)"
+        );
         if (sunResponseSection) {
-          const existingError = sunResponseSection.querySelector('.input-error-message');
+          const existingError = sunResponseSection.querySelector(
+            ".input-error-message"
+          );
           if (existingError) existingError.remove();
           const errorDiv = document.createElement("div");
           errorDiv.className = "input-error-message";
-          errorDiv.textContent = "Please select how your skin responds to sun to continue.";
-          errorDiv.style.cssText = "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
-          const label = sunResponseSection.querySelector('.demographic-label');
+          errorDiv.textContent =
+            "Please select how your skin responds to sun to continue.";
+          errorDiv.style.cssText =
+            "color: #d32f2f; font-size: 12px; margin-top: 4px; margin-bottom: 8px;";
+          const label = sunResponseSection.querySelector(".demographic-label");
           if (label) {
-            label.insertAdjacentElement('afterend', errorDiv);
+            label.insertAdjacentElement("afterend", errorDiv);
           }
         }
       }
     }
     return; // Early return for step 3
   }
-  
+
   // For other steps, use the regular validation message
   const validationMessage = document.getElementById("validation-message");
   if (validationMessage) {
     validationMessage.textContent = message;
     validationMessage.className = "validation-message error";
     validationMessage.style.display = "block";
-    
+
     // Scroll to validation message
     setTimeout(() => {
       validationMessage.scrollIntoView({
@@ -6199,9 +6431,9 @@ function showValidationError(message, targetStep, field = null) {
       });
     }, 100);
   }
-  
+
   // Navigate to the step with the error if not already on that step
-  const currentStep = document.querySelector('.form-step.active')?.dataset.step;
+  const currentStep = document.querySelector(".form-step.active")?.dataset.step;
   if (targetStep && parseInt(currentStep) !== targetStep) {
     goToFormStep(targetStep);
   }
@@ -6215,41 +6447,43 @@ function hideValidationError() {
     concernWarningEl.style.display = "none";
     concernWarningEl.classList.remove("error");
   }
-  
+
   const validationMessage = document.getElementById("validation-message");
   if (validationMessage) {
     validationMessage.style.display = "none";
     validationMessage.textContent = "";
   }
-  
+
   // Remove step 2 validation error
-  const step2ErrorEl = document.getElementById('step-2-validation-error');
+  const step2ErrorEl = document.getElementById("step-2-validation-error");
   if (step2ErrorEl) {
-    step2ErrorEl.style.display = 'none';
-    step2ErrorEl.textContent = '';
+    step2ErrorEl.style.display = "none";
+    step2ErrorEl.textContent = "";
   }
-  
+
   // Remove step 3 inline validation errors
   const ageInput = document.getElementById("patient-age");
   if (ageInput) {
     hideInputError(ageInput);
     ageInput.classList.remove("input-error");
   }
-  
+
   // Remove errors from skin type and sun response sections
-  document.querySelectorAll('#form-step-3 .input-error-message').forEach(error => {
-    error.remove();
-  });
-  
+  document
+    .querySelectorAll("#form-step-3 .input-error-message")
+    .forEach((error) => {
+      error.remove();
+    });
+
   // Remove highlighting from concerns container
-  const concernsContainer = document.querySelector('.concern-categories-grid');
+  const concernsContainer = document.querySelector(".concern-categories-grid");
   if (concernsContainer) {
     concernsContainer.style.border = "";
     concernsContainer.style.padding = "";
   }
-  
+
   // Remove highlighting from areas grid
-  const areasGrid = document.getElementById('areas-of-concern-grid');
+  const areasGrid = document.getElementById("areas-of-concern-grid");
   if (areasGrid) {
     areasGrid.style.border = "";
     areasGrid.style.padding = "";
@@ -6329,7 +6563,11 @@ function updateFormNavigation(stepNumber) {
         // Validate required fields before continuing
         const validation = validateStep3();
         if (!validation.isValid) {
-          showValidationError(validation.message, validation.step, validation.field);
+          showValidationError(
+            validation.message,
+            validation.step,
+            validation.field
+          );
           return;
         }
         hideValidationError();
@@ -6349,7 +6587,10 @@ function updateFormNavigation(stepNumber) {
         // Validate all required fields before proceeding to review
         const validation = validateRequiredFields();
         if (!validation.isValid) {
-          showValidationError(validation.errors[0].message, validation.targetStep);
+          showValidationError(
+            validation.errors[0].message,
+            validation.targetStep
+          );
           return;
         }
         hideValidationError();
@@ -6380,10 +6621,13 @@ function updateFormNavigation(stepNumber) {
         // Validate required fields
         const validation = validateRequiredFields();
         if (!validation.isValid) {
-          showValidationError(validation.errors[0].message, validation.targetStep);
+          showValidationError(
+            validation.errors[0].message,
+            validation.targetStep
+          );
           return;
         }
-        
+
         // All validation passed - proceed to lead capture
         hideValidationError();
         showEarlyLeadCapture();
@@ -6642,12 +6886,16 @@ function populateReviewStep() {
         <span class="review-item-label">Skin Tone:</span>
         <span class="review-item-value">${skinToneLabel}</span>
       </div>
-      ${sunResponseLabel ? `
+      ${
+        sunResponseLabel
+          ? `
       <div class="review-item">
         <span class="review-item-label">Sun Response:</span>
         <span class="review-item-value">${sunResponseLabel}</span>
       </div>
-      ` : ''}
+      `
+          : ""
+      }
     `;
   }
 
@@ -7181,26 +7429,27 @@ function setupFormValidation() {
         hideInputError(e.target);
         e.target.classList.remove("input-error");
       }
-    } else if (
-      e.target.name === "skin-type" ||
-      e.target.name === "skin-tone"
-    ) {
+    } else if (e.target.name === "skin-type" || e.target.name === "skin-tone") {
       // Collect demographic data in real-time
       collectFormData();
       // Clear inline validation error when field is selected
       if (e.target.name === "skin-type" && e.target.checked) {
         // Find the section containing this input
-        const skinTypeSection = e.target.closest('.demographic-section');
+        const skinTypeSection = e.target.closest(".demographic-section");
         if (skinTypeSection) {
-          const errorMsg = skinTypeSection.querySelector('.input-error-message');
+          const errorMsg = skinTypeSection.querySelector(
+            ".input-error-message"
+          );
           if (errorMsg) errorMsg.remove();
         }
       }
       if (e.target.name === "skin-tone" && e.target.checked) {
         // Find the section containing this input
-        const skinToneSection = e.target.closest('.demographic-section');
+        const skinToneSection = e.target.closest(".demographic-section");
         if (skinToneSection) {
-          const errorMsg = skinToneSection.querySelector('.input-error-message');
+          const errorMsg = skinToneSection.querySelector(
+            ".input-error-message"
+          );
           if (errorMsg) errorMsg.remove();
         }
       }
@@ -7228,7 +7477,7 @@ function setupFormValidation() {
         this.classList.remove("input-error");
       }
     });
-    
+
     // Also listen for blur to validate on focus loss
     ageInput.addEventListener("blur", function () {
       const ageValue = parseInt(this.value);
@@ -7820,8 +8069,7 @@ function extractConcernFromCaseName(caseName) {
     // Remove "with [treatment]" patterns - comprehensive list of all treatments
     // This pattern matches "with [any treatment]" and removes everything after "with"
     {
-      pattern:
-        /\s+with\s+.*$/i,
+      pattern: /\s+with\s+.*$/i,
       replacement: "",
     },
     // Remove standalone treatment terms at the end (e.g., "Heat/energy", "RF", "Laser")
@@ -8028,11 +8276,139 @@ function groupCasesByTreatmentSuggestion(cases) {
   // Filter out surgical cases first
   const nonSurgicalCases = filterNonSurgicalCases(cases);
 
+  // Filter by user's selected areas if any are selected
+  let areaFilteredCases = nonSurgicalCases;
+  if (userSelections.selectedAreas && userSelections.selectedAreas.length > 0) {
+    const userSelectedAreaNames = userSelections.selectedAreas
+      .map((areaId) => {
+        const area = AREAS_OF_CONCERN.find((a) => a.id === areaId);
+        return area ? area.name : null;
+      })
+      .filter((name) => name !== null);
+
+    // Use the same area keyword mapping for consistency
+    const areaKeywords = [
+      // Forehead area
+      {
+        keywords: [
+          "brow ptosis",
+          "brow asymmetry",
+          "brow lift",
+          "brow balance",
+          "brow droop",
+        ],
+        area: "Forehead",
+      },
+      {
+        keywords: [
+          "forehead",
+          "temple",
+          "temples",
+          "glabella",
+          "11s",
+          "temporal",
+        ],
+        area: "Forehead",
+      },
+      // Eyes area
+      {
+        keywords: [
+          "under eye",
+          "under-eye",
+          "eyelid",
+          "eyelids",
+          "upper eyelid",
+          "lower eyelid",
+        ],
+        area: "Eyes",
+      },
+      {
+        keywords: [
+          "brow",
+          "brows",
+          "eyebrow",
+          "eyebrows",
+          "eye",
+          "eyes",
+          "ptosis",
+        ],
+        area: "Eyes",
+      },
+      // Cheeks area
+      {
+        keywords: ["cheek", "cheeks", "cheekbone", "mid cheek"],
+        area: "Cheeks",
+      },
+      // Nose area
+      { keywords: ["nose", "nasal", "nasal tip", "dorsal hump"], area: "Nose" },
+      // Mouth & Lips area
+      {
+        keywords: ["lip", "lips", "mouth", "philtral", "gummy smile"],
+        area: "Mouth & Lips",
+      },
+      // Jawline area
+      {
+        keywords: ["jawline", "jaw", "wide jawline", "define jawline"],
+        area: "Jawline",
+      },
+      // Chin area
+      { keywords: ["chin", "retruded chin", "labiomental"], area: "Chin" },
+      // Neck area
+      { keywords: ["neck", "neck lines", "neck wrinkles"], area: "Neck" },
+    ];
+
+    areaFilteredCases = nonSurgicalCases.filter((caseItem) => {
+      const caseName = caseItem.name || "";
+      const caseNameLower = caseName.toLowerCase();
+      const matchingCriteria = (caseItem.matchingCriteria || []).map((c) =>
+        c.toLowerCase()
+      );
+      const solvedIssuesLower = (caseItem.solved || []).map((issue) =>
+        typeof issue === "string"
+          ? issue.toLowerCase()
+          : String(issue || "").toLowerCase()
+      );
+      const allCaseText = [
+        caseNameLower,
+        ...matchingCriteria,
+        ...solvedIssuesLower,
+      ].join(" ");
+
+      // Check which areas this case relates to
+      const matchedAreas = new Set();
+      const matchedKeywords = new Set();
+
+      const sortedAreaKeywords = areaKeywords.map(({ keywords, area }) => ({
+        keywords: keywords.sort((a, b) => b.length - a.length),
+        area,
+      }));
+
+      for (const { keywords, area } of sortedAreaKeywords) {
+        for (const keyword of keywords) {
+          const isSubstringOfMatched = Array.from(matchedKeywords).some(
+            (matched) => matched.includes(keyword) && matched !== keyword
+          );
+
+          if (!isSubstringOfMatched && allCaseText.includes(keyword)) {
+            matchedAreas.add(area);
+            matchedKeywords.add(keyword);
+            break;
+          }
+        }
+      }
+
+      // Only include if the case matches at least one of the user's selected areas
+      return Array.from(matchedAreas).some((area) =>
+        userSelectedAreaNames.includes(area)
+      );
+    });
+  }
+
   // First level: group by concern
   const concernGroups = {};
 
   // Calculate matching scores for all cases before grouping
-  const casesWithScores = nonSurgicalCases.map((caseItem) => {
+  const casesWithScores = areaFilteredCases.map((caseItem) => {
     if (!caseItem.matchingScore) {
       caseItem.matchingScore = calculateMatchingScore(caseItem, userSelections);
     }
@@ -8062,7 +8438,7 @@ function groupCasesByTreatmentSuggestion(cases) {
   const groups = Object.values(concernGroups).map((concernGroup) => {
     const treatments = Object.keys(concernGroup.treatments);
     const allCases = Object.values(concernGroup.treatments).flat();
-    
+
     // Sort cases by matching score (most similar first)
     const sortedCases = allCases.sort((a, b) => {
       const scoreA = a.matchingScore || 0;
@@ -8086,10 +8462,15 @@ function populateResultsScreen() {
   const categories = userSelections.selectedConcernCategories || [];
   const selectedIssues = userSelections.selectedIssues || [];
 
+  // Filter out locked concerns (these will be available post-conversion)
+  const availableCategories = categories.filter(
+    (id) => !LOCKED_CONCERNS.includes(id)
+  );
+
   // If we have categories, use those; otherwise use issues
   const itemsToShow =
-    categories.length > 0
-      ? categories
+    availableCategories.length > 0
+      ? availableCategories
           .map((id) => {
             const category = HIGH_LEVEL_CONCERNS.find((c) => c.id === id);
             return category
@@ -8181,6 +8562,9 @@ function populateResultsScreen() {
               <div class="treatment-groups-grid">
                 ${treatmentGroups
                   .map((group, groupIndex) => {
+                    // Lock suggestions with only 1 case
+                    const isLocked = group.cases.length === 1;
+
                     // Get area tags for this treatment group (which areas it relates to)
                     const areaTags = getTreatmentGroupRelevance(
                       group,
@@ -8202,6 +8586,44 @@ function populateResultsScreen() {
                     </div>
                   `
                         : "";
+
+                    // If locked, show locked version
+                    if (isLocked) {
+                      const previewCase = group.cases[0];
+                      const imageUrl =
+                        previewCase.beforeAfter || previewCase.thumbnail;
+                      return `
+                  <div class="treatment-group-card treatment-group-card-locked" onclick="requestConsultation()">
+                    <div class="treatment-group-header">
+                      <h3 class="treatment-group-title">${escapeHtml(
+                        group.suggestion
+                      )}</h3>
+                      <span class="treatment-group-count locked-count">1 case</span>
+                    </div>
+                    ${areaHtml}
+                    <div class="treatment-group-preview-wrapper locked-preview">
+                      <div class="treatment-group-preview" data-group-index="${groupIndex}">
+                        ${
+                          imageUrl
+                            ? `<img src="${imageUrl}" alt="${escapeHtml(
+                                previewCase.name
+                              )}" class="treatment-group-preview-image" onerror="this.style.display='none'">`
+                            : '<div class="treatment-group-placeholder">Preview</div>'
+                        }
+                        <div class="treatment-group-lock-overlay">
+                          ${getIconSVG("lock", 24)}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="treatment-group-footer locked-footer">
+                      <div class="treatment-group-locked-message">
+                        <strong>See more cases</strong> by booking an in-clinic consultation
+                      </div>
+                      <span class="treatment-group-cta locked-cta">Request Consultation →</span>
+                    </div>
+                  </div>
+                  `;
+                    }
 
                     return `
                   <div class="treatment-group-card" onclick="showTreatmentDetail('${escapeHtml(
@@ -8263,116 +8685,133 @@ function populateResultsScreen() {
   }
 
   activeResultsTab = 0;
-  
+
   // Initialize scroll arrows after content is loaded
   setTimeout(initializeScrollArrows, 100);
 }
 
 // Scroll preview carousel functions
-window.scrollPreviewLeft = function(button, event) {
+window.scrollPreviewLeft = function (button, event) {
   if (event) {
     event.stopPropagation(); // Prevent card click
     event.preventDefault();
   }
-  const wrapper = button.closest('.treatment-group-preview-wrapper');
-  const preview = wrapper.querySelector('.treatment-group-preview');
+  const wrapper = button.closest(".treatment-group-preview-wrapper");
+  const preview = wrapper.querySelector(".treatment-group-preview");
   if (preview) {
-    preview.scrollBy({ left: -200, behavior: 'smooth' });
+    preview.scrollBy({ left: -200, behavior: "smooth" });
   }
 };
 
-window.scrollPreviewRight = function(button, event) {
+window.scrollPreviewRight = function (button, event) {
   if (event) {
     event.stopPropagation(); // Prevent card click
     event.preventDefault();
   }
-  const wrapper = button.closest('.treatment-group-preview-wrapper');
-  const preview = wrapper.querySelector('.treatment-group-preview');
+  const wrapper = button.closest(".treatment-group-preview-wrapper");
+  const preview = wrapper.querySelector(".treatment-group-preview");
   if (preview) {
-    preview.scrollBy({ left: 200, behavior: 'smooth' });
+    preview.scrollBy({ left: 200, behavior: "smooth" });
   }
 };
 
 // Update scroll arrow visibility and gradient shadows based on scroll position
 function initializeScrollArrows() {
   const updateScrollState = (preview) => {
-    const wrapper = preview.closest('.treatment-group-preview-wrapper');
+    const wrapper = preview.closest(".treatment-group-preview-wrapper");
     if (!wrapper) return;
-    
+
     // Only update if the preview is in a visible section
-    const section = wrapper.closest('.results-concern-section');
-    if (section && !section.classList.contains('active')) {
+    const section = wrapper.closest(".results-concern-section");
+    if (section && !section.classList.contains("active")) {
       return; // Skip hidden sections
     }
-    
-    const leftArrow = wrapper.querySelector('.treatment-group-scroll-arrow.left');
-    const rightArrow = wrapper.querySelector('.treatment-group-scroll-arrow.right');
-    
+
+    const leftArrow = wrapper.querySelector(
+      ".treatment-group-scroll-arrow.left"
+    );
+    const rightArrow = wrapper.querySelector(
+      ".treatment-group-scroll-arrow.right"
+    );
+
     // Check if there's content to scroll (content width > container width)
     const hasScrollableContent = preview.scrollWidth > preview.clientWidth;
     const isAtStart = preview.scrollLeft <= 1; // Use 1px threshold for rounding
-    const isAtEnd = preview.scrollLeft >= preview.scrollWidth - preview.clientWidth - 1;
-    
+    const isAtEnd =
+      preview.scrollLeft >= preview.scrollWidth - preview.clientWidth - 1;
+
     // Update arrows - show right arrow initially if there's scrollable content
     if (leftArrow) {
       if (isAtStart || !hasScrollableContent) {
-        leftArrow.classList.add('hidden');
+        leftArrow.classList.add("hidden");
       } else {
-        leftArrow.classList.remove('hidden');
+        leftArrow.classList.remove("hidden");
       }
     }
-    
+
     if (rightArrow) {
       if (isAtEnd || !hasScrollableContent) {
-        rightArrow.classList.add('hidden');
+        rightArrow.classList.add("hidden");
       } else {
-        rightArrow.classList.remove('hidden');
+        rightArrow.classList.remove("hidden");
       }
     }
-    
+
     // Update gradient shadows - show when there's room to scroll
     if (isAtStart || !hasScrollableContent) {
-      wrapper.classList.remove('has-scroll-left');
+      wrapper.classList.remove("has-scroll-left");
     } else {
-      wrapper.classList.add('has-scroll-left');
+      wrapper.classList.add("has-scroll-left");
     }
-    
+
     if (isAtEnd || !hasScrollableContent) {
-      wrapper.classList.remove('has-scroll-right');
+      wrapper.classList.remove("has-scroll-right");
     } else {
-      wrapper.classList.add('has-scroll-right');
+      wrapper.classList.add("has-scroll-right");
     }
   };
-  
+
   // Only process previews in active/visible sections
-  document.querySelectorAll('.results-concern-section.active .treatment-group-preview').forEach(preview => {
-    // Small delay to ensure DOM is fully rendered and dimensions are calculated
-    setTimeout(() => {
-      updateScrollState(preview);
-    }, 100);
-    
-    // Update on scroll - use a flag to prevent duplicate listeners
-    if (!preview.dataset.scrollListenerAttached) {
-      preview.addEventListener('scroll', () => {
+  document
+    .querySelectorAll(
+      ".results-concern-section.active .treatment-group-preview"
+    )
+    .forEach((preview) => {
+      // Small delay to ensure DOM is fully rendered and dimensions are calculated
+      setTimeout(() => {
         updateScrollState(preview);
-      }, { passive: true });
-      preview.dataset.scrollListenerAttached = 'true';
-    }
-  });
-  
+      }, 100);
+
+      // Update on scroll - use a flag to prevent duplicate listeners
+      if (!preview.dataset.scrollListenerAttached) {
+        preview.addEventListener(
+          "scroll",
+          () => {
+            updateScrollState(preview);
+          },
+          { passive: true }
+        );
+        preview.dataset.scrollListenerAttached = "true";
+      }
+    });
+
   // Update on resize
   const handleResize = () => {
-    document.querySelectorAll('.results-concern-section.active .treatment-group-preview').forEach(preview => {
-      updateScrollState(preview);
-    });
+    document
+      .querySelectorAll(
+        ".results-concern-section.active .treatment-group-preview"
+      )
+      .forEach((preview) => {
+        updateScrollState(preview);
+      });
   };
-  
+
   // Remove existing resize listener if any, then add new one
   if (window._scrollArrowsResizeHandler) {
-    window.removeEventListener('resize', window._scrollArrowsResizeHandler);
+    window.removeEventListener("resize", window._scrollArrowsResizeHandler);
   }
   window._scrollArrowsResizeHandler = handleResize;
-  window.addEventListener('resize', handleResize);
+  window.addEventListener("resize", handleResize);
 }
 
 function switchResultsTab(index) {
@@ -9722,89 +10161,60 @@ function requestConsultation() {
   if (modal) {
     modal.classList.add("active");
     const formContainer = modal.querySelector(".modal-container");
+    const discount = getPersonalizedDiscount();
+    const isRedeemed = discount ? isDiscountRedeemed(discount.id) : false;
+
     formContainer.innerHTML = `
             <div class="modal-header consultation-header">
                 <div class="modal-header-content">
-                    <div class="modal-icon-wrapper">${getIconSVG(
-                      "sparkle",
-                      32
-                    )}</div>
-                    <h2 class="modal-title">Book Your In-Clinic Consultation</h2>
-                    <p class="modal-subtitle">Your offers are automatically applied and will be available to you</p>
-                </div>
-                <button class="modal-close" onclick="closeRequestModal()">×</button>
-            </div>
-            <div class="consultation-benefits">
-                <div class="benefit-item">
-                    ${getIconSVG("check", 18)}
-                    <span><strong>Comprehensive AI-powered facial analysis</strong> - We'll analyze your unique facial structure and concerns</span>
-                </div>
-                <div class="benefit-item">
-                    ${getIconSVG("check", 18)}
-                    <span><strong>Personalized treatment plan</strong> - Recommendations tailored specifically to your goals and needs</span>
-                </div>
-                <div class="benefit-item">
-                    ${getIconSVG("check", 18)}
-                    <span><strong>Expert one-on-one consultation</strong> - Meet with our skilled providers to discuss your options</span>
-                </div>
-                <div class="benefit-item">
-                    ${getIconSVG("check", 18)}
-                    <span><strong>No pressure, just guidance</strong> - Learn what's possible and make informed decisions</span>
+                    <div class="consultation-header-top">
+                        <div class="consultation-header-title-section">
+                            <div class="modal-icon-wrapper-compact">${getIconSVG(
+                              "sparkle",
+                              24
+                            )}</div>
+                            <div>
+                                <h2 class="modal-title">Book Your In-Clinic Consultation</h2>
+                                <p class="modal-subtitle-compact">Your offers are automatically applied and will be available to you</p>
+                            </div>
+                        </div>
+                        <button class="modal-close" onclick="closeRequestModal()">×</button>
+                    </div>
                 </div>
             </div>
-            ${(() => {
-              const discount = getPersonalizedDiscount();
-              const isRedeemed = isDiscountRedeemed(discount.id);
-              return discount
+            <div class="consultation-benefits-compact-inline">
+                ${getIconSVG("check", 14)}
+                <span>AI facial analysis • Personalized treatment plan • Expert consultation</span>
+            </div>
+            ${
+              discount
                 ? `
-                <div class="consultation-discount-section">
-                  <div class="consultation-discount-badge">
-                    <span class="consultation-discount-icon">${getIconSVG(
-                      "gift",
-                      16
-                    )}</span>
-                    <div class="consultation-discount-info">
-                      <span class="consultation-discount-amount">$${
-                        discount.amount
-                      } OFF</span>
-                      <span class="consultation-discount-desc">${
-                        discount.description
-                      }</span>
-                    </div>
-                  </div>
-                  ${
-                    isRedeemed
-                      ? `
-                    <div class="consultation-discount-code">
-                      <label>Your Discount Code:</label>
-                      <div class="consultation-code-value">${getDiscountCode(
-                        discount.id
-                      )}</div>
-                      <p class="consultation-code-note">This code will be applied when you book</p>
-                    </div>
-                  `
-                      : `
-                    <p class="consultation-discount-scarcity">${
-                      discount.scarcity
-                    }</p>
-                    <button type="button" class="consultation-redeem-btn" onclick="redeemDiscountNow('${
-                      discount.id
-                    }'); this.closest('.consultation-discount-section').querySelector('.consultation-discount-code').style.display='block'; this.style.display='none';">
-                      Redeem Discount
-                    </button>
-                    <div class="consultation-discount-code" style="display: none;">
-                      <label>Your Discount Code:</label>
-                      <div class="consultation-code-value">${getDiscountCode(
-                        discount.id
-                      )}</div>
-                      <p class="consultation-code-note">This code will be applied when you book</p>
-                    </div>
-                  `
+            <div class="consultation-discount-inline-compact">
+                <span class="consultation-discount-icon-inline">${getIconSVG(
+                  "gift",
+                  14
+                )}</span>
+                <span class="consultation-discount-text-inline">
+                    <strong>$${discount.amount} OFF</strong> ${
+                    discount.description
                   }
-                </div>
-              `
-                : "";
-            })()}
+                    ${
+                      isRedeemed
+                        ? ` • Code: <code>${getDiscountCode(
+                            discount.id
+                          )}</code>`
+                        : ""
+                    }
+                </span>
+                ${
+                  !isRedeemed
+                    ? `<button type="button" class="consultation-redeem-btn-inline" onclick="redeemDiscountInline('${discount.id}', this);">Redeem</button>`
+                    : ""
+                }
+            </div>
+            `
+                : ""
+            }
             <form id="consultation-form" class="modal-form consultation-form">
                 <div class="modal-form-group">
                     <label for="consultation-name">
@@ -9844,12 +10254,12 @@ function requestConsultation() {
                         )}</span>
                         Tell us about your aesthetic goals <span class="optional-text">(optional)</span>
                     </label>
-                    <textarea id="consultation-message" class="modal-textarea" rows="4" placeholder="What would you like to achieve? What are your main concerns?"></textarea>
+                    <textarea id="consultation-message" class="modal-textarea" rows="3" placeholder="What would you like to achieve? What are your main concerns?"></textarea>
                 </div>
                 <div class="modal-form-actions">
                     <button type="submit" class="modal-submit-button consultation-submit">
                         ${getIconSVG("check", 18)}
-                        <span>Get My Personalized Plan</span>
+                        <span>Request Consultation</span>
                     </button>
                     <button type="button" class="modal-cancel-button" onclick="closeRequestModal()">Cancel</button>
                 </div>
@@ -10840,218 +11250,236 @@ const CATEGORY_NAME_TO_ID = {
 const CASE_CATEGORY_MAPPING = {
   // This will be populated from the CSV data
   // Example entries based on CSV:
-  "rec08elFBXXtIfXZi": ["restore-volume-definition"],
-  "rec0TpqaffljCfzOt": ["facial-balancing"],
-  "rec0lge1CHglEWB82": ["eyelid-eye-area-concerns"],
-  "rec0vtYW6DbL0Nz25": ["restore-volume-definition"],
-  "rec1atkwdW9rEqA33": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
-  "rec2734jRXc52jRHd": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "rec2CqT3cRL4p13J2": ["improve-skin-texture-tone"],
-  "rec2GQ9BFULvmPHKl": ["eyelid-eye-area-concerns"],
-  "rec2ZBN2Uealy89aw": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "rec2ifF0nw6oQMU9G": ["improve-skin-texture-tone"],
-  "rec2vsw2A0s4velkc": ["improve-skin-texture-tone"],
-  "rec3nlXo8g3pnssf2": ["facial-balancing"],
-  "rec46iZ4beP8MW7jJ": ["restore-volume-definition"],
-  "rec4ErbyocyeYfmHy": ["facial-balancing", "restore-volume-definition"],
-  "rec4fpYFlvr49A9DQ": ["improve-skin-texture-tone"],
-  "rec4l7yDxjWjTkisH": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "rec4yP12V0I7GkNk0": ["restore-volume-definition"],
-  "rec5F1HsxdGipHKE3": ["improve-skin-texture-tone"],
-  "rec5hc3kQeX9L0870": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "rec5s1iIct9IMSBAA": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "rec6GP10sGtIeXI3L": ["restore-volume-definition"],
-  "rec6mpM562H6S3z1k": ["facial-balancing"],
-  "rec7B93y3h7k00gCg": ["reduce-dark-spots-discoloration", "unwanted-hair-removal"],
-  "rec7DQBFkPkqPx7QU": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
-  "rec7Ps49y18PkHR2B": ["restore-volume-definition"],
-  "rec7XvQ4PypuwELEE": ["restore-volume-definition"],
-  "rec8HOCYK6kGOw9Rg": ["improve-skin-texture-tone"],
-  "rec8Pp2wACf60MRDG": ["eyelid-eye-area-concerns"],
-  "rec8Xy1Z2ni0PX1Pm": ["restore-volume-definition", "improve-skin-texture-tone"],
-  "rec8oAUgDoE5dOW2z": ["restore-volume-definition"],
-  "rec90gBqPjUjBzuNE": ["facial-balancing"],
-  "rec9uePVK7wQZBjey": ["improve-skin-texture-tone"],
-  "recARtfgj2ySzuC5S": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "recAexYUr4jXiGmTC": ["facial-balancing", "restore-volume-definition"],
-  "recAjJLwfkIaiTNp2": ["facial-balancing", "restore-volume-definition"],
-  "recBQUDh0L61EBq02": ["restore-volume-definition"],
-  "recBsG9wJH2qKf451": ["improve-skin-texture-tone"],
-  "recCkYKBe6zzlKqa5": ["facial-balancing"],
-  "recDAOWBhchSdBuNe": ["eyelid-eye-area-concerns"],
-  "recDI1rQMOmgftRzP": ["improve-skin-texture-tone"],
-  "recDazoE3e3MXDtVg": ["facial-balancing"],
-  "recDy7C8dUf4kBz5d": ["restore-volume-definition"],
-  "recEEd9bNK0HFEx7q": ["improve-skin-texture-tone", "reduce-dark-spots-discoloration"],
-  "recEsdzQYjCmEy2KZ": ["restore-volume-definition"],
-  "recEwPIQH7y50WaHW": ["restore-volume-definition", "eyelid-eye-area-concerns"],
-  "recEySwzh8YSQfSJh": ["improve-skin-texture-tone"],
-  "recFBxQziSNGXfSJe": ["eyelid-eye-area-concerns"],
-  "recFYm60eVxovSsxJ": ["improve-skin-texture-tone"],
-  "recFwufUHnC60oZ7t": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "recFyiZqHM0D3SdUH": ["improve-skin-texture-tone"],
-  "recFzqrRez2uhMK7p": ["restore-volume-definition"],
-  "recG8ZoEk1MDp6CaG": ["improve-skin-texture-tone"],
-  "recGAKWoTCtk9nifB": ["restore-volume-definition"],
-  "recGKmLqj2i74jqXO": ["restore-volume-definition"],
-  "recGLGC0RNiVMZwje": ["improve-skin-texture-tone"],
-  "recGS91fpf9suCUhI": ["improve-skin-texture-tone"],
-  "recH85gKwK0jkwW56": ["facial-balancing"],
-  "recHE5gtVtGQe5FP0": ["smooth-wrinkles-lines", "restore-volume-definition"],
-  "recHUxAPzgduPhz52": ["eyelid-eye-area-concerns"],
-  "recHgyAffHULS8Pzf": ["eyelid-eye-area-concerns"],
-  "recHkYXJuU13Zd8PK": ["improve-skin-texture-tone"],
-  "recI6fnyfUcPBULuv": ["facial-balancing"],
-  "recITWpEtALmDztqr": ["smooth-wrinkles-lines"],
-  "recIfsf45CHSrZjjr": ["facial-balancing"],
-  "recJYK1Mr6LXxrlt1": ["facial-balancing"],
-  "recJpAlijbaiCnabw": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
-  "recJqv5n5I5Sc3vep": ["improve-skin-texture-tone"],
-  "recL4OUGPvZj8ztOc": ["reduce-dark-spots-discoloration"],
-  "recLM7Hv6ip1g5JkC": ["improve-skin-texture-tone"],
-  "recLVToCtcqE8PtqE": ["restore-volume-definition", "improve-skin-texture-tone"],
-  "recLd6TIaKDSjyfnF": ["facial-balancing"],
-  "recLiEXtGdqbwGClp": ["restore-volume-definition"],
-  "recN1Hbs50QgZgxQK": ["restore-volume-definition"],
-  "recN7epp9z7dCvNo7": ["improve-skin-texture-tone"],
-  "recNoy8fYNHPrMJnO": ["improve-skin-texture-tone"],
-  "recNxtvVkfM6wIbn5": ["restore-volume-definition", "eyelid-eye-area-concerns"],
-  "recObiye7WXlfV5AB": ["improve-skin-texture-tone"],
-  "recOpojB5zUyWRFYq": ["facial-balancing"],
-  "recOyBrkyZwwJ1S0w": ["eyelid-eye-area-concerns"],
-  "recOzMAfbQLdyj0pk": ["facial-balancing"],
-  "recPL3MPe8g400jV6": ["restore-volume-definition"],
-  "recPLgIfyPHMoOBFs": ["restore-volume-definition"],
-  "recPNLhyWgsNfUeQU": ["improve-skin-texture-tone"],
-  "recPeVAFCYuHEcrs1": ["eyelid-eye-area-concerns"],
-  "recPeXtFJinA94env": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "recQAAfXQpTQLuJdL": ["improve-skin-texture-tone"],
-  "recQOYS1r8g2QsELA": ["restore-volume-definition"],
-  "recQaJw1OpbhMrgfU": ["improve-skin-texture-tone"],
-  "recRVKr2A5BUZM2jt": ["restore-volume-definition"],
-  "recRWhIKJdSGH5iNi": ["facial-balancing"],
-  "recSEntcPxuGiYAm6": ["facial-balancing"],
-  "recSNi15VWPB3PDwU": ["facial-balancing"],
-  "recSvpoCu6sSjzv3F": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
-  "recTzzrGAOpXr21EV": ["restore-volume-definition"],
-  "recUOVZa6W2KZ0gm4": ["restore-volume-definition"],
-  "recURzdg3sM9tJZbi": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "recUXUBEPg7z0Ta6B": ["improve-skin-texture-tone"],
-  "recUZXcmjuHGb7hDZ": ["eyelid-eye-area-concerns"],
-  "recUqgRGXd1F9rYFR": ["restore-volume-definition"],
-  "recUrFMXVLkxiTIK6": ["facial-balancing"],
-  "recV37RRK7kSKjVug": ["facial-balancing", "improve-skin-texture-tone"],
-  "recVAEz7Cvx50m0no": ["facial-balancing", "restore-volume-definition"],
-  "recVlEc05yi7BzPCA": ["improve-skin-texture-tone"],
-  "recVr90ML5qDGpqr1": ["facial-balancing"],
-  "recVyBWsS4pPmbjqa": ["facial-balancing"],
-  "recW30FSgmeCmNTHh": ["facial-balancing", "smooth-wrinkles-lines"],
-  "recW9Wu74qZWF56wi": ["smooth-wrinkles-lines"],
-  "recWBFCWAZmstER0s": ["improve-skin-texture-tone"],
-  "recWqhtAhG8UK6qlt": ["restore-volume-definition", "eyelid-eye-area-concerns"],
-  "recWwH2qqcMeoumQi": ["restore-volume-definition"],
-  "recX5Ugv9bYGafcLz": ["restore-volume-definition", "eyelid-eye-area-concerns"],
-  "recX6nIQTSQzpbRf2": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "recX8fpi4sKiMbVjE": ["facial-balancing", "improve-skin-texture-tone"],
-  "recXUq7HQP9OJIawU": ["improve-skin-texture-tone", "clear-acne-minimize-pores"],
-  "recXWbmo42zOd9Mch": ["facial-balancing"],
-  "recXliMUxm8xUqUTS": ["restore-volume-definition"],
-  "recY4UBtk4mI7OtuG": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "recYHGC8Zuf3RQOjq": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "recYNu8T6nwDRGl7P": ["restore-volume-definition"],
-  "recYfha7wV8CDu2QI": ["restore-volume-definition"],
-  "recYjY7WKsBNNEzJ4": ["improve-skin-texture-tone"],
-  "recZYsKwCgdoClypF": ["restore-volume-definition"],
-  "reca2WnfVwkffvwQ8": ["restore-volume-definition"],
-  "recb6AfUJDmUicgMf": ["facial-balancing"],
-  "recb6VX1xzMkEWNDb": ["restore-volume-definition"],
-  "recbDNhFYwuvbmwkF": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "recbLeA234skLNQcV": ["restore-volume-definition"],
-  "recbWwMQqc7nTF8ED": ["facial-balancing"],
-  "recbbZa92ig9DBLRJ": ["restore-volume-definition"],
-  "recclSfDQJRzA5ztq": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "recddW1VaQw9NOLXG": ["restore-volume-definition", "improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "recdnVbtjlNcf5gbs": ["smooth-wrinkles-lines"],
-  "recdqGEUH108CeYlz": ["facial-balancing"],
-  "receXGWIUcKPr7idv": ["improve-skin-texture-tone"],
-  "receceTP4EZjHhrYp": ["body-contouring-fat-reduction"],
-  "recf8Ho2s14QhuUSa": ["improve-skin-texture-tone"],
-  "recfAou41aYczf0FP": ["facial-balancing"],
-  "recfCBcAN1ciyBTbU": ["facial-balancing"],
-  "recfPeRPnp50IDW1Z": ["smooth-wrinkles-lines"],
-  "recfb0tbad1JsrGLH": ["facial-balancing"],
-  "recfbUndrNj2Oe6gD": ["facial-balancing", "smooth-wrinkles-lines"],
-  "recgCbAoLI777gpwb": ["restore-volume-definition"],
-  "recgdd5uyqS5vgW0x": ["improve-skin-texture-tone"],
-  "recgyEK5LD6suWzbh": ["improve-skin-texture-tone"],
-  "rechhaGf1RMFChTnq": ["improve-skin-texture-tone"],
-  "rechlMc5hzxYBrPE3": ["facial-balancing"],
-  "rechqJh7tFVTGxorY": ["restore-volume-definition"],
-  "reciE0fcDkrPx8PCz": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "reciIqHry3RtoflYv": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "reciN6ujbd4RbiecQ": ["restore-volume-definition"],
-  "reciZ29TeybjNbDAq": ["smooth-wrinkles-lines"],
-  "reciuSusMZxBcPQIF": ["facial-balancing"],
-  "recj1KjwPmirgcSXt": ["facial-balancing"],
-  "recjiUWKVycta7zkh": ["restore-volume-definition"],
-  "reck64zaDMfgO5DNT": ["facial-balancing"],
-  "reckQn2J5UPi2X5Fg": ["improve-skin-texture-tone"],
-  "recl6i681c0Ppck5T": ["eyelid-eye-area-concerns"],
-  "reclJntsa0gSM2o8S": ["restore-volume-definition"],
-  "reclaWwuMgkAPwOe4": ["restore-volume-definition"],
-  "recm4aK5sIImkvDIc": ["facial-balancing", "smooth-wrinkles-lines"],
-  "recmn9C12s00Fnjjp": ["facial-balancing"],
-  "recnGnZfFVtNSi4vH": ["reduce-dark-spots-discoloration"],
-  "recnJCFafLDdTWHqX": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "recnoyDWJsacV0CXO": ["smooth-wrinkles-lines"],
-  "recnp712Kc8Hx95SP": ["smooth-wrinkles-lines"],
-  "reco0fP0fWlHHuoUE": ["restore-volume-definition"],
-  "recoCTikbsHYm5zyE": ["facial-balancing"],
-  "recoH8bByi19k5orU": ["improve-skin-texture-tone"],
-  "recoUs9XIZWStoI6X": ["facial-balancing"],
-  "recoV8QYMHSCOMDS5": ["facial-balancing"],
-  "recoh2n38zA7uycSH": ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
-  "recpQFltIq03zT6P0": ["facial-balancing"],
-  "recplDjkqUMGOppYZ": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "recqs5nTkSXOZ7YYV": ["facial-balancing"],
-  "recrEuVSGTZzIUsZ2": ["restore-volume-definition"],
-  "recrTqUFzfLHx0usK": ["facial-balancing", "smooth-wrinkles-lines"],
-  "recryEg4u5PkBXAjb": ["restore-volume-definition", "improve-skin-texture-tone"],
-  "recs3VC9NonG9FWUa": ["facial-balancing"],
-  "recsJxremsml0rwXv": ["improve-skin-texture-tone"],
-  "recsQULXGvLt4LQUm": ["facial-balancing"],
-  "recsYeygjt7Qe4IDM": ["facial-balancing"],
-  "recsbQfx2x4NZlxOJ": ["facial-balancing"],
-  "recsnCp7YtUXYGbQa": ["improve-skin-texture-tone"],
-  "rectFfW51bgYEWO6W": ["restore-volume-definition"],
-  "rectMqeTvWRkcQsK4": ["restore-volume-definition"],
-  "recu7NpLpUUT5ntiy": ["facial-balancing", "restore-volume-definition"],
-  "recuYpylvaPcqDoNP": ["eyelid-eye-area-concerns"],
-  "recuukhGcqUjfCL9Q": ["restore-volume-definition", "improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "recvCndjzK1OZD8kz": ["facial-balancing", "restore-volume-definition"],
-  "recvSz776om40f1m8": ["body-contouring-fat-reduction"],
-  "recvWshJ89JSrz7XC": ["restore-volume-definition", "eyelid-eye-area-concerns"],
-  "recvYIypJRmGysJRW": ["restore-volume-definition"],
-  "recvp7xuZA6Fz313a": ["restore-volume-definition"],
-  "recw0hTcHU5ZRWB9a": ["smooth-wrinkles-lines"],
-  "recwbhunGR3nICNh4": ["improve-skin-texture-tone"],
-  "recwd1qV71M4rnSEV": ["improve-skin-texture-tone"],
-  "recx8X4omgnYMXpKJ": ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
-  "recxBxN7w3ISMZ83H": ["restore-volume-definition"],
-  "recxDCtziA9a0yKDw": ["smooth-wrinkles-lines", "improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "recxU0FpEDYRVz06l": ["facial-balancing"],
-  "recxycQc4hulKpsmn": ["body-contouring-fat-reduction"],
-  "recyHYbBp8xUetx7f": ["restore-volume-definition", "eyelid-eye-area-concerns"],
-  "recyd3FegGye3aaCh": ["restore-volume-definition"],
-  "recz4feOXQ4x4puBJ": ["restore-volume-definition"],
-  "recz9RI2wXb4qCNEV": ["eyelid-eye-area-concerns"],
-  "reczAhYBCgBNiHoeb": ["improve-skin-texture-tone"],
-  "reczG29LktxBlh6eV": ["smooth-wrinkles-lines"],
-  "reczHnOWx2sCiv2QK": ["smooth-wrinkles-lines"],
-  "reczgDgGmKO6Vslap": ["facial-balancing"],
-  "reczqLstrRQPrKwgf": ["eyelid-eye-area-concerns"],
-  "reczwBf9Db8VH7NJE": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
-  "reczxqJp3zNylgxaR": ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  rec08elFBXXtIfXZi: ["restore-volume-definition"],
+  rec0TpqaffljCfzOt: ["facial-balancing"],
+  rec0lge1CHglEWB82: ["eyelid-eye-area-concerns"],
+  rec0vtYW6DbL0Nz25: ["restore-volume-definition"],
+  rec1atkwdW9rEqA33: ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  rec2734jRXc52jRHd: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  rec2CqT3cRL4p13J2: ["improve-skin-texture-tone"],
+  rec2GQ9BFULvmPHKl: ["eyelid-eye-area-concerns"],
+  rec2ZBN2Uealy89aw: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  rec2ifF0nw6oQMU9G: ["improve-skin-texture-tone"],
+  rec2vsw2A0s4velkc: ["improve-skin-texture-tone"],
+  rec3nlXo8g3pnssf2: ["facial-balancing"],
+  rec46iZ4beP8MW7jJ: ["restore-volume-definition"],
+  rec4ErbyocyeYfmHy: ["facial-balancing", "restore-volume-definition"],
+  rec4fpYFlvr49A9DQ: ["improve-skin-texture-tone"],
+  rec4l7yDxjWjTkisH: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  rec4yP12V0I7GkNk0: ["restore-volume-definition"],
+  rec5F1HsxdGipHKE3: ["improve-skin-texture-tone"],
+  rec5hc3kQeX9L0870: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  rec5s1iIct9IMSBAA: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  rec6GP10sGtIeXI3L: ["restore-volume-definition"],
+  rec6mpM562H6S3z1k: ["facial-balancing"],
+  rec7B93y3h7k00gCg: [
+    "reduce-dark-spots-discoloration",
+    "unwanted-hair-removal",
+  ],
+  rec7DQBFkPkqPx7QU: ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  rec7Ps49y18PkHR2B: ["restore-volume-definition"],
+  rec7XvQ4PypuwELEE: ["restore-volume-definition"],
+  rec8HOCYK6kGOw9Rg: ["improve-skin-texture-tone"],
+  rec8Pp2wACf60MRDG: ["eyelid-eye-area-concerns"],
+  rec8Xy1Z2ni0PX1Pm: ["restore-volume-definition", "improve-skin-texture-tone"],
+  rec8oAUgDoE5dOW2z: ["restore-volume-definition"],
+  rec90gBqPjUjBzuNE: ["facial-balancing"],
+  rec9uePVK7wQZBjey: ["improve-skin-texture-tone"],
+  recARtfgj2ySzuC5S: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  recAexYUr4jXiGmTC: ["facial-balancing", "restore-volume-definition"],
+  recAjJLwfkIaiTNp2: ["facial-balancing", "restore-volume-definition"],
+  recBQUDh0L61EBq02: ["restore-volume-definition"],
+  recBsG9wJH2qKf451: ["improve-skin-texture-tone"],
+  recCkYKBe6zzlKqa5: ["facial-balancing"],
+  recDAOWBhchSdBuNe: ["eyelid-eye-area-concerns"],
+  recDI1rQMOmgftRzP: ["improve-skin-texture-tone"],
+  recDazoE3e3MXDtVg: ["facial-balancing"],
+  recDy7C8dUf4kBz5d: ["restore-volume-definition"],
+  recEEd9bNK0HFEx7q: [
+    "improve-skin-texture-tone",
+    "reduce-dark-spots-discoloration",
+  ],
+  recEsdzQYjCmEy2KZ: ["restore-volume-definition"],
+  recEwPIQH7y50WaHW: ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  recEySwzh8YSQfSJh: ["improve-skin-texture-tone"],
+  recFBxQziSNGXfSJe: ["eyelid-eye-area-concerns"],
+  recFYm60eVxovSsxJ: ["improve-skin-texture-tone"],
+  recFwufUHnC60oZ7t: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  recFyiZqHM0D3SdUH: ["improve-skin-texture-tone"],
+  recFzqrRez2uhMK7p: ["restore-volume-definition"],
+  recG8ZoEk1MDp6CaG: ["improve-skin-texture-tone"],
+  recGAKWoTCtk9nifB: ["restore-volume-definition"],
+  recGKmLqj2i74jqXO: ["restore-volume-definition"],
+  recGLGC0RNiVMZwje: ["improve-skin-texture-tone"],
+  recGS91fpf9suCUhI: ["improve-skin-texture-tone"],
+  recH85gKwK0jkwW56: ["facial-balancing"],
+  recHE5gtVtGQe5FP0: ["smooth-wrinkles-lines", "restore-volume-definition"],
+  recHUxAPzgduPhz52: ["eyelid-eye-area-concerns"],
+  recHgyAffHULS8Pzf: ["eyelid-eye-area-concerns"],
+  recHkYXJuU13Zd8PK: ["improve-skin-texture-tone"],
+  recI6fnyfUcPBULuv: ["facial-balancing"],
+  recITWpEtALmDztqr: ["smooth-wrinkles-lines"],
+  recIfsf45CHSrZjjr: ["facial-balancing"],
+  recJYK1Mr6LXxrlt1: ["facial-balancing"],
+  recJpAlijbaiCnabw: ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  recJqv5n5I5Sc3vep: ["improve-skin-texture-tone"],
+  recL4OUGPvZj8ztOc: ["reduce-dark-spots-discoloration"],
+  recLM7Hv6ip1g5JkC: ["improve-skin-texture-tone"],
+  recLVToCtcqE8PtqE: ["restore-volume-definition", "improve-skin-texture-tone"],
+  recLd6TIaKDSjyfnF: ["facial-balancing"],
+  recLiEXtGdqbwGClp: ["restore-volume-definition"],
+  recN1Hbs50QgZgxQK: ["restore-volume-definition"],
+  recN7epp9z7dCvNo7: ["improve-skin-texture-tone"],
+  recNoy8fYNHPrMJnO: ["improve-skin-texture-tone"],
+  recNxtvVkfM6wIbn5: ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  recObiye7WXlfV5AB: ["improve-skin-texture-tone"],
+  recOpojB5zUyWRFYq: ["facial-balancing"],
+  recOyBrkyZwwJ1S0w: ["eyelid-eye-area-concerns"],
+  recOzMAfbQLdyj0pk: ["facial-balancing"],
+  recPL3MPe8g400jV6: ["restore-volume-definition"],
+  recPLgIfyPHMoOBFs: ["restore-volume-definition"],
+  recPNLhyWgsNfUeQU: ["improve-skin-texture-tone"],
+  recPeVAFCYuHEcrs1: ["eyelid-eye-area-concerns"],
+  recPeXtFJinA94env: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  recQAAfXQpTQLuJdL: ["improve-skin-texture-tone"],
+  recQOYS1r8g2QsELA: ["restore-volume-definition"],
+  recQaJw1OpbhMrgfU: ["improve-skin-texture-tone"],
+  recRVKr2A5BUZM2jt: ["restore-volume-definition"],
+  recRWhIKJdSGH5iNi: ["facial-balancing"],
+  recSEntcPxuGiYAm6: ["facial-balancing"],
+  recSNi15VWPB3PDwU: ["facial-balancing"],
+  recSvpoCu6sSjzv3F: ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  recTzzrGAOpXr21EV: ["restore-volume-definition"],
+  recUOVZa6W2KZ0gm4: ["restore-volume-definition"],
+  recURzdg3sM9tJZbi: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  recUXUBEPg7z0Ta6B: ["improve-skin-texture-tone"],
+  recUZXcmjuHGb7hDZ: ["eyelid-eye-area-concerns"],
+  recUqgRGXd1F9rYFR: ["restore-volume-definition"],
+  recUrFMXVLkxiTIK6: ["facial-balancing"],
+  recV37RRK7kSKjVug: ["facial-balancing", "improve-skin-texture-tone"],
+  recVAEz7Cvx50m0no: ["facial-balancing", "restore-volume-definition"],
+  recVlEc05yi7BzPCA: ["improve-skin-texture-tone"],
+  recVr90ML5qDGpqr1: ["facial-balancing"],
+  recVyBWsS4pPmbjqa: ["facial-balancing"],
+  recW30FSgmeCmNTHh: ["facial-balancing", "smooth-wrinkles-lines"],
+  recW9Wu74qZWF56wi: ["smooth-wrinkles-lines"],
+  recWBFCWAZmstER0s: ["improve-skin-texture-tone"],
+  recWqhtAhG8UK6qlt: ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  recWwH2qqcMeoumQi: ["restore-volume-definition"],
+  recX5Ugv9bYGafcLz: ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  recX6nIQTSQzpbRf2: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  recX8fpi4sKiMbVjE: ["facial-balancing", "improve-skin-texture-tone"],
+  recXUq7HQP9OJIawU: ["improve-skin-texture-tone", "clear-acne-minimize-pores"],
+  recXWbmo42zOd9Mch: ["facial-balancing"],
+  recXliMUxm8xUqUTS: ["restore-volume-definition"],
+  recY4UBtk4mI7OtuG: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  recYHGC8Zuf3RQOjq: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  recYNu8T6nwDRGl7P: ["restore-volume-definition"],
+  recYfha7wV8CDu2QI: ["restore-volume-definition"],
+  recYjY7WKsBNNEzJ4: ["improve-skin-texture-tone"],
+  recZYsKwCgdoClypF: ["restore-volume-definition"],
+  reca2WnfVwkffvwQ8: ["restore-volume-definition"],
+  recb6AfUJDmUicgMf: ["facial-balancing"],
+  recb6VX1xzMkEWNDb: ["restore-volume-definition"],
+  recbDNhFYwuvbmwkF: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  recbLeA234skLNQcV: ["restore-volume-definition"],
+  recbWwMQqc7nTF8ED: ["facial-balancing"],
+  recbbZa92ig9DBLRJ: ["restore-volume-definition"],
+  recclSfDQJRzA5ztq: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  recddW1VaQw9NOLXG: [
+    "restore-volume-definition",
+    "improve-skin-texture-tone",
+    "eyelid-eye-area-concerns",
+  ],
+  recdnVbtjlNcf5gbs: ["smooth-wrinkles-lines"],
+  recdqGEUH108CeYlz: ["facial-balancing"],
+  receXGWIUcKPr7idv: ["improve-skin-texture-tone"],
+  receceTP4EZjHhrYp: ["body-contouring-fat-reduction"],
+  recf8Ho2s14QhuUSa: ["improve-skin-texture-tone"],
+  recfAou41aYczf0FP: ["facial-balancing"],
+  recfCBcAN1ciyBTbU: ["facial-balancing"],
+  recfPeRPnp50IDW1Z: ["smooth-wrinkles-lines"],
+  recfb0tbad1JsrGLH: ["facial-balancing"],
+  recfbUndrNj2Oe6gD: ["facial-balancing", "smooth-wrinkles-lines"],
+  recgCbAoLI777gpwb: ["restore-volume-definition"],
+  recgdd5uyqS5vgW0x: ["improve-skin-texture-tone"],
+  recgyEK5LD6suWzbh: ["improve-skin-texture-tone"],
+  rechhaGf1RMFChTnq: ["improve-skin-texture-tone"],
+  rechlMc5hzxYBrPE3: ["facial-balancing"],
+  rechqJh7tFVTGxorY: ["restore-volume-definition"],
+  reciE0fcDkrPx8PCz: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  reciIqHry3RtoflYv: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  reciN6ujbd4RbiecQ: ["restore-volume-definition"],
+  reciZ29TeybjNbDAq: ["smooth-wrinkles-lines"],
+  reciuSusMZxBcPQIF: ["facial-balancing"],
+  recj1KjwPmirgcSXt: ["facial-balancing"],
+  recjiUWKVycta7zkh: ["restore-volume-definition"],
+  reck64zaDMfgO5DNT: ["facial-balancing"],
+  reckQn2J5UPi2X5Fg: ["improve-skin-texture-tone"],
+  recl6i681c0Ppck5T: ["eyelid-eye-area-concerns"],
+  reclJntsa0gSM2o8S: ["restore-volume-definition"],
+  reclaWwuMgkAPwOe4: ["restore-volume-definition"],
+  recm4aK5sIImkvDIc: ["facial-balancing", "smooth-wrinkles-lines"],
+  recmn9C12s00Fnjjp: ["facial-balancing"],
+  recnGnZfFVtNSi4vH: ["reduce-dark-spots-discoloration"],
+  recnJCFafLDdTWHqX: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  recnoyDWJsacV0CXO: ["smooth-wrinkles-lines"],
+  recnp712Kc8Hx95SP: ["smooth-wrinkles-lines"],
+  reco0fP0fWlHHuoUE: ["restore-volume-definition"],
+  recoCTikbsHYm5zyE: ["facial-balancing"],
+  recoH8bByi19k5orU: ["improve-skin-texture-tone"],
+  recoUs9XIZWStoI6X: ["facial-balancing"],
+  recoV8QYMHSCOMDS5: ["facial-balancing"],
+  recoh2n38zA7uycSH: ["smooth-wrinkles-lines", "eyelid-eye-area-concerns"],
+  recpQFltIq03zT6P0: ["facial-balancing"],
+  recplDjkqUMGOppYZ: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  recqs5nTkSXOZ7YYV: ["facial-balancing"],
+  recrEuVSGTZzIUsZ2: ["restore-volume-definition"],
+  recrTqUFzfLHx0usK: ["facial-balancing", "smooth-wrinkles-lines"],
+  recryEg4u5PkBXAjb: ["restore-volume-definition", "improve-skin-texture-tone"],
+  recs3VC9NonG9FWUa: ["facial-balancing"],
+  recsJxremsml0rwXv: ["improve-skin-texture-tone"],
+  recsQULXGvLt4LQUm: ["facial-balancing"],
+  recsYeygjt7Qe4IDM: ["facial-balancing"],
+  recsbQfx2x4NZlxOJ: ["facial-balancing"],
+  recsnCp7YtUXYGbQa: ["improve-skin-texture-tone"],
+  rectFfW51bgYEWO6W: ["restore-volume-definition"],
+  rectMqeTvWRkcQsK4: ["restore-volume-definition"],
+  recu7NpLpUUT5ntiy: ["facial-balancing", "restore-volume-definition"],
+  recuYpylvaPcqDoNP: ["eyelid-eye-area-concerns"],
+  recuukhGcqUjfCL9Q: [
+    "restore-volume-definition",
+    "improve-skin-texture-tone",
+    "eyelid-eye-area-concerns",
+  ],
+  recvCndjzK1OZD8kz: ["facial-balancing", "restore-volume-definition"],
+  recvSz776om40f1m8: ["body-contouring-fat-reduction"],
+  recvWshJ89JSrz7XC: ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  recvYIypJRmGysJRW: ["restore-volume-definition"],
+  recvp7xuZA6Fz313a: ["restore-volume-definition"],
+  recw0hTcHU5ZRWB9a: ["smooth-wrinkles-lines"],
+  recwbhunGR3nICNh4: ["improve-skin-texture-tone"],
+  recwd1qV71M4rnSEV: ["improve-skin-texture-tone"],
+  recx8X4omgnYMXpKJ: ["smooth-wrinkles-lines", "improve-skin-texture-tone"],
+  recxBxN7w3ISMZ83H: ["restore-volume-definition"],
+  recxDCtziA9a0yKDw: [
+    "smooth-wrinkles-lines",
+    "improve-skin-texture-tone",
+    "eyelid-eye-area-concerns",
+  ],
+  recxU0FpEDYRVz06l: ["facial-balancing"],
+  recxycQc4hulKpsmn: ["body-contouring-fat-reduction"],
+  recyHYbBp8xUetx7f: ["restore-volume-definition", "eyelid-eye-area-concerns"],
+  recyd3FegGye3aaCh: ["restore-volume-definition"],
+  recz4feOXQ4x4puBJ: ["restore-volume-definition"],
+  recz9RI2wXb4qCNEV: ["eyelid-eye-area-concerns"],
+  reczAhYBCgBNiHoeb: ["improve-skin-texture-tone"],
+  reczG29LktxBlh6eV: ["smooth-wrinkles-lines"],
+  reczHnOWx2sCiv2QK: ["smooth-wrinkles-lines"],
+  reczgDgGmKO6Vslap: ["facial-balancing"],
+  reczqLstrRQPrKwgf: ["eyelid-eye-area-concerns"],
+  reczwBf9Db8VH7NJE: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
+  reczxqJp3zNylgxaR: ["improve-skin-texture-tone", "eyelid-eye-area-concerns"],
 };
 
 function getMatchingCasesForItem(item) {
@@ -11157,21 +11585,136 @@ function getMatchingCasesForItem(item) {
           const matchingCriteria = (caseItem.matchingCriteria || []).map((c) =>
             c.toLowerCase()
           );
+          const solvedIssuesLower = (caseItem.solved || []).map((issue) =>
+            typeof issue === "string"
+              ? issue.toLowerCase()
+              : String(issue || "").toLowerCase()
+          );
+          const allCaseText = [
+            caseNameLower,
+            ...matchingCriteria,
+            ...solvedIssuesLower,
+          ].join(" ");
 
-          // Check if any selected area matches the case
-          areaMatch = userSelections.selectedAreas.some((areaId) => {
-            const area = AREAS_OF_CONCERN.find((a) => a.id === areaId);
-            if (!area) return false;
+          // Use the same area keyword mapping as getTreatmentGroupRelevance for consistency
+          const areaKeywords = [
+            // Forehead area (brow ptosis and asymmetry map to Forehead)
+            {
+              keywords: [
+                "brow ptosis",
+                "brow asymmetry",
+                "brow lift",
+                "brow balance",
+                "brow droop",
+              ],
+              area: "Forehead",
+            },
+            {
+              keywords: [
+                "forehead",
+                "temple",
+                "temples",
+                "glabella",
+                "11s",
+                "temporal",
+              ],
+              area: "Forehead",
+            },
+            // Eyes area (more specific first)
+            {
+              keywords: [
+                "under eye",
+                "under-eye",
+                "eyelid",
+                "eyelids",
+                "upper eyelid",
+                "lower eyelid",
+              ],
+              area: "Eyes",
+            },
+            {
+              keywords: [
+                "brow",
+                "brows",
+                "eyebrow",
+                "eyebrows",
+                "eye",
+                "eyes",
+                "ptosis",
+              ],
+              area: "Eyes",
+            },
+            // Cheeks area
+            {
+              keywords: ["cheek", "cheeks", "cheekbone", "mid cheek"],
+              area: "Cheeks",
+            },
+            // Nose area
+            {
+              keywords: ["nose", "nasal", "nasal tip", "dorsal hump"],
+              area: "Nose",
+            },
+            // Mouth & Lips area
+            {
+              keywords: ["lip", "lips", "mouth", "philtral", "gummy smile"],
+              area: "Mouth & Lips",
+            },
+            // Jawline area
+            {
+              keywords: ["jawline", "jaw", "wide jawline", "define jawline"],
+              area: "Jawline",
+            },
+            // Chin area
+            {
+              keywords: ["chin", "retruded chin", "labiomental"],
+              area: "Chin",
+            },
+            // Neck area
+            { keywords: ["neck", "neck lines", "neck wrinkles"], area: "Neck" },
+          ];
 
-            const areaNameLower = area.name.toLowerCase();
-            // Check if area name appears in case name or matching criteria
-            return (
-              caseNameLower.includes(areaNameLower) ||
-              matchingCriteria.some(
-                (c) => c.includes(areaNameLower) || c.includes(areaId)
-              )
+          // Get user's selected area names
+          const userSelectedAreaNames = userSelections.selectedAreas
+            .map((areaId) => {
+              const area = AREAS_OF_CONCERN.find((a) => a.id === areaId);
+              return area ? area.name : null;
+            })
+            .filter((name) => name !== null);
+
+          // Check which areas this case relates to (based on keywords)
+          const matchedAreas = new Set();
+          const matchedKeywords = new Set();
+
+          // Sort area keyword groups by longest keyword first (more specific first)
+          const sortedAreaKeywords = areaKeywords.map(({ keywords, area }) => ({
+            keywords: keywords.sort((a, b) => b.length - a.length),
+            area,
+          }));
+
+          for (const { keywords, area } of sortedAreaKeywords) {
+            for (const keyword of keywords) {
+              // Skip if a more specific keyword that contains this keyword already matched
+              const isSubstringOfMatched = Array.from(matchedKeywords).some(
+                (matched) => matched.includes(keyword) && matched !== keyword
+              );
+
+              if (!isSubstringOfMatched && allCaseText.includes(keyword)) {
+                matchedAreas.add(area);
+                matchedKeywords.add(keyword);
+                break; // Found a match for this area, move to next area
+              }
+            }
+          }
+
+          // Only include if the case matches at least one of the user's selected areas
+          // If no areas matched from keywords, filter it out (areaMatch = false)
+          if (matchedAreas.size === 0) {
+            areaMatch = false;
+          } else {
+            areaMatch = Array.from(matchedAreas).some((area) =>
+              userSelectedAreaNames.includes(area)
             );
-          });
+          }
         }
 
         return (nameMatch || criteriaMatch || issueMatch) && areaMatch;
@@ -12116,12 +12659,29 @@ function organizeCasesByArea(cases) {
     userSelections.selectedAreas.forEach((area) => {
       const areaLower = area.toLowerCase();
       const areaKeywords = {
-        Forehead: ["forehead", "brow ptosis", "brow asymmetry", "brow lift", "glabella", "temporal", "temple"],
+        Forehead: [
+          "forehead",
+          "brow ptosis",
+          "brow asymmetry",
+          "brow lift",
+          "glabella",
+          "temporal",
+          "temple",
+        ],
         Eyes: ["eye", "eyelid", "under-eye", "crow", "brow", "ptosis"],
         Cheeks: ["cheek", "cheekbone", "mid cheek"],
         Nose: ["nose", "nasal", "rhino", "nasal tip", "dorsal hump"],
         "Mouth & Lips": ["lip", "lips", "mouth", "philtral", "gummy"],
-        Jawline: ["chin", "jaw", "jawline", "jowl", "jowls", "masseter", "prejowl", "submentum"],
+        Jawline: [
+          "chin",
+          "jaw",
+          "jawline",
+          "jowl",
+          "jowls",
+          "masseter",
+          "prejowl",
+          "submentum",
+        ],
         Neck: ["neck", "platysmal", "submental", "neck lines", "neck wrinkles"],
         Skin: ["skin", "spot", "scar", "wrinkle", "peel", "laser"],
       };
@@ -13163,10 +13723,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (topRightButtons) {
     topRightButtons.classList.remove("visible");
   }
-  
+
   // Set up global event delegation for age input error clearing
   // This ensures it works regardless of when the element is created
-  document.addEventListener("input", function(e) {
+  document.addEventListener("input", function (e) {
     if (e.target && e.target.id === "patient-age") {
       const ageValue = parseInt(e.target.value);
       if (ageValue && ageValue >= 18) {
@@ -13175,8 +13735,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     }
   });
-  
-  document.addEventListener("change", function(e) {
+
+  document.addEventListener("change", function (e) {
     if (e.target && e.target.id === "patient-age") {
       const ageValue = parseInt(e.target.value);
       if (ageValue && ageValue >= 18) {
@@ -13184,27 +13744,27 @@ document.addEventListener("DOMContentLoaded", async function () {
         e.target.classList.remove("input-error");
       }
     }
-    
+
     // Clear skin type error when selected
     if (e.target && e.target.name === "skin-type" && e.target.checked) {
       // Find the section containing this input
-      const skinTypeSection = e.target.closest('.demographic-section');
+      const skinTypeSection = e.target.closest(".demographic-section");
       if (skinTypeSection) {
-        const errorMsg = skinTypeSection.querySelector('.input-error-message');
+        const errorMsg = skinTypeSection.querySelector(".input-error-message");
         if (errorMsg) errorMsg.remove();
       }
     }
-    
+
     // Clear skin tone error when selected
     if (e.target && e.target.name === "skin-tone" && e.target.checked) {
       // Find the section containing this input
-      const skinToneSection = e.target.closest('.demographic-section');
+      const skinToneSection = e.target.closest(".demographic-section");
       if (skinToneSection) {
-        const errorMsg = skinToneSection.querySelector('.input-error-message');
+        const errorMsg = skinToneSection.querySelector(".input-error-message");
         if (errorMsg) errorMsg.remove();
       }
     }
-    
+
     // Sun response is now optional - no need to clear errors
   });
 
@@ -13561,6 +14121,37 @@ function redeemDiscountNow(discountId) {
   }
 }
 
+function redeemDiscountInline(discountId, buttonElement) {
+  const redeemed = redeemDiscount(discountId);
+  if (redeemed) {
+    // Get the discount info
+    const discount = getPersonalizedDiscount();
+    if (discount && discount.id === discountId) {
+      const discountCode = getDiscountCode(discountId);
+      const discountSection = buttonElement.closest(
+        ".consultation-discount-inline-compact"
+      );
+      const discountText = discountSection.querySelector(
+        ".consultation-discount-text-inline"
+      );
+
+      // Update the text to include the code
+      discountText.innerHTML = `<strong>$${discount.amount} OFF</strong> ${discount.description} • Code: <code>${discountCode}</code>`;
+
+      // Hide the button
+      buttonElement.style.display = "none";
+
+      // Add a subtle animation
+      discountSection.style.transition = "all 0.3s ease";
+      discountSection.style.background =
+        "linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)";
+      discountSection.style.borderColor = "#4caf50";
+
+      trackEvent("discount_redeemed_inline", { discountId });
+    }
+  }
+}
+
 /**
  * Close discount modal
  */
@@ -13598,6 +14189,7 @@ function getDiscountBadgeHTML(caseItem) {
 // Make functions globally accessible
 window.showDiscountDetails = showDiscountDetails;
 window.redeemDiscountNow = redeemDiscountNow;
+window.redeemDiscountInline = redeemDiscountInline;
 window.closeDiscountModal = closeDiscountModal;
 
 // ============================================================================

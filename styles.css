@@ -2984,6 +2984,8 @@ body.brand-uniqueAestheticsTeal .review-item-icon {
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slideUp {
@@ -3098,12 +3100,12 @@ body.brand-uniqueAestheticsTeal .review-item-icon {
 }
 
 .modal-cancel-button {
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: 2px solid #e8e8e8;
   border-radius: 8px;
   background: white;
   color: #212121;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3116,12 +3118,12 @@ body.brand-uniqueAestheticsTeal .review-item-icon {
 }
 
 .modal-submit-button {
-  padding: 12px 24px;
+  padding: 10px 24px;
   border: none;
   border-radius: 8px;
   background: #212121;
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3181,39 +3183,68 @@ body.brand-uniqueAestheticsTeal .review-item-icon {
 .consultation-header {
   flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
+  gap: 0;
   background: linear-gradient(135deg, #ffd291 0%, #fff3e0 100%);
-  padding: 32px 24px;
+  padding: 24px 24px 20px;
   border-bottom: none;
   position: relative;
+  border-radius: 20px 20px 0 0;
 }
 
 .modal-header-content {
   width: 100%;
 }
 
-.consultation-header .modal-close {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 10;
+.consultation-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
 }
 
-.modal-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+.consultation-header-title-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+
+.modal-icon-wrapper-compact {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 12px rgba(33, 33, 33, 0.1);
+  box-shadow: 0 2px 8px rgba(33, 33, 33, 0.1);
+  flex-shrink: 0;
 }
 
-.modal-icon-wrapper svg {
+.modal-icon-wrapper-compact svg {
   color: #ffd291;
   stroke-width: 2.5;
+}
+
+.consultation-header .modal-title {
+  font-size: 22px;
+  margin: 0 0 4px 0;
+  line-height: 1.3;
+}
+
+.modal-subtitle-compact {
+  font-size: 13px;
+  color: #424242;
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.consultation-header .modal-close {
+  position: static;
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 .modal-subtitle {
@@ -3247,12 +3278,293 @@ body.brand-uniqueAestheticsTeal .review-item-icon {
   stroke-width: 2.5;
 }
 
+.consultation-benefits-compact-inline {
+  padding: 14px 24px;
+  background: #fafafa;
+  border-bottom: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+.consultation-benefits-compact-inline svg {
+  color: #212121;
+  flex-shrink: 0;
+  stroke-width: 2.5;
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+}
+
+.consultation-benefits-compact-grid {
+  padding: 18px 24px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #e8e8e8;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+}
+
+.benefit-item-compact {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #424242;
+  line-height: 1.5;
+  padding: 4px 0;
+}
+
+.benefit-item-compact svg {
+  color: #4caf50;
+  flex-shrink: 0;
+  stroke-width: 2.5;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  filter: drop-shadow(0 1px 2px rgba(76, 175, 80, 0.2));
+}
+
+.benefit-item-compact strong {
+  font-weight: 600;
+  color: #212121;
+  display: block;
+  margin-bottom: 2px;
+}
+
 .consultation-form {
-  padding: 32px 24px;
+  padding: 24px 24px 20px;
+}
+
+/* Compact discount section (before form) - inline version */
+.consultation-discount-inline-compact {
+  background: linear-gradient(135deg, #fff9f0 0%, #fff5e6 100%);
+  border: 1px solid #ffd291;
+  border-radius: 10px;
+  padding: 14px 24px;
+  margin: 0 24px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #424242;
+  box-shadow: 0 1px 3px rgba(255, 193, 7, 0.1);
+}
+
+.consultation-discount-icon-inline {
+  display: flex;
+  align-items: center;
+  color: #E8759E;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.consultation-discount-icon-inline svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
+}
+
+.consultation-discount-text-inline {
+  flex: 1;
+  line-height: 1.5;
+  color: #424242;
+}
+
+.consultation-discount-text-inline strong {
+  color: #E8759E;
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+.consultation-discount-text-inline code {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #212121;
+  border: 1px dashed #ffd291;
+}
+
+.consultation-redeem-btn-inline {
+  padding: 8px 16px;
+  background: #212121;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Montserrat", sans-serif;
+  flex-shrink: 0;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(33, 33, 33, 0.15);
+  letter-spacing: 0.3px;
+}
+
+.consultation-redeem-btn-inline:hover {
+  background: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(33, 33, 33, 0.25);
+}
+
+.consultation-redeem-btn-inline:active {
+  transform: translateY(0);
+}
+
+/* Compact discount section (before form) - full version (kept for backwards compatibility) */
+.consultation-discount-section-compact-top {
+  background: linear-gradient(135deg, #fff9f0 0%, #fff5e6 100%);
+  border: 2px solid #ffd291;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 0 24px 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+}
+
+.consultation-discount-badge-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.consultation-discount-icon-compact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.consultation-discount-icon-compact svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  color: #d32f2f;
+  stroke-width: 2.5;
+}
+
+.consultation-discount-info-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+}
+
+.consultation-discount-amount-compact {
+  font-size: 22px;
+  font-weight: 700;
+  color: #212121;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.consultation-discount-desc-compact {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.consultation-discount-scarcity-compact-top {
+  font-size: 11px;
+  color: #c97c2b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 10px 0 12px;
+  padding: 6px 12px;
+  background: rgba(201, 124, 43, 0.1);
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.consultation-redeem-btn-compact-top {
+  width: 100%;
+  padding: 12px 20px;
+  background: #212121;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Montserrat", sans-serif;
+  margin: 10px 0 0;
+  box-shadow: 0 2px 8px rgba(33, 33, 33, 0.2);
+  letter-spacing: 0.3px;
+}
+
+.consultation-redeem-btn-compact-top:hover {
+  background: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(33, 33, 33, 0.3);
+}
+
+.consultation-redeem-btn-compact-top:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(33, 33, 33, 0.25);
+}
+
+.consultation-discount-code-compact-top {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 12px;
+  border: 1px solid #e8e8e8;
+}
+
+.consultation-discount-code-compact-top label {
+  display: block;
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.consultation-code-value-compact-top {
+  font-size: 22px;
+  font-weight: 700;
+  color: #212121;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 8px;
+  border: 2px dashed #ffd291;
+  margin-bottom: 8px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.consultation-code-note-compact-top {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
 }
 
 .modal-form-group {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .modal-form-group label {
@@ -3307,7 +3619,7 @@ body.brand-uniqueAestheticsTeal .review-item-icon {
 
 .modal-textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
   font-family: "Montserrat", sans-serif;
 }
 
@@ -3348,7 +3660,7 @@ body.brand-uniqueAestheticsTeal .review-item-icon {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 16px 24px;
+  padding: 12px 24px;
   background: #212121;
   color: white;
   font-weight: 600;
@@ -7103,6 +7415,83 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   margin: 0;
 }
 
+/* Compact discount section (after form) */
+.consultation-discount-section-compact {
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #fff9f0 0%, #fff5e6 100%);
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.consultation-redeem-btn-compact {
+  width: 100%;
+  padding: 10px 16px;
+  background: #212121;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.consultation-redeem-btn-compact:hover {
+  background: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(33, 33, 33, 0.3);
+}
+
+.consultation-redeem-btn-compact svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
+}
+
+.consultation-discount-code-compact {
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.consultation-code-value-compact {
+  font-size: 18px;
+  font-weight: 700;
+  color: #212121;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  background: white;
+  border-radius: 6px;
+  border: 2px dashed #ffd291;
+}
+
+.consultation-code-note-compact {
+  font-size: 11px;
+  color: #666;
+  margin: 0;
+  text-align: center;
+}
+
+.consultation-discount-scarcity-compact {
+  font-size: 11px;
+  color: #c97c2b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 8px 0 0;
+  text-align: center;
+}
+
 @media (max-width: 480px) {
   .discount-offer-badge {
     flex-direction: column;
@@ -7121,6 +7510,53 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
 
   .consultation-discount-section {
     margin: 16px;
+  }
+  
+  .consultation-benefits-compact-inline {
+    padding: 10px 20px;
+    font-size: 12px;
+  }
+  
+  .consultation-benefits-compact-grid {
+    grid-template-columns: 1fr;
+    padding: 14px 20px;
+    gap: 10px;
+  }
+  
+  .consultation-discount-inline-compact {
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    margin: 0 20px 14px;
+  }
+  
+  .consultation-redeem-btn-inline {
+    width: 100%;
+    margin-top: 8px;
+  }
+  
+  .consultation-header {
+    padding: 16px 20px 12px;
+  }
+  
+  .consultation-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .consultation-header .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+  }
+  
+  .consultation-discount-section-compact-top {
+    margin: 0 20px 14px;
+    padding: 10px 14px;
+  }
+  
+  .consultation-form {
+    padding: 16px 20px;
   }
 }
 
@@ -8148,16 +8584,97 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
 
 .concern-warning-message {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 10px;
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin: 0 0 16px 0;
+  background: #fff8e1;
+  border: 2px solid #ffc107;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 0 0 24px 0;
   color: #856404;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
   animation: slideDown 0.3s ease-out;
+  box-shadow: 0 3px 12px rgba(255, 193, 7, 0.25);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.concern-warning-message #concern-warning-text,
+.concern-warning-message #area-warning-text {
+  font-weight: 600;
+  line-height: 1.5;
+  display: block;
+  width: 100%;
+}
+
+.concern-warning-message #concern-warning-text span,
+.concern-warning-message #area-warning-text span {
+  font-weight: 500;
+  font-size: 14px;
+  margin-top: 8px;
+  display: block;
+  line-height: 1.5;
+  color: #856404;
+  opacity: 0.95;
+  border-top: 1px solid rgba(255, 193, 7, 0.3);
+  padding-top: 8px;
+}
+
+.warning-booking-btn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+}
+
+.warning-booking-btn:hover {
+  background: #b71c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+}
+
+.warning-booking-btn:active {
+  transform: translateY(0);
+}
+
+.form-subtitle-note {
+  font-size: 13px;
+  color: #666;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.form-subtitle-note strong {
+  color: #424242;
+  font-weight: 600;
+}
+
+.form-subtitle-note a {
+  color: #E8759E;
+  text-decoration: underline;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  margin-left: 4px;
+}
+
+.form-subtitle-note a:hover {
+  color: #E8759E;
+  text-decoration: underline;
+  opacity: 0.8;
 }
 
 .concern-warning-message.error {
@@ -8641,9 +9158,14 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   font-size: 18px;
   font-weight: 600;
   color: var(--color-text-primary, #000000);
-  margin-bottom: 8px;
+  margin-top: 24px;
+  margin-bottom: 12px;
   padding: 0;
   font-family: var(--font-heading, "Playfair Display", serif);
+}
+
+.concern-group-header:first-child {
+  margin-top: 0;
 }
 
 .concern-group-container {
@@ -8651,15 +9173,21 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   grid-template-columns: 1fr;
   gap: 12px;
   width: 100%;
+  margin-bottom: 16px;
 }
 
-/* Areas of Concern Grid */
-.areas-of-concern-grid {
+/* Area group containers should use 2-column grid for area cards */
+#areas-of-concern-grid .concern-group-container {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 18px !important;
   row-gap: 18px !important;
   column-gap: 18px !important;
+}
+
+/* Areas of Concern Grid */
+.areas-of-concern-grid {
+  display: block !important;
   margin: 24px 0;
   padding: 0 4px;
   width: 100%;
@@ -8673,15 +9201,12 @@ body.brand-uniqueAestheticsPink .lead-email-input:focus {
   max-width: 100% !important;
 }
 
-/* Force 2 columns for areas grid - override any other rules */
+/* Force block layout for areas grid to stack headers and containers vertically */
 #areas-of-concern-grid.areas-of-concern-grid,
 div#areas-of-concern-grid,
 .form-step[data-step="2"] #areas-of-concern-grid,
 #form-step-2 #areas-of-concern-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  grid-auto-flow: row !important;
-  gap: 18px !important;
+  display: block !important;
 }
 
 .area-of-concern-card {
@@ -8791,10 +9316,7 @@ div#areas-of-concern-grid,
     column-gap: 14px !important;
   }
 
-  #areas-of-concern-grid.areas-of-concern-grid,
-  div#areas-of-concern-grid,
-  .form-step[data-step="2"] #areas-of-concern-grid,
-  #form-step-2 #areas-of-concern-grid {
+  #areas-of-concern-grid .concern-group-container {
     gap: 14px !important;
     row-gap: 14px !important;
     column-gap: 14px !important;
@@ -9464,6 +9986,88 @@ body.brand-uniqueAestheticsPink .results-tab.active {
 
 .treatment-group-card:hover .treatment-group-cta {
   color: var(--color-accent, #ffa2c7);
+}
+
+/* Locked treatment group card styles */
+.treatment-group-card-locked {
+  opacity: 0.85;
+  position: relative;
+  cursor: pointer;
+}
+
+.treatment-group-card-locked:hover {
+  opacity: 1;
+  border-color: var(--color-accent, #ffa2c7);
+}
+
+.treatment-group-card-locked .locked-count {
+  background: rgba(232, 117, 158, 0.15);
+  color: #E8759E;
+  border: 1px solid rgba(232, 117, 158, 0.3);
+}
+
+.treatment-group-card-locked .locked-preview {
+  position: relative;
+}
+
+.treatment-group-lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  z-index: 2;
+}
+
+.treatment-group-lock-overlay svg {
+  color: white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.treatment-group-placeholder {
+  width: 180px;
+  height: 180px;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.treatment-group-card-locked .locked-footer {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 12px;
+}
+
+.treatment-group-locked-message {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+  width: 100%;
+}
+
+.treatment-group-locked-message strong {
+  color: #424242;
+  font-weight: 600;
+}
+
+.treatment-group-card-locked .locked-cta {
+  color: var(--color-accent, #E8759E);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.treatment-group-card-locked:hover .locked-cta {
+  color: var(--color-accent-dark, #E8759E);
 }
 
 .treatment-group-preview-image {

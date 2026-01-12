@@ -494,10 +494,14 @@
         <div class="form-container">
           <!-- Dynamic Title and Subtitle -->
           <h1 class="form-title" id="form-step-title">
-            What would you like to improve?
+            Start Your Virtual Consultation
           </h1>
           <p class="form-subtitle" id="form-step-subtitle">
             Select up to 3 main concerns that matter most to you
+          </p>
+          <p class="form-subtitle-note" style="font-size: 13px; color: #666; margin-top: 8px; margin-bottom: 20px; font-weight: 500; line-height: 1.5;">
+            <strong style="color: #424242;">In-clinic consultations</strong> unlock access to all concerns and areas. 
+            <a href="#" onclick="event.preventDefault(); requestConsultation();" style="color: #E8759E; text-decoration: underline; font-weight: 600; cursor: pointer;">Request now →</a>
           </p>
 
           <form id="aesthetic-form">
@@ -523,6 +527,16 @@
             <!-- Step 2: Which Areas Are You Most Concerned About? -->
             <div class="form-step" data-step="2" id="form-step-2">
               <div class="form-section">
+                <!-- Warning message for max selections -->
+                <div
+                  class="concern-warning-message"
+                  id="area-warning-message"
+                  style="display: none"
+                >
+                  <span id="area-warning-text"
+                    >Please select up to 3 areas</span
+                  >
+                </div>
                 <div id="areas-of-concern-grid"></div>
               </div>
             </div>
