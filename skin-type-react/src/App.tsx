@@ -242,12 +242,9 @@ function AppContent() {
             setCaseData(nonSurgicalData);
             setIsLoading(false);
             console.log(`✓ Loaded ${transformedData.length} cases from Airtable, filtered to ${nonSurgicalData.length} non-surgical cases`);
-        } catch (error) {
-          setIsLoading(false);
-          console.warn('Could not load cases from Airtable:', error);
-        }
-      } else {
+      } catch (error) {
         setIsLoading(false);
+        console.warn('Could not load cases from Airtable:', error);
       }
     };
 
