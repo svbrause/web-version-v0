@@ -4,7 +4,13 @@
 const https = require('https');
 const fs = require('fs');
 
-const AIRTABLE_API_KEY = "patmjhUfBrLAveso9.22cfbb0b5d0967dbfba9d855ad11af6be983b00acb55b394ef663acf751be30b";
+const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+
+if (!AIRTABLE_API_KEY) {
+  console.error('❌ AIRTABLE_API_KEY environment variable is not set.');
+  console.error('   Set it with: export AIRTABLE_API_KEY="your-api-key"');
+  process.exit(1);
+}
 const AIRTABLE_BASE_ID = "appXblSpAMBQskgzB";
 const AIRTABLE_TABLE_NAME = "Photos";
 

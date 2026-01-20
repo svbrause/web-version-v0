@@ -1,35 +1,18 @@
 // Dashboard JavaScript - Connected to Airtable
 // Fetches real leads from Airtable, with mock data fallback for demos
-// UNIQUE AESTHETICS VERSION - Filters by Unique Aesthetics provider
+// LAKESHORE VERSION - Filters by Lakeshore provider
 
 // Airtable Configuration (same as app.js)
-// Read from window variables (set in HTML) or environment variables
-const AIRTABLE_API_KEY = 
-  typeof window !== 'undefined' && window.AIRTABLE_API_KEY
-    ? window.AIRTABLE_API_KEY
-    : (typeof process !== 'undefined' && process.env.AIRTABLE_API_KEY)
-      ? process.env.AIRTABLE_API_KEY
-      : null;
-const AIRTABLE_BASE_ID = 
-  typeof window !== 'undefined' && window.AIRTABLE_BASE_ID
-    ? window.AIRTABLE_BASE_ID
-    : (typeof process !== 'undefined' && process.env.AIRTABLE_BASE_ID)
-      ? process.env.AIRTABLE_BASE_ID
-      : "appXblSpAMBQskgzB";
-// Validate API key is set
-if (!AIRTABLE_API_KEY) {
-  console.error('❌ AIRTABLE_API_KEY is not set. Please configure it in your environment variables or HTML.');
-  console.error('   For Vercel: Set AIRTABLE_API_KEY in Settings → Environment Variables');
-  console.error('   For local: Set window.AIRTABLE_API_KEY in your HTML file');
-}
-
+const AIRTABLE_API_KEY =
+  "patmjhUfBrLAveso9.22cfbb0b5d0967dbfba9d855ad11af6be983b00acb55b394ef663acf751be30b";
+const AIRTABLE_BASE_ID = "appXblSpAMBQskgzB";
 const LEADS_TABLE_NAME = "Web Popup Leads";
 const LEADS_API_URL = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(
   LEADS_TABLE_NAME
 )}`;
 
-// Provider filter - Unique Aesthetics provider ID
-const PROVIDER_ID = 'recN9Q4W02xtroD6g'; // Unique Aesthetics
+// Provider filter - Lakeshore provider ID
+const PROVIDER_ID = 'rec3oXyrb1t6YUvoe'; // Lakeshore
 
 // Demo mode flag - set to true to use mock data instead of Airtable
 const USE_MOCK_DATA = false; // Change to true for demo-only mode
@@ -312,7 +295,7 @@ function getRelativeDate(daysAgo, hoursAgo = 0) {
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
-  initTheme();
+  // No theme init for Lakeshore
   initNavigation();
   loadLeadsFromAirtable().then(() => {
     renderDashboard();
@@ -328,45 +311,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Theme Management - Default to Pink theme (Unique Aesthetics)
+// Theme Management - Lakeshore uses warm theme by default (no toggle needed)
 function initTheme() {
-  const savedTheme = localStorage.getItem('dashboard-theme');
-  // Default to pink if no saved preference
-  if (!savedTheme || savedTheme === 'pink') {
-    // Pink is now the default, no class needed
-    document.body.classList.remove('theme-warm');
-    updateThemeButton('pink');
-    // Save default preference
-    if (!savedTheme) {
-      localStorage.setItem('dashboard-theme', 'pink');
-    }
-  } else if (savedTheme === 'warm') {
-    // Apply warm theme
-    document.body.classList.add('theme-warm');
-    updateThemeButton('warm');
-  }
+  // Lakeshore always uses warm theme, no toggle needed
+  // Theme is handled by CSS file
 }
 
 function toggleTheme() {
-  const isWarm = document.body.classList.contains('theme-warm');
-  if (isWarm) {
-    // Switch to pink (default)
-    document.body.classList.remove('theme-warm');
-    localStorage.setItem('dashboard-theme', 'pink');
-    updateThemeButton('pink');
-  } else {
-    // Switch to warm
-    document.body.classList.add('theme-warm');
-    localStorage.setItem('dashboard-theme', 'warm');
-    updateThemeButton('warm');
-  }
+  // No theme toggle for Lakeshore
 }
 
 function updateThemeButton(theme) {
-  const label = document.getElementById('theme-label');
-  if (label) {
-    label.textContent = theme === 'pink' ? 'Warm Theme' : 'Pink Theme';
-  }
+  // No theme button for Lakeshore
 }
 
 // Navigation
@@ -409,7 +365,87 @@ function switchView(view) {
   }
 }
 
-// Load leads from Airtable
+// Helper function to fetch all records from an Airtable table
+async function fetchTableRecords(tableName) {
+  let allRecords = [];
+  let offset = null;
+  let pageCount = 0;
+  const maxPages = 50;
+  const tableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}`;
+
+  do {
+    pageCount++;
+    let url = tableUrl;
+    const params = new URLSearchParams();
+    params.append("pageSize", "100");
+    if (offset) {
+      params.append("offset", offset);
+    }
+    url += "?" + params.toString();
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Airtable API error for ${tableName}: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = await response.json();
+    const pageRecords = data.records || [];
+    allRecords = allRecords.concat(pageRecords);
+
+    offset = data.offset || null;
+
+    if (pageCount >= maxPages) {
+      console.warn(`Reached max pages limit for ${tableName}`);
+      break;
+    }
+  } while (offset);
+
+  return allRecords;
+}
+
+// Helper function to map Airtable record to lead format
+function mapRecordToLead(record, tableName) {
+  const fields = record.fields || {};
+  
+  // Map Airtable fields to dashboard format
+  // Handle different field names between "Web Popup Leads" and "Patients" tables
+  const lead = {
+    id: record.id,
+    name: fields["Name"] || fields["Patient Name"] || "",
+    email: fields["Email Address"] || fields["Email"] || "",
+    phone: fields["Phone Number"] || fields["Phone"] || "",
+    age: fields["Age"] || null,
+    goals: Array.isArray(fields["Goals"]) ? fields["Goals"] : [],
+    concerns: fields["Concerns"] || "",
+    aestheticGoals: fields["Aesthetic Goals"] || fields["Notes"] || "",
+    photosLiked: Array.isArray(fields["Liked Photos"]) ? fields["Liked Photos"].length : 0,
+    photosViewed: Array.isArray(fields["Viewed Photos"]) ? fields["Viewed Photos"].length : 0,
+    treatmentsViewed: [], // Can be populated if you track this in Airtable
+    source: fields["Source"] || (tableName === "Patients" ? "Patient" : "AI Consult"),
+    status: mapAirtableStatus(fields),
+    priority: determinePriority(fields),
+    createdAt: record.createdTime || new Date().toISOString(),
+    notes: fields["Contact Notes"] || fields["Notes"] || "",
+    appointmentDate: fields["Appointment Date"] || null,
+    treatmentReceived: fields["Treatment Received"] || null,
+    revenue: fields["Revenue"] || null,
+    lastContact: fields["Last Contact"] || null,
+    isReal: true, // Mark as real lead
+    tableSource: tableName, // Track which table it came from
+  };
+
+  return lead;
+}
+
+// Load leads from Airtable (both "Web Popup Leads" and "Patients" tables)
 async function loadLeadsFromAirtable() {
   if (USE_MOCK_DATA) {
     leads = [...MOCK_LEADS];
@@ -421,93 +457,44 @@ async function loadLeadsFromAirtable() {
   showLoadingState();
 
   try {
-    let allRecords = [];
-    let offset = null;
-    let pageCount = 0;
-    const maxPages = 50;
+    // Fetch from both tables in parallel
+    const [webPopupLeadsRecords, patientsRecords] = await Promise.all([
+      fetchTableRecords("Web Popup Leads"),
+      fetchTableRecords("Patients")
+    ]);
 
-    do {
-      pageCount++;
-      let url = LEADS_API_URL;
-      const params = new URLSearchParams();
-      params.append("pageSize", "100");
-      if (offset) {
-        params.append("offset", offset);
-      }
-      url += "?" + params.toString();
+    console.log(`📊 Fetched ${webPopupLeadsRecords.length} records from "Web Popup Leads"`);
+    console.log(`📊 Fetched ${patientsRecords.length} records from "Patients"`);
 
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${AIRTABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          `Airtable API error: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      const pageRecords = data.records || [];
-      allRecords = allRecords.concat(pageRecords);
-
-      offset = data.offset || null;
-
-      if (pageCount >= maxPages) {
-        console.warn("Reached max pages limit");
-        break;
-      }
-    } while (offset);
+    // Combine all records
+    const allRecords = [...webPopupLeadsRecords, ...patientsRecords];
 
     // Process and map Airtable records to lead format
-    const airtableLeads = allRecords.map((record) => {
-      const fields = record.fields || {};
-      
-      // Map Airtable fields to dashboard format
-      const lead = {
-        id: record.id,
-        name: fields["Name"] || "",
-        email: fields["Email Address"] || "",
-        phone: fields["Phone Number"] || "",
-        age: fields["Age"] || null,
-        goals: Array.isArray(fields["Goals"]) ? fields["Goals"] : [],
-        concerns: fields["Concerns"] || "",
-        aestheticGoals: fields["Aesthetic Goals"] || "",
-        photosLiked: Array.isArray(fields["Liked Photos"]) ? fields["Liked Photos"].length : 0,
-        photosViewed: Array.isArray(fields["Viewed Photos"]) ? fields["Viewed Photos"].length : 0,
-        treatmentsViewed: [], // Can be populated if you track this in Airtable
-        source: fields["Source"] || "AI Consult",
-        status: mapAirtableStatus(fields),
-        priority: determinePriority(fields),
-        createdAt: record.createdTime || new Date().toISOString(),
-        notes: fields["Contact Notes"] || "",
-        appointmentDate: fields["Appointment Date"] || null,
-        treatmentReceived: fields["Treatment Received"] || null,
-        revenue: fields["Revenue"] || null,
-        lastContact: fields["Last Contact"] || null,
-        isReal: true, // Mark as real lead
-      };
-
-      return lead;
-    });
+    // Filter by provider during mapping
+    const webPopupLeadsIds = new Set(webPopupLeadsRecords.map(r => r.id));
+    
+    const airtableLeads = allRecords
+      .filter((record) => {
+        const fields = record.fields || {};
+        // Check if this lead belongs to our provider
+        const providers = fields["Providers"] || [];
+        // If Providers field exists and doesn't include our provider, skip
+        if (Array.isArray(providers) && providers.length > 0) {
+          return providers.includes(PROVIDER_ID);
+        }
+        // If no Providers field, include it (backward compatibility)
+        return true;
+      })
+      .map((record) => {
+        // Determine which table this record came from
+        const tableName = webPopupLeadsIds.has(record.id) 
+          ? "Web Popup Leads" 
+          : "Patients";
+        return mapRecordToLead(record, tableName);
+      });
 
     // Filter out incomplete leads (must have name and either email or phone)
-    // Also filter by provider if Providers field exists
-    const validAirtableLeads = airtableLeads.filter((lead, index) => {
-      const record = allRecords[index];
-      const fields = record?.fields || {};
-      
-      // Check if this lead belongs to our provider
-      const providers = fields["Providers"] || [];
-      const belongsToProvider = Array.isArray(providers) && providers.includes(PROVIDER_ID);
-      
-      // If Providers field exists and doesn't include our provider, skip
-      if (providers.length > 0 && !belongsToProvider) {
-        return false;
-      }
-      
+    const validAirtableLeads = airtableLeads.filter(lead => {
       const hasName = lead.name && lead.name.trim().length > 0;
       const hasContact = (lead.email && lead.email.trim().length > 0) || 
                          (lead.phone && lead.phone.trim().length > 0);
@@ -521,7 +508,9 @@ async function loadLeadsFromAirtable() {
     leads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     filteredLeads = [...leads];
 
-    console.log(`✅ Loaded ${validAirtableLeads.length} real leads + ${MOCK_LEADS.length} demo leads`);
+    const webPopupCount = validAirtableLeads.filter(l => l.tableSource === "Web Popup Leads").length;
+    const patientsCount = validAirtableLeads.filter(l => l.tableSource === "Patients").length;
+    console.log(`Loaded ${validAirtableLeads.length} real leads (${webPopupCount} from Web Popup Leads, ${patientsCount} from Patients) + ${MOCK_LEADS.length} demo leads`);
   } catch (error) {
     console.error("Error loading leads from Airtable:", error);
     // Fallback to mock data on error
@@ -617,7 +606,6 @@ function renderKanban() {
     if (statusLeads.length === 0) {
       column.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">📋</div>
           <p class="empty-state-text">No leads yet</p>
         </div>
       `;
@@ -636,7 +624,7 @@ function renderKanban() {
 }
 
 function createLeadCard(lead) {
-  const priorityIcon = lead.priority === 'hot' ? '🔥' : lead.priority === 'medium' ? '⭐' : '';
+  const priorityLabel = lead.priority === 'hot' ? 'Hot' : lead.priority === 'medium' ? 'Medium' : '';
   const date = formatRelativeDate(lead.createdAt);
   
   // Handle concerns - could be string or array
@@ -646,12 +634,12 @@ function createLeadCard(lead) {
   const interests = concernsList.slice(0, 2);
   
   // Show both phone and email for completeness
-  let phoneInfo = lead.phone ? `📞 ${lead.phone}` : '';
+  let phoneInfo = lead.phone ? `Phone: ${lead.phone}` : '';
   let emailInfo = '';
   if (lead.email) {
     // Truncate long emails
     const email = lead.email.length > 22 ? lead.email.substring(0, 20) + '...' : lead.email;
-    emailInfo = `✉️ ${email}`;
+    emailInfo = `Email: ${email}`;
   }
   
   return `
@@ -664,7 +652,7 @@ function createLeadCard(lead) {
             ${emailInfo ? `<div class="lead-contact">${emailInfo}</div>` : ''}
           </div>
         </div>
-        <span class="lead-priority">${priorityIcon}</span>
+        ${priorityLabel ? `<span class="lead-priority">${priorityLabel}</span>` : ''}
       </div>
       <div class="lead-interests">
         ${interests.map((i, idx) => `<span class="interest-tag ${idx === 0 ? 'primary' : ''}">${i}</span>`).join('')}
@@ -672,8 +660,8 @@ function createLeadCard(lead) {
       </div>
       <div class="lead-card-footer">
         <div class="lead-engagement">
-          <span>❤️ ${lead.photosLiked}</span>
-          <span>👁️ ${lead.photosViewed}</span>
+          <span>Liked: ${lead.photosLiked}</span>
+          <span>Viewed: ${lead.photosViewed}</span>
         </div>
         <span class="lead-date">${date}</span>
       </div>
@@ -756,10 +744,32 @@ function renderList() {
         </div>
       </td>
       <td>
-        <span style="font-size: 13px;">❤️ ${lead.photosLiked} &nbsp; 👁️ ${lead.photosViewed}</span>
+        <span style="font-size: 13px;">Liked: ${lead.photosLiked} &nbsp; Viewed: ${lead.photosViewed}</span>
       </td>
-      <td>
-        <span class="status-badge ${lead.status}">${formatStatus(lead.status)}</span>
+      <td onclick="event.stopPropagation();">
+        <select 
+          class="status-select-inline" 
+          value="${lead.status}" 
+          onchange="updateLeadStatusFromTable('${lead.id}', this.value)"
+          onclick="event.stopPropagation();"
+          style="
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--theme-border);
+            background: var(--theme-bg-card);
+            color: var(--theme-text-primary);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 120px;
+            font-family: inherit;
+          "
+        >
+          <option value="new" ${lead.status === 'new' ? 'selected' : ''}>New Lead</option>
+          <option value="contacted" ${lead.status === 'contacted' ? 'selected' : ''}>Contacted</option>
+          <option value="scheduled" ${lead.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
+          <option value="converted" ${lead.status === 'converted' ? 'selected' : ''}>Converted</option>
+        </select>
       </td>
       <td style="font-size: 13px; color: #666;">${formatRelativeDate(lead.createdAt)}</td>
       <td>
@@ -783,6 +793,26 @@ function filterLeads() {
   renderList();
 }
 
+// Update lead status from table dropdown
+function updateLeadStatusFromTable(leadId, newStatus) {
+  const lead = leads.find(l => l.id === leadId);
+  
+  if (lead && lead.status !== newStatus) {
+    // Update in Airtable (or local state for mock data)
+    updateLeadStatusInAirtable(leadId, newStatus);
+    showToast(`Updated ${lead.name} to ${formatStatus(newStatus)}`);
+    
+    // Update the lead's status in local state immediately for UI responsiveness
+    lead.status = newStatus;
+    
+    // Re-render the list to reflect the change
+    renderList();
+    
+    // Also update kanban if we're viewing it
+    renderKanban();
+  }
+}
+
 // Lead Details Modal
 function viewLeadDetails(leadId) {
   const lead = leads.find(l => l.id === leadId);
@@ -798,14 +828,14 @@ function viewLeadDetails(leadId) {
   
   const appointmentInfo = lead.appointmentDate ? `
     <div class="detail-section">
-      <div class="detail-section-title">📅 Appointment</div>
+      <div class="detail-section-title">Appointment</div>
       <div class="detail-value">${formatDate(lead.appointmentDate)}</div>
     </div>
   ` : '';
   
   const conversionInfo = lead.status === 'converted' ? `
     <div class="detail-section">
-      <div class="detail-section-title">✅ Conversion Details</div>
+      <div class="detail-section-title">Conversion Details</div>
       <div class="detail-grid">
         <div class="detail-field">
           <div class="detail-label">Treatment</div>
@@ -918,7 +948,7 @@ function viewLeadDetails(leadId) {
     
     <div class="detail-section">
       <div class="detail-section-title">
-        📞 Contact History
+        Contact History
         <button class="edit-toggle-btn" onclick="showAddContactLog()">+ Add Entry</button>
       </div>
       <div class="contact-history" id="contact-history">
@@ -929,10 +959,10 @@ function viewLeadDetails(leadId) {
           <div class="form-group">
             <label>Contact Type</label>
             <select id="contact-log-type">
-              <option value="call">📞 Phone Call</option>
-              <option value="email">✉️ Email</option>
-              <option value="text">💬 Text Message</option>
-              <option value="meeting">👤 In-Person</option>
+              <option value="call">Phone Call</option>
+              <option value="email">Email</option>
+              <option value="text">Text Message</option>
+              <option value="meeting">In-Person</option>
             </select>
           </div>
           <div class="form-group">
@@ -958,7 +988,7 @@ function viewLeadDetails(leadId) {
     
     ${lead.notes ? `
     <div class="detail-section">
-      <div class="detail-section-title">📝 Internal Notes</div>
+      <div class="detail-section-title">Internal Notes</div>
       <div class="notes-box">${lead.notes}</div>
     </div>
     ` : ''}
@@ -978,7 +1008,7 @@ function renderContactHistory(lead) {
   return history.map(entry => `
     <div class="contact-entry">
       <div class="contact-entry-header">
-        <span class="contact-type ${entry.type}">${getContactTypeIcon(entry.type)} ${formatContactType(entry.type)}</span>
+        <span class="contact-type ${entry.type}">${formatContactType(entry.type)}</span>
         <span class="contact-date">${formatRelativeDate(entry.date)}</span>
       </div>
       <div class="contact-outcome ${entry.outcome}">${formatOutcome(entry.outcome)}</div>
@@ -987,10 +1017,7 @@ function renderContactHistory(lead) {
   `).join('');
 }
 
-function getContactTypeIcon(type) {
-  const icons = { call: '📞', email: '✉️', text: '💬', meeting: '👤' };
-  return icons[type] || '📝';
-}
+// Removed getContactTypeIcon - using formatContactType instead
 
 function formatContactType(type) {
   const labels = { call: 'Phone Call', email: 'Email', text: 'Text', meeting: 'In-Person' };
@@ -999,10 +1026,10 @@ function formatContactType(type) {
 
 function formatOutcome(outcome) {
   const labels = { 
-    reached: '✅ Reached', 
-    voicemail: '📭 Left Voicemail', 
-    'no-answer': '❌ No Answer',
-    scheduled: '📅 Appointment Scheduled'
+    reached: 'Reached', 
+    voicemail: 'Left Voicemail', 
+    'no-answer': 'No Answer',
+    scheduled: 'Appointment Scheduled'
   };
   return labels[outcome] || outcome;
 }
@@ -1056,7 +1083,7 @@ function saveContactLog() {
   
   // Update views
   renderKanban();
-  renderListView();
+  renderList();
   
   showToast('Contact log added!');
 }
@@ -1147,7 +1174,7 @@ function saveLeadEdits() {
   
   // Re-render views
   renderKanban();
-  renderListView();
+  renderList();
   
   showToast(`Updated ${newName}'s information`);
 }
@@ -1271,6 +1298,7 @@ function updateLeadStatus() {
 
 /**
  * Update lead status in Airtable
+ * Handles both "Web Popup Leads" and "Patients" tables
  */
 async function updateLeadStatusInAirtable(leadId, newStatus) {
   if (USE_MOCK_DATA) {
@@ -1285,6 +1313,10 @@ async function updateLeadStatusInAirtable(leadId, newStatus) {
   }
 
   try {
+    // Find the lead to determine which table it's in
+    const lead = leads.find(l => l.id === leadId);
+    const tableName = lead?.tableSource || "Web Popup Leads"; // Default to Web Popup Leads for backward compatibility
+    
     // Map dashboard status to Airtable fields
     const fields = {};
     
@@ -1298,8 +1330,9 @@ async function updateLeadStatusInAirtable(leadId, newStatus) {
       fields["Contacted"] = false;
     }
 
+    const tableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}`;
     const response = await fetch(
-      `${LEADS_API_URL}/${leadId}`,
+      `${tableUrl}/${leadId}`,
       {
         method: "PATCH",
         headers: {
@@ -1316,7 +1349,6 @@ async function updateLeadStatusInAirtable(leadId, newStatus) {
     }
 
     // Update local state
-    const lead = leads.find(l => l.id === leadId);
     if (lead) {
       lead.status = newStatus;
     }
@@ -1324,11 +1356,12 @@ async function updateLeadStatusInAirtable(leadId, newStatus) {
     // Update UI
     renderKanban();
     renderList();
+    updateSidebarStats();
     if (currentLeadId === leadId) {
       viewLeadDetails(leadId); // Refresh modal
     }
 
-    console.log(`✅ Updated lead status to ${newStatus}`);
+    console.log(`Updated lead status to ${newStatus} in ${tableName}`);
   } catch (error) {
     console.error("Error updating lead:", error);
     showError("Failed to update lead status. Please try again.");

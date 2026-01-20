@@ -1,7 +1,24 @@
 // Airtable Configuration
-const AIRTABLE_API_KEY =
-  "patmjhUfBrLAveso9.22cfbb0b5d0967dbfba9d855ad11af6be983b00acb55b394ef663acf751be30b";
-const AIRTABLE_BASE_ID = "appXblSpAMBQskgzB";
+// Read from window variables (set in HTML) or environment variables
+const AIRTABLE_API_KEY = 
+  typeof window !== 'undefined' && window.AIRTABLE_API_KEY
+    ? window.AIRTABLE_API_KEY
+    : (typeof process !== 'undefined' && process.env.AIRTABLE_API_KEY)
+      ? process.env.AIRTABLE_API_KEY
+      : null;
+const AIRTABLE_BASE_ID = 
+  typeof window !== 'undefined' && window.AIRTABLE_BASE_ID
+    ? window.AIRTABLE_BASE_ID
+    : (typeof process !== 'undefined' && process.env.AIRTABLE_BASE_ID)
+      ? process.env.AIRTABLE_BASE_ID
+      : "appXblSpAMBQskgzB";
+// Validate API key is set
+if (!AIRTABLE_API_KEY) {
+  console.error('❌ AIRTABLE_API_KEY is not set. Please configure it in your environment variables or HTML.');
+  console.error('   For Vercel: Set AIRTABLE_API_KEY in Settings → Environment Variables');
+  console.error('   For local: Set window.AIRTABLE_API_KEY in your HTML file');
+}
+
 const AIRTABLE_TABLE_NAME = "Photos";
 const AIRTABLE_API_URL = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`;
 
@@ -279,6 +296,11 @@ async function submitLeadToAirtable(leadData) {
       "Email Address": leadData.email || "",
       "Phone Number": leadData.phone || "",
     };
+    
+    // Add Offer Claimed field if this is an offer claim
+    if (leadData.offerClaimed !== undefined) {
+      fields["Offer Claimed"] = leadData.offerClaimed;
+    }
 
     // Add Age if available (as number)
     if (age) {
@@ -10174,58 +10196,19 @@ function requestConsultation() {
                               24
                             )}</div>
                             <div>
-                                <h2 class="modal-title">Book Your In-Clinic Consultation</h2>
-                                <p class="modal-subtitle-compact">Your offers are automatically applied and will be available to you</p>
+                                <h2 class="modal-title">Claim Your $50 Off Offer</h2>
+                                <p class="modal-subtitle-compact">Enter your email to claim your exclusive offer</p>
                             </div>
                         </div>
                         <button class="modal-close" onclick="closeRequestModal()">×</button>
                     </div>
                 </div>
             </div>
-            <div class="consultation-benefits-compact-inline">
-                ${getIconSVG("check", 14)}
-                <span>AI facial analysis • Personalized treatment plan • Expert consultation</span>
+            <div class="consultation-benefits-compact-inline" style="background: #E8F5E9; border: 2px solid #4CAF50; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                <span style="font-size: 24px; font-weight: bold; color: #2E7D32; display: block; margin-bottom: 4px;">$50 Off</span>
+                <span style="font-size: 14px; color: #666;">Your offer will be sent to your email</span>
             </div>
-            ${
-              discount
-                ? `
-            <div class="consultation-discount-inline-compact">
-                <span class="consultation-discount-icon-inline">${getIconSVG(
-                  "gift",
-                  14
-                )}</span>
-                <span class="consultation-discount-text-inline">
-                    <strong>$${discount.amount} OFF</strong> ${
-                    discount.description
-                  }
-                    ${
-                      isRedeemed
-                        ? ` • Code: <code>${getDiscountCode(
-                            discount.id
-                          )}</code>`
-                        : ""
-                    }
-                </span>
-                ${
-                  !isRedeemed
-                    ? `<button type="button" class="consultation-redeem-btn-inline" onclick="redeemDiscountInline('${discount.id}', this);">Redeem</button>`
-                    : ""
-                }
-            </div>
-            `
-                : ""
-            }
             <form id="consultation-form" class="modal-form consultation-form">
-                <div class="modal-form-group">
-                    <label for="consultation-name">
-                        <span class="label-icon">${getIconSVG(
-                          "user",
-                          16
-                        )}</span>
-                        Full Name
-                    </label>
-                    <input type="text" id="consultation-name" class="modal-input" required placeholder="Enter your full name">
-                </div>
                 <div class="modal-form-group">
                     <label for="consultation-email">
                         <span class="label-icon">${getIconSVG(
@@ -10234,32 +10217,12 @@ function requestConsultation() {
                         )}</span>
                         Email Address
                     </label>
-                    <input type="email" id="consultation-email" class="modal-input" required placeholder="your.email@example.com">
-                </div>
-                <div class="modal-form-group">
-                    <label for="consultation-phone">
-                        <span class="label-icon">${getIconSVG(
-                          "chat",
-                          16
-                        )}</span>
-                        Phone Number
-                    </label>
-                    <input type="tel" id="consultation-phone" class="modal-input" required placeholder="(555) 123-4567">
-                </div>
-                <div class="modal-form-group">
-                    <label for="consultation-message">
-                        <span class="label-icon">${getIconSVG(
-                          "chat",
-                          16
-                        )}</span>
-                        Tell us about your aesthetic goals <span class="optional-text">(optional)</span>
-                    </label>
-                    <textarea id="consultation-message" class="modal-textarea" rows="3" placeholder="What would you like to achieve? What are your main concerns?"></textarea>
+                    <input type="email" id="consultation-email" class="modal-input" required placeholder="Enter your email address">
                 </div>
                 <div class="modal-form-actions">
                     <button type="submit" class="modal-submit-button consultation-submit">
                         ${getIconSVG("check", 18)}
-                        <span>Request Consultation</span>
+                        <span>Claim $50 Off</span>
                     </button>
                     <button type="button" class="modal-cancel-button" onclick="closeRequestModal()">Cancel</button>
                 </div>
@@ -10269,26 +10232,14 @@ function requestConsultation() {
     // Handle form submission
     const form = document.getElementById("consultation-form");
 
-    // Setup phone and email formatting/validation
-    const nameInput = document.getElementById("consultation-name");
-    const phoneInput = document.getElementById("consultation-phone");
+    // Setup email formatting/validation
     const emailInput = document.getElementById("consultation-email");
-    setupPhoneInput(phoneInput);
     setupEmailInput(emailInput);
 
-    // Pre-populate fields from sessionStorage if available
-    const storedName = sessionStorage.getItem("user_name");
+    // Pre-populate email from sessionStorage if available
     const storedEmail = sessionStorage.getItem("user_email");
-    const storedPhone = sessionStorage.getItem("user_phone");
-
-    if (storedName && nameInput) {
-      nameInput.value = storedName;
-    }
     if (storedEmail && emailInput) {
       emailInput.value = storedEmail;
-    }
-    if (storedPhone && phoneInput) {
-      phoneInput.value = storedPhone;
     }
 
     form.addEventListener("submit", async function (e) {
@@ -10296,7 +10247,6 @@ function requestConsultation() {
 
       // Validate before submitting
       const email = document.getElementById("consultation-email").value;
-      const phone = document.getElementById("consultation-phone").value;
 
       if (!isValidEmail(email)) {
         showInputError(emailInput, "Please enter a valid email address");
@@ -10305,38 +10255,19 @@ function requestConsultation() {
         return;
       }
 
-      if (phone && !isValidPhoneNumber(phone)) {
-        showInputError(
-          phoneInput,
-          "Please enter a valid 10-digit phone number"
-        );
-        phoneInput.classList.add("input-error");
-        phoneInput.focus();
-        return;
-      }
-
       // Gather form data
-      const name = document.getElementById("consultation-name").value.trim();
       const leadData = {
-        name: name,
         email: email,
-        phone: phone,
-        message: document.getElementById("consultation-message").value,
-        source: "Consultation Form",
+        source: "Offer Claim",
+        offerClaimed: true,
       };
 
       // Save to sessionStorage for future use
-      if (name) {
-        sessionStorage.setItem("user_name", name);
-      }
       sessionStorage.setItem("user_email", email);
-      if (phone) {
-        sessionStorage.setItem("user_phone", phone);
-      }
 
-      console.log("Consultation request submitted:", leadData);
-      trackEvent("consultation_submitted", {
-        hasMessage: !!leadData.message,
+      console.log("Offer claim submitted:", leadData);
+      trackEvent("offer_claimed", {
+        has_email: !!email,
         goals: userSelections.overallGoals,
         issuesCount: userSelections.selectedIssues?.length || 0,
       });
@@ -10347,17 +10278,19 @@ function requestConsultation() {
       submitButton.innerHTML = `${getIconSVG(
         "check",
         18
-      )} <span>Submitting...</span>`;
+      )} <span>Claiming Offer...</span>`;
       submitButton.disabled = true;
 
       // Submit to Airtable
       const result = await submitLeadToAirtable(leadData);
 
       if (result.success) {
-        console.log("✅ Lead saved to Airtable");
+        console.log("✅ Offer claim saved to Airtable");
+        // TODO: Send email with offer details (set up Airtable automation or email service)
+        console.log("📧 Would send offer email to:", email);
       } else {
         console.warn(
-          "⚠️ Lead submission to Airtable failed, but showing success to user"
+          "⚠️ Offer claim submission to Airtable failed, but showing success to user"
         );
       }
 
@@ -10370,21 +10303,18 @@ function requestConsultation() {
                           48
                         )}</div>
                     </div>
-                    <h2 class="modal-title">Consultation Request Received!</h2>
-                    <p class="success-message">We've received your consultation request and will contact you shortly to schedule your personalized facial analysis.</p>
-                    <div class="success-details-box">
-                        <div class="success-detail-item">
-                            ${getIconSVG("check", 16)}
-                            <span>Our team will reach out within 24 hours</span>
-                        </div>
-                        <div class="success-detail-item">
-                            ${getIconSVG("check", 16)}
-                            <span>We'll discuss your aesthetic goals</span>
-                        </div>
-                        <div class="success-detail-item">
-                            ${getIconSVG("check", 16)}
-                            <span>Schedule your personalized consultation</span>
-                        </div>
+                    <h2 class="modal-title">Offer Claimed!</h2>
+                    <p class="success-message">Your $50 off offer has been claimed! Check your email for your offer details and redemption terms.</p>
+                    <div class="success-details-box" style="text-align: left; background: #f5f5f5; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                        <strong style="display: block; margin-bottom: 8px;">Redemption Terms:</strong>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6;">
+                            <li>Offer valid for new patients only</li>
+                            <li>Must be redeemed within 90 days of claim date</li>
+                            <li>Cannot be combined with other offers or promotions</li>
+                            <li>Valid for services over $200</li>
+                            <li>One offer per person</li>
+                            <li>Subject to provider availability</li>
+                        </ul>
                     </div>
                     <button class="modal-submit-button consultation-close-btn" onclick="closeRequestModal()">Got it!</button>
                 </div>
@@ -14525,3 +14455,6 @@ function analyzeConcernMapping() {
 
 // Make analysis function globally accessible
 window.analyzeConcernMapping = analyzeConcernMapping;
+
+// Expose CASE_CATEGORY_MAPPING for use by minimalist version
+window.CASE_CATEGORY_MAPPING = CASE_CATEGORY_MAPPING;
