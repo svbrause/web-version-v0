@@ -14,9 +14,11 @@ export default async function handler(req, res) {
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || 'appXblSpAMBQskgzB';
 
   if (!AIRTABLE_API_KEY) {
+    console.error('❌ AIRTABLE_API_KEY not configured');
+    console.error('Available env keys:', Object.keys(process.env).filter(k => k.includes('AIRTABLE')));
     return res.status(500).json({ 
       error: 'Server configuration error',
-      message: 'Airtable API key not configured'
+      message: 'Airtable API key not configured. Please set AIRTABLE_API_KEY in Vercel and redeploy.'
     });
   }
 
