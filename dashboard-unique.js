@@ -21,6 +21,10 @@ if (!AIRTABLE_API_KEY) {
   console.error('❌ AIRTABLE_API_KEY is not set. Please configure it in your environment variables or HTML.');
   console.error('   For Vercel: Set AIRTABLE_API_KEY in Settings → Environment Variables');
   console.error('   For local: Set window.AIRTABLE_API_KEY in your HTML file');
+} else {
+  // Log key info for debugging (first 10 chars only for security)
+  console.log('✅ AIRTABLE_API_KEY loaded:', AIRTABLE_API_KEY.substring(0, 10) + '...' + AIRTABLE_API_KEY.substring(AIRTABLE_API_KEY.length - 5));
+  console.log('✅ AIRTABLE_BASE_ID:', AIRTABLE_BASE_ID);
 }
 
 const LEADS_TABLE_NAME = "Web Popup Leads";
@@ -30,6 +34,40 @@ const LEADS_API_URL = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeU
 
 // Provider filter - Unique Aesthetics provider ID
 const PROVIDER_ID = 'recN9Q4W02xtroD6g'; // Unique Aesthetics
+
+// Areas and Issues mapping for grouping issues by area
+const areasAndIssues = {
+  Forehead: [
+    "Forehead Wrinkles", "Glabella Wrinkles", "Brow Asymmetry", "Flat Forehead",
+    "Brow Ptosis", "Temporal Hollow"
+  ],
+  Eyes: [
+    "Crow's Feet Wrinkles", "Under Eye Wrinkles", "Under Eye Dark Circles",
+    "Excess Upper Eyelid Skin", "Lower Eyelid - Excess Skin", "Upper Eyelid Droop",
+    "Lower Eyelid Sag", "Lower Eyelid Bags", "Under Eye Hollow", "Upper Eye Hollow"
+  ],
+  Cheeks: [
+    "Mid Cheek Flattening", "Cheekbone - Not Prominent", "Heavy Lateral Cheek",
+    "Lower Cheeks - Volume Depletion"
+  ],
+  Nose: ["Crooked Nose", "Droopy Tip", "Dorsal Hump", "Tip Droop When Smiling"],
+  Lips: [
+    "Thin Lips", "Lacking Philtral Column", "Long Philtral Column", "Gummy Smile",
+    "Asymmetric Lips", "Dry Lips", "Lip Thinning When Smiling"
+  ],
+  "Chin/Jaw": [
+    "Retruded Chin", "Over-Projected Chin", "Asymmetric Chin", "Jowls",
+    "Ill-Defined Jawline", "Asymmetric Jawline", "Masseter Hypertrophy", "Prejowl Sulcus"
+  ],
+  Neck: [
+    "Neck Lines", "Loose Neck Skin", "Platysmal Bands", "Excess/Submental Fullness"
+  ],
+  Skin: [
+    "Dark Spots", "Red Spots", "Scars", "Dry Skin", "Whiteheads", "Blackheads",
+    "Crepey Skin", "Nasolabial Folds", "Marionette Lines", "Bunny Lines", "Perioral Wrinkles"
+  ],
+  Body: ["Unwanted Hair", "Stubborn Fat"]
+};
 
 // Facial Analysis Configuration
 const JOTFORM_URL = 'https://form.jotform.com/YOUR_FORM_ID'; // Update with your actual Jotform URL
@@ -301,14 +339,15 @@ const MOCK_LEADS = [
 // Global state
 let leads = [];
 let filteredLeads = [];
-let currentView = 'kanban';
+let currentView = 'list';
 let currentFilter = 'all';
-let currentSortField = 'createdAt';
+let currentSortField = 'lastContact';
 let currentSortOrder = 'desc';
 let archivedSortField = 'createdAt';
 let archivedSortOrder = 'desc';
 let currentLeadId = null;
 let isLoading = false;
+let facialAnalysisSearchTerm = ''; // Search term for facial analysis view
 
 // Helper to create relative dates
 function getRelativeDate(daysAgo, hoursAgo = 0) {
@@ -324,6 +363,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initNavigation();
   
+  // Set initial view to list (All Leads)
+  switchView('list');
+  
   // Render empty dashboard immediately so page appears instantly
   renderDashboard();
   
@@ -335,11 +377,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   }).catch((error) => {
     console.error("Failed to load from Airtable:", error);
-    // Fallback to mock data if Airtable fails
+    // Don't use mock data - show empty state instead
     if (!USE_MOCK_DATA) {
-      console.log("Falling back to mock data for demo...");
-      leads = [...MOCK_LEADS];
-      filteredLeads = [...leads];
+      console.log("No leads available - Airtable connection failed");
+      leads = [];
+      filteredLeads = [];
       renderDashboard();
     }
   });
@@ -395,6 +437,27 @@ function initNavigation() {
       switchView(view);
     });
   });
+  
+  // Initialize search input handler
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    // Remove old listener if exists
+    searchInput.removeEventListener('input', handleSearchInput);
+    // Add new listener
+    searchInput.addEventListener('input', handleSearchInput);
+  }
+}
+
+// Handle search input
+function handleSearchInput(e) {
+  const searchTerm = e.target.value.toLowerCase().trim();
+  if (currentView === 'facial-analysis') {
+    facialAnalysisSearchTerm = searchTerm;
+    renderFacialAnalysis();
+  } else {
+    // Handle search for other views (list, etc.)
+    // This would need to be implemented for other views if needed
+  }
 }
 
 function switchView(view) {
@@ -410,17 +473,38 @@ function switchView(view) {
     v.classList.remove('active');
   });
   
+  // Hide kanban view - redirect to list view instead
+  if (view === 'kanban') {
+    view = 'list';
+    currentView = 'list';
+    // Update nav to show list as active
+    document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+      item.classList.toggle('active', item.dataset.view === 'list');
+    });
+  }
+  
   document.getElementById(`${view}-view`).classList.add('active');
   
   // Update title
   const titles = {
-    kanban: 'Lead Board',
+    kanban: 'All Leads',
     list: 'All Leads',
     'facial-analysis': 'Facial Analysis',
     analytics: 'Analytics',
     archived: 'Archived Leads'
   };
   document.getElementById('page-title').textContent = titles[view] || view;
+  
+  // Clear search when switching views
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    if (view === 'facial-analysis') {
+      // Keep search term for facial analysis
+    } else {
+      searchInput.value = '';
+      facialAnalysisSearchTerm = '';
+    }
+  }
   
   // Render view
   if (view === 'analytics') {
@@ -429,6 +513,10 @@ function switchView(view) {
     renderFacialAnalysis();
   } else if (view === 'archived') {
     renderArchivedLeads();
+  } else if (view === 'list') {
+    renderList();
+  } else if (view === 'list') {
+    renderList();
   }
 }
 
@@ -436,9 +524,12 @@ function switchView(view) {
 // Only requesting fields that actually exist in the tables
 function getFieldsForTable(tableName) {
   if (tableName === "Web Popup Leads") {
-    // Based on actual fields found: Name, Email Address, Phone Number, Status, Contacted, Created
+    // Fetch all fields from the lead capture form
     return [
-      "Name", "Email Address", "Phone Number", "Status", "Contacted", "Archived", "Offer Claimed"
+      "Name", "Email Address", "Phone Number", "Status", "Contacted", "Archived", "Offer Claimed",
+      "Goals", "Concerns", "Aesthetic Goals", "Age Range", "Age", "Source",
+      "Skin Type", "Skin Tone", "Ethnic Background", "Areas", 
+      "Engagement Level", "Cases Viewed Count", "Total Cases Available", "Concerns Explored"
     ];
   } else if (tableName === "Patients") {
     // Based on actual fields found: Name, Email, Patient Phone Number, Age (from Form Submissions), Status, Contacted
@@ -449,6 +540,10 @@ function getFieldsForTable(tableName) {
       "Name (from Interest Items)", "Areas of Interest (from Form Submissions)",
       "Which regions of your face do you want to improve? (from Form Submissions)",
       "What would you like to improve? (from Form Submissions)",
+      "Do you have any skin complaints? (from Form Submissions)",
+      "Processed Areas of Interest (from Form Submissions)",
+      "Name (from All Issues) (from Analyses)",
+      "Issues String (from Patient-Issue/Suggestion Mapping) (from Interest Items)",
       "Pending/Opened", "Front Photo", "Archived"
     ];
   }
@@ -495,8 +590,16 @@ async function fetchTableRecords(tableName, filterFormula = null) {
     });
 
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMsg = errorData.error?.message || response.statusText;
+      console.error(`❌ Airtable API error for ${tableName}:`, {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorData.error,
+        url: url.substring(0, 100) + '...'
+      });
       throw new Error(
-        `Airtable API error for ${tableName}: ${response.status} ${response.statusText}`
+        `Airtable API error for ${tableName}: ${response.status} ${errorMsg}`
       );
     }
 
@@ -527,7 +630,11 @@ function mapRecordToLead(record, tableName) {
     name: fields["Name"] || "",
     email: tableName === "Patients" ? (fields["Email"] || "") : (fields["Email Address"] || ""),
     phone: tableName === "Patients" ? (fields["Patient Phone Number"] || "") : (fields["Phone Number"] || ""),
-    age: tableName === "Patients" ? (fields["Age (from Form Submissions)"] || null) : (fields["Age"] || null),
+    // For Web Popup Leads: prefer Age Range (from form) over Age (number), for Patients: use Age from Form Submissions
+    age: tableName === "Patients" 
+      ? (fields["Age (from Form Submissions)"] || null) 
+      : (fields["Age Range"] || fields["Age"] || null),
+    ageRange: tableName === "Patients" ? null : (fields["Age Range"] || null), // Age Range for Web Popup Leads
     // Map Goals: For Patients, use "Name (from Interest Items)" (treatment names), for Web Popup Leads use "Goals"
     goals: tableName === "Patients" 
       ? (Array.isArray(fields["Name (from Interest Items)"]) ? fields["Name (from Interest Items)"] : [])
@@ -542,8 +649,29 @@ function mapRecordToLead(record, tableName) {
               ? fields["What would you like to improve? (from Form Submissions)"].join(", ")
               : "")
           || "")
-      : (fields["Concerns"] || ""),
-    aestheticGoals: fields["Aesthetic Goals"] || fields["Notes"] || "",
+      : (Array.isArray(fields["Concerns"]) ? fields["Concerns"] : (fields["Concerns"] || "")),
+    // Areas field (separate from Concerns for Web Popup Leads)
+    areas: tableName === "Patients" ? null : (Array.isArray(fields["Areas"]) ? fields["Areas"] : (fields["Areas"] || null)),
+    // Aesthetic Goals: For Web Popup Leads use "Aesthetic Goals", for Patients use "What would you like to improve? (from Form Submissions)"
+    // Handle both string and array formats from Airtable
+    aestheticGoals: (() => {
+      let value = tableName === "Patients" 
+        ? (fields["What would you like to improve? (from Form Submissions)"] || fields["Notes"] || "")
+        : (fields["Aesthetic Goals"] || fields["Notes"] || "");
+      // Convert array to string if needed
+      if (Array.isArray(value)) {
+        return value.join(", ");
+      }
+      return value || "";
+    })(),
+    // Demographics for Web Popup Leads
+    skinType: tableName === "Patients" ? null : (fields["Skin Type"] || null),
+    skinTone: tableName === "Patients" ? null : (fields["Skin Tone"] || null),
+    ethnicBackground: tableName === "Patients" ? null : (fields["Ethnic Background"] || null),
+    engagementLevel: tableName === "Patients" ? null : (fields["Engagement Level"] || null),
+    casesViewedCount: tableName === "Patients" ? null : (fields["Cases Viewed Count"] || null),
+    totalCasesAvailable: tableName === "Patients" ? null : (fields["Total Cases Available"] || null),
+    concernsExplored: tableName === "Patients" ? null : (Array.isArray(fields["Concerns Explored"]) ? fields["Concerns Explored"] : (fields["Concerns Explored"] || null)),
     // For Patients table, Photos Viewed might be a string, so parse it
     photosLiked: Array.isArray(fields["Liked Photos"]) ? fields["Liked Photos"].length : 0,
     photosViewed: tableName === "Patients" 
@@ -563,6 +691,35 @@ function mapRecordToLead(record, tableName) {
     tableSource: tableName, // Track which table it came from
     facialAnalysisStatus: fields["Pending/Opened"] || null, // Facial analysis status
     frontPhoto: tableName === "Patients" ? (fields["Front Photo"] || null) : null, // Front photo attachment
+    allIssues: tableName === "Patients" ? (fields["Name (from All Issues) (from Analyses)"] || "") : "", // All issues found by analysis
+    // Use "Name (from Interest Items)" for suggestion names (e.g., "Hydrate Lips", "Balance Lips")
+    // This contains the actual suggestion/treatment names the patient is interested in
+    interestedIssues: tableName === "Patients" 
+      ? (Array.isArray(fields["Name (from Interest Items)"]) 
+          ? fields["Name (from Interest Items)"].join(', ') 
+          : (fields["Name (from Interest Items)"] || ""))
+      : "",
+    // Additional Facial Analysis Form fields
+    whichRegions: tableName === "Patients" 
+      ? (Array.isArray(fields["Which regions of your face do you want to improve? (from Form Submissions)"])
+          ? fields["Which regions of your face do you want to improve? (from Form Submissions)"].join(", ")
+          : (fields["Which regions of your face do you want to improve? (from Form Submissions)"] || ""))
+      : "",
+    skinComplaints: tableName === "Patients"
+      ? (Array.isArray(fields["Do you have any skin complaints? (from Form Submissions)"])
+          ? fields["Do you have any skin complaints? (from Form Submissions)"].join(", ")
+          : (fields["Do you have any skin complaints? (from Form Submissions)"] || ""))
+      : "",
+    processedAreasOfInterest: tableName === "Patients"
+      ? (Array.isArray(fields["Processed Areas of Interest (from Form Submissions)"])
+          ? fields["Processed Areas of Interest (from Form Submissions)"].join(", ")
+          : (fields["Processed Areas of Interest (from Form Submissions)"] || ""))
+      : "",
+    areasOfInterestFromForm: tableName === "Patients"
+      ? (Array.isArray(fields["Areas of Interest (from Form Submissions)"])
+          ? fields["Areas of Interest (from Form Submissions)"].join(", ")
+          : (fields["Areas of Interest (from Form Submissions)"] || ""))
+      : "", // Suggestion names patient is interested in
     archived: fields["Archived"] || false, // Archived status
     offerClaimed: fields["Offer Claimed"] || false, // Offer claimed status
     // Contact history will be loaded separately from Contact History table
@@ -808,11 +965,15 @@ async function loadLeadsFromAirtable() {
       return hasName && hasContact;
     });
 
-    // Merge real leads with mock leads (real leads first, then mock)
-    leads = [...validAirtableLeads, ...MOCK_LEADS];
+    // Use only real leads (mock leads hidden for now)
+    leads = [...validAirtableLeads];
 
     // Sort by most recent first
-    leads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    leads.sort((a, b) => {
+      const aDate = new Date(a.lastContact || a.createdAt);
+      const bDate = new Date(b.lastContact || b.createdAt);
+      return bDate - aDate;
+    });
     filteredLeads = [...leads];
 
     // Load contact history for all real leads
@@ -821,13 +982,13 @@ async function loadLeadsFromAirtable() {
     const webPopupCount = validAirtableLeads.filter(l => l.tableSource === "Web Popup Leads").length;
     const patientsCount = validAirtableLeads.filter(l => l.tableSource === "Patients").length;
     const loadTime = ((performance.now() - startTime) / 1000).toFixed(2);
-    console.log(`Loaded ${validAirtableLeads.length} real leads (${webPopupCount} from Web Popup Leads, ${patientsCount} from Patients) + ${MOCK_LEADS.length} demo leads in ${loadTime}s`);
+    console.log(`Loaded ${validAirtableLeads.length} real leads (${webPopupCount} from Web Popup Leads, ${patientsCount} from Patients) in ${loadTime}s`);
   } catch (error) {
     console.error("Error loading leads from Airtable:", error);
-    // Fallback to mock data on error
-    leads = [...MOCK_LEADS];
-    filteredLeads = [...leads];
-    console.log("⚠️ Using mock data due to Airtable error");
+    // Don't use mock data - show empty state instead
+    leads = [];
+    filteredLeads = [];
+    console.log("⚠️ No leads loaded due to Airtable error");
   } finally {
     isLoading = false;
     hideLoadingState();
@@ -941,127 +1102,706 @@ function renderKanban() {
   });
 }
 
-// Facial Analysis Kanban Board
+// Facial Analysis Card Grid View
+let expandedFacialCardId = null;
+
 function renderFacialAnalysis() {
-  // Include both Web Popup Leads (not started) and Patients (with status)
   // Only show active (non-archived) leads
   const allLeads = leads.filter(l => !l.archived);
   
-  // Separate into Web Popup Leads (not started) and Patients (with status)
-  const webPopupLeads = leads.filter(l => l.tableSource === "Web Popup Leads");
-  const patients = leads.filter(l => l.tableSource === "Patients");
-  
-  console.log('Facial Analysis - Web Popup Leads:', webPopupLeads.length, 'Patients:', patients.length);
-  
-  // Map facial analysis statuses (order matters - first is leftmost)
-  const facialStatusMap = {
-    'not-started': { id: 'not-started', countId: 'count-facial-not-started' },
-    'pending': { id: 'pending', countId: 'count-facial-pending' },
-    'ready': { id: 'ready', countId: 'count-facial-ready' },
-    'Patient Reviewed': { id: 'patient-reviewed', countId: 'count-facial-patient-reviewed' }
-  };
-  
-  // Track which leads have been assigned to avoid duplicates
-  const assignedLeadIds = new Set();
-  
-  // First pass: count pending patients to decide if we should show the column
-  let pendingCount = 0;
-  allLeads.forEach(lead => {
+  // Filter to only show Patients (those who have done facial analysis)
+  let facialAnalysisLeads = allLeads.filter(lead => {
+    // Include Patients table records
     if (lead.tableSource === "Patients") {
-      const facialStatus = String(lead.facialAnalysisStatus || '').trim().toLowerCase();
-      if (facialStatus === 'pending') {
-        pendingCount++;
-      }
+      return true;
     }
+    return false;
   });
   
-  Object.entries(facialStatusMap).forEach(([status, config]) => {
-    const column = document.getElementById(`column-facial-${config.id}`);
-    const count = document.getElementById(config.countId);
-    
-    if (!column || !count) return;
-    
-    // Hide "Pending" column if there are no pending patients
-    if (status === 'pending' && pendingCount === 0) {
-      column.style.display = 'none';
-      return;
-    } else {
-      column.style.display = ''; // Show column
-    }
-    
-    // Filter leads by facial analysis status
-    const statusLeads = allLeads.filter(lead => {
-      // Skip if already assigned to another column
-      if (assignedLeadIds.has(lead.id)) return false;
-      
-      // Handle "not-started" - includes Web Popup Leads and Patients with no status
-      if (status === 'not-started') {
-        // All Web Popup Leads go to "Not Started" (they haven't done facial analysis)
-        if (lead.tableSource === "Web Popup Leads") {
-          assignedLeadIds.add(lead.id);
-          return true;
-        }
-        
-        // Patients with no status also go to "Not Started"
-        const facialStatus = lead.facialAnalysisStatus;
-        if (facialStatus === null || facialStatus === undefined || facialStatus === '') {
-          assignedLeadIds.add(lead.id);
-          return true;
-        }
-        // Also check if it's a string with only whitespace or "null"/"undefined" strings
-        const trimmed = String(facialStatus).trim();
-        if (trimmed === '' || trimmed.toLowerCase() === 'null' || trimmed.toLowerCase() === 'undefined') {
-          assignedLeadIds.add(lead.id);
-          return true;
-        }
-        return false;
-      }
-      
-      // For other statuses, only check Patients table (Web Popup Leads don't have these statuses)
-      if (lead.tableSource !== "Patients") return false;
-      
-      const facialStatus = lead.facialAnalysisStatus;
-      const normalizedStatus = String(facialStatus || '').trim().toLowerCase();
-      const normalizedTarget = status.toLowerCase();
-      
-      if (normalizedStatus === normalizedTarget) {
-        assignedLeadIds.add(lead.id);
-        return true;
-      }
-      
-      return false;
+  // Apply search filter if search term exists
+  if (facialAnalysisSearchTerm) {
+    facialAnalysisLeads = facialAnalysisLeads.filter(lead => {
+      const searchLower = facialAnalysisSearchTerm.toLowerCase();
+      const nameMatch = (lead.name || '').toLowerCase().includes(searchLower);
+      const emailMatch = (lead.email || '').toLowerCase().includes(searchLower);
+      const phoneMatch = (lead.phone || '').toLowerCase().includes(searchLower);
+      return nameMatch || emailMatch || phoneMatch;
     });
-    
-    count.textContent = statusLeads.length;
-    
-    if (statusLeads.length === 0) {
-      column.innerHTML = `
-        <div class="empty-state">
-          <p class="empty-state-text">No patients</p>
-        </div>
-      `;
-      return;
-    }
-    
-    column.innerHTML = statusLeads.map(lead => createLeadCard(lead)).join('');
-  });
-  
-  // Log any unassigned leads (shouldn't happen, but good for debugging)
-  const unassigned = allLeads.filter(l => !assignedLeadIds.has(l.id));
-  if (unassigned.length > 0) {
-    console.warn('Unassigned leads in facial analysis:', unassigned.map(l => ({
-      name: l.name,
-      table: l.tableSource,
-      status: l.facialAnalysisStatus
-    })));
   }
   
-  // Add drag listeners
-  document.querySelectorAll('#facial-analysis-board .lead-card').forEach(card => {
-    card.addEventListener('dragstart', handleDragStart);
-    card.addEventListener('dragend', handleDragEnd);
-    card.addEventListener('click', () => viewLeadDetails(card.dataset.id));
+  const container = document.getElementById('facial-analysis-view');
+  if (!container) return;
+  
+  if (facialAnalysisLeads.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 60px 20px; color: #666;">
+        <p style="font-size: 16px;">${facialAnalysisSearchTerm ? 'No patients found matching your search.' : 'No facial analysis patients yet.'}</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = `
+    <div class="facial-analysis-cards-grid" id="facial-analysis-cards-grid" style="display: grid !important; grid-template-columns: repeat(auto-fill, minmax(280px, 320px)) !important; gap: 16px !important; padding: 20px !important; justify-content: start !important; width: 100% !important; box-sizing: border-box !important;">
+      ${facialAnalysisLeads.map(lead => createFacialAnalysisCard(lead)).join('')}
+    </div>
+  `;
+  
+  // Add click listeners for card - show issues modal using event delegation
+  const grid = document.getElementById('facial-analysis-cards-grid');
+  if (grid) {
+    // Remove old listener if exists
+    grid.removeEventListener('click', handleFacialCardClick);
+    // Add new listener
+    grid.addEventListener('click', handleFacialCardClick);
+  }
+}
+
+// Handle facial analysis card clicks
+function handleFacialCardClick(e) {
+  const card = e.target.closest('.facial-analysis-card');
+  if (!card) return;
+  
+  // Don't trigger if clicking on the expand button
+  if (e.target.closest('.expand-card-btn')) return;
+  
+  const leadId = card.dataset.id;
+  if (leadId) {
+    showPatientIssuesModal(leadId);
+  }
+}
+
+function createFacialAnalysisCard(lead) {
+  const isExpanded = expandedFacialCardId === lead.id;
+  
+  // Get front photo URL if available
+  let frontPhotoUrl = null;
+  if (lead.frontPhoto && Array.isArray(lead.frontPhoto) && lead.frontPhoto.length > 0) {
+    const attachment = lead.frontPhoto[0];
+    frontPhotoUrl = attachment.thumbnails?.large?.url || 
+                    attachment.thumbnails?.full?.url ||
+                    attachment.url;
+  }
+  
+  // Get findings (concerns) and interests (goals)
+  const findings = typeof lead.concerns === 'string' 
+    ? lead.concerns.split(',').map(c => c.trim()).filter(c => c)
+    : (Array.isArray(lead.concerns) ? lead.concerns : []);
+  
+  const interests = lead.goals || [];
+  
+  // Format date - use createdAt or lastContact, whichever is available
+  const cardDate = lead.createdAt || lead.lastContact || new Date().toISOString();
+  const formattedDate = formatRelativeDate(cardDate);
+  
+  return `
+    <div class="facial-analysis-card ${isExpanded ? 'expanded' : ''}" data-id="${lead.id}">
+      <div class="facial-card-content">
+        <div class="facial-card-photo">
+          ${frontPhotoUrl ? `
+            <img src="${frontPhotoUrl}" alt="${lead.name}" />
+          ` : `
+            <div class="facial-card-photo-placeholder">${lead.name.charAt(0).toUpperCase()}</div>
+          `}
+        </div>
+        <div class="facial-card-details">
+          <div class="facial-card-name">${lead.name}</div>
+          <div class="facial-card-info">
+            <div class="facial-card-email">${lead.email || 'No email'}</div>
+            ${lead.phone ? `<div class="facial-card-phone">${lead.phone}</div>` : ''}
+            <div class="facial-card-date">${formattedDate}</div>
+            <div class="facial-card-status">
+              <span class="status-badge" style="
+                padding: 4px 12px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 500;
+                display: inline-block;
+                background: ${getFacialStatusColor(lead.facialAnalysisStatus)};
+                color: white;
+              ">${formatFacialStatus(lead.facialAnalysisStatus)}</span>
+            </div>
+          </div>
+        </div>
+        <button class="expand-card-btn" onclick="event.stopPropagation(); toggleFacialCardExpansion('${lead.id}')">
+          ${isExpanded ? '▼' : '▶'}
+        </button>
+      </div>
+      ${isExpanded ? `
+        <div class="facial-card-expanded">
+          <div class="facial-card-section">
+            <div class="facial-card-section-title">Findings</div>
+            <div class="facial-card-tags">
+              ${findings.length > 0 
+                ? findings.map(f => `<span class="facial-tag">${f}</span>`).join('')
+                : '<span class="no-data">No findings recorded</span>'
+              }
+            </div>
+          </div>
+          <div class="facial-card-section">
+            <div class="facial-card-section-title">Interests</div>
+            <div class="facial-card-tags">
+              ${interests.length > 0 
+                ? interests.map(i => `<span class="facial-tag interest">${i}</span>`).join('')
+                : '<span class="no-data">No interests recorded</span>'
+              }
+            </div>
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function toggleFacialCardExpansion(leadId) {
+  if (expandedFacialCardId === leadId) {
+    expandedFacialCardId = null;
+  } else {
+    expandedFacialCardId = leadId;
+  }
+  renderFacialAnalysis();
+}
+
+// Function to map an issue name to its area
+function getIssueArea(issueName) {
+  // Normalize issue name for matching (case-insensitive, trim whitespace)
+  const normalizedIssue = issueName.trim();
+  
+  // Check each area's issues
+  for (const [area, issues] of Object.entries(areasAndIssues)) {
+    if (issues.some(issue => issue.toLowerCase() === normalizedIssue.toLowerCase())) {
+      return area;
+    }
+  }
+  
+  // If not found in mapping, try to infer from name
+  const issueLower = normalizedIssue.toLowerCase();
+  if (issueLower.includes('forehead') || issueLower.includes('brow') || issueLower.includes('glabella') || issueLower.includes('temporal')) {
+    return 'Forehead';
+  } else if (issueLower.includes('eye') || issueLower.includes('eyelid') || issueLower.includes('crow')) {
+    return 'Eyes';
+  } else if (issueLower.includes('cheek')) {
+    return 'Cheeks';
+  } else if (issueLower.includes('nose') || issueLower.includes('nasal')) {
+    return 'Nose';
+  } else if (issueLower.includes('lip') || issueLower.includes('mouth') || issueLower.includes('philtral') || issueLower.includes('gummy')) {
+    return 'Lips';
+  } else if (issueLower.includes('chin') || issueLower.includes('jaw') || issueLower.includes('jowl') || issueLower.includes('masseter')) {
+    return 'Chin/Jaw';
+  } else if (issueLower.includes('neck') || issueLower.includes('platysmal') || issueLower.includes('submental')) {
+    return 'Neck';
+  } else if (issueLower.includes('spot') || issueLower.includes('scar') || issueLower.includes('skin') || issueLower.includes('wrinkle') || issueLower.includes('line') || issueLower.includes('fold')) {
+    return 'Skin';
+  } else if (issueLower.includes('hair') || issueLower.includes('fat') || issueLower.includes('body')) {
+    return 'Body';
+  }
+  
+  return 'Other'; // Default category for unmapped issues
+}
+
+// Function to group issues by area
+function groupIssuesByArea(issuesString) {
+  if (!issuesString || typeof issuesString !== 'string') return {};
+  
+  // Split by comma and clean up
+  const issues = issuesString.split(',').map(issue => issue.trim()).filter(issue => issue);
+  
+  // Group by area
+  const grouped = {};
+  issues.forEach(issue => {
+    const area = getIssueArea(issue);
+    if (!grouped[area]) {
+      grouped[area] = [];
+    }
+    grouped[area].push(issue);
   });
+  
+  return grouped;
+}
+
+// Show modal with patient issues grouped by area
+// Generate Analysis Results HTML (for collapsible section)
+function generateAnalysisResultsHTML(lead) {
+  // Get all issues and interested issues
+  // Handle both array and string formats from Airtable
+  let allIssues = [];
+  if (Array.isArray(lead.allIssues)) {
+    allIssues = lead.allIssues.filter(i => i && i.trim());
+  } else if (typeof lead.allIssues === 'string') {
+    allIssues = lead.allIssues.split(',').map(i => i.trim()).filter(i => i);
+  }
+  
+  // Handle interested issues (suggestion names like "Hydrate Lips", "Balance Lips")
+  // This comes from "Name (from Interest Items)" field which contains suggestion/treatment names
+  let interestedIssues = [];
+  if (Array.isArray(lead.interestedIssues)) {
+    interestedIssues = lead.interestedIssues.filter(i => i && i.trim());
+  } else if (typeof lead.interestedIssues === 'string') {
+    interestedIssues = lead.interestedIssues.split(',').map(i => i.trim()).filter(i => i);
+  }
+  
+  // Get patient goals (focus areas)
+  const patientGoals = Array.isArray(lead.goals) ? lead.goals : (typeof lead.goals === 'string' ? lead.goals.split(',').map(g => g.trim()) : []);
+  
+  // Issue to Suggestion mapping from CSV
+  const issueToSuggestionMap = {
+    "Forehead Wrinkles": "Smoothen Fine Lines",
+    "Crow's Feet Wrinkles": "Smoothen Fine Lines",
+    "Glabella Wrinkles": "Smoothen Fine Lines",
+    "Under Eye Wrinkles": "Smoothen Fine Lines",
+    "Perioral Wrinkles": "Smoothen Fine Lines",
+    "Bunny Lines": "Smoothen Fine Lines",
+    "Neck Lines": "Smoothen Fine Lines",
+    "Dark Spots": "Even Skin Tone",
+    "Red Spots": "Even Skin Tone",
+    "Scars": "Fade Scars",
+    "Dry Skin": "Hydrate Skin",
+    "Whiteheads": "Exfoliate Skin",
+    "Blackheads": "Exfoliate Skin",
+    "Under Eye Dark Circles": "Rejuvenate Lower Eyelids",
+    "Crepey Skin": "Tighten Skin Laxity",
+    "Rosacea [DEPRECATED]": "Even Skin Tone",
+    "Nasolabial Folds": "Shadow Correction",
+    "Marionette Lines": "Shadow Correction",
+    "Temporal Hollow": "Balance Forehead",
+    "Brow Asymmetry": "Balance Brows",
+    "Flat Forehead": "Balance Forehead",
+    "Brow Ptosis": "Balance Brows",
+    "Excess Upper Eyelid Skin": "Rejuvenate Upper Eyelids",
+    "Lower Eyelid - Excess Skin": "Rejuvenate Lower Eyelids",
+    "Upper Eyelid Droop": "Rejuvenate Upper Eyelids",
+    "Lower Eyelid Sag": "Rejuvenate Lower Eyelids",
+    "Lower Eyelid Bags": "Rejuvenate Lower Eyelids",
+    "Under Eye Hollow": "Rejuvenate Lower Eyelids",
+    "Upper Eye Hollow": "Rejuvenate Upper Eyelids",
+    "Mid Cheek Flattening": "Improve Cheek Definition",
+    "Cheekbone - Not Prominent": "Improve Cheek Definition",
+    "Heavy Lateral Cheek": "Contour Cheeks",
+    "Crooked Nose": "Balance Nose",
+    "Droopy Tip": "Balance Nose",
+    "Dorsal Hump": "Balance Nose",
+    "Tip Droop When Smiling": "Balance Nose",
+    "Thin Lips": "Balance Lips",
+    "Lacking Philtral Column": "Balance Lips",
+    "Long Philtral Column": "Balance Lips",
+    "Gummy Smile": "Balance Lips",
+    "Asymmetric Lips": "Balance Lips",
+    "Dry Lips": "Hydrate Lips",
+    "Lip Thinning When Smiling": "Balance Lips",
+    "Retruded Chin": "Balance Jawline",
+    "Over-Projected Chin": "Contour Jawline",
+    "Asymmetric Chin": "Balance Jawline",
+    "Jowls": "Contour Jawline",
+    "Lower Cheeks - Volume Depletion": "Improve Cheek Definition",
+    "Ill-Defined Jawline": "Contour Jawline",
+    "Asymmetric Jawline": "Balance Jawline",
+    "Masseter Hypertrophy": "Contour Jawline",
+    "Prejowl Sulcus": "Balance Jawline",
+    "Loose Neck Skin": "Contour Neck",
+    "Platysmal Bands": "Contour Neck",
+    "Excess/Submental Fullness": "Contour Jawline"
+  };
+  
+  // Create a function to match suggestion names (from interestedIssues) to issues
+  function findMatchingInterests(issue, issueArea) {
+    const matchingInterests = [];
+    const issueLower = issue.toLowerCase().trim();
+    
+    const mappedSuggestion = issueToSuggestionMap[issue];
+    if (mappedSuggestion) {
+      const mappedSuggestionLower = mappedSuggestion.toLowerCase();
+      if (interestedIssues.some(interest => interest.toLowerCase().trim() === mappedSuggestionLower)) {
+        matchingInterests.push(mappedSuggestion);
+      }
+    }
+    
+    interestedIssues.forEach(interest => {
+      const interestLower = interest.toLowerCase().trim();
+      if (interestLower === issueLower && !matchingInterests.includes(interest)) {
+        matchingInterests.push(interest);
+      }
+    });
+    
+    return [...new Set(matchingInterests)];
+  }
+  
+  const interestedSet = new Set(interestedIssues.map(i => i.toLowerCase().trim()));
+  
+  // Determine which areas are focus areas based on goals
+  const focusAreas = new Set();
+  patientGoals.forEach(goal => {
+    const goalLower = goal.toLowerCase();
+    if (goalLower.includes('lip') || goalLower.includes('lips')) focusAreas.add('Lips');
+    if (goalLower.includes('eye') || goalLower.includes('eyes')) focusAreas.add('Eyes');
+    if (goalLower.includes('cheek') || goalLower.includes('cheeks')) focusAreas.add('Cheeks');
+    if (goalLower.includes('forehead') || goalLower.includes('brow')) focusAreas.add('Forehead');
+    if (goalLower.includes('chin') || goalLower.includes('jaw')) focusAreas.add('Chin/Jaw');
+    if (goalLower.includes('neck')) focusAreas.add('Neck');
+    if (goalLower.includes('skin')) focusAreas.add('Skin');
+    if (goalLower.includes('nose')) focusAreas.add('Nose');
+  });
+  
+  // Group all issues by area
+  const groupedIssues = {};
+  allIssues.forEach(issue => {
+    const area = getIssueArea(issue);
+    if (!groupedIssues[area]) {
+      groupedIssues[area] = [];
+    }
+    groupedIssues[area].push(issue);
+  });
+  
+  // Sort areas in a logical order
+  const areaOrder = ['Forehead', 'Eyes', 'Cheeks', 'Nose', 'Lips', 'Chin/Jaw', 'Neck', 'Skin', 'Body', 'Other'];
+  const sortedAreas = Object.keys(groupedIssues).sort((a, b) => {
+    const aIndex = areaOrder.indexOf(a);
+    const bIndex = areaOrder.indexOf(b);
+    if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+  
+  if (sortedAreas.length === 0) {
+    return `
+      <div class="no-issues-message" style="padding: 40px 20px; text-align: center; color: #666;">
+        <p>No issues found for this patient.</p>
+      </div>
+    `;
+  }
+  
+  let html = '';
+  sortedAreas.forEach(area => {
+    const issues = groupedIssues[area];
+    const isFocusArea = focusAreas.has(area);
+    html += `
+      <div class="issues-area-group" style="margin-bottom: 24px;">
+        <h3 class="issues-area-title" style="font-size: 16px; font-weight: 600; color: #212121; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          ${area}
+          ${isFocusArea ? '<span class="focus-area-pill" style="padding: 2px 8px; background: #E1BEE7; color: #6A1B9A; border-radius: 12px; font-size: 11px; font-weight: 500;">Focus Area</span>' : ''}
+        </h3>
+        <div class="issues-chips-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;">
+    `;
+    
+    issues.forEach(issue => {
+      const isInterested = interestedSet.has(issue.toLowerCase());
+      const matchingInterests = findMatchingInterests(issue, area);
+      html += `
+        <div class="issue-chip" style="padding: 12px; background: ${isInterested ? '#F3E5F5' : '#f5f5f5'}; border-radius: 8px; border: 1px solid ${isInterested ? '#E1BEE7' : '#e0e0e0'};">
+          <div class="issue-chip-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: ${matchingInterests.length > 0 ? '8px' : '0'};">
+            <span class="issue-chip-name" style="font-size: 13px; font-weight: 500; color: #212121;">${issue}</span>
+            ${isInterested ? '<span class="issue-interest-badge" style="padding: 2px 6px; background: #9C27B0; color: white; border-radius: 4px; font-size: 10px; font-weight: 500;">Interested</span>' : ''}
+          </div>
+          ${matchingInterests.length > 0 ? `
+            <div class="issue-chip-interests" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid ${isInterested ? '#E1BEE7' : '#e0e0e0'};">
+              <span class="issue-chip-interests-label" style="font-size: 11px; color: #666; display: block; margin-bottom: 4px;">Client interested in:</span>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                ${matchingInterests.map(interest => `<span class="issue-chip-interest-item" style="padding: 4px 8px; background: #C5E1A5; color: #33691E; border-radius: 4px; font-size: 11px;">${interest}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    });
+    
+    html += `
+        </div>
+      </div>
+    `;
+  });
+  
+  return html;
+}
+
+function showPatientIssuesModal(leadId) {
+  const lead = leads.find(l => l.id === leadId);
+  if (!lead) return;
+  
+  // Get all issues and interested issues
+  // Handle both array and string formats from Airtable
+  let allIssues = [];
+  if (Array.isArray(lead.allIssues)) {
+    allIssues = lead.allIssues.filter(i => i && i.trim());
+  } else if (typeof lead.allIssues === 'string') {
+    allIssues = lead.allIssues.split(',').map(i => i.trim()).filter(i => i);
+  }
+  
+  // Handle interested issues (suggestion names like "Hydrate Lips", "Balance Lips")
+  // This comes from "Name (from Interest Items)" field which contains suggestion/treatment names
+  let interestedIssues = [];
+  if (Array.isArray(lead.interestedIssues)) {
+    interestedIssues = lead.interestedIssues.filter(i => i && i.trim());
+  } else if (typeof lead.interestedIssues === 'string') {
+    interestedIssues = lead.interestedIssues.split(',').map(i => i.trim()).filter(i => i);
+  }
+  
+  // Get patient goals (focus areas)
+  const patientGoals = Array.isArray(lead.goals) ? lead.goals : (typeof lead.goals === 'string' ? lead.goals.split(',').map(g => g.trim()) : []);
+  
+  // Issue to Suggestion mapping from CSV
+  const issueToSuggestionMap = {
+    "Forehead Wrinkles": "Smoothen Fine Lines",
+    "Crow's Feet Wrinkles": "Smoothen Fine Lines",
+    "Glabella Wrinkles": "Smoothen Fine Lines",
+    "Under Eye Wrinkles": "Smoothen Fine Lines",
+    "Perioral Wrinkles": "Smoothen Fine Lines",
+    "Bunny Lines": "Smoothen Fine Lines",
+    "Neck Lines": "Smoothen Fine Lines",
+    "Dark Spots": "Even Skin Tone",
+    "Red Spots": "Even Skin Tone",
+    "Scars": "Fade Scars",
+    "Dry Skin": "Hydrate Skin",
+    "Whiteheads": "Exfoliate Skin",
+    "Blackheads": "Exfoliate Skin",
+    "Under Eye Dark Circles": "Rejuvenate Lower Eyelids",
+    "Crepey Skin": "Tighten Skin Laxity",
+    "Rosacea [DEPRECATED]": "Even Skin Tone",
+    "Nasolabial Folds": "Shadow Correction",
+    "Marionette Lines": "Shadow Correction",
+    "Temporal Hollow": "Balance Forehead",
+    "Brow Asymmetry": "Balance Brows",
+    "Flat Forehead": "Balance Forehead",
+    "Brow Ptosis": "Balance Brows",
+    "Excess Upper Eyelid Skin": "Rejuvenate Upper Eyelids",
+    "Lower Eyelid - Excess Skin": "Rejuvenate Lower Eyelids",
+    "Upper Eyelid Droop": "Rejuvenate Upper Eyelids",
+    "Lower Eyelid Sag": "Rejuvenate Lower Eyelids",
+    "Lower Eyelid Bags": "Rejuvenate Lower Eyelids",
+    "Under Eye Hollow": "Rejuvenate Lower Eyelids",
+    "Upper Eye Hollow": "Rejuvenate Upper Eyelids",
+    "Mid Cheek Flattening": "Improve Cheek Definition",
+    "Cheekbone - Not Prominent": "Improve Cheek Definition",
+    "Heavy Lateral Cheek": "Contour Cheeks",
+    "Crooked Nose": "Balance Nose",
+    "Droopy Tip": "Balance Nose",
+    "Dorsal Hump": "Balance Nose",
+    "Tip Droop When Smiling": "Balance Nose",
+    "Thin Lips": "Balance Lips",
+    "Lacking Philtral Column": "Balance Lips",
+    "Long Philtral Column": "Balance Lips",
+    "Gummy Smile": "Balance Lips",
+    "Asymmetric Lips": "Balance Lips",
+    "Dry Lips": "Hydrate Lips",
+    "Lip Thinning When Smiling": "Balance Lips",
+    "Retruded Chin": "Balance Jawline",
+    "Over-Projected Chin": "Contour Jawline",
+    "Asymmetric Chin": "Balance Jawline",
+    "Jowls": "Contour Jawline",
+    "Lower Cheeks - Volume Depletion": "Improve Cheek Definition",
+    "Ill-Defined Jawline": "Contour Jawline",
+    "Asymmetric Jawline": "Balance Jawline",
+    "Masseter Hypertrophy": "Contour Jawline",
+    "Prejowl Sulcus": "Balance Jawline",
+    "Loose Neck Skin": "Contour Neck",
+    "Platysmal Bands": "Contour Neck",
+    "Excess/Submental Fullness": "Contour Jawline"
+  };
+  
+  // Create a function to match suggestion names (from interestedIssues) to issues
+  // Uses the exact mapping from CSV to find which suggestions match each issue
+  function findMatchingInterests(issue, issueArea) {
+    const matchingInterests = [];
+    const issueLower = issue.toLowerCase().trim();
+    
+    // First, check if this issue has a mapped suggestion
+    const mappedSuggestion = issueToSuggestionMap[issue];
+    
+    // Check if the patient is interested in the mapped suggestion
+    if (mappedSuggestion) {
+      const mappedSuggestionLower = mappedSuggestion.toLowerCase();
+      // Check if patient is interested in this exact suggestion
+      if (interestedIssues.some(interest => interest.toLowerCase().trim() === mappedSuggestionLower)) {
+        matchingInterests.push(mappedSuggestion);
+      }
+    }
+    
+    // Also check for direct matches (if suggestion name exactly matches issue name)
+    // This handles edge cases where the suggestion name might be the same as the issue name
+    interestedIssues.forEach(interest => {
+      const interestLower = interest.toLowerCase().trim();
+      if (interestLower === issueLower && !matchingInterests.includes(interest)) {
+        matchingInterests.push(interest);
+      }
+    });
+    
+    // Remove duplicates and return
+    return [...new Set(matchingInterests)];
+  }
+  
+  // Create a set for quick lookup (normalize for comparison)
+  const interestedSet = new Set(interestedIssues.map(i => i.toLowerCase().trim()));
+  
+  // Determine which areas are focus areas based on goals
+  const focusAreas = new Set();
+  patientGoals.forEach(goal => {
+    const goalLower = goal.toLowerCase();
+    // Map goals to areas
+    if (goalLower.includes('lip') || goalLower.includes('lips')) focusAreas.add('Lips');
+    if (goalLower.includes('eye') || goalLower.includes('eyes')) focusAreas.add('Eyes');
+    if (goalLower.includes('cheek') || goalLower.includes('cheeks')) focusAreas.add('Cheeks');
+    if (goalLower.includes('forehead') || goalLower.includes('brow')) focusAreas.add('Forehead');
+    if (goalLower.includes('chin') || goalLower.includes('jaw')) focusAreas.add('Chin/Jaw');
+    if (goalLower.includes('neck')) focusAreas.add('Neck');
+    if (goalLower.includes('skin')) focusAreas.add('Skin');
+    if (goalLower.includes('nose')) focusAreas.add('Nose');
+  });
+  
+  // Group all issues by area
+  const groupedIssues = {};
+  allIssues.forEach(issue => {
+    const area = getIssueArea(issue);
+    if (!groupedIssues[area]) {
+      groupedIssues[area] = [];
+    }
+    groupedIssues[area].push(issue);
+  });
+  
+  // Get front photo URL if available
+  let frontPhotoUrl = null;
+  if (lead.frontPhoto && Array.isArray(lead.frontPhoto) && lead.frontPhoto.length > 0) {
+    const attachment = lead.frontPhoto[0];
+    frontPhotoUrl = attachment.thumbnails?.large?.url || 
+                    attachment.thumbnails?.full?.url ||
+                    attachment.url;
+  }
+  
+  // Calculate last activity (most recent contact or facial analysis)
+  // lastContact is already calculated from Contact History table
+  const lastActivityDate = lead.lastContact ? formatDate(lead.lastContact) : (lead.createdAt ? formatDate(lead.createdAt) : 'No activity yet');
+  const lastActivityRelative = lead.lastContact ? formatRelativeDate(lead.lastContact) : (lead.createdAt ? formatRelativeDate(lead.createdAt) : 'No activity yet');
+  
+  // Sort areas in a logical order
+  const areaOrder = ['Forehead', 'Eyes', 'Cheeks', 'Nose', 'Lips', 'Chin/Jaw', 'Neck', 'Skin', 'Body', 'Other'];
+  const sortedAreas = Object.keys(groupedIssues).sort((a, b) => {
+    const aIndex = areaOrder.indexOf(a);
+    const bIndex = areaOrder.indexOf(b);
+    if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+  
+  // Build modal HTML
+  let modalHTML = `
+    <div class="patient-issues-modal-overlay" onclick="closePatientIssuesModal()">
+      <div class="patient-issues-modal" onclick="event.stopPropagation()">
+        <div class="patient-issues-modal-header">
+          <div style="flex: 1;">
+            <h2>Analysis Results for ${lead.name}</h2>
+            <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+              <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #f5f5f5; border-radius: 6px;">
+                <span style="font-size: 12px; color: #666; font-weight: 500;">Last Activity:</span>
+                <span style="font-size: 14px; color: #212121; font-weight: 600;">${lastActivityRelative}</span>
+              </div>
+            </div>
+          </div>
+          <button class="patient-issues-modal-close" onclick="closePatientIssuesModal()">×</button>
+        </div>
+        <div class="patient-issues-modal-body">
+          
+          <div class="detail-section ${frontPhotoUrl ? 'modal-header-with-photo' : ''}" style="margin-bottom: 24px;">
+            ${frontPhotoUrl ? `
+              <div class="modal-photo-container">
+                <img src="${frontPhotoUrl}" alt="${lead.name}" class="modal-photo" />
+              </div>
+            ` : ''}
+            ${generateContactInformationSection(lead, lastActivityRelative, false)}
+          </div>
+          
+          <div class="detail-section" style="margin-bottom: 24px;">
+            <div class="detail-section-title">Analysis Results</div>
+          </div>
+  `;
+  
+  if (sortedAreas.length === 0) {
+    modalHTML += `
+      <div class="no-issues-message">
+        <p>No issues found for this patient.</p>
+      </div>
+    `;
+  } else {
+    sortedAreas.forEach(area => {
+      const issues = groupedIssues[area];
+      const isFocusArea = focusAreas.has(area);
+      modalHTML += `
+        <div class="issues-area-group">
+          <h3 class="issues-area-title">
+            ${area}
+            ${isFocusArea ? '<span class="focus-area-pill">Focus Area</span>' : ''}
+          </h3>
+          <div class="issues-chips-grid">
+      `;
+      
+      issues.forEach(issue => {
+        const isInterested = interestedSet.has(issue.toLowerCase());
+        const matchingInterests = findMatchingInterests(issue, area);
+        modalHTML += `
+          <div class="issue-chip ${isInterested ? 'issue-interested' : ''}">
+            <div class="issue-chip-header">
+              <span class="issue-chip-name">${issue}</span>
+              ${isInterested ? '<span class="issue-interest-badge">Interested</span>' : ''}
+            </div>
+            ${matchingInterests.length > 0 ? `
+              <div class="issue-chip-interests">
+                <span class="issue-chip-interests-label">Client interested in:</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;">
+                  ${matchingInterests.map(interest => `<span class="issue-chip-interest-item">${interest}</span>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      });
+      
+      modalHTML += `
+          </div>
+        </div>
+      `;
+    });
+  }
+  
+  modalHTML += `
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Remove existing modal if any
+  const existingModal = document.querySelector('.patient-issues-modal-overlay');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // Add modal to page
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+// Toggle Analysis Results section
+function toggleAnalysisResults(leadId) {
+  const section = document.getElementById(`analysis-results-section-${leadId}`);
+  const button = document.getElementById(`toggle-analysis-btn-${leadId}`);
+  const text = document.getElementById(`toggle-analysis-text-${leadId}`);
+  const icon = document.getElementById(`toggle-analysis-icon-${leadId}`);
+  
+  if (section && button && text && icon) {
+    if (section.style.display === 'none') {
+      section.style.display = 'block';
+      text.textContent = 'Hide Analysis Results & Interests';
+      icon.style.transform = 'rotate(180deg)';
+    } else {
+      section.style.display = 'none';
+      text.textContent = 'View Analysis Results & Interests';
+      icon.style.transform = 'rotate(0deg)';
+    }
+  }
+}
+
+// Close patient issues modal (kept for backward compatibility)
+function closePatientIssuesModal() {
+  const modal = document.querySelector('.patient-issues-modal-overlay');
+  if (modal) {
+    modal.remove();
+  }
 }
 
 function createLeadCard(lead) {
@@ -1222,6 +1962,10 @@ function handleDrop(e, newStatus) {
 // List View
 function renderList() {
   const tbody = document.getElementById('leads-tbody');
+  if (!tbody) {
+    console.warn('leads-tbody not found, cannot render list');
+    return;
+  }
   let filteredLeads = [...leads];
   
   // Only show active (non-archived) leads in list view
@@ -1361,7 +2105,7 @@ function renderList() {
           <option value="converted" ${lead.status === 'converted' ? 'selected' : ''}>Converted</option>
         </select>
       </td>
-      <td style="font-size: 13px; color: #666;">${formatRelativeDate(lead.createdAt)}</td>
+      <td style="font-size: 13px; color: #666;">${formatRelativeDate(lead.lastContact || lead.createdAt)}</td>
       <td>
         <button class="btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="event.stopPropagation(); viewLeadDetails('${lead.id}')">
           View
@@ -1377,6 +2121,18 @@ function setListFilter(filter) {
     chip.classList.toggle('active', chip.dataset.filter === filter);
   });
   renderList();
+}
+
+function toggleFilters() {
+  const filters = document.getElementById('list-advanced-filters');
+  const icon = document.getElementById('filters-toggle-icon');
+  if (filters.style.display === 'none') {
+    filters.style.display = 'grid';
+    icon.textContent = '▲';
+  } else {
+    filters.style.display = 'none';
+    icon.textContent = '▼';
+  }
 }
 
 function filterLeads() {
@@ -1761,52 +2517,114 @@ function updateLeadStatusFromTable(leadId, newStatus) {
 }
 
 // Lead Details Modal
+// Generate Contact Information section HTML (shared between popups)
+function generateContactInformationSection(lead, lastActivityRelative, enableEdit = true) {
+  return `
+    <div class="modal-contact-section" style="position: relative;">
+      ${enableEdit ? `
+      <button class="edit-toggle-btn" onclick="toggleEditMode()" style="position: absolute; top: 0; right: 0; background: transparent; border: none; padding: 8px; cursor: pointer; color: #666; transition: color 0.2s ease;" onmouseover="this.style.color='#212121'" onmouseout="this.style.color='#666'">
+        <svg id="edit-btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+      </button>
+      ` : ''}
+      <div class="detail-grid" id="contact-fields" style="grid-template-columns: repeat(2, 1fr); gap: 12px;">
+      <div class="detail-field">
+        <div class="detail-label">Name</div>
+        <div class="detail-value" id="display-name">${lead.name}</div>
+        ${enableEdit ? `<input type="text" class="edit-input hidden" id="edit-name" value="${lead.name}" />` : ''}
+      </div>
+      <div class="detail-field">
+        <div class="detail-label">Email</div>
+        <div class="detail-value" id="display-email">${lead.email}</div>
+        ${enableEdit ? `<input type="email" class="edit-input hidden" id="edit-email" value="${lead.email}" />` : ''}
+      </div>
+      ${lead.phone ? `
+      <div class="detail-field">
+        <div class="detail-label">Phone</div>
+        <div class="detail-value" id="display-phone">${lead.phone}</div>
+        ${enableEdit ? `<input type="tel" class="edit-input hidden" id="edit-phone" value="${lead.phone}" oninput="formatPhoneInput(this)" />` : ''}
+      </div>
+      ` : '<div class="detail-field"></div>'}
+      ${(lead.ageRange || lead.age) ? `
+      <div class="detail-field">
+        <div class="detail-label">${lead.ageRange ? 'Age Range' : 'Age'}</div>
+        <div class="detail-value" id="display-age">${lead.ageRange || lead.age}</div>
+        ${enableEdit ? `<input type="text" class="edit-input hidden" id="edit-age" value="${lead.ageRange || lead.age}" />` : ''}
+      </div>
+      ` : (!lead.phone ? '<div class="detail-field"></div>' : '')}
+      ${lead.source ? `
+      <div class="detail-field">
+        <div class="detail-label">Source</div>
+        <div class="detail-value" id="display-source">${lead.source}</div>
+        ${enableEdit ? `
+        <select class="edit-input hidden" id="edit-source">
+          <option value="Walk-in" ${lead.source === 'Walk-in' ? 'selected' : ''}>Walk-in</option>
+          <option value="Phone Call" ${lead.source === 'Phone Call' ? 'selected' : ''}>Phone Call</option>
+          <option value="Referral" ${lead.source === 'Referral' ? 'selected' : ''}>Referral</option>
+          <option value="Social Media" ${lead.source === 'Social Media' ? 'selected' : ''}>Social Media</option>
+          <option value="Website" ${lead.source === 'Website' ? 'selected' : ''}>Website</option>
+          <option value="AI Consult" ${lead.source === 'AI Consult' ? 'selected' : ''}>AI Consult Tool</option>
+          <option value="Early Lead Capture" ${lead.source === 'Early Lead Capture' ? 'selected' : ''}>Early Lead Capture</option>
+          <option value="Consultation Form" ${lead.source === 'Consultation Form' ? 'selected' : ''}>Consultation Form</option>
+          <option value="Other" ${lead.source === 'Other' ? 'selected' : ''}>Other</option>
+        </select>
+        ` : ''}
+      </div>
+      ` : '<div class="detail-field"></div>'}
+      <div class="detail-field">
+        <div class="detail-label">Last Activity</div>
+        <div class="detail-value" id="modal-last-activity">${lastActivityRelative}</div>
+      </div>
+      </div>
+      ${enableEdit ? `
+      <div class="edit-actions hidden" id="edit-actions">
+        <button class="btn-secondary btn-sm" onclick="cancelEdit()">Cancel</button>
+        <button class="btn-primary btn-sm" onclick="saveLeadEdits()">Save Changes</button>
+      </div>
+      ` : ''}
+    </div>
+  `;
+}
+
 function viewLeadDetails(leadId) {
   const lead = leads.find(l => l.id === leadId);
   if (!lead) return;
   
   currentLeadId = leadId;
   
+  // Calculate last activity (most recent contact or creation date)
+  const lastActivityDate = lead.lastContact ? formatDate(lead.lastContact) : (lead.createdAt ? formatDate(lead.createdAt) : 'No activity yet');
+  const lastActivityRelative = lead.lastContact ? formatRelativeDate(lead.lastContact) : (lead.createdAt ? formatRelativeDate(lead.createdAt) : 'No activity yet');
+  
   document.getElementById('modal-lead-name').textContent = lead.name;
   document.getElementById('modal-status').className = `status-badge ${lead.status}`;
   document.getElementById('modal-status').textContent = formatStatus(lead.status);
-  document.getElementById('status-select').value = lead.status;
-  document.getElementById('modal-email-btn').href = `mailto:${lead.email}`;
   
-  // Update archive button
-  const archiveBtn = document.getElementById('archive-btn');
-  const archiveBtnText = document.getElementById('archive-btn-text');
-  if (archiveBtn && archiveBtnText) {
-    if (lead.archived) {
-      archiveBtnText.textContent = 'Unarchive';
-      archiveBtn.className = 'btn-primary btn-sm';
-    } else {
-      archiveBtnText.textContent = 'Archive';
-      archiveBtn.className = 'btn-secondary btn-sm';
-    }
-  }
+  // Note: status-select and modal-email-btn are now in the modal body, so they'll be set after the body is rendered
   
   const appointmentInfo = lead.appointmentDate ? `
-    <div class="detail-section">
       <div class="detail-section-title">Appointment</div>
       <div class="detail-value">${formatDate(lead.appointmentDate)}</div>
-    </div>
   ` : '';
   
-  const conversionInfo = lead.status === 'converted' ? `
-    <div class="detail-section">
+  const conversionInfo = (lead.status === 'converted' && (lead.treatmentReceived || lead.revenue)) ? `
       <div class="detail-section-title">Conversion Details</div>
-      <div class="detail-grid">
+      <div class="detail-grid" style="grid-template-columns: repeat(2, 1fr); gap: 16px;">
+        ${lead.treatmentReceived ? `
         <div class="detail-field">
           <div class="detail-label">Treatment</div>
-          <div class="detail-value">${lead.treatmentReceived || 'N/A'}</div>
+          <div class="detail-value">${lead.treatmentReceived}</div>
         </div>
+        ` : ''}
+        ${lead.revenue ? `
         <div class="detail-field">
           <div class="detail-label">Revenue</div>
-          <div class="detail-value" style="color: #2e7d32; font-weight: 700;">$${lead.revenue?.toLocaleString() || 'N/A'}</div>
+          <div class="detail-value" style="color: #2e7d32; font-weight: 700;">$${lead.revenue.toLocaleString()}</div>
         </div>
+        ` : ''}
       </div>
-    </div>
   ` : '';
   
   // Get front photo URL if available
@@ -1818,124 +2636,294 @@ function viewLeadDetails(leadId) {
                     attachment.url;
   }
   
+  // Determine which forms have been completed
+  const hasWebPopupForm = lead.tableSource === "Web Popup Leads";
+  const hasFacialAnalysisForm = lead.tableSource === "Patients";
+  
+  // Check if Web Popup Leads form has meaningful data (beyond just name/email)
+  const webPopupFormHasData = hasWebPopupForm && (
+    lead.ageRange || 
+    lead.skinType || 
+    lead.skinTone || 
+    lead.ethnicBackground ||
+    ((typeof lead.concerns === 'string' && lead.concerns.trim()) || (Array.isArray(lead.concerns) && lead.concerns.length > 0)) ||
+    (lead.areas && lead.areas.length > 0) ||
+    (lead.aestheticGoals && (typeof lead.aestheticGoals === 'string' ? lead.aestheticGoals.trim() : String(lead.aestheticGoals).trim())) ||
+    (lead.concernsExplored && (Array.isArray(lead.concernsExplored) ? lead.concernsExplored.length > 0 : lead.concernsExplored)) ||
+    lead.offerClaimed
+  );
+  
+  // Check if Facial Analysis form has meaningful data
+  const facialAnalysisFormHasData = hasFacialAnalysisForm && (
+    lead.age ||
+    (lead.aestheticGoals && (typeof lead.aestheticGoals === 'string' ? lead.aestheticGoals.trim() : String(lead.aestheticGoals).trim())) ||
+    lead.whichRegions ||
+    lead.skinComplaints ||
+    lead.areasOfInterestFromForm ||
+    lead.processedAreasOfInterest ||
+    (lead.goals && Array.isArray(lead.goals) && lead.goals.length > 0) ||
+    lead.facialAnalysisStatus ||
+    frontPhotoUrl ||
+    lead.allIssues ||
+    lead.interestItems
+  );
+
   document.getElementById('modal-body').innerHTML = `
-    <div class="detail-section ${frontPhotoUrl ? 'modal-header-with-photo' : ''}">
+    
+    <div class="detail-section ${frontPhotoUrl ? 'modal-header-with-photo' : ''}" style="background: #fafafa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
       ${frontPhotoUrl ? `
         <div class="modal-photo-container">
           <img src="${frontPhotoUrl}" alt="${lead.name}" class="modal-photo" />
         </div>
       ` : ''}
-      <div class="modal-contact-section">
-        <div class="detail-section-title">
-          Contact Information
-          <button class="edit-toggle-btn" onclick="toggleEditMode()">
-            <span id="edit-btn-text">✏️ Edit</span>
+      ${generateContactInformationSection(lead, lastActivityRelative, true)}
+    </div>
+    
+    <!-- Web Popup Leads Form Section -->
+    <div class="detail-section" style="border-top: 2px solid #4A90E2; padding-top: 20px; margin-top: 20px; background: #f0f7ff; padding: 20px; border-radius: 8px; border-left: 4px solid #4A90E2;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <div class="detail-section-title" style="margin: 0; display: flex; align-items: center; gap: 10px;">
+          <span>Web Popup Leads Form</span>
+        </div>
+        <span class="status-badge" style="
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 600;
+          background: ${webPopupFormHasData ? '#4CAF50' : '#ff9800'};
+          color: white;
+        ">
+          ${webPopupFormHasData ? '✓ Completed' : '⚠ Not Completed'}
+        </span>
+      </div>
+      ${webPopupFormHasData ? `
+        ${(((typeof lead.concerns === 'string' && lead.concerns.trim()) || (Array.isArray(lead.concerns) && lead.concerns.length > 0)) || (lead.areas && lead.areas.length > 0)) ? `
+        <div style="margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          ${((typeof lead.concerns === 'string' && lead.concerns.trim()) || (Array.isArray(lead.concerns) && lead.concerns.length > 0)) ? `
+          <div>
+            <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">Concerns</div>
+            <div class="detail-tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${(typeof lead.concerns === 'string' 
+                ? lead.concerns.split(',').map(c => c.trim()).filter(c => c)
+                : (Array.isArray(lead.concerns) ? lead.concerns : [])
+              ).map(c => `<span class="detail-tag secondary" style="font-size: 11px; padding: 4px 8px;">${c}</span>`).join('')}
+            </div>
+          </div>
+          ` : '<div></div>'}
+          ${lead.areas && lead.areas.length > 0 ? `
+          <div>
+            <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">Areas of Interest</div>
+            <div class="detail-tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${(Array.isArray(lead.areas) ? lead.areas : [lead.areas]).map(a => `<span class="detail-tag" style="font-size: 11px; padding: 4px 8px;">${a}</span>`).join('')}
+            </div>
+          </div>
+          ` : '<div></div>'}
+        </div>
+        ` : ''}
+        ${(lead.skinType || lead.skinTone || lead.ethnicBackground) ? `
+        <div style="margin-bottom: 12px;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">Demographics</div>
+          <div class="detail-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            ${lead.skinType ? `
+            <div class="detail-field">
+              <div class="detail-label" style="font-size: 11px; margin-bottom: 4px;">Skin Type</div>
+              <div class="detail-value" style="font-size: 13px;">${lead.skinType && lead.skinType.length > 0 ? lead.skinType.charAt(0).toUpperCase() + lead.skinType.slice(1) : lead.skinType}</div>
+            </div>
+            ` : ''}
+            ${lead.skinTone ? `
+            <div class="detail-field">
+              <div class="detail-label" style="font-size: 11px; margin-bottom: 4px;">Skin Tone</div>
+              <div class="detail-value" style="font-size: 13px;">${lead.skinTone && lead.skinTone.length > 0 ? lead.skinTone.charAt(0).toUpperCase() + lead.skinTone.slice(1) : lead.skinTone}</div>
+            </div>
+            ` : ''}
+            ${lead.ethnicBackground ? `
+            <div class="detail-field">
+              <div class="detail-label" style="font-size: 11px; margin-bottom: 4px;">Ethnic Background</div>
+              <div class="detail-value" style="font-size: 13px;">${lead.ethnicBackground && lead.ethnicBackground.length > 0 ? lead.ethnicBackground.charAt(0).toUpperCase() + lead.ethnicBackground.slice(1) : lead.ethnicBackground}</div>
+            </div>
+            ` : ''}
+          </div>
+        </div>
+        ` : ''}
+        ${lead.aestheticGoals && (typeof lead.aestheticGoals === 'string' ? lead.aestheticGoals.trim() : String(lead.aestheticGoals).trim()) && lead.tableSource === "Web Popup Leads" ? `
+        <div style="margin-bottom: 12px;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">Patient Goals</div>
+          <div style="padding: 12px; background: white; border-radius: 6px; border-left: 3px solid #4A90E2; font-size: 14px; line-height: 1.5; color: #333;">
+            "${lead.aestheticGoals}"
+          </div>
+        </div>
+        ` : ''}
+        ${lead.concernsExplored && (Array.isArray(lead.concernsExplored) ? lead.concernsExplored.length > 0 : lead.concernsExplored) ? `
+        <div style="margin-bottom: 12px;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">Concerns Explored</div>
+          <div class="detail-tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
+            ${(Array.isArray(lead.concernsExplored) ? lead.concernsExplored : [lead.concernsExplored]).map(c => `<span class="detail-tag secondary" style="font-size: 11px; padding: 4px 8px;">${c}</span>`).join('')}
+          </div>
+        </div>
+        ` : ''}
+        ${lead.offerClaimed ? `
+        <div style="margin-bottom: 12px;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">Offer Status</div>
+          <div style="padding: 12px; background: #E8F5E9; border-radius: 8px; border-left: 4px solid #4CAF50;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 18px;">✓</span>
+              <strong style="color: #2E7D32; font-size: 13px;">$50 Off Offer Claimed</strong>
+            </div>
+          </div>
+        </div>
+        ` : ''}
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #e0e7ff;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 10px; font-weight: 600;">Actions</div>
+          <div>
+            <a href="mailto:${lead.email}" class="btn-secondary btn-sm" id="modal-email-btn" style="width: 100%; text-align: center; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              Email Lead
+            </a>
+          </div>
+        </div>
+      ` : `
+        <div style="padding: 16px; background: white; border-radius: 6px; text-align: center; color: #999; font-size: 13px;">
+          This patient has not completed the Web Popup Leads form.
+        </div>
+      `}
+    </div>
+    
+    <!-- Facial Analysis Section -->
+    <div class="detail-section" style="border-top: 2px solid #9C27B0; padding-top: 20px; margin-top: 20px; background: #faf5ff; padding: 20px; border-radius: 8px; border-left: 4px solid #9C27B0;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+        <div class="detail-section-title" style="margin: 0; display: flex; align-items: center; gap: 10px;">
+          <span>Facial Analysis</span>
+        </div>
+        ${facialAnalysisFormHasData && lead.facialAnalysisStatus ? `
+        <span class="status-badge" style="
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 600;
+          background: ${getFacialStatusColor(lead.facialAnalysisStatus)};
+          color: white;
+        ">
+          ${formatFacialStatus(lead.facialAnalysisStatus)}
+        </span>
+        ` : `
+        <span class="status-badge" style="
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 600;
+          background: #ff9800;
+          color: white;
+        ">
+          Not Completed
+        </span>
+        `}
+      </div>
+      ${facialAnalysisFormHasData ? `
+        ${lead.age && lead.tableSource === "Patients" ? `
+        <div class="detail-field" style="margin-bottom: 12px;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 4px;">Age</div>
+          <div class="detail-value" style="font-size: 14px;">${lead.age}</div>
+        </div>
+        ` : ''}
+        ${lead.aestheticGoals && (typeof lead.aestheticGoals === 'string' ? lead.aestheticGoals.trim() : String(lead.aestheticGoals).trim()) && lead.tableSource === "Patients" ? `
+        <div style="margin-bottom: 12px;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">What would you like to improve?</div>
+          <div class="detail-tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
+            ${(typeof lead.aestheticGoals === 'string' 
+              ? lead.aestheticGoals.split(',').map(g => g.trim()).filter(g => g)
+              : [lead.aestheticGoals]
+            ).map(g => `<span class="detail-tag" style="font-size: 11px; padding: 4px 8px; background: #E1BEE7; color: #4A148C;">${g}</span>`).join('')}
+          </div>
+        </div>
+        ` : ''}
+        ${(() => {
+          // Consolidate: prefer processedAreasOfInterest, then areasOfInterestFromForm, then whichRegions (they're all the same)
+          const areasToShow = lead.processedAreasOfInterest || lead.areasOfInterestFromForm || lead.whichRegions;
+          return areasToShow && lead.tableSource === "Patients" ? `
+        <div style="margin-bottom: 12px;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">Areas of Interest</div>
+          <div class="detail-tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
+            ${(typeof areasToShow === 'string' 
+              ? areasToShow.split(',').map(a => a.trim()).filter(a => a)
+              : [areasToShow]
+            ).map(a => `<span class="detail-tag" style="font-size: 11px; padding: 4px 8px; background: #F3E5F5; color: #6A1B9A;">${a}</span>`).join('')}
+          </div>
+        </div>
+        ` : '';
+        })()}
+        ${lead.skinComplaints && lead.tableSource === "Patients" ? `
+        <div style="margin-bottom: 12px;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">Do you have any skin complaints?</div>
+          <div style="padding: 12px; background: white; border-radius: 6px; border-left: 3px solid #9C27B0; font-size: 14px; line-height: 1.5; color: #333;">
+            ${lead.skinComplaints}
+          </div>
+        </div>
+        ` : ''}
+        ${lead.goals && Array.isArray(lead.goals) && lead.goals.length > 0 && lead.tableSource === "Patients" ? `
+        <div style="margin-bottom: 12px;">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 600;">Treatment Interests</div>
+          <div class="detail-tags" style="display: flex; flex-wrap: wrap; gap: 6px;">
+            ${lead.goals.map(g => `<span class="detail-tag" style="font-size: 11px; padding: 4px 8px; background: #C5E1A5; color: #33691E;">${g}</span>`).join('')}
+          </div>
+        </div>
+        ` : ''}
+        ${(lead.allIssues || lead.interestItems) ? `
+          <button 
+            class="btn-secondary btn-sm" 
+            onclick="toggleAnalysisResults('${lead.id}')"
+            style="width: 100%; padding: 10px 16px; font-size: 13px; font-weight: 500; margin-bottom: 20px;"
+            id="toggle-analysis-btn-${lead.id}"
+          >
+            <span id="toggle-analysis-text-${lead.id}">View Analysis Results & Interests</span>
+            <svg id="toggle-analysis-icon-${lead.id}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 8px; display: inline-block; vertical-align: middle; transition: transform 0.3s ease;">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
           </button>
+          <div id="analysis-results-section-${lead.id}" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #E1BEE7;">
+            <div class="detail-label" style="font-size: 14px; color: #666; margin-bottom: 16px; font-weight: 600;">Analysis Results</div>
+            ${generateAnalysisResultsHTML(lead)}
+          </div>
+          ` : ''}
         </div>
-        <div class="detail-grid" id="contact-fields">
-        <div class="detail-field">
-          <div class="detail-label">Name</div>
-          <div class="detail-value" id="display-name">${lead.name}</div>
-          <input type="text" class="edit-input hidden" id="edit-name" value="${lead.name}" />
+      ` : ''}
+      ${(() => {
+        // Show scan buttons only if scan is not completed
+        // Consider completed if status includes "reviewed" or is a final state
+        const status = lead.facialAnalysisStatus ? String(lead.facialAnalysisStatus).toLowerCase().trim() : '';
+        const isCompleted = status && (status.includes('reviewed') || status.includes('completed') || status.includes('done'));
+        // Show buttons if no status (not started) or if status exists but is not completed
+        return !isCompleted ? `
+        <div style="margin-top: ${facialAnalysisFormHasData ? '20px' : '0'}; padding-top: 16px; border-top: ${facialAnalysisFormHasData ? '1px solid #E1BEE7' : 'none'};">
+          <div class="detail-label" style="font-size: 12px; color: #666; margin-bottom: 12px; font-weight: 600;">Actions</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button 
+              class="btn-primary btn-sm" 
+              onclick="requestTelehealthFacialAnalysis('${lead.id}')"
+              style="padding: 10px 16px; font-size: 13px; font-weight: 500;"
+              ${!lead.phone ? 'disabled title="Phone number required"' : ''}
+            >
+              Request Telehealth Scan
+            </button>
+            <button 
+              class="btn-secondary btn-sm" 
+              onclick="scanPatientNow('${lead.id}')"
+              style="padding: 10px 16px; font-size: 13px; font-weight: 500;"
+            >
+              Scan Patient Now
+            </button>
+          </div>
         </div>
-        <div class="detail-field">
-          <div class="detail-label">Email</div>
-          <div class="detail-value" id="display-email">${lead.email}</div>
-          <input type="email" class="edit-input hidden" id="edit-email" value="${lead.email}" />
+        ` : '';
+      })()}
+      ${!facialAnalysisFormHasData ? `
+        <div style="padding: 16px; background: white; border-radius: 6px; text-align: center; color: #999; font-size: 13px; margin-top: 20px;">
+          This patient has not completed the Facial Analysis form.
         </div>
-        <div class="detail-field">
-          <div class="detail-label">Phone</div>
-          <div class="detail-value" id="display-phone">${lead.phone || 'Not provided'}</div>
-          <input type="tel" class="edit-input hidden" id="edit-phone" value="${lead.phone || ''}" oninput="formatPhoneInput(this)" />
-        </div>
-        <div class="detail-field">
-          <div class="detail-label">Age</div>
-          <div class="detail-value" id="display-age">${lead.age || 'Not provided'}</div>
-          <input type="number" class="edit-input hidden" id="edit-age" value="${lead.age || ''}" min="18" max="100" />
-        </div>
-        <div class="detail-field">
-          <div class="detail-label">Source</div>
-          <div class="detail-value" id="display-source">${lead.source}</div>
-          <select class="edit-input hidden" id="edit-source">
-            <option value="Walk-in" ${lead.source === 'Walk-in' ? 'selected' : ''}>Walk-in</option>
-            <option value="Phone Call" ${lead.source === 'Phone Call' ? 'selected' : ''}>Phone Call</option>
-            <option value="Referral" ${lead.source === 'Referral' ? 'selected' : ''}>Referral</option>
-            <option value="Social Media" ${lead.source === 'Social Media' ? 'selected' : ''}>Social Media</option>
-            <option value="Website" ${lead.source === 'Website' ? 'selected' : ''}>Website</option>
-            <option value="AI Consult" ${lead.source === 'AI Consult' ? 'selected' : ''}>AI Consult Tool</option>
-            <option value="Early Lead Capture" ${lead.source === 'Early Lead Capture' ? 'selected' : ''}>Early Lead Capture</option>
-            <option value="Consultation Form" ${lead.source === 'Consultation Form' ? 'selected' : ''}>Consultation Form</option>
-            <option value="Other" ${lead.source === 'Other' ? 'selected' : ''}>Other</option>
-          </select>
-        </div>
-        </div>
-        <div class="edit-actions hidden" id="edit-actions">
-          <button class="btn-secondary btn-sm" onclick="cancelEdit()">Cancel</button>
-          <button class="btn-primary btn-sm" onclick="saveLeadEdits()">Save Changes</button>
-        </div>
-      </div>
+      ` : ''}
     </div>
-    
-    <div class="detail-section">
-      <div class="detail-section-title">Goals & Interests</div>
-      <div class="detail-tags">
-        ${lead.goals.length > 0 ? lead.goals.map(g => `<span class="detail-tag">${g}</span>`).join('') : '<span class="no-data">No goals recorded</span>'}
-      </div>
-    </div>
-    
-    <div class="detail-section">
-      <div class="detail-section-title">Concerns</div>
-      <div class="detail-tags">
-        ${(typeof lead.concerns === 'string' 
-          ? lead.concerns.split(',').map(c => c.trim()).filter(c => c)
-          : (Array.isArray(lead.concerns) ? lead.concerns : [])
-        ).length > 0 ? (typeof lead.concerns === 'string' 
-          ? lead.concerns.split(',').map(c => c.trim()).filter(c => c)
-          : (Array.isArray(lead.concerns) ? lead.concerns : [])
-        ).map(c => `<span class="detail-tag secondary">${c}</span>`).join('') : '<span class="no-data">No concerns recorded</span>'}
-      </div>
-    </div>
-    
-    <div class="detail-section">
-      <div class="detail-section-title">What They Said</div>
-      <div class="notes-box">${lead.aestheticGoals ? `"${lead.aestheticGoals}"` : '<span class="no-data">No notes</span>'}</div>
-    </div>
-    
-    <div class="detail-section">
-      <div class="detail-section-title">Engagement</div>
-      <div class="engagement-grid">
-        <div class="engagement-item">
-          <span class="engagement-item-value">${lead.photosLiked}</span>
-          <span class="engagement-item-label">Photos Liked</span>
-        </div>
-        <div class="engagement-item">
-          <span class="engagement-item-value">${lead.photosViewed}</span>
-          <span class="engagement-item-label">Photos Viewed</span>
-        </div>
-        <div class="engagement-item">
-          <span class="engagement-item-value">${lead.treatmentsViewed?.length || 0}</span>
-          <span class="engagement-item-label">Treatments Explored</span>
-        </div>
-      </div>
-    </div>
-    
-    ${lead.offerClaimed ? `
-    <div class="detail-section">
-      <div class="detail-section-title">Offer Status</div>
-      <div style="padding: 12px; background: #E8F5E9; border-radius: 8px; border-left: 4px solid #4CAF50;">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-          <span style="font-size: 20px;">✓</span>
-          <strong style="color: #2E7D32;">$50 Off Offer Claimed</strong>
-        </div>
-        <p style="margin: 0; font-size: 13px; color: #666;">
-          Offer details and redemption terms were sent to ${lead.email}
-        </p>
-      </div>
-    </div>
-    ` : ''}
-    
-    <div class="detail-section">
-      <div class="detail-section-title">Facial Analysis</div>
       <div style="margin-bottom: 12px;">
         <div class="detail-label" style="margin-bottom: 8px;">Status</div>
         <span class="status-badge" style="
@@ -1967,12 +2955,21 @@ function viewLeadDetails(leadId) {
       </div>
     </div>
     
-    ${appointmentInfo}
-    ${conversionInfo}
+    ${appointmentInfo ? `
+    <div class="detail-section" style="border-top: 1px solid #e8e8e8; padding-top: 20px; margin-top: 20px; background: #fafafa; padding: 20px; border-radius: 8px;">
+      ${appointmentInfo}
+    </div>
+    ` : ''}
     
-    <div class="detail-section">
-      <div class="detail-section-title">
-        Contact History
+    ${conversionInfo ? `
+    <div class="detail-section" style="border-top: 1px solid #e8e8e8; padding-top: 20px; margin-top: 20px; background: #fafafa; padding: 20px; border-radius: 8px;">
+      ${conversionInfo}
+    </div>
+    ` : ''}
+    
+    <div class="detail-section" style="border-top: 1px solid #e8e8e8; padding-top: 20px; margin-top: 20px; background: #fafafa; padding: 20px; border-radius: 8px;">
+      <div class="detail-section-title" style="display: flex; align-items: center; justify-content: space-between;">
+        <span>Contact History</span>
         <button class="edit-toggle-btn" onclick="showAddContactLog()">+ Add Entry</button>
       </div>
       <div class="contact-history" id="contact-history">
@@ -2010,13 +3007,47 @@ function viewLeadDetails(leadId) {
       </div>
     </div>
     
-    ${lead.notes ? `
-    <div class="detail-section">
-      <div class="detail-section-title">Internal Notes</div>
-      <div class="notes-box">${lead.notes}</div>
+    <!-- Archive Action -->
+    <div class="detail-section" style="border-top: 1px solid #e8e8e8; padding-top: 20px; margin-top: 20px; background: #fff5f5; padding: 20px; border-radius: 8px; border-left: 4px solid #f44336;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div class="detail-label" style="font-size: 13px; color: #666; margin-bottom: 4px; font-weight: 600;">Archive Lead</div>
+          <div style="font-size: 12px; color: #999;">Archive this lead to remove it from active lists</div>
+        </div>
+        <button class="btn-secondary btn-sm" id="archive-btn" onclick="toggleArchiveLead()">
+          <span id="archive-btn-text">Archive</span>
+        </button>
+      </div>
     </div>
-    ` : ''}
   `;
+  
+  // Update elements that are now in the modal body after it's rendered
+  setTimeout(() => {
+    // Update status select
+    const statusSelect = document.getElementById('status-select');
+    if (statusSelect) {
+      statusSelect.value = lead.status;
+    }
+    
+    // Update email button href
+    const emailBtn = document.getElementById('modal-email-btn');
+    if (emailBtn) {
+      emailBtn.href = `mailto:${lead.email}`;
+    }
+    
+    // Update archive button state
+    const archiveBtn = document.getElementById('archive-btn');
+    const archiveBtnText = document.getElementById('archive-btn-text');
+    if (archiveBtn && archiveBtnText) {
+      if (lead.archived) {
+        archiveBtnText.textContent = 'Unarchive';
+        archiveBtn.className = 'btn-primary btn-sm';
+      } else {
+        archiveBtnText.textContent = 'Archive';
+        archiveBtn.className = 'btn-secondary btn-sm';
+      }
+    }
+  }, 0);
   
   document.getElementById('lead-modal').classList.add('active');
 }
@@ -2024,21 +3055,55 @@ function viewLeadDetails(leadId) {
 // Contact History Functions
 function renderContactHistory(lead) {
   const history = lead.contactHistory || [];
+  const entries = [];
   
-  if (history.length === 0) {
+  // Add facial analysis entries if available
+  if (lead.facialAnalysisStatus && lead.facialAnalysisStatus !== '' && lead.facialAnalysisStatus !== 'not-started') {
+    // Try to find when facial analysis was completed (could be from createdAt or a separate field)
+    const facialAnalysisDate = lead.createdAt || new Date().toISOString();
+    entries.push({
+      type: 'facial-analysis',
+      date: facialAnalysisDate,
+      status: lead.facialAnalysisStatus,
+      notes: `Facial analysis status: ${formatFacialStatus(lead.facialAnalysisStatus)}`
+    });
+  }
+  
+  // Add regular contact history entries
+  entries.push(...history);
+  
+  // Sort by date (most recent first)
+  entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  if (entries.length === 0) {
     return '<div class="no-data">No contact history yet. Add your first interaction!</div>';
   }
   
-  return history.map(entry => `
-    <div class="contact-entry">
-      <div class="contact-entry-header">
-        <span class="contact-type ${entry.type}">${formatContactType(entry.type)}</span>
-        <span class="contact-date">${formatRelativeDate(entry.date)}</span>
+  return entries.map(entry => {
+    if (entry.type === 'facial-analysis') {
+      return `
+        <div class="contact-entry">
+          <div class="contact-entry-header">
+            <span class="contact-type facial-analysis">Facial Analysis</span>
+            <span class="contact-date">${formatRelativeDate(entry.date)}</span>
+          </div>
+          <div class="contact-outcome">Status: ${formatFacialStatus(entry.status)}</div>
+          ${entry.notes ? `<div class="contact-notes">${entry.notes}</div>` : ''}
+        </div>
+      `;
+    }
+    
+    return `
+      <div class="contact-entry">
+        <div class="contact-entry-header">
+          <span class="contact-type ${entry.type}">${formatContactType(entry.type)}</span>
+          <span class="contact-date">${formatRelativeDate(entry.date)}</span>
+        </div>
+        <div class="contact-outcome ${entry.outcome}">${formatOutcome(entry.outcome)}</div>
+        ${entry.notes ? `<div class="contact-notes">${entry.notes}</div>` : ''}
       </div>
-      <div class="contact-outcome ${entry.outcome}">${formatOutcome(entry.outcome)}</div>
-      ${entry.notes ? `<div class="contact-notes">${entry.notes}</div>` : ''}
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 // Removed getContactTypeIcon - using formatContactType instead
@@ -2209,21 +3274,27 @@ let isEditMode = false;
 function toggleEditMode() {
   isEditMode = !isEditMode;
   
-  const displayFields = document.querySelectorAll('.detail-value');
-  const editFields = document.querySelectorAll('.edit-input');
+  const displayFields = document.querySelectorAll('#contact-fields .detail-value');
+  const editFields = document.querySelectorAll('#contact-fields .edit-input');
   const editActions = document.getElementById('edit-actions');
-  const editBtnText = document.getElementById('edit-btn-text');
+  const editBtnIcon = document.getElementById('edit-btn-icon');
   
   if (isEditMode) {
     displayFields.forEach(f => f.classList.add('hidden'));
     editFields.forEach(f => f.classList.remove('hidden'));
     editActions.classList.remove('hidden');
-    editBtnText.textContent = 'Cancel';
+    // Change icon to close/cancel (X)
+    if (editBtnIcon) {
+      editBtnIcon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
+    }
   } else {
     displayFields.forEach(f => f.classList.remove('hidden'));
     editFields.forEach(f => f.classList.add('hidden'));
     editActions.classList.add('hidden');
-    editBtnText.textContent = '✏️ Edit';
+    // Change icon back to edit (pencil)
+    if (editBtnIcon) {
+      editBtnIcon.innerHTML = '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>';
+    }
   }
 }
 

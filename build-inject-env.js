@@ -15,11 +15,68 @@
 const fs = require('fs');
 const path = require('path');
 
+// Try to load .env file from skin-type-react directory first (for VITE_ prefixed vars)
+// Then try root directory
+const reactEnvPath = path.join(__dirname, 'skin-type-react', '.env');
+const rootEnvPath = path.join(__dirname, '.env');
+
 // Try to load .env file if dotenv is available
 try {
-  require('dotenv').config();
+  const dotenv = require('dotenv');
+  // First try React app's .env file
+  if (fs.existsSync(reactEnvPath)) {
+    const reactEnv = dotenv.config({ path: reactEnvPath });
+    if (reactEnv.parsed) {
+      console.log('📁 Loaded .env from skin-type-react/.env');
+    }
+  }
+  // Also try root .env file
+  if (fs.existsSync(rootEnvPath)) {
+    const rootEnv = dotenv.config({ path: rootEnvPath });
+    if (rootEnv.parsed) {
+      console.log('📁 Loaded .env from root directory');
+    }
+  }
+  // Also try default location
+  dotenv.config();
 } catch (e) {
-  // dotenv not installed, that's okay
+  // dotenv not installed, that's okay - we'll try manual parsing
+  console.log('⚠️  dotenv not available, trying manual .env parsing...');
+  
+  // Manual .env parsing as fallback
+  const envFiles = [reactEnvPath, rootEnvPath];
+  for (const envFile of envFiles) {
+    if (fs.existsSync(envFile)) {
+      try {
+        const envContent = fs.readFileSync(envFile, 'utf8');
+        envContent.split('\n').forEach(line => {
+          const trimmed = line.trim();
+          if (trimmed && !trimmed.startsWith('#')) {
+            const equalIndex = trimmed.indexOf('=');
+            if (equalIndex > 0) {
+              const key = trimmed.substring(0, equalIndex).trim();
+              let value = trimmed.substring(equalIndex + 1).trim();
+              // Remove surrounding quotes if present
+              if ((value.startsWith('"') && value.endsWith('"')) || 
+                  (value.startsWith("'") && value.endsWith("'"))) {
+                value = value.slice(1, -1);
+              }
+              process.env[key] = value;
+            }
+          }
+        });
+        console.log(`📁 Manually loaded .env from ${envFile}`);
+        // Log what we found (first 10 chars only for security)
+        if (process.env.VITE_AIRTABLE_API_KEY) {
+          const keyPreview = process.env.VITE_AIRTABLE_API_KEY.substring(0, 10) + '...';
+          console.log(`   Found VITE_AIRTABLE_API_KEY: ${keyPreview}`);
+        }
+        break;
+      } catch (err) {
+        console.error(`Error reading ${envFile}:`, err.message);
+      }
+    }
+  }
 }
 
 // HTML files that need environment variable injection
@@ -31,9 +88,10 @@ const HTML_FILES = [
 ];
 
 // Environment variables to inject
+// Priority: VITE_ prefixed (from React app) > non-VITE (legacy) > default
 const ENV_VARS = {
-  'AIRTABLE_API_KEY': process.env.AIRTABLE_API_KEY || '',
-  'AIRTABLE_BASE_ID': process.env.AIRTABLE_BASE_ID || 'appXblSpAMBQskgzB'
+  'AIRTABLE_API_KEY': process.env.VITE_AIRTABLE_API_KEY || process.env.AIRTABLE_API_KEY || '',
+  'AIRTABLE_BASE_ID': process.env.VITE_AIRTABLE_BASE_ID || process.env.AIRTABLE_BASE_ID || 'appXblSpAMBQskgzB'
 };
 
 // Validate required variables
@@ -97,5 +155,13 @@ console.log(`\n✅ Environment variable injection complete! (${successCount} fil
 
 if (!ENV_VARS.AIRTABLE_API_KEY) {
   console.log('\n⚠️  Remember to set AIRTABLE_API_KEY before deploying!');
+  console.log('   Update skin-type-react/.env with: VITE_AIRTABLE_API_KEY=your_key_here');
   process.exit(1);
+} else {
+  console.log('\n✅ API key successfully loaded from .env file');
+  console.log('   Key preview:', ENV_VARS.AIRTABLE_API_KEY.substring(0, 10) + '...' + ENV_VARS.AIRTABLE_API_KEY.substring(ENV_VARS.AIRTABLE_API_KEY.length - 5));
+  console.log('\n💡 If you see authentication errors:');
+  console.log('   1. Make sure your rotated API key is in skin-type-react/.env as VITE_AIRTABLE_API_KEY');
+  console.log('   2. Hard refresh your browser (Cmd+Shift+R or Ctrl+Shift+R) to clear cache');
+  console.log('   3. Check browser console for detailed error messages');
 }
