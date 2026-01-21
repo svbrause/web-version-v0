@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lead Dashboard - Unique Aesthetics & Wellness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="dashboard-unique.css" />
+  </head>
+  <body>
+    <div class="dashboard-wrapper">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo">
+            <img
+              src="https://www.datocms-assets.com/163832/1753199215-unique_physique.svg"
+              alt="Unique Aesthetics & Wellness Logo"
+              class="logo-image"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="logo-fallback" style="display: none">
+              <span class="logo-icon">UA</span>
+            </div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="#" class="nav-item active" data-view="kanban" style="display: none;">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Lead Board
+          </a>
+          <a href="#" class="nav-item active" data-view="list">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            All Leads
+          </a>
+          <a href="#" class="nav-item" data-view="facial-analysis">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
+              <circle cx="8" cy="10" r="1.5"></circle>
+              <circle cx="16" cy="10" r="1.5"></circle>
+              <path d="M12 16c-2.67 0-4-1.33-4-2.5 0-.83 1.17-1.5 4-1.5s4 .67 4 1.5c0 1.17-1.33 2.5-4 2.5z"></path>
+            </svg>
+            Facial Analysis
+          </a>
+          <a href="#" class="nav-item" data-view="analytics">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            Analytics
+          </a>
+          <div class="nav-divider"></div>
+          <a href="#" class="nav-item" data-view="archived" onclick="switchView('archived')">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            Archived Leads
+          </a>
+        </nav>
+
+        <div class="sidebar-stats">
+          <div class="sidebar-stat">
+            <span class="sidebar-stat-value" id="sidebar-total">0</span>
+            <span class="sidebar-stat-label">Total Leads</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Header -->
+        <header class="main-header">
+          <div class="header-left">
+            <h2 class="page-title" id="page-title">All Leads</h2>
+            <p class="page-subtitle">
+              Manage your prospective patients from first touch to booked
+              appointment
+            </p>
+          </div>
+          <div class="header-right">
+            <div class="search-box">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Search leads..."
+                oninput="filterLeads()"
+              />
+            </div>
+            <button class="btn-primary" onclick="showAddLeadModal()">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Lead
+            </button>
+          </div>
+        </header>
+
+        <!-- Kanban View -->
+        <section class="kanban-view" id="kanban-view">
+          <div class="kanban-board" id="kanban-board">
+            <!-- New Leads Column -->
+            <div class="kanban-column" data-status="new">
+              <div class="kanban-column-header">
+                <div class="column-title">
+                  <span class="column-dot new"></span>
+                  <h3>New Leads</h3>
+                  <span class="column-count" id="count-new">0</span>
+                </div>
+              </div>
+              <div
+                class="kanban-cards"
+                id="column-new"
+                ondrop="handleDrop(event, 'new')"
+                ondragover="handleDragOver(event)"
+              >
+                <!-- Cards populated by JS -->
+              </div>
+            </div>
+
+            <!-- Contacted Column -->
+            <div class="kanban-column" data-status="contacted">
+              <div class="kanban-column-header">
+                <div class="column-title">
+                  <span class="column-dot contacted"></span>
+                  <h3>Contacted</h3>
+                  <span class="column-count" id="count-contacted">0</span>
+                </div>
+              </div>
+              <div
+                class="kanban-cards"
+                id="column-contacted"
+                ondrop="handleDrop(event, 'contacted')"
+                ondragover="handleDragOver(event)"
+              >
+                <!-- Cards populated by JS -->
+              </div>
+            </div>
+
+            <!-- Consultation Scheduled Column -->
+            <div class="kanban-column" data-status="scheduled">
+              <div class="kanban-column-header">
+                <div class="column-title">
+                  <span class="column-dot scheduled"></span>
+                  <h3>Consultation Scheduled</h3>
+                  <span class="column-count" id="count-scheduled">0</span>
+                </div>
+              </div>
+              <div
+                class="kanban-cards"
+                id="column-scheduled"
+                ondrop="handleDrop(event, 'scheduled')"
+                ondragover="handleDragOver(event)"
+              >
+                <!-- Cards populated by JS -->
+              </div>
+            </div>
+
+            <!-- Converted Column -->
+            <div class="kanban-column" data-status="converted">
+              <div class="kanban-column-header">
+                <div class="column-title">
+                  <span class="column-dot converted"></span>
+                  <h3>Converted</h3>
+                  <span class="column-count" id="count-converted">0</span>
+                </div>
+              </div>
+              <div
+                class="kanban-cards"
+                id="column-converted"
+                ondrop="handleDrop(event, 'converted')"
+                ondragover="handleDragOver(event)"
+              >
+                <!-- Cards populated by JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- List View -->
+        <section class="list-view active" id="list-view">
+          <!-- Advanced Filters -->
+          <div class="list-advanced-filters-container">
+            <button class="filters-toggle-btn" onclick="toggleFilters()">
+              <span>Filters</span>
+              <span id="filters-toggle-icon">▼</span>
+            </button>
+            <div class="list-advanced-filters" id="list-advanced-filters" style="display: none;">
+            <div class="filter-group">
+              <label>Search</label>
+              <input 
+                type="text" 
+                id="filter-search" 
+                placeholder="Name, email, or phone..." 
+                oninput="applyFilters()"
+                class="filter-input"
+              />
+            </div>
+            <div class="filter-group">
+              <label>Source</label>
+              <select id="filter-source" onchange="applyFilters()" class="filter-select">
+                <option value="">All Sources</option>
+                <option value="Web Popup Leads">Web Popup Leads</option>
+                <option value="Patients">Patients</option>
+                <option value="AI Consult">AI Consult</option>
+                <option value="Patient">Patient</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Age Range</label>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input 
+                  type="number" 
+                  id="filter-age-min" 
+                  placeholder="Min" 
+                  min="0" 
+                  max="150"
+                  oninput="applyFilters()"
+                  class="filter-input"
+                  style="width: 80px;"
+                />
+                <span>-</span>
+                <input 
+                  type="number" 
+                  id="filter-age-max" 
+                  placeholder="Max" 
+                  min="0" 
+                  max="150"
+                  oninput="applyFilters()"
+                  class="filter-input"
+                  style="width: 80px;"
+                />
+              </div>
+            </div>
+            <div class="filter-group">
+              <label>Sort By</label>
+              <select id="sort-field" onchange="applySorting()" class="filter-select">
+                <option value="lastContact">Last Activity</option>
+                <option value="name">Name</option>
+                <option value="age">Age</option>
+                <option value="status">Status</option>
+                <option value="photosLiked">Photos Liked</option>
+                <option value="photosViewed">Photos Viewed</option>
+                <option value="createdAt">Date Added</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Order</label>
+              <select id="sort-order" onchange="applySorting()" class="filter-select">
+                <option value="desc">Descending</option>
+                <option value="asc">Ascending</option>
+              </select>
+            </div>
+            <button class="btn-secondary btn-sm" onclick="clearFilters()" style="align-self: flex-end;">
+              Clear Filters
+            </button>
+            </div>
+          </div>
+          <div class="leads-table-container">
+            <table class="leads-table">
+              <thead>
+                <tr>
+                  <th onclick="sortByColumn('name')" style="cursor: pointer; user-select: none;">
+                    Lead <span class="sort-indicator" id="sort-name"></span>
+                  </th>
+                  <th onclick="sortByColumn('phone')" style="cursor: pointer; user-select: none;">
+                    Contact <span class="sort-indicator" id="sort-phone"></span>
+                  </th>
+                  <th>Interests</th>
+                  <th onclick="sortByColumn('facialAnalysisStatus')" style="cursor: pointer; user-select: none;">
+                    Facial Analysis Status <span class="sort-indicator" id="sort-facialAnalysisStatus"></span>
+                  </th>
+                  <th onclick="sortByColumn('status')" style="cursor: pointer; user-select: none;">
+                    Status <span class="sort-indicator" id="sort-status"></span>
+                  </th>
+                  <th onclick="sortByColumn('lastContact')" style="cursor: pointer; user-select: none;">
+                    Last Activity <span class="sort-indicator" id="sort-lastContact"></span>
+                  </th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leads-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Facial Analysis View -->
+        <section class="facial-analysis-view" id="facial-analysis-view">
+          <!-- Cards will be populated by JS -->
+        </section>
+
+        <!-- Archived Leads View -->
+        <section class="archived-view" id="archived-view">
+          <div style="padding: 20px;">
+            <h2 style="margin-bottom: 20px; font-size: 24px; font-weight: 600;">Archived Leads</h2>
+            <div class="list-advanced-filters" style="margin-bottom: 20px;">
+              <div class="filter-group">
+                <label>Search</label>
+                <input 
+                  type="text" 
+                  id="archived-filter-search" 
+                  placeholder="Name, email, or phone..." 
+                  oninput="renderArchivedLeads()"
+                  class="filter-input"
+                />
+              </div>
+            </div>
+            <table class="leads-table">
+              <thead>
+                <tr>
+                  <th onclick="sortArchivedBy('name')">Name <span class="sort-indicator"></span></th>
+                  <th onclick="sortArchivedBy('email')">Email <span class="sort-indicator"></span></th>
+                  <th onclick="sortArchivedBy('phone')">Phone <span class="sort-indicator"></span></th>
+                  <th onclick="sortArchivedBy('status')">Status <span class="sort-indicator"></span></th>
+                  <th onclick="sortArchivedBy('createdAt')">Archived Date <span class="sort-indicator"></span></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="archived-leads-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Analytics View -->
+        <section class="analytics-view" id="analytics-view">
+          <!-- Summary Stats -->
+          <div class="analytics-summary-stats">
+            <div class="summary-stat-card">
+              <div class="summary-stat-value" id="summary-total">0</div>
+              <div class="summary-stat-label">Total Leads</div>
+            </div>
+            <div class="summary-stat-card">
+              <div class="summary-stat-value" id="summary-conversion-rate">0%</div>
+              <div class="summary-stat-label">Conversion Rate</div>
+            </div>
+            <div class="summary-stat-card">
+              <div class="summary-stat-value" id="summary-avg-age">-</div>
+              <div class="summary-stat-label">Average Age</div>
+            </div>
+            <div class="summary-stat-card">
+              <div class="summary-stat-value" id="summary-new-this-week">0</div>
+              <div class="summary-stat-label">New This Week</div>
+            </div>
+            <div class="summary-stat-card">
+              <div class="summary-stat-value" id="summary-scheduled">0</div>
+              <div class="summary-stat-label">Scheduled</div>
+            </div>
+            <div class="summary-stat-card">
+              <div class="summary-stat-value" id="summary-converted">0</div>
+              <div class="summary-stat-label">Converted</div>
+            </div>
+          </div>
+
+          <div class="analytics-header">
+            <h3>Conversion Funnel</h3>
+            <p>
+              Track your lead journey from first interaction to booked patient
+            </p>
+          </div>
+
+          <div class="funnel-container">
+            <div class="funnel-stage">
+              <div class="funnel-bar" style="width: 100%">
+                <span class="funnel-label">AI Consult Started</span>
+                <span class="funnel-value" id="funnel-started">0</span>
+              </div>
+            </div>
+            <div class="funnel-stage">
+              <div class="funnel-bar" style="width: 85%">
+                <span class="funnel-label">Completed Consult</span>
+                <span class="funnel-value" id="funnel-completed">0</span>
+              </div>
+            </div>
+            <div class="funnel-stage">
+              <div class="funnel-bar" style="width: 60%">
+                <span class="funnel-label">Email Captured</span>
+                <span class="funnel-value" id="funnel-captured">0</span>
+              </div>
+            </div>
+            <div class="funnel-stage">
+              <div class="funnel-bar" style="width: 40%">
+                <span class="funnel-label">Contacted</span>
+                <span class="funnel-value" id="funnel-contacted">0</span>
+              </div>
+            </div>
+            <div class="funnel-stage">
+              <div class="funnel-bar" style="width: 25%">
+                <span class="funnel-label">Consultation Booked</span>
+                <span class="funnel-value" id="funnel-booked">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <h4>Top Treatment Interests</h4>
+              <div class="analytics-list" id="top-treatments">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+            <div class="analytics-card">
+              <h4>Lead Sources</h4>
+              <div class="analytics-list" id="lead-sources">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+            <div class="analytics-card">
+              <h4>Age Demographics</h4>
+              <div class="analytics-list" id="age-demographics">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+            <div class="analytics-card">
+              <h4>This Week's Activity</h4>
+              <div class="activity-stats">
+                <div class="activity-stat">
+                  <span class="activity-value" id="week-new">0</span>
+                  <span class="activity-label">New Leads</span>
+                </div>
+                <div class="activity-stat">
+                  <span class="activity-value" id="week-contacted">0</span>
+                  <span class="activity-label">Contacted</span>
+                </div>
+                <div class="activity-stat">
+                  <span class="activity-value" id="week-booked">0</span>
+                  <span class="activity-label">Booked</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Lead Detail Modal -->
+    <div id="lead-modal" class="modal-overlay" onclick="closeLeadModal(event)">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-header-info">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <h2 class="modal-title" id="modal-lead-name">Lead Details</h2>
+              <span class="status-badge" id="modal-status">New</span>
+            </div>
+          </div>
+          <button class="modal-close" onclick="closeLeadModal()">×</button>
+        </div>
+        <div class="modal-body" id="modal-body">
+          <!-- Content populated by JS -->
+        </div>
+        <div class="modal-footer">
+          <div class="modal-actions-left">
+            <select id="status-select" onchange="updateLeadStatus()" style="padding: 10px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 14px; font-weight: 500; font-family: inherit; color: #212121; background: white; cursor: pointer; transition: all 0.2s ease;">
+              <option value="new">New Lead</option>
+              <option value="contacted">Contacted</option>
+              <option value="scheduled">Consultation Scheduled</option>
+              <option value="converted">Converted</option>
+            </select>
+          </div>
+          <div class="modal-actions-right">
+            <button class="btn-secondary" onclick="closeLeadModal()">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Lead Modal -->
+    <div
+      id="add-lead-modal"
+      class="modal-overlay"
+      onclick="closeAddLeadModal(event)"
+    >
+      <div
+        class="modal-content add-lead-modal-content"
+        onclick="event.stopPropagation()"
+      >
+        <div class="modal-header">
+          <div class="modal-header-info">
+            <h2 class="modal-title">Add New Lead</h2>
+          </div>
+          <button class="modal-close" onclick="closeAddLeadModal()">×</button>
+        </div>
+        <form id="add-lead-form" onsubmit="handleAddLead(event)">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="new-lead-name">Full Name *</label>
+              <input
+                type="text"
+                id="new-lead-name"
+                required
+                placeholder="Enter full name"
+              />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="new-lead-email">Email Address *</label>
+                <input
+                  type="email"
+                  id="new-lead-email"
+                  required
+                  placeholder="email@example.com"
+                />
+                <span class="field-error" id="email-error"></span>
+              </div>
+              <div class="form-group">
+                <label for="new-lead-phone">Phone Number</label>
+                <input
+                  type="tel"
+                  id="new-lead-phone"
+                  placeholder="(555) 123-4567"
+                  oninput="formatPhoneInput(this)"
+                />
+                <span class="field-error" id="phone-error"></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="new-lead-age">Age</label>
+                <input
+                  type="number"
+                  id="new-lead-age"
+                  min="18"
+                  max="100"
+                  placeholder="Enter age"
+                />
+              </div>
+              <div class="form-group">
+                <label for="new-lead-source">Source</label>
+                <select id="new-lead-source">
+                  <option value="Walk-in">Walk-in</option>
+                  <option value="Phone Call">Phone Call</option>
+                  <option value="Referral">Referral</option>
+                  <option value="Social Media">Social Media</option>
+                  <option value="Website">Website</option>
+                  <option value="AI Consult">AI Consult Tool</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="new-lead-notes">Notes</label>
+              <textarea
+                id="new-lead-notes"
+                rows="3"
+                placeholder="Any additional details about this lead..."
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="modal-actions-left"></div>
+            <div class="modal-actions-right">
+              <button
+                type="button"
+                class="btn-secondary"
+                onclick="closeAddLeadModal()"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn-primary">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add Lead
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Inject environment variables before loading main script -->
+    <script>
+      // Set Airtable configuration from environment variables
+      // These will be replaced by build-inject-env.js script from .env file
+      window.AIRTABLE_API_KEY = window.AIRTABLE_API_KEY || '';
+      window.AIRTABLE_BASE_ID = window.AIRTABLE_BASE_ID || 'appXblSpAMBQskgzB';
+    </script>
+    <script src="dashboard-unique.js"></script>
+  </body>
+</html>
