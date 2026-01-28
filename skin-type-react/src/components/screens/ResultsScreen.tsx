@@ -233,7 +233,7 @@ export default function ResultsScreen() {
         </div>
         <div className="case-detail-page-footer">
           <button className="results-cta-button" onClick={requestConsultation}>
-            {practice === "lakeshore" ? "Claim Offer" : "Request Consultation"}
+            {practice === "lakeshore" ? "Request Consult" : "Request Consultation"}
           </button>
           {practice === "lakeshore" && (
             <p className="results-cta-incentive">
@@ -377,8 +377,8 @@ export default function ResultsScreen() {
                         {isRead ? (
                           <div className="concern-case-card-read-indicator">
                             <svg
-                              width="16"
-                              height="16"
+                              width="14"
+                              height="14"
                               viewBox="0 0 24 24"
                               fill="none"
                               stroke="currentColor"
@@ -388,6 +388,7 @@ export default function ResultsScreen() {
                             >
                               <path d="M20 6L9 17l-5-5" />
                             </svg>
+                            <span>seen</span>
                           </div>
                         ) : (
                           <div className="concern-case-card-unread-indicator">
@@ -431,8 +432,8 @@ export default function ResultsScreen() {
                         {isRead ? (
                           <div className="concern-case-card-read-indicator">
                             <svg
-                              width="16"
-                              height="16"
+                              width="14"
+                              height="14"
                               viewBox="0 0 24 24"
                               fill="none"
                               stroke="currentColor"
@@ -442,6 +443,7 @@ export default function ResultsScreen() {
                             >
                               <path d="M20 6L9 17l-5-5" />
                             </svg>
+                            <span>seen</span>
                           </div>
                         ) : (
                           <div className="concern-case-card-unread-indicator">
@@ -464,7 +466,7 @@ export default function ResultsScreen() {
 
         <div className="results-cta-container">
           <button className="results-cta-button" onClick={requestConsultation}>
-            {practice === "lakeshore" ? "Claim Offer" : "Request Consultation"}
+            {practice === "lakeshore" ? "Request Consult" : "Request Consultation"}
           </button>
           {practice === "lakeshore" && (
             <p className="results-cta-incentive">
@@ -587,7 +589,7 @@ export default function ResultsScreen() {
 
       <div className="results-cta-container">
         <button className="results-cta-button" onClick={requestConsultation}>
-          {practice === "lakeshore" ? "Claim Offer" : "Request Consultation"}
+          {practice === "lakeshore" ? "Request Consult" : "Request Consultation"}
         </button>
         {practice === "lakeshore" && (
           <p className="results-cta-incentive">
@@ -870,8 +872,7 @@ function renderCaseDetailPage(
           if (
             patientAge ||
             caseSkinType ||
-            caseSkinTone ||
-            relevanceScore > 0
+            caseSkinTone
           ) {
             return (
               <div className="case-detail-page-meta">
@@ -892,13 +893,6 @@ function renderCaseDetailPage(
                     </span>
                   )}
                 </div>
-                {relevanceScore > 0 && (
-                  <div className="case-detail-page-meta-line">
-                    <span className="case-detail-page-meta-item case-detail-page-meta-relevance">
-                      {relevanceScore}% Relevance
-                    </span>
-                  </div>
-                )}
               </div>
             );
           }
@@ -932,7 +926,7 @@ function renderCaseDetailPage(
             <h3 className="case-detail-page-section-title">
               Treatment Details
             </h3>
-            <p className="case-detail-page-section-content">
+            <p className="case-detail-page-story-content">
               {escapeHtml(caseTreatment)}
             </p>
           </div>
