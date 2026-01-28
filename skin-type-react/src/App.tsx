@@ -19,6 +19,7 @@ import { FORM_STEPS } from "./constants/data";
 import { trackEvent } from "./utils/analytics";
 import { getPracticeFromConfig } from "./components/Logo";
 import { isSurgicalCase } from "./utils/caseMatching";
+import { getBackendBaseUrl } from "./config/backend";
 import "./App.css";
 
 function AppContent() {
@@ -28,14 +29,17 @@ function AppContent() {
   // This needs to run on mount and when URL changes
   useEffect(() => {
     const practice = getPracticeFromConfig();
-    if (typeof document !== 'undefined') {
-      document.body.setAttribute('data-practice', practice);
+    if (typeof document !== "undefined") {
+      document.body.setAttribute("data-practice", practice);
       // Update page title based on practice
-      const practiceName = practice === 'lakeshore' 
-        ? 'Lakeshore Skin + Body' 
-        : 'Unique Aesthetics & Wellness';
+      const practiceName =
+        practice === "lakeshore"
+          ? "Lakeshore Skin + Body"
+          : "Unique Aesthetics & Wellness";
       document.title = `Discover Your Perfect Treatment | ${practiceName}`;
-      console.log(`🎨 Set practice to: ${practice} (from URL: ${window.location.search})`);
+      console.log(
+        `🎨 Set practice to: ${practice} (from URL: ${window.location.search})`,
+      );
     }
   }, []); // Run on mount
 
@@ -43,31 +47,34 @@ function AppContent() {
   useEffect(() => {
     const handleLocationChange = () => {
       const practice = getPracticeFromConfig();
-      if (typeof document !== 'undefined') {
-        document.body.setAttribute('data-practice', practice);
-        console.log(`🎨 Updated practice to: ${practice} (from URL: ${window.location.search})`);
+      if (typeof document !== "undefined") {
+        document.body.setAttribute("data-practice", practice);
+        console.log(
+          `🎨 Updated practice to: ${practice} (from URL: ${window.location.search})`,
+        );
       }
     };
 
     // Listen for popstate (back/forward buttons)
-    window.addEventListener('popstate', handleLocationChange);
-    
+    window.addEventListener("popstate", handleLocationChange);
+
     // Also check periodically in case URL changes without navigation (for dev)
     const interval = setInterval(() => {
-      const currentPractice = document.body.getAttribute('data-practice');
+      const currentPractice = document.body.getAttribute("data-practice");
       const expectedPractice = getPracticeFromConfig();
       if (currentPractice !== expectedPractice) {
         handleLocationChange();
         // Update title when practice changes
-        const practiceName = expectedPractice === 'lakeshore' 
-          ? 'Lakeshore Skin + Body' 
-          : 'Unique Aesthetics & Wellness';
+        const practiceName =
+          expectedPractice === "lakeshore"
+            ? "Lakeshore Skin + Body"
+            : "Unique Aesthetics & Wellness";
         document.title = `Discover Your Perfect Treatment | ${practiceName}`;
       }
     }, 100); // Check every 100ms
 
     return () => {
-      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener("popstate", handleLocationChange);
       clearInterval(interval);
     };
   }, []);
@@ -76,22 +83,28 @@ function AppContent() {
   useEffect(() => {
     const loadCaseData = async () => {
       setIsLoading(true);
-      
+
       // First try to get from window (if main app loaded it)
       if (typeof window !== "undefined" && (window as any).caseData) {
         const data = (window as any).caseData;
         if (Array.isArray(data) && data.length > 0) {
           // Filter out surgical cases
-          const nonSurgicalData = data.filter((caseItem: any) => !isSurgicalCase(caseItem));
+          const nonSurgicalData = data.filter(
+            (caseItem: any) => !isSurgicalCase(caseItem),
+          );
           setCaseData(nonSurgicalData);
           setIsLoading(false);
-          console.log(`✓ Loaded ${data.length} cases from window.caseData, filtered to ${nonSurgicalData.length} non-surgical cases`);
-          
+          console.log(
+            `✓ Loaded ${data.length} cases from window.caseData, filtered to ${nonSurgicalData.length} non-surgical cases`,
+          );
+
           // Also try to get CASE_CATEGORY_MAPPING from main app if available
           if ((window as any).CASE_CATEGORY_MAPPING) {
             // Store in window for caseMatching utils to access
-            (window as any).CASE_CATEGORY_MAPPING = (window as any).CASE_CATEGORY_MAPPING;
-            console.log('✓ Loaded CASE_CATEGORY_MAPPING from main app');
+            (window as any).CASE_CATEGORY_MAPPING = (
+              window as any
+            ).CASE_CATEGORY_MAPPING;
+            console.log("✓ Loaded CASE_CATEGORY_MAPPING from main app");
           }
           return;
         }
@@ -104,24 +117,28 @@ function AppContent() {
         const isDev = import.meta.env.DEV;
         const airtableApiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
         const airtableBaseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
-        
+
         let allRecords: any[] = [];
         let offset: string | null = null;
         let pageCount = 0;
         const maxPages = 50; // Safety limit
 
         // In development with API keys, use direct Airtable calls
-        // In production, use secure API route
+        // Otherwise use backend proxy (ponce-patient-backend.vercel.app) so we don't need AIRTABLE_API_KEY on cases.ponce.ai
         const useDirectAirtable = isDev && airtableApiKey && airtableBaseId;
-        const API_URL = '/api/airtable-cases';
+        const API_URL = useDirectAirtable
+          ? ""
+          : `${getBackendBaseUrl()}/api/airtable-cases`;
 
         if (useDirectAirtable) {
-          console.log('📡 Using direct Airtable API (development mode)');
+          console.log("📡 Using direct Airtable API (development mode)");
           if (!airtableApiKey || !airtableBaseId) {
-            throw new Error('Airtable API key or Base ID not configured. Set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file');
+            throw new Error(
+              "Airtable API key or Base ID not configured. Set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file",
+            );
           }
         } else {
-          console.log('📡 Using secure API route');
+          console.log("📡 Using backend proxy:", API_URL);
         }
 
         do {
@@ -134,41 +151,46 @@ function AppContent() {
 
           let url: string;
           let headers: HeadersInit;
-          
+
           if (useDirectAirtable) {
             url = `https://api.airtable.com/v0/${airtableBaseId}/Photos?${params.toString()}`;
             headers = {
-              'Authorization': `Bearer ${airtableApiKey}`,
-              'Content-Type': 'application/json',
+              Authorization: `Bearer ${airtableApiKey}`,
+              "Content-Type": "application/json",
             };
           } else {
             url = `${API_URL}?${params.toString()}`;
             headers = {
               "Content-Type": "application/json",
             };
+            // Backend proxy; no auth from client
           }
 
           console.log(
-            `Fetching page ${pageCount}${offset ? ` (with offset)` : " (first page)"}...`
+            `Fetching page ${pageCount}${offset ? ` (with offset)` : " (first page)"}...`,
           );
 
           const response = await fetch(url, {
-            method: 'GET',
+            method: "GET",
             headers,
           });
 
           // Check if we got HTML instead of JSON (API route doesn't exist)
-          const contentType = response.headers.get('content-type') || '';
-          if (contentType.includes('text/html')) {
+          const contentType = response.headers.get("content-type") || "";
+          if (contentType.includes("text/html")) {
             // Got HTML instead of JSON - API route doesn't exist
             await response.text(); // consume body
-            throw new Error(`API route returned HTML instead of JSON. This usually means the API route isn't configured. In development, set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file to use direct Airtable API.`);
+            throw new Error(
+              `API route returned HTML instead of JSON. This usually means the API route isn't configured. In development, set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file to use direct Airtable API.`,
+            );
           }
 
           if (!response.ok) {
-            const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+            const error = await response
+              .json()
+              .catch(() => ({ message: "Unknown error" }));
             throw new Error(
-              `API error: ${response.status} ${response.statusText} - ${error.message || 'Unknown error'}`
+              `API error: ${response.status} ${response.statusText} - ${error.message || "Unknown error"}`,
             );
           }
 
@@ -180,111 +202,122 @@ function AppContent() {
           offset = data.offset || null;
 
           console.log(
-            `Fetched page ${pageCount}: ${pageRecords.length} records (total so far: ${allRecords.length})`
+            `Fetched page ${pageCount}: ${pageRecords.length} records (total so far: ${allRecords.length})`,
           );
         } while (offset !== null && pageCount < maxPages);
 
-          console.log(
-            `✓ Successfully fetched ${allRecords.length} total records from Airtable API (${pageCount} page(s))`
-          );
+        console.log(
+          `✓ Successfully fetched ${allRecords.length} total records from Airtable API (${pageCount} page(s))`,
+        );
 
-          const records = allRecords;
-            
-            // Transform records to match CaseItem format
-            const transformedData = records.map((record: any) => {
-              const fields = record.fields || {};
-              const name = fields['Name'] || `Treatment ${record.id}`;
+        const records = allRecords;
 
-              // Get images - try multiple field name variations
-              let beforeAfterField = null;
-              if (fields['Before/After Photo']) {
-                beforeAfterField = Array.isArray(fields['Before/After Photo']) 
-                  ? fields['Before/After Photo'][0]?.url 
-                  : fields['Before/After Photo'];
-              } else if (fields['Before/After']) {
-                beforeAfterField = Array.isArray(fields['Before/After']) 
-                  ? fields['Before/After'][0]?.url 
-                  : fields['Before/After'];
-              } else if (fields['Photo']) {
-                beforeAfterField = Array.isArray(fields['Photo']) 
-                  ? fields['Photo'][0]?.url 
-                  : fields['Photo'];
+        // Transform records to match CaseItem format
+        const transformedData = records.map((record: any) => {
+          const fields = record.fields || {};
+          const name = fields["Name"] || `Treatment ${record.id}`;
+
+          // Get images - try multiple field name variations
+          let beforeAfterField = null;
+          if (fields["Before/After Photo"]) {
+            beforeAfterField = Array.isArray(fields["Before/After Photo"])
+              ? fields["Before/After Photo"][0]?.url
+              : fields["Before/After Photo"];
+          } else if (fields["Before/After"]) {
+            beforeAfterField = Array.isArray(fields["Before/After"])
+              ? fields["Before/After"][0]?.url
+              : fields["Before/After"];
+          } else if (fields["Photo"]) {
+            beforeAfterField = Array.isArray(fields["Photo"])
+              ? fields["Photo"][0]?.url
+              : fields["Photo"];
+          }
+
+          let thumbnailField = null;
+          if (fields["Thumbnail"]) {
+            thumbnailField = Array.isArray(fields["Thumbnail"])
+              ? fields["Thumbnail"][0]?.url
+              : fields["Thumbnail"];
+          }
+
+          // Get headline - PRIMARY: "Story Title" (from generated stories)
+          // Falls back to other field name variations
+          const headline =
+            fields["Story Title"] ||
+            fields["Headline"] ||
+            fields["Title"] ||
+            fields["Case Title"] ||
+            fields["Story Headline"] ||
+            fields["Treatment Title"] ||
+            name;
+
+          // Get story - PRIMARY: "Story Detailed" (from generated stories)
+          // Falls back to other field name variations
+          const story =
+            fields["Story Detailed"] ||
+            fields["Story"] ||
+            fields["Description"] ||
+            fields["Patient Story"] ||
+            fields["Case Story"] ||
+            fields["Background"] ||
+            fields["Notes"] ||
+            "";
+
+          // Get treatment details - try multiple variations
+          const treatment =
+            fields["Treatment Details"] ||
+            fields["Treatment"] ||
+            fields["Treatment Description"] ||
+            "";
+
+          return {
+            id: record.id,
+            name: name,
+            headline: headline,
+            patient: fields["Patient Name"] || fields["Patient"] || "",
+            story: story,
+            solved: fields["Solved"] || [],
+            matchingCriteria: (() => {
+              // Check for "Matching Criteria" first, then "Matching"
+              const matchingValue =
+                fields["Matching Criteria"] || fields["Matching"];
+              if (!matchingValue) return [];
+              // If it's already an array, return it
+              if (Array.isArray(matchingValue)) return matchingValue;
+              // If it's a string, split by comma and trim
+              if (typeof matchingValue === "string") {
+                return matchingValue
+                  .split(",")
+                  .map((s) => s.trim())
+                  .filter((s) => s);
               }
+              return [];
+            })(),
+            beforeAfter: beforeAfterField,
+            thumbnail: thumbnailField,
+            treatment: treatment,
+            directMatchingIssues: fields["Direct Matching Issues"] || [],
+            surgical: fields["Surgical"] || "",
+            patientAge: fields["Age"] || fields["Patient Age"] || null,
+            skinType: fields["Skin Type"] || null,
+            skinTone: fields["Skin Tone"] || null,
+            areaNames: fields["Area Names"] || fields["Areas"] || null,
+          };
+        });
 
-              let thumbnailField = null;
-              if (fields['Thumbnail']) {
-                thumbnailField = Array.isArray(fields['Thumbnail']) 
-                  ? fields['Thumbnail'][0]?.url 
-                  : fields['Thumbnail'];
-              }
+        // Filter out surgical cases before setting state
+        const nonSurgicalData = transformedData.filter(
+          (caseItem: any) => !isSurgicalCase(caseItem),
+        );
 
-              // Get headline - PRIMARY: "Story Title" (from generated stories)
-              // Falls back to other field name variations
-              const headline = fields['Story Title'] ||
-                              fields['Headline'] ||
-                              fields['Title'] ||
-                              fields['Case Title'] ||
-                              fields['Story Headline'] ||
-                              fields['Treatment Title'] ||
-                              name;
-
-              // Get story - PRIMARY: "Story Detailed" (from generated stories)
-              // Falls back to other field name variations
-              const story = fields['Story Detailed'] ||
-                           fields['Story'] ||
-                           fields['Description'] ||
-                           fields['Patient Story'] ||
-                           fields['Case Story'] ||
-                           fields['Background'] ||
-                           fields['Notes'] ||
-                           '';
-
-              // Get treatment details - try multiple variations
-              const treatment = fields['Treatment Details'] ||
-                               fields['Treatment'] ||
-                               fields['Treatment Description'] ||
-                               '';
-
-              return {
-                id: record.id,
-                name: name,
-                headline: headline,
-                patient: fields['Patient Name'] || fields['Patient'] || '',
-                story: story,
-                solved: fields['Solved'] || [],
-                matchingCriteria: (() => {
-                  // Check for "Matching Criteria" first, then "Matching"
-                  const matchingValue = fields['Matching Criteria'] || fields['Matching'];
-                  if (!matchingValue) return [];
-                  // If it's already an array, return it
-                  if (Array.isArray(matchingValue)) return matchingValue;
-                  // If it's a string, split by comma and trim
-                  if (typeof matchingValue === 'string') {
-                    return matchingValue.split(',').map(s => s.trim()).filter(s => s);
-                  }
-                  return [];
-                })(),
-                beforeAfter: beforeAfterField,
-                thumbnail: thumbnailField,
-                treatment: treatment,
-                directMatchingIssues: fields['Direct Matching Issues'] || [],
-                surgical: fields['Surgical'] || '',
-                patientAge: fields['Age'] || fields['Patient Age'] || null,
-                skinType: fields['Skin Type'] || null,
-                skinTone: fields['Skin Tone'] || null,
-                areaNames: fields['Area Names'] || fields['Areas'] || null
-              };
-            });
-
-            // Filter out surgical cases before setting state
-            const nonSurgicalData = transformedData.filter((caseItem: any) => !isSurgicalCase(caseItem));
-            
-            setCaseData(nonSurgicalData);
-            setIsLoading(false);
-            console.log(`✓ Loaded ${transformedData.length} cases from Airtable, filtered to ${nonSurgicalData.length} non-surgical cases`);
+        setCaseData(nonSurgicalData);
+        setIsLoading(false);
+        console.log(
+          `✓ Loaded ${transformedData.length} cases from Airtable, filtered to ${nonSurgicalData.length} non-surgical cases`,
+        );
       } catch (error) {
         setIsLoading(false);
-        console.warn('Could not load cases from Airtable:', error);
+        console.warn("Could not load cases from Airtable:", error);
       }
     };
 
@@ -295,12 +328,18 @@ function AppContent() {
 
     // Also set up a retry mechanism in case window.caseData becomes available later
     const retryInterval = setInterval(() => {
-      if (caseData.length === 0 && typeof window !== "undefined" && (window as any).caseData) {
+      if (
+        caseData.length === 0 &&
+        typeof window !== "undefined" &&
+        (window as any).caseData
+      ) {
         const data = (window as any).caseData;
         if (Array.isArray(data) && data.length > 0) {
           setCaseData(data);
           setIsLoading(false);
-          console.log(`✓ Loaded ${data.length} cases from window.caseData (retry)`);
+          console.log(
+            `✓ Loaded ${data.length} cases from window.caseData (retry)`,
+          );
           clearInterval(retryInterval);
         }
       }
@@ -327,7 +366,11 @@ function AppContent() {
       return <LandingScreen />;
     }
     // Show onboarding screens (between -1 and 0)
-    if (state.currentStep === -0.7 || state.currentStep === -0.5 || state.currentStep === -0.3) {
+    if (
+      state.currentStep === -0.7 ||
+      state.currentStep === -0.5 ||
+      state.currentStep === -0.3
+    ) {
       return <OnboardingScreen />;
     }
     // Show suggestion detail screen if viewing one
@@ -375,31 +418,40 @@ function AppContent() {
   const currentStepName =
     state.currentStep === -1
       ? "landing"
-      : (state.currentStep === -0.7 || state.currentStep === -0.5 || state.currentStep === -0.3)
-      ? "onboarding"
-      : state.viewingSuggestionDetail
-      ? "suggestionDetail"
-      : state.currentStep < FORM_STEPS.length
-      ? FORM_STEPS[state.currentStep]
-      : state.currentStep === FORM_STEPS.length
-      ? "celebration"
-      : state.currentStep === FORM_STEPS.length + 1
-      ? "leadCapture"
-      : "results";
+      : state.currentStep === -0.7 ||
+          state.currentStep === -0.5 ||
+          state.currentStep === -0.3
+        ? "onboarding"
+        : state.viewingSuggestionDetail
+          ? "suggestionDetail"
+          : state.currentStep < FORM_STEPS.length
+            ? FORM_STEPS[state.currentStep]
+            : state.currentStep === FORM_STEPS.length
+              ? "celebration"
+              : state.currentStep === FORM_STEPS.length + 1
+                ? "leadCapture"
+                : "results";
   const showHeader =
-    !["landing", "onboarding", "results", "suggestionDetail"].includes(currentStepName) &&
+    !["landing", "onboarding", "results", "suggestionDetail"].includes(
+      currentStepName,
+    ) &&
     state.currentStep >= 0 &&
     state.currentStep < FORM_STEPS.length + 3;
 
   // Track screen views
   useEffect(() => {
-    trackEvent('screen_viewed', {
+    trackEvent("screen_viewed", {
       screen_name: currentStepName,
       step_number: state.currentStep,
       selected_concerns_count: state.selectedConcerns.length,
       selected_areas_count: state.selectedAreas.length,
     });
-  }, [currentStepName, state.currentStep, state.selectedConcerns.length, state.selectedAreas.length]);
+  }, [
+    currentStepName,
+    state.currentStep,
+    state.selectedConcerns.length,
+    state.selectedAreas.length,
+  ]);
 
   const appContainerClass = showHeader
     ? "app-container"
@@ -416,7 +468,9 @@ function AppContent() {
       ) : (
         <div className="main-content">{getCurrentScreen()}</div>
       )}
-      {!isLoading && state.currentStep !== -1 && state.currentStep >= 0 && <NextButton />}
+      {!isLoading && state.currentStep !== -1 && state.currentStep >= 0 && (
+        <NextButton />
+      )}
       <ConsultationModal />
     </div>
   );
