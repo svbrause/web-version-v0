@@ -1,6 +1,6 @@
 # PostHog Analytics & Session Recording Setup
 
-This React app includes PostHog integration for analytics and session recordings.
+This React app includes PostHog via the **npm package** (`posthog-js`), so there is no CDN script — the library is bundled at build time. Session recordings and events are sent to your PostHog project when `VITE_POSTHOG_KEY` is set.
 
 ## Features
 
