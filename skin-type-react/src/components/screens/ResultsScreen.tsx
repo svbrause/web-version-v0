@@ -100,7 +100,7 @@ export default function ResultsScreen() {
       if (Array.isArray(data) && data.length > 0) {
         setCaseData(data);
         console.log(
-          `ResultsScreen: Loaded ${data.length} cases from window.caseData`
+          `ResultsScreen: Loaded ${data.length} cases from window.caseData`,
         );
       }
     }
@@ -138,7 +138,7 @@ export default function ResultsScreen() {
     const matchingCases = getMatchingCasesForConcern(
       concernId,
       caseData,
-      state
+      state,
     );
 
     // Track concern as explored in localStorage and schedule sync
@@ -195,7 +195,7 @@ export default function ResultsScreen() {
         case_name: caseItem.name || caseItem.headline,
         concern_id: state.viewingConcernCasesId,
         concern_name: HIGH_LEVEL_CONCERNS.find(
-          (c) => c.id === state.viewingConcernCasesId
+          (c) => c.id === state.viewingConcernCasesId,
         )?.name,
         relevance_score: caseItem.matchingScore,
       });
@@ -219,7 +219,7 @@ export default function ResultsScreen() {
     const matchingCases = getMatchingCasesForConcern(
       state.viewingConcernCasesId,
       caseData,
-      state
+      state,
     );
     return matchingCases.find((c) => c.id === selectedCaseId) || null;
   }, [selectedCaseId, state.viewingConcernCasesId, caseData, state]);
@@ -233,7 +233,9 @@ export default function ResultsScreen() {
         </div>
         <div className="case-detail-page-footer">
           <button className="results-cta-button" onClick={requestConsultation}>
-            {practice === "lakeshore" ? "Request Consult" : "Request Consultation"}
+            {practice === "lakeshore"
+              ? "Request Consult"
+              : "Request Consultation"}
           </button>
           {practice === "lakeshore" && (
             <p className="results-cta-incentive">
@@ -252,12 +254,12 @@ export default function ResultsScreen() {
   // Show cases for a concern
   if (state.viewingConcernCases && state.viewingConcernCasesId) {
     const concern = HIGH_LEVEL_CONCERNS.find(
-      (c) => c.id === state.viewingConcernCasesId
+      (c) => c.id === state.viewingConcernCasesId,
     );
     const matchingCases = getMatchingCasesForConcern(
       state.viewingConcernCasesId,
       caseData,
-      state
+      state,
     );
     const readCount = matchingCases.filter((c) => readCases.has(c.id)).length;
     const totalCount = matchingCases.length;
@@ -464,7 +466,9 @@ export default function ResultsScreen() {
 
         <div className="results-cta-container">
           <button className="results-cta-button" onClick={requestConsultation}>
-            {practice === "lakeshore" ? "Request Consult" : "Request Consultation"}
+            {practice === "lakeshore"
+              ? "Request Consult"
+              : "Request Consultation"}
           </button>
           {practice === "lakeshore" && (
             <p className="results-cta-incentive">
@@ -517,14 +521,14 @@ export default function ResultsScreen() {
           <div className="concern-cards-container">
             {state.selectedConcerns.map((concernId) => {
               const concern = HIGH_LEVEL_CONCERNS.find(
-                (c) => c.id === concernId
+                (c) => c.id === concernId,
               );
               if (!concern) return null;
 
               const matchingCases = getMatchingCasesForConcern(
                 concernId,
                 caseData,
-                state
+                state,
               );
               const caseImages = matchingCases
                 .map((c) => c.beforeAfter || c.thumbnail)
@@ -532,7 +536,7 @@ export default function ResultsScreen() {
                 .slice(0, 10);
 
               const reviewedCount = matchingCases.filter((c) =>
-                readCases.has(c.id)
+                readCases.has(c.id),
               ).length;
               const totalCases = matchingCases.length;
 
@@ -580,7 +584,9 @@ export default function ResultsScreen() {
 
       <div className="results-cta-container">
         <button className="results-cta-button" onClick={requestConsultation}>
-          {practice === "lakeshore" ? "Request Consult" : "Request Consultation"}
+          {practice === "lakeshore"
+            ? "Request Consult"
+            : "Request Consultation"}
         </button>
         {practice === "lakeshore" && (
           <p className="results-cta-incentive">
@@ -739,7 +745,7 @@ function PhotoScroll({
 function renderCaseDetailPage(
   caseItem: CaseItem,
   onBack: () => void,
-  _userState: AppState
+  _userState: AppState,
 ): JSX.Element {
   const escapeHtml = (text: string | undefined): string => {
     if (!text) return "";
@@ -754,7 +760,6 @@ function renderCaseDetailPage(
   const caseStory = caseItem.story;
   const solvedIssues = caseItem.solved || [];
   const caseTreatment = (caseItem as any).treatment;
-  const relevanceScore = caseItem.matchingScore || 0;
   const patientAge = (caseItem as any).patientAge;
 
   let patientInfo = "";
@@ -843,11 +848,7 @@ function renderCaseDetailPage(
           const caseSkinType = (caseItem as any).skinType;
           const caseSkinTone = (caseItem as any).skinTone;
 
-          if (
-            patientAge ||
-            caseSkinType ||
-            caseSkinTone
-          ) {
+          if (patientAge || caseSkinType || caseSkinTone) {
             return (
               <div className="case-detail-page-meta">
                 <div className="case-detail-page-meta-line">

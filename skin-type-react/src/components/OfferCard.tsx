@@ -1,13 +1,9 @@
-import { getPracticeFromConfig } from "./Logo";
-
 interface OfferCardProps {
   className?: string;
   style?: React.CSSProperties;
 }
 
 export default function OfferCard({ className = "", style }: OfferCardProps) {
-  const practice = getPracticeFromConfig();
-
   return (
     <div
       className={`offer-card ${className}`}
