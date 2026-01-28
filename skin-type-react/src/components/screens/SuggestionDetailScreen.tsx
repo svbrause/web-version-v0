@@ -26,7 +26,7 @@ export default function SuggestionDetailScreen() {
     const matchingCases = getMatchingCasesForConcern(
       concernId,
       caseData,
-      state,
+      state
     );
     if (matchingCases.length === 0) return [];
 
@@ -156,7 +156,7 @@ export default function SuggestionDetailScreen() {
             .map((caseItem) => {
               const imageUrl = caseItem.beforeAfter || caseItem.thumbnail;
               const treatmentName = extractTreatmentFromCaseName(
-                caseItem.name || caseItem.headline,
+                caseItem.name || caseItem.headline
               );
               const storyTitle = caseItem.headline || null;
 
@@ -247,7 +247,7 @@ export default function SuggestionDetailScreen() {
 function renderCaseDetailPage(
   caseItem: CaseItem,
   onBack: () => void,
-  _userState: any,
+  _userState: any
 ): JSX.Element {
   const escapeHtml = (text: string | undefined): string => {
     if (!text) return "";
@@ -350,7 +350,11 @@ function renderCaseDetailPage(
           const caseSkinType = (caseItem as any).skinType;
           const caseSkinTone = (caseItem as any).skinTone;
 
-          if (patientAge || caseSkinType || caseSkinTone) {
+          if (
+            patientAge ||
+            caseSkinType ||
+            caseSkinTone
+          ) {
             return (
               <div className="case-detail-page-meta">
                 <div className="case-detail-page-meta-line">
