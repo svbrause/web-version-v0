@@ -1,0 +1,1545 @@
+/* ============================================================================
+   BRANDING SYSTEM STYLES
+   CSS variables and branding-specific styles
+   ============================================================================ */
+
+/* ============================================================================
+   CSS CUSTOM PROPERTIES (Variables)
+   These are set dynamically by branding.js
+   ============================================================================ */
+
+:root {
+  /* Colors - Default to Unique Aesthetics Pink (overridden by JS if needed) */
+  --color-primary: #000000;
+  --color-primary-hover: #333333;
+  --color-accent: #ffa2c7;
+  --color-accent-light: #ffd4e5;
+  --color-accent-dark: #e8759e;
+  --color-background: linear-gradient(180deg, #faf6f0 0%, #f1ece2 100%);
+  --color-card-bg: #ffffff;
+  --color-text-primary: #000000;
+  --color-text-secondary: #333333;
+  --color-text-muted: #666666;
+  --color-border: #e8e4dc;
+  --color-success: #2e7d32;
+  --color-success-light: #e8f5e9;
+
+  /* Fonts - Default to Unique Aesthetics Pink */
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Montserrat", sans-serif;
+}
+
+/* ============================================================================
+   APPLY CSS VARIABLES TO EXISTING ELEMENTS
+   ============================================================================ */
+
+/* Body & Background */
+/* Important: This must override styles.css body background */
+body {
+  background: var(--color-background) !important;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  background-attachment: fixed;
+}
+
+/* Headings */
+.teaser-title,
+.onboarding-heading,
+.form-title,
+.gallery-title,
+.my-cases-title,
+.modal-title,
+.issue-overview-title,
+.case-headline,
+.pitch-title,
+.provider-section-title {
+  font-family: var(--font-heading);
+  color: var(--color-text-primary);
+}
+
+/* Primary Buttons */
+.teaser-cta,
+.continue-button,
+.lets-go-button,
+.submit-button,
+.cta-button.primary,
+.modal-submit-button,
+.consultation-submit,
+.pitch-cta-button,
+.concern-card-cta-button,
+.concern-card-footer {
+  background: var(--color-primary);
+  color: white;
+}
+
+.teaser-cta:hover,
+.continue-button:hover,
+.lets-go-button:hover,
+.submit-button:hover,
+.cta-button.primary:hover,
+.modal-submit-button:hover,
+.consultation-submit:hover,
+.pitch-cta-button:hover {
+  background: var(--color-primary-hover);
+}
+
+/* Secondary Buttons & Borders */
+.cta-button.secondary,
+.goal-button,
+.filter-button,
+.action-button,
+.modal-cancel-button {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.cta-button.secondary:hover,
+.goal-button:hover,
+.filter-button:hover,
+.action-button:hover {
+  border-color: var(--color-primary);
+}
+
+.filter-button.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Accent Elements */
+.option-button:has(input[type="checkbox"]:checked),
+.solved-tag,
+.locked-badge,
+.goal-badge,
+.card-goal-badge {
+  background: var(--color-accent);
+}
+
+.consultation-pitch,
+.issue-overview-prevalence,
+.issue-goal-relation {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent) 0%,
+    var(--color-accent-light) 100%
+  );
+  border-color: var(--color-accent);
+}
+
+/* Text Colors */
+.teaser-subtitle,
+.onboarding-subheading,
+.form-subtitle,
+.gallery-subtitle {
+  color: var(--color-text-secondary);
+}
+
+.section-subtitle,
+.case-common,
+.carousel-common {
+  color: var(--color-text-muted);
+}
+
+/* Border Colors */
+.option-button,
+.age-input,
+.custom-dropdown-button,
+.custom-dropdown-menu,
+.region-select,
+.issue-select,
+.filter-button,
+.carousel-case-card,
+.case-card,
+.my-case-card,
+.my-cases-section,
+.goal-accordion,
+.concern-card,
+.issue-list-item,
+.modal-input,
+.modal-textarea {
+  border-color: var(--color-border);
+}
+
+/* Active/Hover States */
+.option-button:hover,
+.custom-dropdown-button:hover,
+.filter-button:hover,
+.carousel-case-card:hover,
+.case-card:hover,
+.my-case-card:hover,
+.concern-card:hover,
+.issue-list-item:hover {
+  border-color: var(--color-primary);
+}
+
+/* Accent Text */
+.concern-card-body .concern-card-prevalence strong,
+.issue-subtitle strong,
+.prevalence-inline strong,
+.issue-overview-prevalence .prevalence-text strong {
+  color: var(--color-accent-dark);
+}
+
+/* Step/Process Indicators */
+.process-step.active .step-number {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.indicator-bar.active {
+  background: var(--color-primary);
+}
+
+/* Feature Icons */
+.feature-icon,
+.case-arrow,
+.my-case-arrow {
+  color: var(--color-text-primary);
+}
+
+/* Input Focus States */
+.age-input:focus,
+.custom-dropdown-button.open,
+.region-select:focus,
+.issue-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(33, 33, 33, 0.1);
+}
+
+.modal-input:focus,
+.modal-textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(255, 210, 145, 0.2);
+}
+
+/* Carousel Navigation */
+.carousel-nav {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.carousel-nav:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* ============================================================================
+   BRANDING TOGGLE UI
+   ============================================================================ */
+
+.branding-toggle-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  font-family: "Montserrat", sans-serif;
+}
+
+.branding-toggle-panel {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e8e8e8;
+  width: 300px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.branding-toggle-container.expanded .branding-toggle-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.branding-toggle-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e8e8e8;
+  background: #f9f9f9;
+  border-radius: 12px 12px 0 0;
+}
+
+.branding-toggle-icon {
+  font-size: 18px;
+}
+
+.branding-toggle-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #212121;
+  flex: 1;
+}
+
+.branding-toggle-collapse {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.branding-toggle-collapse:hover {
+  background: #e8e8e8;
+  color: #212121;
+}
+
+.branding-toggle-content {
+  padding: 16px;
+}
+
+.branding-toggle-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.branding-toggle-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.brand-option {
+  flex: 1 1 calc(33% - 4px);
+  min-width: 70px;
+  padding: 8px 10px;
+  border: 2px solid #e8e8e8;
+  border-radius: 8px;
+  background: white;
+  color: #666;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+}
+
+.brand-option:hover {
+  border-color: #212121;
+  color: #212121;
+}
+
+.brand-option.active {
+  background: #212121;
+  border-color: #212121;
+  color: white;
+}
+
+.branding-current {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f3f3f3;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.branding-current-label {
+  color: #666;
+}
+
+.branding-current-name {
+  color: #212121;
+  font-weight: 600;
+}
+
+.branding-toggle-trigger {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #e8e8e8;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.branding-toggle-trigger:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border-color: #212121;
+}
+
+.branding-toggle-container.expanded .branding-toggle-trigger {
+  background: #212121;
+  border-color: #212121;
+}
+
+body.brand-uniqueAestheticsPink
+  .branding-toggle-container.expanded
+  .branding-toggle-trigger {
+  background: #000000;
+  border-color: #ffa2c7;
+}
+
+body.brand-uniqueAestheticsPink .brand-option.active {
+  background: #000000;
+  border-color: #000000;
+}
+
+/* ============================================================================
+   PROVIDER SECTION
+   ============================================================================ */
+
+.provider-section {
+  margin: 0 0;
+  padding: 0 0;
+  border-top: 5px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.provider-section-header {
+  text-align: center;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.provider-section-title {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+}
+
+.provider-section-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.provider-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.provider-card {
+  display: flex;
+  gap: 0px;
+  background: var(--color-card-bg);
+  border: 2px solid var(--color-border);
+  border-radius: 16px;
+  padding: 0px;
+  transition: all 0.2s ease;
+}
+
+.provider-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.provider-image-wrapper {
+  flex-shrink: 0;
+}
+
+.provider-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-accent);
+}
+
+.provider-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.provider-name {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 4px 0;
+}
+
+.provider-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-accent-dark);
+  margin: 0 0 8px 0;
+}
+
+body.brand-uniqueAestheticsPink .provider-title {
+  color: #e8759e;
+}
+
+.provider-bio {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.provider-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.specialty-tag {
+  padding: 4px 10px;
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Practice Info */
+.practice-info {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.practice-info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.practice-info-item svg {
+  color: var(--color-accent-dark);
+  flex-shrink: 0;
+}
+
+.practice-info-item a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.practice-info-item a:hover {
+  text-decoration: underline;
+}
+
+body.brand-uniqueAestheticsPink .practice-info-item svg {
+  color: #ffa2c7;
+}
+
+body.brand-uniqueAestheticsPink .practice-info-item a {
+  color: #000000;
+}
+
+body.brand-uniqueAestheticsPink .practice-info-item a:hover {
+  color: #e8759e;
+}
+
+/* ============================================================================
+   BRAND-SPECIFIC OVERRIDES
+   ============================================================================ */
+
+/* ============================================================================
+   UNIQUE AESTHETICS - SHARED STYLES (Both Pink and Teal variants)
+   ============================================================================ */
+
+body.brand-uniqueAestheticsPink .teaser-title,
+body.brand-uniqueAestheticsPink .onboarding-heading,
+body.brand-uniqueAestheticsPink .form-title,
+body.brand-uniqueAestheticsPink .gallery-title,
+body.brand-uniqueAestheticsPink .my-cases-title,
+body.brand-uniqueAestheticsPink .provider-section-title,
+body.brand-uniqueAestheticsPink .pitch-title,
+body.brand-uniqueAestheticsTeal .teaser-title,
+body.brand-uniqueAestheticsTeal .onboarding-heading,
+body.brand-uniqueAestheticsTeal .form-title,
+body.brand-uniqueAestheticsTeal .gallery-title,
+body.brand-uniqueAestheticsTeal .my-cases-title,
+body.brand-uniqueAestheticsTeal .provider-section-title,
+body.brand-uniqueAestheticsTeal .pitch-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+body.brand-uniqueAestheticsPink .logo-image,
+body.brand-uniqueAestheticsTeal .logo-image {
+  max-width: 200px;
+  max-height: 80px;
+}
+
+/* Header bar for Unique Aesthetics brands */
+.brand-header-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: white;
+  border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  z-index: 1000;
+  min-height: 64px;
+  max-height: 64px;
+}
+
+/* Show header bar by default for pink branding */
+body.brand-uniqueAestheticsPink .brand-header-bar {
+  display: flex;
+}
+
+body.brand-uniqueAestheticsPink .brand-header-bar,
+body.brand-uniqueAestheticsTeal .brand-header-bar {
+  border-bottom-color: var(--color-border);
+}
+
+.brand-header-logo {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.brand-header-logo .logo-image {
+  max-width: 180px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Hide logo in teaser when header bar is shown */
+body.brand-uniqueAestheticsPink .teaser-logo,
+body.brand-uniqueAestheticsTeal .teaser-logo {
+  display: none !important;
+}
+
+/* Hide large teaser image when provider section is shown */
+body.brand-uniqueAestheticsPink .teaser-image,
+body.brand-uniqueAestheticsTeal .teaser-image {
+  display: none !important;
+}
+
+/* Show provider section by default for Unique Aesthetics brands */
+body.brand-uniqueAestheticsPink #provider-section,
+body.brand-uniqueAestheticsTeal #provider-section {
+  display: block !important;
+}
+
+/* Adjust screen padding when header is present */
+body.brand-uniqueAestheticsPink #home-teaser,
+body.brand-uniqueAestheticsTeal #home-teaser {
+  padding-top: 84px;
+  padding-bottom: 24px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Add padding to all screens when header bar is present */
+body.brand-uniqueAestheticsPink .screen.active,
+body.brand-uniqueAestheticsTeal .screen.active {
+  padding-top: 84px;
+}
+
+body.brand-uniqueAestheticsPink #form-screen,
+body.brand-uniqueAestheticsTeal #form-screen {
+  padding-top: 84px;
+}
+
+body.brand-uniqueAestheticsPink #results-screen,
+body.brand-uniqueAestheticsTeal #results-screen {
+  padding-top: 0;
+}
+
+body.brand-uniqueAestheticsPink #gallery-toc,
+body.brand-uniqueAestheticsTeal #gallery-toc {
+  padding-top: 84px;
+}
+
+body.brand-uniqueAestheticsPink #treatment-detail-screen,
+body.brand-uniqueAestheticsTeal #treatment-detail-screen {
+  padding-top: 84px;
+}
+
+body.brand-uniqueAestheticsPink #case-detail,
+body.brand-uniqueAestheticsTeal #case-detail {
+  padding-top: 84px;
+}
+
+/* Optimize teaser container for single screen view */
+body.brand-uniqueAestheticsPink .teaser-container,
+body.brand-uniqueAestheticsTeal .teaser-container {
+  max-width: 100%;
+  padding: 0;
+  width: 100%;
+  text-align: left;
+}
+
+body.brand-uniqueAestheticsPink #home-teaser.active,
+body.brand-uniqueAestheticsTeal #home-teaser.active {
+  align-items: flex-start;
+  padding-top: 84px;
+  overflow-y: auto;
+  justify-content: flex-start;
+}
+
+body.brand-uniqueAestheticsPink #form-screen,
+body.brand-uniqueAestheticsTeal #form-screen {
+  padding-top: 80px;
+}
+
+body.brand-uniqueAestheticsPink #onboarding,
+body.brand-uniqueAestheticsTeal #onboarding {
+  padding-top: 70px;
+}
+
+body.brand-uniqueAestheticsPink #gallery-toc,
+body.brand-uniqueAestheticsTeal #gallery-toc {
+  padding-top: 70px;
+}
+
+body.brand-uniqueAestheticsPink #case-detail,
+body.brand-uniqueAestheticsTeal #case-detail {
+  padding-top: 70px;
+}
+
+body.brand-uniqueAestheticsPink #my-cases-screen,
+body.brand-uniqueAestheticsTeal #my-cases-screen {
+  padding-top: 70px;
+}
+
+body.brand-uniqueAestheticsPink #lead-capture-screen,
+body.brand-uniqueAestheticsTeal #lead-capture-screen {
+  padding-top: 70px;
+}
+
+body.brand-uniqueAestheticsPink #issue-detail-screen,
+body.brand-uniqueAestheticsTeal #issue-detail-screen {
+  padding-top: 70px;
+}
+
+body.brand-uniqueAestheticsPink #results-screen,
+body.brand-uniqueAestheticsTeal #results-screen {
+  padding-top: 0;
+}
+
+body.brand-uniqueAestheticsPink #concerns-selection-screen,
+body.brand-uniqueAestheticsTeal #concerns-selection-screen {
+  padding-top: 70px;
+}
+
+/* Adjust top-right-buttons position when header bar is visible */
+body.brand-uniqueAestheticsPink .top-right-buttons,
+body.brand-uniqueAestheticsTeal .top-right-buttons {
+  top: 70px;
+}
+
+/* Compact provider section for landing page */
+/* Remove spacing from provider section for Unique Aesthetics brands */
+body.brand-uniqueAestheticsPink #provider-section,
+body.brand-uniqueAestheticsTeal #provider-section {
+  margin: 24px 0;
+  padding: 0;
+  border: none;
+  display: block !important;
+}
+
+body.brand-uniqueAestheticsPink .provider-compact,
+body.brand-uniqueAestheticsTeal .provider-compact {
+  display: flex !important;
+  align-items: center;
+  gap: 16px;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transition: none;
+}
+
+body.brand-uniqueAestheticsPink .provider-compact:hover,
+body.brand-uniqueAestheticsTeal .provider-compact:hover {
+  box-shadow: none !important;
+  transform: none !important;
+  border-color: transparent !important;
+  background: transparent !important;
+}
+
+.provider-compact-image {
+  flex-shrink: 0;
+}
+
+.provider-compact-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: none;
+  box-shadow: none;
+}
+
+.provider-compact-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.provider-compact-name {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 4px 0;
+  line-height: 1.3;
+}
+
+.provider-compact-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-accent-dark);
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+}
+
+body.brand-uniqueAestheticsPink .provider-compact-title {
+  color: #e8759e;
+}
+
+body.brand-uniqueAestheticsTeal .provider-compact-title {
+  color: #9a7d4a;
+}
+
+.provider-compact-bio {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Compact features for Unique Aesthetics */
+body.brand-uniqueAestheticsPink .teaser-features,
+body.brand-uniqueAestheticsTeal .teaser-features {
+  margin: 20px 0 0 0;
+  gap: 14px;
+  padding: 0;
+}
+
+body.brand-uniqueAestheticsPink .teaser-feature,
+body.brand-uniqueAestheticsTeal .teaser-feature {
+  font-size: 16px;
+  gap: 12px;
+  font-weight: 500;
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0;
+}
+
+body.brand-uniqueAestheticsPink .feature-icon,
+body.brand-uniqueAestheticsTeal .feature-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: var(--color-accent);
+}
+
+body.brand-uniqueAestheticsPink .feature-icon svg,
+body.brand-uniqueAestheticsTeal .feature-icon svg {
+  stroke: var(--color-accent);
+}
+
+/* Reduce spacing on landing page for Unique Aesthetics */
+body.brand-uniqueAestheticsPink .teaser-title,
+body.brand-uniqueAestheticsTeal .teaser-title {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+body.brand-uniqueAestheticsPink .teaser-subtitle,
+body.brand-uniqueAestheticsTeal .teaser-subtitle {
+  margin-bottom: 20px;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+body.brand-uniqueAestheticsPink .teaser-cta,
+body.brand-uniqueAestheticsTeal .teaser-cta {
+  margin-top: 20px;
+  padding: 18px 32px;
+  font-size: 17px;
+  font-weight: 600;
+  width: 100%;
+  border-radius: 12px;
+}
+
+@media (max-width: 428px) {
+  body.brand-uniqueAestheticsPink .provider-compact,
+  body.brand-uniqueAestheticsTeal .provider-compact {
+    gap: 14px;
+    padding: 0;
+    margin: 0;
+  }
+
+  body.brand-uniqueAestheticsPink #provider-section,
+  body.brand-uniqueAestheticsTeal #provider-section {
+    margin: 20px 0;
+    padding: 0;
+  }
+
+  .provider-compact-img {
+    width: 75px;
+    height: 75px;
+  }
+
+  .provider-compact-name {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .provider-compact-title {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  .provider-compact-bio {
+    font-size: 13px;
+  }
+
+  body.brand-uniqueAestheticsPink .teaser-title,
+  body.brand-uniqueAestheticsTeal .teaser-title {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  body.brand-uniqueAestheticsPink .teaser-subtitle,
+  body.brand-uniqueAestheticsTeal .teaser-subtitle {
+    font-size: 17px;
+    margin-bottom: 18px;
+  }
+
+  body.brand-uniqueAestheticsPink .teaser-feature,
+  body.brand-uniqueAestheticsTeal .teaser-feature {
+    font-size: 15px;
+  }
+
+  body.brand-uniqueAestheticsPink .teaser-features,
+  body.brand-uniqueAestheticsTeal .teaser-features {
+    margin: 18px 0 0 0;
+    gap: 12px;
+  }
+
+  body.brand-uniqueAestheticsPink #home-teaser,
+  body.brand-uniqueAestheticsTeal #home-teaser {
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 80px;
+    padding-bottom: 20px;
+  }
+
+  body.brand-uniqueAestheticsPink .teaser-cta,
+  body.brand-uniqueAestheticsTeal .teaser-cta {
+    margin-top: 18px;
+    padding: 16px 24px;
+    font-size: 16px;
+  }
+}
+
+/* Exit button styling in header */
+.brand-header-bar .exit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: white;
+  color: #212121;
+  border: 2px solid #e8e8e8;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(33, 33, 33, 0.1);
+  transition: all 0.2s ease;
+  font-family: "Montserrat", sans-serif;
+  text-decoration: none;
+  font-size: 24px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.brand-header-bar .exit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(33, 33, 33, 0.2);
+  border-color: #212121;
+  background: #f9f9f9;
+}
+
+body.brand-uniqueAestheticsPink .brand-header-bar .exit-button:hover {
+  border-color: #ffa2c7;
+  background: #fff;
+}
+
+body.brand-uniqueAestheticsTeal .brand-header-bar .exit-button:hover {
+  border-color: #c9a86c;
+  background: #fff;
+}
+
+@media (max-width: 428px) {
+  .brand-header-bar {
+    padding: 10px 16px;
+    min-height: 56px;
+  }
+
+  .brand-header-logo .logo-image {
+    max-width: 150px;
+    max-height: 45px;
+  }
+
+  .brand-header-bar .exit-button {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  body.brand-uniqueAestheticsPink #home-teaser,
+  body.brand-uniqueAestheticsTeal #home-teaser {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink .screen.active,
+  body.brand-uniqueAestheticsTeal .screen.active {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #form-screen,
+  body.brand-uniqueAestheticsTeal #form-screen {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #results-screen,
+  body.brand-uniqueAestheticsTeal #results-screen {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #gallery-toc,
+  body.brand-uniqueAestheticsTeal #gallery-toc {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #treatment-detail-screen,
+  body.brand-uniqueAestheticsTeal #treatment-detail-screen {
+    padding-top: 76px;
+  }
+
+  body.brand-uniqueAestheticsPink #case-detail,
+  body.brand-uniqueAestheticsTeal #case-detail {
+    padding-top: 76px;
+  }
+}
+
+/* Primary buttons with black background */
+body.brand-uniqueAestheticsPink .teaser-cta,
+body.brand-uniqueAestheticsPink .continue-button,
+body.brand-uniqueAestheticsPink .lets-go-button,
+body.brand-uniqueAestheticsPink .submit-button,
+body.brand-uniqueAestheticsPink .cta-button.primary,
+body.brand-uniqueAestheticsPink .concern-card-footer,
+body.brand-uniqueAestheticsPink .pitch-cta-button {
+  background: #000000;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+
+body.brand-uniqueAestheticsPink .teaser-cta:hover,
+body.brand-uniqueAestheticsPink .continue-button:hover,
+body.brand-uniqueAestheticsPink .lets-go-button:hover,
+body.brand-uniqueAestheticsPink .submit-button:hover,
+body.brand-uniqueAestheticsPink .cta-button.primary:hover,
+body.brand-uniqueAestheticsPink .pitch-cta-button:hover {
+  background: #333333;
+}
+
+/* Pink accent elements */
+body.brand-uniqueAestheticsPink
+  .option-button:has(input[type="checkbox"]:checked) {
+  background: #ffd4e5;
+  border-color: #ffa2c7;
+}
+
+body.brand-uniqueAestheticsPink .solved-tag,
+body.brand-uniqueAestheticsPink .goal-badge,
+body.brand-uniqueAestheticsPink .card-goal-badge {
+  background: #ffa2c7;
+  color: #000000;
+}
+
+body.brand-uniqueAestheticsPink .specialty-tag {
+  background: #ffd4e5;
+  color: #000000;
+}
+
+body.brand-uniqueAestheticsPink .provider-image {
+  border-color: #ffa2c7;
+}
+
+/* Consultation pitch with soft linen background */
+body.brand-uniqueAestheticsPink .consultation-pitch,
+body.brand-uniqueAestheticsPink .issue-overview-prevalence,
+body.brand-uniqueAestheticsPink .issue-goal-relation {
+  background: linear-gradient(135deg, #faf6f0 0%, #f1ece2 100%);
+  border-color: #e8e4dc;
+}
+
+body.brand-uniqueAestheticsPink .consultation-pitch {
+  border-left: 4px solid #ffa2c7;
+}
+
+/* Active filter button */
+body.brand-uniqueAestheticsPink .filter-button.active {
+  background: #000000;
+  border-color: #000000;
+}
+
+/* Process step indicators */
+body.brand-uniqueAestheticsPink .process-step.active .step-number {
+  background: #000000;
+  border-color: #000000;
+}
+
+body.brand-uniqueAestheticsPink .indicator-bar.active {
+  background: #ffa2c7;
+}
+
+/* Input focus states with pink */
+body.brand-uniqueAestheticsPink .modal-input:focus,
+body.brand-uniqueAestheticsPink .modal-textarea:focus {
+  border-color: #ffa2c7;
+  box-shadow: 0 0 0 3px rgba(255, 162, 199, 0.2);
+}
+
+/* Selection counter */
+body.brand-uniqueAestheticsPink .selection-counter {
+  background: #ffd4e5;
+}
+
+body.brand-uniqueAestheticsPink .selection-counter.limit-reached {
+  background: #ffa2c7;
+  color: #000000;
+}
+
+/* Accent text colors */
+body.brand-uniqueAestheticsPink
+  .concern-card-body
+  .concern-card-prevalence
+  strong,
+body.brand-uniqueAestheticsPink .issue-subtitle strong,
+body.brand-uniqueAestheticsPink .prevalence-inline strong,
+body.brand-uniqueAestheticsPink
+  .issue-overview-prevalence
+  .prevalence-text
+  strong {
+  color: #e8759e;
+}
+
+/* Carousel navigation */
+body.brand-uniqueAestheticsPink .carousel-nav {
+  border-color: #000000;
+  color: #000000;
+}
+
+body.brand-uniqueAestheticsPink .carousel-nav:hover {
+  background: #000000;
+  color: white;
+}
+
+/* Cards hover state */
+body.brand-uniqueAestheticsPink .carousel-case-card:hover,
+body.brand-uniqueAestheticsPink .case-card:hover,
+body.brand-uniqueAestheticsPink .my-case-card:hover,
+body.brand-uniqueAestheticsPink .concern-card:hover,
+body.brand-uniqueAestheticsPink .provider-card:hover {
+  border-color: #ffa2c7;
+}
+
+/* Goal button states */
+body.brand-uniqueAestheticsPink .goal-button.in-goals {
+  background: #ffd4e5;
+  border-color: #ffa2c7;
+  color: #000000;
+}
+
+body.brand-uniqueAestheticsPink .goal-button.in-goals:hover {
+  background: #ffa2c7;
+  color: #000000;
+}
+
+body.brand-uniqueAestheticsPink .goal-button-compact.in-goals {
+  border-color: #ffa2c7;
+  background: #ffa2c7;
+}
+
+body.brand-uniqueAestheticsPink .goal-button-compact.in-goals svg {
+  color: #000000;
+}
+
+/* Locked badge */
+body.brand-uniqueAestheticsPink .locked-badge {
+  background: #ffd4e5;
+  color: #000000;
+}
+
+/* Case count badge */
+body.brand-uniqueAestheticsPink .case-count {
+  background: #000000;
+  color: white;
+}
+
+/* My cases button */
+body.brand-uniqueAestheticsPink .my-cases-button:hover {
+  border-color: #ffa2c7;
+}
+
+/* Modal styling */
+body.brand-uniqueAestheticsPink .consultation-header {
+  background: linear-gradient(135deg, #faf6f0 0%, #f1ece2 100%);
+}
+
+body.brand-uniqueAestheticsPink .modal-icon-wrapper svg {
+  color: #ffa2c7;
+}
+
+/* ============================================================================
+   UNIQUE AESTHETICS - TEAL VARIANT
+   Champagne gold accent with deep teal primary
+   ============================================================================ */
+
+/* Primary buttons with teal background */
+body.brand-uniqueAestheticsTeal .teaser-cta,
+body.brand-uniqueAestheticsTeal .continue-button,
+body.brand-uniqueAestheticsTeal .lets-go-button,
+body.brand-uniqueAestheticsTeal .submit-button,
+body.brand-uniqueAestheticsTeal .cta-button.primary,
+body.brand-uniqueAestheticsTeal .concern-card-footer,
+body.brand-uniqueAestheticsTeal .pitch-cta-button {
+  background: #1a3a3a;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+
+body.brand-uniqueAestheticsTeal .teaser-cta:hover,
+body.brand-uniqueAestheticsTeal .continue-button:hover,
+body.brand-uniqueAestheticsTeal .lets-go-button:hover,
+body.brand-uniqueAestheticsTeal .submit-button:hover,
+body.brand-uniqueAestheticsTeal .cta-button.primary:hover,
+body.brand-uniqueAestheticsTeal .pitch-cta-button:hover {
+  background: #0f2828;
+}
+
+/* Gold accent elements */
+body.brand-uniqueAestheticsTeal
+  .option-button:has(input[type="checkbox"]:checked) {
+  background: #f7f3eb;
+  border-color: #c9a86c;
+}
+
+body.brand-uniqueAestheticsTeal .solved-tag,
+body.brand-uniqueAestheticsTeal .goal-badge,
+body.brand-uniqueAestheticsTeal .card-goal-badge {
+  background: #c9a86c;
+  color: #1a3a3a;
+}
+
+body.brand-uniqueAestheticsTeal .specialty-tag {
+  background: #f7f3eb;
+  color: #1a3a3a;
+}
+
+body.brand-uniqueAestheticsTeal .provider-image {
+  border-color: #c9a86c;
+}
+
+body.brand-uniqueAestheticsTeal .provider-title {
+  color: #9a7d4a;
+}
+
+/* Consultation pitch with linen background */
+body.brand-uniqueAestheticsTeal .consultation-pitch,
+body.brand-uniqueAestheticsTeal .issue-overview-prevalence,
+body.brand-uniqueAestheticsTeal .issue-goal-relation {
+  background: linear-gradient(135deg, #f7f3eb 0%, #e8ebe8 100%);
+  border-color: #d4dcd4;
+}
+
+body.brand-uniqueAestheticsTeal .consultation-pitch {
+  border-left: 4px solid #c9a86c;
+}
+
+/* Active filter button */
+body.brand-uniqueAestheticsTeal .filter-button.active {
+  background: #1a3a3a;
+  border-color: #1a3a3a;
+}
+
+/* Process step indicators */
+body.brand-uniqueAestheticsTeal .process-step.active .step-number {
+  background: #1a3a3a;
+  border-color: #1a3a3a;
+}
+
+body.brand-uniqueAestheticsTeal .indicator-bar.active {
+  background: #c9a86c;
+}
+
+/* Input focus states with gold */
+body.brand-uniqueAestheticsTeal .modal-input:focus,
+body.brand-uniqueAestheticsTeal .modal-textarea:focus {
+  border-color: #c9a86c;
+  box-shadow: 0 0 0 3px rgba(201, 168, 108, 0.2);
+}
+
+/* Selection counter */
+body.brand-uniqueAestheticsTeal .selection-counter {
+  background: #f7f3eb;
+}
+
+body.brand-uniqueAestheticsTeal .selection-counter.limit-reached {
+  background: #c9a86c;
+  color: #1a3a3a;
+}
+
+/* Accent text colors */
+body.brand-uniqueAestheticsTeal
+  .concern-card-body
+  .concern-card-prevalence
+  strong,
+body.brand-uniqueAestheticsTeal .issue-subtitle strong,
+body.brand-uniqueAestheticsTeal .prevalence-inline strong,
+body.brand-uniqueAestheticsTeal
+  .issue-overview-prevalence
+  .prevalence-text
+  strong {
+  color: #9a7d4a;
+}
+
+/* Carousel navigation */
+body.brand-uniqueAestheticsTeal .carousel-nav {
+  border-color: #1a3a3a;
+  color: #1a3a3a;
+}
+
+body.brand-uniqueAestheticsTeal .carousel-nav:hover {
+  background: #1a3a3a;
+  color: white;
+}
+
+/* Cards hover state */
+body.brand-uniqueAestheticsTeal .carousel-case-card:hover,
+body.brand-uniqueAestheticsTeal .case-card:hover,
+body.brand-uniqueAestheticsTeal .my-case-card:hover,
+body.brand-uniqueAestheticsTeal .concern-card:hover,
+body.brand-uniqueAestheticsTeal .provider-card:hover {
+  border-color: #c9a86c;
+}
+
+/* Goal button states */
+body.brand-uniqueAestheticsTeal .goal-button.in-goals {
+  background: #f7f3eb;
+  border-color: #c9a86c;
+  color: #1a3a3a;
+}
+
+body.brand-uniqueAestheticsTeal .goal-button.in-goals:hover {
+  background: #c9a86c;
+  color: #1a3a3a;
+}
+
+body.brand-uniqueAestheticsTeal .goal-button-compact.in-goals {
+  border-color: #c9a86c;
+  background: #c9a86c;
+}
+
+body.brand-uniqueAestheticsTeal .goal-button-compact.in-goals svg {
+  color: #1a3a3a;
+}
+
+/* Locked badge */
+body.brand-uniqueAestheticsTeal .locked-badge {
+  background: #f7f3eb;
+  color: #1a3a3a;
+}
+
+/* Case count badge */
+body.brand-uniqueAestheticsTeal .case-count {
+  background: #1a3a3a;
+  color: white;
+}
+
+/* My cases button */
+body.brand-uniqueAestheticsTeal .my-cases-button:hover {
+  border-color: #c9a86c;
+}
+
+/* Modal styling */
+body.brand-uniqueAestheticsTeal .consultation-header {
+  background: linear-gradient(135deg, #f7f3eb 0%, #e8ebe8 100%);
+}
+
+body.brand-uniqueAestheticsTeal .modal-icon-wrapper svg {
+  color: #c9a86c;
+}
+
+/* Practice info */
+body.brand-uniqueAestheticsTeal .practice-info-item svg {
+  color: #c9a86c;
+}
+
+body.brand-uniqueAestheticsTeal .practice-info-item a {
+  color: #1a3a3a;
+}
+
+body.brand-uniqueAestheticsTeal .practice-info-item a:hover {
+  color: #9a7d4a;
+}
+
+/* Branding toggle */
+body.brand-uniqueAestheticsTeal
+  .branding-toggle-container.expanded
+  .branding-toggle-trigger {
+  background: #1a3a3a;
+  border-color: #c9a86c;
+}
+
+body.brand-uniqueAestheticsTeal .brand-option.active {
+  background: #1a3a3a;
+  border-color: #1a3a3a;
+}
+
+/* ============================================================================
+   ZONE ACCORDION BRANDING
+   ============================================================================ */
+
+.zone-accordion.expanded {
+  border-color: var(--color-primary);
+}
+
+.zone-accordion.expanded .zone-accordion-header {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-light) 0%,
+    var(--color-accent-light) 100%
+  );
+}
+
+.zone-accordion.expanded .zone-icon {
+  background: var(--color-accent);
+}
+
+.zone-accordion.expanded .zone-count {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.zone-accordion.expanded .zone-accordion-toggle {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.zone-connection-message {
+  border-left-color: var(--color-accent);
+}
+
+.zone-more-count svg {
+  color: var(--color-accent);
+}
+
+/* Lead Capture Screen Branding */
+.lead-capture-icon {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent) 0%,
+    var(--color-accent-light) 100%
+  );
+}
+
+.lead-submit-button {
+  background: var(--color-primary);
+}
+
+.lead-submit-button:hover {
+  background: var(--color-primary-hover);
+}
+
+.lead-email-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(33, 33, 33, 0.1);
+}
+
+/* Goal Visual Cards Branding */
+.goal-visual-card:has(input:checked) {
+  border-color: var(--color-primary);
+}
+
+.goal-card-check {
+  background: var(--color-primary);
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+
+@media (max-width: 480px) {
+  .branding-toggle-container {
+    bottom: 10px;
+    left: 10px;
+  }
+
+  .branding-toggle-panel {
+    width: 260px;
+    bottom: 55px;
+  }
+
+  .branding-toggle-trigger {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .provider-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .provider-image-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  .provider-specialties {
+    justify-content: center;
+  }
+}

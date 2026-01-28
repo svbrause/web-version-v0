@@ -354,7 +354,8 @@ function renderCaseDetailPage(
           if (
             patientAge ||
             caseSkinType ||
-            caseSkinTone
+            caseSkinTone ||
+            relevanceScore > 0
           ) {
             return (
               <div className="case-detail-page-meta">
@@ -375,6 +376,13 @@ function renderCaseDetailPage(
                     </span>
                   )}
                 </div>
+                {relevanceScore > 0 && (
+                  <div className="case-detail-page-meta-line">
+                    <span className="case-detail-page-meta-item case-detail-page-meta-relevance">
+                      {relevanceScore}% Relevance
+                    </span>
+                  </div>
+                )}
               </div>
             );
           }
@@ -407,7 +415,7 @@ function renderCaseDetailPage(
             <h3 className="case-detail-page-section-title">
               Treatment Details
             </h3>
-            <p className="case-detail-page-story-content">
+            <p className="case-detail-page-section-content">
               {escapeHtml(caseTreatment)}
             </p>
           </div>

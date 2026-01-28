@@ -1,0 +1,1485 @@
+// Dashboard JavaScript - Connected to Airtable
+// Fetches real leads from Airtable, with mock data fallback for demos
+// UNIQUE AESTHETICS VERSION - Filters by Unique Aesthetics provider
+
+// Airtable Configuration (same as app.js)
+// Read from window variables (set in HTML) or environment variables
+const AIRTABLE_API_KEY = 
+  typeof window !== 'undefined' && window.AIRTABLE_API_KEY
+    ? window.AIRTABLE_API_KEY
+    : (typeof process !== 'undefined' && process.env.AIRTABLE_API_KEY)
+      ? process.env.AIRTABLE_API_KEY
+      : null;
+const AIRTABLE_BASE_ID = 
+  typeof window !== 'undefined' && window.AIRTABLE_BASE_ID
+    ? window.AIRTABLE_BASE_ID
+    : (typeof process !== 'undefined' && process.env.AIRTABLE_BASE_ID)
+      ? process.env.AIRTABLE_BASE_ID
+      : "appXblSpAMBQskgzB";
+// Validate API key is set
+if (!AIRTABLE_API_KEY) {
+  console.error('❌ AIRTABLE_API_KEY is not set. Please configure it in your environment variables or HTML.');
+  console.error('   For Vercel: Set AIRTABLE_API_KEY in Settings → Environment Variables');
+  console.error('   For local: Set window.AIRTABLE_API_KEY in your HTML file');
+}
+
+const LEADS_TABLE_NAME = "Web Popup Leads";
+const LEADS_API_URL = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(
+  LEADS_TABLE_NAME
+)}`;
+
+// Provider filter - Unique Aesthetics provider ID
+const PROVIDER_ID = 'recN9Q4W02xtroD6g'; // Unique Aesthetics
+
+// Demo mode flag - set to true to use mock data instead of Airtable
+const USE_MOCK_DATA = false; // Change to true for demo-only mode
+
+// Mock data - realistic patient leads that tell a story (used when USE_MOCK_DATA = true or Airtable fails)
+const MOCK_LEADS = [
+  // NEW LEADS - Hot prospects just came in
+  {
+    id: "lead_001",
+    name: "Sarah Mitchell",
+    email: "sarah.mitchell@gmail.com",
+    phone: "(512) 555-0142",
+    age: 42,
+    goals: ["Anti-Aging", "Skin Rejuvenation"],
+    concerns: ["Under Eye Wrinkles", "Forehead Lines", "Loss of Volume"],
+    aestheticGoals: "I want to look refreshed and well-rested without looking 'done'. Would love to reduce these forehead lines.",
+    photosLiked: 5,
+    photosViewed: 12,
+    treatmentsViewed: ["Botox", "Dermal Fillers", "Chemical Peel"],
+    source: "AI Consult",
+    status: "new",
+    priority: "hot",
+    createdAt: getRelativeDate(0, 2), // 2 hours ago
+    notes: ""
+  },
+  {
+    id: "lead_002",
+    name: "Jennifer Park",
+    email: "jen.park@outlook.com",
+    phone: "(512) 555-0198",
+    age: 35,
+    goals: ["Facial Balancing", "Natural Look"],
+    concerns: ["Thin Lips", "Weak Chin"],
+    aestheticGoals: "Interested in subtle lip enhancement and maybe chin filler. Want to keep it very natural.",
+    photosLiked: 8,
+    photosViewed: 15,
+    treatmentsViewed: ["Lip Fillers", "Chin Filler", "Jawline Contouring"],
+    source: "AI Consult",
+    status: "new",
+    priority: "hot",
+    createdAt: getRelativeDate(0, 5), // 5 hours ago
+    notes: ""
+  },
+  {
+    id: "lead_003",
+    name: "Amanda Torres",
+    email: "amanda.t@yahoo.com",
+    phone: "(512) 555-0234",
+    age: 28,
+    goals: ["Skin Rejuvenation"],
+    concerns: ["Acne Scars", "Uneven Skin Tone"],
+    aestheticGoals: "I've struggled with acne scars for years. Looking for something that actually works.",
+    photosLiked: 3,
+    photosViewed: 8,
+    treatmentsViewed: ["Microneedling", "Chemical Peel", "Laser Resurfacing"],
+    source: "AI Consult",
+    status: "new",
+    priority: "medium",
+    createdAt: getRelativeDate(1, 0), // Yesterday
+    notes: ""
+  },
+  {
+    id: "lead_004",
+    name: "Michelle Wong",
+    email: "m.wong@gmail.com",
+    phone: "(512) 555-0167",
+    age: 51,
+    goals: ["Anti-Aging", "Facial Balancing"],
+    concerns: ["Jowls", "Neck Laxity", "Nasolabial Folds"],
+    aestheticGoals: "Everything is starting to sag. I want to look like myself 10 years ago.",
+    photosLiked: 6,
+    photosViewed: 20,
+    treatmentsViewed: ["Thread Lift", "Dermal Fillers", "Morpheus8", "Ultherapy"],
+    source: "AI Consult",
+    status: "new",
+    priority: "hot",
+    createdAt: getRelativeDate(1, 3), // Yesterday
+    notes: ""
+  },
+
+  // CONTACTED - In active conversation
+  {
+    id: "lead_005",
+    name: "Rachel Green",
+    email: "rachel.green@email.com",
+    phone: "(512) 555-0189",
+    age: 38,
+    goals: ["Anti-Aging", "Natural Look"],
+    concerns: ["Crow's Feet", "Forehead Lines", "Frown Lines"],
+    aestheticGoals: "First time considering injectables. Very nervous but want to try Botox.",
+    photosLiked: 4,
+    photosViewed: 18,
+    treatmentsViewed: ["Botox", "Xeomin", "Dysport"],
+    source: "AI Consult",
+    status: "contacted",
+    priority: "medium",
+    createdAt: getRelativeDate(2, 0),
+    lastContact: getRelativeDate(0, 4),
+    notes: "Called today - she's interested but had questions about downtime. Sending her some before/after photos."
+  },
+  {
+    id: "lead_006",
+    name: "Lisa Chen",
+    email: "lisa.chen@company.com",
+    phone: "(512) 555-0223",
+    age: 45,
+    goals: ["Facial Balancing", "Anti-Aging"],
+    concerns: ["Hollow Cheeks", "Under Eye Bags", "Marionette Lines"],
+    aestheticGoals: "Looking tired all the time even when I sleep well. Need volume restoration.",
+    photosLiked: 7,
+    photosViewed: 14,
+    treatmentsViewed: ["Cheek Fillers", "Under Eye Filler", "Sculptra"],
+    source: "AI Consult",
+    status: "contacted",
+    priority: "hot",
+    createdAt: getRelativeDate(3, 0),
+    lastContact: getRelativeDate(0, 8),
+    notes: "Very engaged - asked detailed questions about Sculptra vs traditional fillers. Considering a comprehensive treatment plan."
+  },
+  {
+    id: "lead_007",
+    name: "Nicole Roberts",
+    email: "nicole.r@gmail.com",
+    phone: "(512) 555-0156",
+    age: 33,
+    goals: ["Skin Rejuvenation", "Natural Look"],
+    concerns: ["Large Pores", "Sun Damage", "Dull Skin"],
+    aestheticGoals: "My skin looks tired and dull. Want that 'glow' everyone talks about.",
+    photosLiked: 2,
+    photosViewed: 6,
+    treatmentsViewed: ["HydraFacial", "Chemical Peel", "IPL"],
+    source: "AI Consult",
+    status: "contacted",
+    priority: "medium",
+    createdAt: getRelativeDate(4, 0),
+    lastContact: getRelativeDate(1, 0),
+    notes: "Interested in a HydraFacial to start. Mentioned she might want to do a series."
+  },
+
+  // SCHEDULED - Consultation booked
+  {
+    id: "lead_008",
+    name: "Katherine Moore",
+    email: "kate.moore@email.com",
+    phone: "(512) 555-0178",
+    age: 47,
+    goals: ["Anti-Aging", "Facial Balancing"],
+    concerns: ["Deep Wrinkles", "Volume Loss", "Skin Laxity"],
+    aestheticGoals: "Ready for a full facial rejuvenation. Budget isn't a concern, I want the best results.",
+    photosLiked: 12,
+    photosViewed: 25,
+    treatmentsViewed: ["Botox", "Dermal Fillers", "PDO Threads", "Morpheus8"],
+    source: "AI Consult",
+    status: "scheduled",
+    priority: "hot",
+    createdAt: getRelativeDate(5, 0),
+    appointmentDate: getRelativeDate(-2, 10), // 2 days from now at 10am
+    notes: "VIP lead! Scheduled for comprehensive consultation on Thursday at 10am. Interested in full-face rejuvenation package."
+  },
+  {
+    id: "lead_009",
+    name: "Emily Davis",
+    email: "emily.d@outlook.com",
+    phone: "(512) 555-0145",
+    age: 29,
+    goals: ["Facial Balancing"],
+    concerns: ["Lip Shape", "Facial Asymmetry"],
+    aestheticGoals: "Want fuller lips but still natural-looking. Saw some amazing results in the app!",
+    photosLiked: 9,
+    photosViewed: 11,
+    treatmentsViewed: ["Lip Fillers", "Dermal Fillers"],
+    source: "AI Consult",
+    status: "scheduled",
+    priority: "medium",
+    createdAt: getRelativeDate(4, 0),
+    appointmentDate: getRelativeDate(-3, 14), // 3 days from now at 2pm
+    notes: "Consultation Friday at 2pm for lip fillers. Very excited - been researching for months."
+  },
+  {
+    id: "lead_010",
+    name: "Jessica Taylor",
+    email: "jess.taylor@gmail.com",
+    phone: "(512) 555-0212",
+    age: 55,
+    goals: ["Anti-Aging", "Skin Rejuvenation"],
+    concerns: ["Neck Lines", "Chest Wrinkles", "Age Spots"],
+    aestheticGoals: "My face looks okay but my neck and chest give away my age. Need help with these areas.",
+    photosLiked: 4,
+    photosViewed: 9,
+    treatmentsViewed: ["Neck Treatment", "IPL", "Laser Resurfacing"],
+    source: "AI Consult",
+    status: "scheduled",
+    priority: "medium",
+    createdAt: getRelativeDate(6, 0),
+    appointmentDate: getRelativeDate(-5, 11), // 5 days from now
+    notes: "Monday consultation at 11am. Focused on neck and décolletage treatment."
+  },
+
+  // CONVERTED - Became patients
+  {
+    id: "lead_011",
+    name: "Maria Santos",
+    email: "maria.santos@email.com",
+    phone: "(512) 555-0134",
+    age: 40,
+    goals: ["Anti-Aging", "Natural Look"],
+    concerns: ["Forehead Lines", "Frown Lines"],
+    aestheticGoals: "Started with the AI consult, loved the recommendations, now I'm hooked!",
+    photosLiked: 6,
+    photosViewed: 16,
+    treatmentsViewed: ["Botox", "Dysport"],
+    source: "AI Consult",
+    status: "converted",
+    priority: "completed",
+    createdAt: getRelativeDate(14, 0),
+    convertedDate: getRelativeDate(7, 0),
+    treatmentReceived: "Botox - Full Face (50 units)",
+    revenue: 550,
+    notes: "Amazing first visit! Already asking about next treatment. Referred her sister."
+  },
+  {
+    id: "lead_012",
+    name: "Christine Adams",
+    email: "c.adams@company.com",
+    phone: "(512) 555-0167",
+    age: 36,
+    goals: ["Facial Balancing", "Skin Rejuvenation"],
+    concerns: ["Lip Enhancement", "Uneven Skin"],
+    aestheticGoals: "Wanted subtle enhancement - got exactly what I was looking for!",
+    photosLiked: 5,
+    photosViewed: 10,
+    treatmentsViewed: ["Lip Fillers", "Chemical Peel"],
+    source: "AI Consult",
+    status: "converted",
+    priority: "completed",
+    createdAt: getRelativeDate(10, 0),
+    convertedDate: getRelativeDate(5, 0),
+    treatmentReceived: "Lip Filler (1 syringe Juvederm)",
+    revenue: 650,
+    notes: "Thrilled with results. Coming back for skincare treatment next month."
+  },
+  {
+    id: "lead_013",
+    name: "Patricia Johnson",
+    email: "pjohnson@gmail.com",
+    phone: "(512) 555-0189",
+    age: 52,
+    goals: ["Anti-Aging"],
+    concerns: ["Full Face Aging", "Volume Loss"],
+    aestheticGoals: "Comprehensive treatment plan - this app helped me understand my options.",
+    photosLiked: 15,
+    photosViewed: 30,
+    treatmentsViewed: ["Botox", "Fillers", "PDO Threads", "Morpheus8"],
+    source: "AI Consult",
+    status: "converted",
+    priority: "completed",
+    createdAt: getRelativeDate(21, 0),
+    convertedDate: getRelativeDate(14, 0),
+    treatmentReceived: "Liquid Facelift Package",
+    revenue: 4500,
+    notes: "VIP patient now! Started with AI consult, now committed to quarterly treatments. $4,500 initial package."
+  }
+];
+
+// Global state
+let leads = [];
+let filteredLeads = [];
+let currentView = 'kanban';
+let currentFilter = 'all';
+let currentLeadId = null;
+let isLoading = false;
+
+// Helper to create relative dates
+function getRelativeDate(daysAgo, hoursAgo = 0) {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  date.setHours(date.getHours() - hoursAgo);
+  return date.toISOString();
+}
+
+// Initialize
+document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
+  initNavigation();
+  loadLeadsFromAirtable().then(() => {
+    renderDashboard();
+  }).catch((error) => {
+    console.error("Failed to load from Airtable:", error);
+    // Fallback to mock data if Airtable fails
+    if (!USE_MOCK_DATA) {
+      console.log("Falling back to mock data for demo...");
+      leads = [...MOCK_LEADS];
+      filteredLeads = [...leads];
+      renderDashboard();
+    }
+  });
+});
+
+// Theme Management - Default to Pink theme (Unique Aesthetics)
+function initTheme() {
+  const savedTheme = localStorage.getItem('dashboard-theme');
+  // Default to pink if no saved preference
+  if (!savedTheme || savedTheme === 'pink') {
+    // Pink is now the default, no class needed
+    document.body.classList.remove('theme-warm');
+    updateThemeButton('pink');
+    // Save default preference
+    if (!savedTheme) {
+      localStorage.setItem('dashboard-theme', 'pink');
+    }
+  } else if (savedTheme === 'warm') {
+    // Apply warm theme
+    document.body.classList.add('theme-warm');
+    updateThemeButton('warm');
+  }
+}
+
+function toggleTheme() {
+  const isWarm = document.body.classList.contains('theme-warm');
+  if (isWarm) {
+    // Switch to pink (default)
+    document.body.classList.remove('theme-warm');
+    localStorage.setItem('dashboard-theme', 'pink');
+    updateThemeButton('pink');
+  } else {
+    // Switch to warm
+    document.body.classList.add('theme-warm');
+    localStorage.setItem('dashboard-theme', 'warm');
+    updateThemeButton('warm');
+  }
+}
+
+function updateThemeButton(theme) {
+  const label = document.getElementById('theme-label');
+  if (label) {
+    label.textContent = theme === 'pink' ? 'Warm Theme' : 'Pink Theme';
+  }
+}
+
+// Navigation
+function initNavigation() {
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const view = item.dataset.view;
+      switchView(view);
+    });
+  });
+}
+
+function switchView(view) {
+  currentView = view;
+  
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.view === view);
+  });
+  
+  // Update views
+  document.querySelectorAll('.kanban-view, .list-view, .analytics-view').forEach(v => {
+    v.classList.remove('active');
+  });
+  
+  document.getElementById(`${view}-view`).classList.add('active');
+  
+  // Update title
+  const titles = {
+    kanban: 'Lead Board',
+    list: 'All Leads',
+    analytics: 'Analytics'
+  };
+  document.getElementById('page-title').textContent = titles[view];
+  
+  // Render view
+  if (view === 'analytics') {
+    renderAnalytics();
+  }
+}
+
+// Load leads from Airtable
+async function loadLeadsFromAirtable() {
+  if (USE_MOCK_DATA) {
+    leads = [...MOCK_LEADS];
+    filteredLeads = [...leads];
+    return;
+  }
+
+  isLoading = true;
+  showLoadingState();
+
+  try {
+    let allRecords = [];
+    let offset = null;
+    let pageCount = 0;
+    const maxPages = 50;
+
+    do {
+      pageCount++;
+      let url = LEADS_API_URL;
+      const params = new URLSearchParams();
+      params.append("pageSize", "100");
+      if (offset) {
+        params.append("offset", offset);
+      }
+      url += "?" + params.toString();
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Airtable API error: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      const pageRecords = data.records || [];
+      allRecords = allRecords.concat(pageRecords);
+
+      offset = data.offset || null;
+
+      if (pageCount >= maxPages) {
+        console.warn("Reached max pages limit");
+        break;
+      }
+    } while (offset);
+
+    // Process and map Airtable records to lead format
+    const airtableLeads = allRecords.map((record) => {
+      const fields = record.fields || {};
+      
+      // Map Airtable fields to dashboard format
+      const lead = {
+        id: record.id,
+        name: fields["Name"] || "",
+        email: fields["Email Address"] || "",
+        phone: fields["Phone Number"] || "",
+        age: fields["Age"] || null,
+        goals: Array.isArray(fields["Goals"]) ? fields["Goals"] : [],
+        concerns: fields["Concerns"] || "",
+        aestheticGoals: fields["Aesthetic Goals"] || "",
+        photosLiked: Array.isArray(fields["Liked Photos"]) ? fields["Liked Photos"].length : 0,
+        photosViewed: Array.isArray(fields["Viewed Photos"]) ? fields["Viewed Photos"].length : 0,
+        treatmentsViewed: [], // Can be populated if you track this in Airtable
+        source: fields["Source"] || "AI Consult",
+        status: mapAirtableStatus(fields),
+        priority: determinePriority(fields),
+        createdAt: record.createdTime || new Date().toISOString(),
+        notes: fields["Contact Notes"] || "",
+        appointmentDate: fields["Appointment Date"] || null,
+        treatmentReceived: fields["Treatment Received"] || null,
+        revenue: fields["Revenue"] || null,
+        lastContact: fields["Last Contact"] || null,
+        isReal: true, // Mark as real lead
+      };
+
+      return lead;
+    });
+
+    // Filter out incomplete leads (must have name and either email or phone)
+    // Also filter by provider if Providers field exists
+    const validAirtableLeads = airtableLeads.filter((lead, index) => {
+      const record = allRecords[index];
+      const fields = record?.fields || {};
+      
+      // Check if this lead belongs to our provider
+      const providers = fields["Providers"] || [];
+      const belongsToProvider = Array.isArray(providers) && providers.includes(PROVIDER_ID);
+      
+      // If Providers field exists and doesn't include our provider, skip
+      if (providers.length > 0 && !belongsToProvider) {
+        return false;
+      }
+      
+      const hasName = lead.name && lead.name.trim().length > 0;
+      const hasContact = (lead.email && lead.email.trim().length > 0) || 
+                         (lead.phone && lead.phone.trim().length > 0);
+      return hasName && hasContact;
+    });
+
+    // Merge real leads with mock leads (real leads first, then mock)
+    leads = [...validAirtableLeads, ...MOCK_LEADS];
+
+    // Sort by most recent first
+    leads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    filteredLeads = [...leads];
+
+    console.log(`✅ Loaded ${validAirtableLeads.length} real leads + ${MOCK_LEADS.length} demo leads`);
+  } catch (error) {
+    console.error("Error loading leads from Airtable:", error);
+    // Fallback to mock data on error
+    leads = [...MOCK_LEADS];
+    filteredLeads = [...leads];
+    console.log("⚠️ Using mock data due to Airtable error");
+  } finally {
+    isLoading = false;
+    hideLoadingState();
+  }
+}
+
+// Map Airtable status field to dashboard status
+function mapAirtableStatus(fields) {
+  // Check for Status field first
+  if (fields["Status"]) {
+    const status = fields["Status"].toLowerCase();
+    if (["new", "contacted", "scheduled", "converted"].includes(status)) {
+      return status;
+    }
+  }
+  
+  // Fallback: use Contacted checkbox
+  if (fields["Contacted"] === true) {
+    return "contacted";
+  }
+  
+  // Default to new
+  return "new";
+}
+
+// Determine priority based on engagement
+function determinePriority(fields) {
+  const photosLiked = Array.isArray(fields["Liked Photos"]) ? fields["Liked Photos"].length : 0;
+  const photosViewed = Array.isArray(fields["Viewed Photos"]) ? fields["Viewed Photos"].length : 0;
+  
+  if (photosLiked >= 5 || photosViewed >= 10) {
+    return "hot";
+  } else if (photosLiked >= 2 || photosViewed >= 5) {
+    return "medium";
+  }
+  return "low";
+}
+
+// Show loading state
+function showLoadingState() {
+  const columns = ['new', 'contacted', 'scheduled', 'converted'];
+  columns.forEach(status => {
+    const column = document.getElementById(`column-${status}`);
+    if (column) {
+      column.innerHTML = `
+        <div class="empty-state">
+          <div class="loading-spinner"></div>
+          <p class="empty-state-text">Loading leads...</p>
+        </div>
+      `;
+    }
+  });
+}
+
+// Hide loading state
+function hideLoadingState() {
+  // Will be replaced by renderKanban
+}
+
+// Render dashboard
+function renderDashboard() {
+  renderKanban();
+  renderList();
+  updateSidebarStats();
+  if (currentView === 'analytics') {
+    renderAnalytics();
+  }
+}
+
+// Update sidebar stats
+function updateSidebarStats() {
+  document.getElementById('sidebar-total').textContent = leads.length;
+  document.getElementById('sidebar-hot').textContent = leads.filter(l => l.priority === 'hot').length;
+}
+
+// Kanban Board
+function renderKanban() {
+  const statuses = ['new', 'contacted', 'scheduled', 'converted'];
+  
+  statuses.forEach(status => {
+    const column = document.getElementById(`column-${status}`);
+    const count = document.getElementById(`count-${status}`);
+    const statusLeads = leads.filter(l => l.status === status);
+    
+    count.textContent = statusLeads.length;
+    
+    if (statusLeads.length === 0) {
+      column.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <p class="empty-state-text">No leads yet</p>
+        </div>
+      `;
+      return;
+    }
+    
+    column.innerHTML = statusLeads.map(lead => createLeadCard(lead)).join('');
+  });
+  
+  // Add drag listeners
+  document.querySelectorAll('.lead-card').forEach(card => {
+    card.addEventListener('dragstart', handleDragStart);
+    card.addEventListener('dragend', handleDragEnd);
+    card.addEventListener('click', () => viewLeadDetails(card.dataset.id));
+  });
+}
+
+function createLeadCard(lead) {
+  const priorityIcon = lead.priority === 'hot' ? '🔥' : lead.priority === 'medium' ? '⭐' : '';
+  const date = formatRelativeDate(lead.createdAt);
+  
+  // Handle concerns - could be string or array
+  const concernsList = typeof lead.concerns === 'string' 
+    ? lead.concerns.split(',').map(c => c.trim()).filter(c => c)
+    : (Array.isArray(lead.concerns) ? lead.concerns : []);
+  const interests = concernsList.slice(0, 2);
+  
+  // Show both phone and email for completeness
+  let phoneInfo = lead.phone ? `📞 ${lead.phone}` : '';
+  let emailInfo = '';
+  if (lead.email) {
+    // Truncate long emails
+    const email = lead.email.length > 22 ? lead.email.substring(0, 20) + '...' : lead.email;
+    emailInfo = `✉️ ${email}`;
+  }
+  
+  return `
+    <div class="lead-card" draggable="true" data-id="${lead.id}">
+      <div class="lead-card-header">
+        <div>
+          <div class="lead-name">${lead.name}</div>
+          <div class="lead-contact-info">
+            ${phoneInfo ? `<div class="lead-contact">${phoneInfo}</div>` : ''}
+            ${emailInfo ? `<div class="lead-contact">${emailInfo}</div>` : ''}
+          </div>
+        </div>
+        <span class="lead-priority">${priorityIcon}</span>
+      </div>
+      <div class="lead-interests">
+        ${interests.map((i, idx) => `<span class="interest-tag ${idx === 0 ? 'primary' : ''}">${i}</span>`).join('')}
+        ${concernsList.length > 2 ? `<span class="interest-tag">+${concernsList.length - 2}</span>` : ''}
+      </div>
+      <div class="lead-card-footer">
+        <div class="lead-engagement">
+          <span>❤️ ${lead.photosLiked}</span>
+          <span>👁️ ${lead.photosViewed}</span>
+        </div>
+        <span class="lead-date">${date}</span>
+      </div>
+    </div>
+  `;
+}
+
+// Drag and Drop
+function handleDragStart(e) {
+  e.target.classList.add('dragging');
+  e.dataTransfer.setData('text/plain', e.target.dataset.id);
+}
+
+function handleDragEnd(e) {
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.kanban-cards').forEach(col => {
+    col.classList.remove('drag-over');
+  });
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+
+function handleDrop(e, newStatus) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  
+  const leadId = e.dataTransfer.getData('text/plain');
+  const lead = leads.find(l => l.id === leadId);
+  
+  if (lead && lead.status !== newStatus) {
+    // Update in Airtable (or local state for mock data)
+    updateLeadStatusInAirtable(leadId, newStatus);
+    showToast(`Moved ${lead.name} to ${formatStatus(newStatus)}`);
+  }
+}
+
+// List View
+function renderList() {
+  const tbody = document.getElementById('leads-tbody');
+  let filteredLeads = leads;
+  
+  if (currentFilter !== 'all') {
+    filteredLeads = leads.filter(l => l.status === currentFilter);
+  }
+  
+  // Apply search
+  const searchTerm = document.getElementById('search-input')?.value?.toLowerCase() || '';
+  if (searchTerm) {
+    filteredLeads = filteredLeads.filter(l => 
+      l.name.toLowerCase().includes(searchTerm) ||
+      l.email.toLowerCase().includes(searchTerm) ||
+      l.phone.includes(searchTerm)
+    );
+  }
+  
+  if (filteredLeads.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 48px; color: #666;">
+          No leads found
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = filteredLeads.map(lead => `
+    <tr onclick="viewLeadDetails('${lead.id}')" style="cursor: pointer;">
+      <td>
+        <div class="table-lead-name">${lead.name}</div>
+        <div class="table-lead-email">${lead.email}</div>
+      </td>
+      <td>${lead.phone}</td>
+      <td>
+        <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+          ${lead.goals.slice(0, 2).map(g => `<span class="interest-tag" style="font-size: 11px;">${g}</span>`).join('')}
+        </div>
+      </td>
+      <td>
+        <span style="font-size: 13px;">❤️ ${lead.photosLiked} &nbsp; 👁️ ${lead.photosViewed}</span>
+      </td>
+      <td>
+        <span class="status-badge ${lead.status}">${formatStatus(lead.status)}</span>
+      </td>
+      <td style="font-size: 13px; color: #666;">${formatRelativeDate(lead.createdAt)}</td>
+      <td>
+        <button class="btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="event.stopPropagation(); viewLeadDetails('${lead.id}')">
+          View
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function setListFilter(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.filter === filter);
+  });
+  renderList();
+}
+
+function filterLeads() {
+  renderList();
+}
+
+// Lead Details Modal
+function viewLeadDetails(leadId) {
+  const lead = leads.find(l => l.id === leadId);
+  if (!lead) return;
+  
+  currentLeadId = leadId;
+  
+  document.getElementById('modal-lead-name').textContent = lead.name;
+  document.getElementById('modal-status').className = `status-badge ${lead.status}`;
+  document.getElementById('modal-status').textContent = formatStatus(lead.status);
+  document.getElementById('status-select').value = lead.status;
+  document.getElementById('modal-email-btn').href = `mailto:${lead.email}`;
+  
+  const appointmentInfo = lead.appointmentDate ? `
+    <div class="detail-section">
+      <div class="detail-section-title">📅 Appointment</div>
+      <div class="detail-value">${formatDate(lead.appointmentDate)}</div>
+    </div>
+  ` : '';
+  
+  const conversionInfo = lead.status === 'converted' ? `
+    <div class="detail-section">
+      <div class="detail-section-title">✅ Conversion Details</div>
+      <div class="detail-grid">
+        <div class="detail-field">
+          <div class="detail-label">Treatment</div>
+          <div class="detail-value">${lead.treatmentReceived || 'N/A'}</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-label">Revenue</div>
+          <div class="detail-value" style="color: #2e7d32; font-weight: 700;">$${lead.revenue?.toLocaleString() || 'N/A'}</div>
+        </div>
+      </div>
+    </div>
+  ` : '';
+  
+  document.getElementById('modal-body').innerHTML = `
+    <div class="detail-section">
+      <div class="detail-section-title">
+        Contact Information 
+        <button class="edit-toggle-btn" onclick="toggleEditMode()">
+          <span id="edit-btn-text">✏️ Edit</span>
+        </button>
+      </div>
+      <div class="detail-grid" id="contact-fields">
+        <div class="detail-field">
+          <div class="detail-label">Name</div>
+          <div class="detail-value" id="display-name">${lead.name}</div>
+          <input type="text" class="edit-input hidden" id="edit-name" value="${lead.name}" />
+        </div>
+        <div class="detail-field">
+          <div class="detail-label">Email</div>
+          <div class="detail-value" id="display-email">${lead.email}</div>
+          <input type="email" class="edit-input hidden" id="edit-email" value="${lead.email}" />
+        </div>
+        <div class="detail-field">
+          <div class="detail-label">Phone</div>
+          <div class="detail-value" id="display-phone">${lead.phone || 'Not provided'}</div>
+          <input type="tel" class="edit-input hidden" id="edit-phone" value="${lead.phone || ''}" oninput="formatPhoneInput(this)" />
+        </div>
+        <div class="detail-field">
+          <div class="detail-label">Age</div>
+          <div class="detail-value" id="display-age">${lead.age || 'Not provided'}</div>
+          <input type="number" class="edit-input hidden" id="edit-age" value="${lead.age || ''}" min="18" max="100" />
+        </div>
+        <div class="detail-field">
+          <div class="detail-label">Source</div>
+          <div class="detail-value" id="display-source">${lead.source}</div>
+          <select class="edit-input hidden" id="edit-source">
+            <option value="Walk-in" ${lead.source === 'Walk-in' ? 'selected' : ''}>Walk-in</option>
+            <option value="Phone Call" ${lead.source === 'Phone Call' ? 'selected' : ''}>Phone Call</option>
+            <option value="Referral" ${lead.source === 'Referral' ? 'selected' : ''}>Referral</option>
+            <option value="Social Media" ${lead.source === 'Social Media' ? 'selected' : ''}>Social Media</option>
+            <option value="Website" ${lead.source === 'Website' ? 'selected' : ''}>Website</option>
+            <option value="AI Consult" ${lead.source === 'AI Consult' ? 'selected' : ''}>AI Consult Tool</option>
+            <option value="Early Lead Capture" ${lead.source === 'Early Lead Capture' ? 'selected' : ''}>Early Lead Capture</option>
+            <option value="Consultation Form" ${lead.source === 'Consultation Form' ? 'selected' : ''}>Consultation Form</option>
+            <option value="Other" ${lead.source === 'Other' ? 'selected' : ''}>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="edit-actions hidden" id="edit-actions">
+        <button class="btn-secondary btn-sm" onclick="cancelEdit()">Cancel</button>
+        <button class="btn-primary btn-sm" onclick="saveLeadEdits()">Save Changes</button>
+      </div>
+    </div>
+    
+    <div class="detail-section">
+      <div class="detail-section-title">Goals & Interests</div>
+      <div class="detail-tags">
+        ${lead.goals.length > 0 ? lead.goals.map(g => `<span class="detail-tag">${g}</span>`).join('') : '<span class="no-data">No goals recorded</span>'}
+      </div>
+    </div>
+    
+    <div class="detail-section">
+      <div class="detail-section-title">Concerns</div>
+      <div class="detail-tags">
+        ${(typeof lead.concerns === 'string' 
+          ? lead.concerns.split(',').map(c => c.trim()).filter(c => c)
+          : (Array.isArray(lead.concerns) ? lead.concerns : [])
+        ).length > 0 ? (typeof lead.concerns === 'string' 
+          ? lead.concerns.split(',').map(c => c.trim()).filter(c => c)
+          : (Array.isArray(lead.concerns) ? lead.concerns : [])
+        ).map(c => `<span class="detail-tag secondary">${c}</span>`).join('') : '<span class="no-data">No concerns recorded</span>'}
+      </div>
+    </div>
+    
+    <div class="detail-section">
+      <div class="detail-section-title">What They Said</div>
+      <div class="notes-box">${lead.aestheticGoals ? `"${lead.aestheticGoals}"` : '<span class="no-data">No notes</span>'}</div>
+    </div>
+    
+    <div class="detail-section">
+      <div class="detail-section-title">Engagement</div>
+      <div class="engagement-grid">
+        <div class="engagement-item">
+          <span class="engagement-item-value">${lead.photosLiked}</span>
+          <span class="engagement-item-label">Photos Liked</span>
+        </div>
+        <div class="engagement-item">
+          <span class="engagement-item-value">${lead.photosViewed}</span>
+          <span class="engagement-item-label">Photos Viewed</span>
+        </div>
+        <div class="engagement-item">
+          <span class="engagement-item-value">${lead.treatmentsViewed?.length || 0}</span>
+          <span class="engagement-item-label">Treatments Explored</span>
+        </div>
+      </div>
+    </div>
+    
+    ${appointmentInfo}
+    ${conversionInfo}
+    
+    <div class="detail-section">
+      <div class="detail-section-title">
+        📞 Contact History
+        <button class="edit-toggle-btn" onclick="showAddContactLog()">+ Add Entry</button>
+      </div>
+      <div class="contact-history" id="contact-history">
+        ${renderContactHistory(lead)}
+      </div>
+      <div class="add-contact-log hidden" id="add-contact-log">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Contact Type</label>
+            <select id="contact-log-type">
+              <option value="call">📞 Phone Call</option>
+              <option value="email">✉️ Email</option>
+              <option value="text">💬 Text Message</option>
+              <option value="meeting">👤 In-Person</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Outcome</label>
+            <select id="contact-log-outcome">
+              <option value="reached">Reached</option>
+              <option value="voicemail">Left Voicemail</option>
+              <option value="no-answer">No Answer</option>
+              <option value="scheduled">Scheduled Appointment</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="contact-log-notes" rows="2" placeholder="What was discussed..."></textarea>
+        </div>
+        <div class="edit-actions">
+          <button class="btn-secondary btn-sm" onclick="hideAddContactLog()">Cancel</button>
+          <button class="btn-primary btn-sm" onclick="saveContactLog()">Save Entry</button>
+        </div>
+      </div>
+    </div>
+    
+    ${lead.notes ? `
+    <div class="detail-section">
+      <div class="detail-section-title">📝 Internal Notes</div>
+      <div class="notes-box">${lead.notes}</div>
+    </div>
+    ` : ''}
+  `;
+  
+  document.getElementById('lead-modal').classList.add('active');
+}
+
+// Contact History Functions
+function renderContactHistory(lead) {
+  const history = lead.contactHistory || [];
+  
+  if (history.length === 0) {
+    return '<div class="no-data">No contact history yet. Add your first interaction!</div>';
+  }
+  
+  return history.map(entry => `
+    <div class="contact-entry">
+      <div class="contact-entry-header">
+        <span class="contact-type ${entry.type}">${getContactTypeIcon(entry.type)} ${formatContactType(entry.type)}</span>
+        <span class="contact-date">${formatRelativeDate(entry.date)}</span>
+      </div>
+      <div class="contact-outcome ${entry.outcome}">${formatOutcome(entry.outcome)}</div>
+      ${entry.notes ? `<div class="contact-notes">${entry.notes}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function getContactTypeIcon(type) {
+  const icons = { call: '📞', email: '✉️', text: '💬', meeting: '👤' };
+  return icons[type] || '📝';
+}
+
+function formatContactType(type) {
+  const labels = { call: 'Phone Call', email: 'Email', text: 'Text', meeting: 'In-Person' };
+  return labels[type] || type;
+}
+
+function formatOutcome(outcome) {
+  const labels = { 
+    reached: '✅ Reached', 
+    voicemail: '📭 Left Voicemail', 
+    'no-answer': '❌ No Answer',
+    scheduled: '📅 Appointment Scheduled'
+  };
+  return labels[outcome] || outcome;
+}
+
+function showAddContactLog() {
+  document.getElementById('add-contact-log').classList.remove('hidden');
+}
+
+function hideAddContactLog() {
+  document.getElementById('add-contact-log').classList.add('hidden');
+  document.getElementById('contact-log-notes').value = '';
+}
+
+function saveContactLog() {
+  if (!currentLeadId) return;
+  
+  const lead = leads.find(l => l.id === currentLeadId);
+  if (!lead) return;
+  
+  const type = document.getElementById('contact-log-type').value;
+  const outcome = document.getElementById('contact-log-outcome').value;
+  const notes = document.getElementById('contact-log-notes').value.trim();
+  
+  // Initialize contact history if doesn't exist
+  if (!lead.contactHistory) {
+    lead.contactHistory = [];
+  }
+  
+  // Add new entry at the beginning
+  lead.contactHistory.unshift({
+    id: Date.now(),
+    type: type,
+    outcome: outcome,
+    notes: notes,
+    date: new Date().toISOString()
+  });
+  
+  // Update last contact
+  lead.lastContact = new Date().toISOString();
+  
+  // If they scheduled, update status
+  if (outcome === 'scheduled' && lead.status !== 'converted') {
+    lead.status = 'scheduled';
+  } else if (lead.status === 'new') {
+    lead.status = 'contacted';
+  }
+  
+  // Re-render history
+  document.getElementById('contact-history').innerHTML = renderContactHistory(lead);
+  hideAddContactLog();
+  
+  // Update views
+  renderKanban();
+  renderListView();
+  
+  showToast('Contact log added!');
+}
+
+function closeLeadModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('lead-modal').classList.remove('active');
+  currentLeadId = null;
+  isEditMode = false;
+}
+
+// Edit Lead Functions
+let isEditMode = false;
+
+function toggleEditMode() {
+  isEditMode = !isEditMode;
+  
+  const displayFields = document.querySelectorAll('.detail-value');
+  const editFields = document.querySelectorAll('.edit-input');
+  const editActions = document.getElementById('edit-actions');
+  const editBtnText = document.getElementById('edit-btn-text');
+  
+  if (isEditMode) {
+    displayFields.forEach(f => f.classList.add('hidden'));
+    editFields.forEach(f => f.classList.remove('hidden'));
+    editActions.classList.remove('hidden');
+    editBtnText.textContent = '❌ Cancel';
+  } else {
+    displayFields.forEach(f => f.classList.remove('hidden'));
+    editFields.forEach(f => f.classList.add('hidden'));
+    editActions.classList.add('hidden');
+    editBtnText.textContent = '✏️ Edit';
+  }
+}
+
+function cancelEdit() {
+  isEditMode = true; // Set to true so toggle sets it to false
+  toggleEditMode();
+  // Re-open the modal to reset values
+  viewLeadDetails(currentLeadId);
+}
+
+function saveLeadEdits() {
+  if (!currentLeadId) return;
+  
+  const lead = leads.find(l => l.id === currentLeadId);
+  if (!lead) return;
+  
+  const newName = document.getElementById('edit-name').value.trim();
+  const newEmail = document.getElementById('edit-email').value.trim();
+  const newPhone = document.getElementById('edit-phone').value.trim();
+  const newAge = document.getElementById('edit-age').value;
+  const newSource = document.getElementById('edit-source').value;
+  
+  // Validate
+  if (!newName) {
+    showToast('Name is required');
+    return;
+  }
+  if (!isValidEmail(newEmail)) {
+    showToast('Please enter a valid email');
+    return;
+  }
+  if (newPhone && !isValidPhone(newPhone)) {
+    showToast('Please enter a valid phone number');
+    return;
+  }
+  
+  // Update the lead
+  lead.name = newName;
+  lead.email = newEmail;
+  lead.phone = newPhone;
+  lead.age = newAge ? parseInt(newAge, 10) : null;
+  lead.source = newSource;
+  
+  // Update displays
+  document.getElementById('display-name').textContent = newName;
+  document.getElementById('display-email').textContent = newEmail;
+  document.getElementById('display-phone').textContent = newPhone || 'Not provided';
+  document.getElementById('display-age').textContent = newAge || 'Not provided';
+  document.getElementById('display-source').textContent = newSource;
+  document.getElementById('modal-lead-name').textContent = newName;
+  document.getElementById('modal-email-btn').href = `mailto:${newEmail}`;
+  
+  // Exit edit mode
+  isEditMode = true;
+  toggleEditMode();
+  
+  // Re-render views
+  renderKanban();
+  renderListView();
+  
+  showToast(`Updated ${newName}'s information`);
+}
+
+// Add Lead Modal Functions
+function showAddLeadModal() {
+  document.getElementById('add-lead-modal').classList.add('active');
+  document.getElementById('new-lead-name').focus();
+}
+
+function closeAddLeadModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('add-lead-modal').classList.remove('active');
+  document.getElementById('add-lead-form').reset();
+}
+
+function handleAddLead(event) {
+  event.preventDefault();
+  
+  const name = document.getElementById('new-lead-name').value.trim();
+  const email = document.getElementById('new-lead-email').value.trim();
+  const phone = document.getElementById('new-lead-phone').value.trim();
+  const ageInput = document.getElementById('new-lead-age').value;
+  const age = ageInput ? parseInt(ageInput, 10) : null;
+  const source = document.getElementById('new-lead-source').value;
+  const notes = document.getElementById('new-lead-notes').value.trim();
+  
+  // Validate email
+  if (!isValidEmail(email)) {
+    document.getElementById('email-error').textContent = 'Please enter a valid email';
+    document.getElementById('new-lead-email').focus();
+    return;
+  }
+  document.getElementById('email-error').textContent = '';
+  
+  // Validate phone if provided
+  if (phone && !isValidPhone(phone)) {
+    document.getElementById('phone-error').textContent = 'Please enter a valid phone number';
+    document.getElementById('new-lead-phone').focus();
+    return;
+  }
+  document.getElementById('phone-error').textContent = '';
+  
+  // Create new lead object
+  const newLead = {
+    id: 'manual_' + Date.now(),
+    name: name,
+    email: email,
+    phone: phone,
+    age: age,
+    goals: [],
+    concerns: "",
+    aestheticGoals: notes,
+    photosLiked: 0,
+    photosViewed: 0,
+    treatmentsViewed: [],
+    source: source,
+    status: "new",
+    priority: "medium",
+    createdAt: new Date().toISOString(),
+    notes: notes,
+    isManual: true
+  };
+  
+  // Add to leads array at the beginning
+  leads.unshift(newLead);
+  filteredLeads = [...leads];
+  
+  // Re-render the views
+  renderKanban();
+  renderListView();
+  renderAnalytics();
+  
+  // Close modal and show success
+  closeAddLeadModal();
+  showToast(`Added ${name} as a new lead!`);
+}
+
+// Phone formatting
+function formatPhoneInput(input) {
+  let value = input.value.replace(/\D/g, '');
+  if (value.length > 10) value = value.substring(0, 10);
+  
+  if (value.length >= 6) {
+    input.value = `(${value.substring(0, 3)}) ${value.substring(3, 6)}-${value.substring(6)}`;
+  } else if (value.length >= 3) {
+    input.value = `(${value.substring(0, 3)}) ${value.substring(3)}`;
+  } else if (value.length > 0) {
+    input.value = `(${value}`;
+  }
+}
+
+// Validation helpers
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function isValidPhone(phone) {
+  const digits = phone.replace(/\D/g, '');
+  return digits.length >= 10;
+}
+
+function updateLeadStatus() {
+  if (!currentLeadId) return;
+  
+  const newStatus = document.getElementById('status-select').value;
+  const lead = leads.find(l => l.id === currentLeadId);
+  
+  if (lead) {
+    // Update in Airtable (or local state for mock data)
+    updateLeadStatusInAirtable(currentLeadId, newStatus);
+    
+    // Update modal badge
+    document.getElementById('modal-status').className = `status-badge ${newStatus}`;
+    document.getElementById('modal-status').textContent = formatStatus(newStatus);
+    
+    showToast(`Updated ${lead.name} to ${formatStatus(newStatus)}`);
+  }
+}
+
+/**
+ * Update lead status in Airtable
+ */
+async function updateLeadStatusInAirtable(leadId, newStatus) {
+  if (USE_MOCK_DATA) {
+    // Just update local state for mock data
+    const lead = leads.find(l => l.id === leadId);
+    if (lead) {
+      lead.status = newStatus;
+      renderKanban();
+      renderList();
+    }
+    return;
+  }
+
+  try {
+    // Map dashboard status to Airtable fields
+    const fields = {};
+    
+    // Update Status field if it exists
+    fields["Status"] = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+    
+    // Also update Contacted checkbox for backward compatibility
+    if (newStatus === "contacted" || newStatus === "scheduled" || newStatus === "converted") {
+      fields["Contacted"] = true;
+    } else {
+      fields["Contacted"] = false;
+    }
+
+    const response = await fetch(
+      `${LEADS_API_URL}/${leadId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fields }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || "Failed to update lead");
+    }
+
+    // Update local state
+    const lead = leads.find(l => l.id === leadId);
+    if (lead) {
+      lead.status = newStatus;
+    }
+
+    // Update UI
+    renderKanban();
+    renderList();
+    if (currentLeadId === leadId) {
+      viewLeadDetails(leadId); // Refresh modal
+    }
+
+    console.log(`✅ Updated lead status to ${newStatus}`);
+  } catch (error) {
+    console.error("Error updating lead:", error);
+    showError("Failed to update lead status. Please try again.");
+  }
+}
+
+function showError(message) {
+  showToast(`❌ ${message}`);
+}
+
+// Analytics
+function renderAnalytics() {
+  // Funnel numbers
+  const funnelData = {
+    started: 156,
+    completed: 132,
+    captured: leads.length,
+    contacted: leads.filter(l => ['contacted', 'scheduled', 'converted'].includes(l.status)).length,
+    booked: leads.filter(l => ['scheduled', 'converted'].includes(l.status)).length
+  };
+  
+  document.getElementById('funnel-started').textContent = funnelData.started;
+  document.getElementById('funnel-completed').textContent = funnelData.completed;
+  document.getElementById('funnel-captured').textContent = funnelData.captured;
+  document.getElementById('funnel-contacted').textContent = funnelData.contacted;
+  document.getElementById('funnel-booked').textContent = funnelData.booked;
+  
+  // Top treatments
+  const treatments = {};
+  leads.forEach(lead => {
+    lead.treatmentsViewed?.forEach(t => {
+      treatments[t] = (treatments[t] || 0) + 1;
+    });
+  });
+  
+  const topTreatments = Object.entries(treatments)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  
+  document.getElementById('top-treatments').innerHTML = topTreatments.map(([name, count]) => `
+    <div class="analytics-item">
+      <span class="analytics-item-label">${name}</span>
+      <span class="analytics-item-value">${count} views</span>
+    </div>
+  `).join('');
+  
+  // Lead sources
+  document.getElementById('lead-sources').innerHTML = `
+    <div class="analytics-item">
+      <span class="analytics-item-label">AI Consultation</span>
+      <span class="analytics-item-value">${leads.length}</span>
+    </div>
+    <div class="analytics-item">
+      <span class="analytics-item-label">Website Form</span>
+      <span class="analytics-item-value">0</span>
+    </div>
+    <div class="analytics-item">
+      <span class="analytics-item-label">Phone Inquiry</span>
+      <span class="analytics-item-value">0</span>
+    </div>
+  `;
+  
+  // Age demographics
+  const ageGroups = {
+    '25-34': leads.filter(l => l.age >= 25 && l.age < 35).length,
+    '35-44': leads.filter(l => l.age >= 35 && l.age < 45).length,
+    '45-54': leads.filter(l => l.age >= 45 && l.age < 55).length,
+    '55+': leads.filter(l => l.age >= 55).length
+  };
+  
+  document.getElementById('age-demographics').innerHTML = Object.entries(ageGroups).map(([range, count]) => `
+    <div class="analytics-item">
+      <span class="analytics-item-label">${range}</span>
+      <span class="analytics-item-value">${count}</span>
+    </div>
+  `).join('');
+  
+  // This week's activity
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  
+  const weekLeads = leads.filter(l => new Date(l.createdAt) >= oneWeekAgo);
+  document.getElementById('week-new').textContent = weekLeads.filter(l => l.status === 'new').length + 
+    weekLeads.filter(l => l.status === 'contacted').length;
+  document.getElementById('week-contacted').textContent = weekLeads.filter(l => 
+    ['contacted', 'scheduled', 'converted'].includes(l.status)).length;
+  document.getElementById('week-booked').textContent = weekLeads.filter(l => 
+    ['scheduled', 'converted'].includes(l.status)).length;
+}
+
+// Utilities
+function formatStatus(status) {
+  const labels = {
+    new: 'New Lead',
+    contacted: 'Contacted',
+    scheduled: 'Scheduled',
+    converted: 'Converted'
+  };
+  return labels[status] || status;
+}
+
+function formatRelativeDate(dateStr) {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffHours < 1) return 'Just now';
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-US', { 
+    weekday: 'long',
+    month: 'long', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+}
+
+function showToast(message) {
+  // Simple toast notification
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = message;
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #212121;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    animation: fadeInUp 0.3s ease;
+  `;
+  
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}

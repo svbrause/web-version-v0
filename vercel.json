@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "buildCommand": "cd skin-type-react && npm install && npm run build",
+  "outputDirectory": "skin-type-react/dist",
+  "devCommand": "cd skin-type-react && npm run dev",
+  "installCommand": "cd skin-type-react && npm install",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
