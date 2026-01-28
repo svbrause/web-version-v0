@@ -82,7 +82,7 @@ export async function submitLeadToAirtable(
 
     const API_URL = useDirectAirtable
       ? `https://api.airtable.com/v0/${airtableBaseId}/Web Popup Leads`
-      : `${getBackendBaseUrl()}/api/airtable-leads`;
+      : `${getBackendBaseUrl()}/api/dashboard/leads`;
 
     if (useDirectAirtable) {
       console.log("🔗 Using direct Airtable API (development mode)");
@@ -431,7 +431,7 @@ export async function updateLeadInAirtable(
 
     const API_URL = useDirectAirtable
       ? `https://api.airtable.com/v0/${airtableBaseId}/Web Popup Leads/${recordId}`
-      : `${getBackendBaseUrl()}/api/airtable-update-lead`;
+      : `${getBackendBaseUrl()}/api/dashboard/leads/${recordId}`;
 
     if (useDirectAirtable) {
       console.log("🔗 Using direct Airtable API (development mode)");
@@ -513,9 +513,8 @@ export async function updateLeadInAirtable(
       headers["Authorization"] = `Bearer ${airtableApiKey}`;
     }
 
-    const body = useDirectAirtable
-      ? JSON.stringify({ fields })
-      : JSON.stringify({ recordId, fields });
+    // Backend PATCH /api/dashboard/leads/:recordId expects body { fields } only
+    const body = JSON.stringify({ fields });
 
     const response = await fetch(API_URL, {
       method: "PATCH",

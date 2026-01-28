@@ -1,7 +1,11 @@
 /**
- * Backend API base URL for Airtable proxy (cases, leads, sync).
- * Use the deployed backend at ponce-patient-backend.vercel.app so we don't
- * need AIRTABLE_API_KEY on the frontend's Vercel project (cases.ponce.ai).
+ * Backend API base URL — Express app at ponce-patient-backend.vercel.app.
+ * Uses existing dashboard API:
+ *   GET  /api/dashboard/leads?tableName=Photos (cases)
+ *   POST /api/dashboard/leads (create lead)
+ *   PATCH /api/dashboard/leads/:recordId (update lead)
+ *   PATCH /api/dashboard/records/Web Popup Leads/:id (behavioral sync)
+ * Ensure FRONTEND_URL on the backend includes https://cases.ponce.ai for CORS.
  */
 const DEFAULT_BACKEND_URL = "https://ponce-patient-backend.vercel.app";
 

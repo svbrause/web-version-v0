@@ -124,11 +124,8 @@ function AppContent() {
         const maxPages = 50; // Safety limit
 
         // In development with API keys, use direct Airtable calls
-        // Otherwise use backend proxy (ponce-patient-backend.vercel.app) so we don't need AIRTABLE_API_KEY on cases.ponce.ai
+        // Otherwise use existing backend: GET /api/dashboard/leads?tableName=Photos (returns { success, records, count })
         const useDirectAirtable = isDev && airtableApiKey && airtableBaseId;
-        const API_URL = useDirectAirtable
-          ? ""
-          : `${getBackendBaseUrl()}/api/airtable-cases`;
 
         if (useDirectAirtable) {
           console.log("📡 Using direct Airtable API (development mode)");
@@ -138,53 +135,63 @@ function AppContent() {
             );
           }
         } else {
-          console.log("📡 Using backend proxy:", API_URL);
+          console.log(
+            "📡 Using backend GET /api/dashboard/leads?tableName=Photos",
+          );
         }
 
-        do {
-          pageCount++;
-          const params = new URLSearchParams();
-          params.append("pageSize", "100"); // Airtable's max per page
-          if (offset) {
-            params.append("offset", offset);
-          }
-
-          let url: string;
-          let headers: HeadersInit;
-
-          if (useDirectAirtable) {
-            url = `https://api.airtable.com/v0/${airtableBaseId}/Photos?${params.toString()}`;
-            headers = {
-              Authorization: `Bearer ${airtableApiKey}`,
-              "Content-Type": "application/json",
-            };
-          } else {
-            url = `${API_URL}?${params.toString()}`;
-            headers = {
-              "Content-Type": "application/json",
-            };
-            // Backend proxy; no auth from client
-          }
-
-          console.log(
-            `Fetching page ${pageCount}${offset ? ` (with offset)` : " (first page)"}...`,
-          );
-
+        if (useDirectAirtable) {
+          // Paginate with Airtable offset
+          do {
+            pageCount++;
+            const params = new URLSearchParams();
+            params.append("pageSize", "100");
+            if (offset) params.append("offset", offset);
+            const url = `https://api.airtable.com/v0/${airtableBaseId}/Photos?${params.toString()}`;
+            const response = await fetch(url, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${airtableApiKey}`,
+                "Content-Type": "application/json",
+              },
+            });
+            const contentType = response.headers.get("content-type") || "";
+            if (contentType.includes("text/html")) {
+              await response.text();
+              throw new Error(
+                `API route returned HTML instead of JSON. In development, set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file.`,
+              );
+            }
+            if (!response.ok) {
+              const error = await response
+                .json()
+                .catch(() => ({ message: "Unknown error" }));
+              throw new Error(
+                `API error: ${response.status} ${response.statusText} - ${error.message || "Unknown error"}`,
+              );
+            }
+            const data = await response.json();
+            const pageRecords = data.records || [];
+            allRecords = allRecords.concat(pageRecords);
+            offset = data.offset || null;
+            console.log(
+              `Fetched page ${pageCount}: ${pageRecords.length} records (total so far: ${allRecords.length})`,
+            );
+          } while (offset !== null && pageCount < maxPages);
+        } else {
+          // Backend: single request, returns { success, records, count } (backend paginates internally)
+          const url = `${getBackendBaseUrl()}/api/dashboard/leads?tableName=Photos`;
           const response = await fetch(url, {
             method: "GET",
-            headers,
+            headers: { "Content-Type": "application/json" },
           });
-
-          // Check if we got HTML instead of JSON (API route doesn't exist)
           const contentType = response.headers.get("content-type") || "";
           if (contentType.includes("text/html")) {
-            // Got HTML instead of JSON - API route doesn't exist
-            await response.text(); // consume body
+            await response.text();
             throw new Error(
-              `API route returned HTML instead of JSON. This usually means the API route isn't configured. In development, set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file to use direct Airtable API.`,
+              `Backend returned HTML instead of JSON. Check that ponce-patient-backend.vercel.app is deployed and FRONTEND_URL includes https://cases.ponce.ai.`,
             );
           }
-
           if (!response.ok) {
             const error = await response
               .json()
@@ -193,21 +200,16 @@ function AppContent() {
               `API error: ${response.status} ${response.statusText} - ${error.message || "Unknown error"}`,
             );
           }
-
           const data = await response.json();
-          const pageRecords = data.records || [];
-          allRecords = allRecords.concat(pageRecords);
-
-          // Airtable returns offset as a string if there are more records
-          offset = data.offset || null;
-
+          allRecords = data.records || [];
+          pageCount = 1;
           console.log(
-            `Fetched page ${pageCount}: ${pageRecords.length} records (total so far: ${allRecords.length})`,
+            `✓ Fetched ${allRecords.length} records from backend (Photos table)`,
           );
-        } while (offset !== null && pageCount < maxPages);
+        }
 
         console.log(
-          `✓ Successfully fetched ${allRecords.length} total records from Airtable API (${pageCount} page(s))`,
+          `✓ Successfully fetched ${allRecords.length} total records (${pageCount} page(s))`,
         );
 
         const records = allRecords;

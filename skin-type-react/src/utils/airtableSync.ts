@@ -201,10 +201,10 @@ async function performSync(): Promise<void> {
       return;
     }
 
-    // Use backend proxy (ponce-patient-backend.vercel.app) so we don't need AIRTABLE_API_KEY on cases.ponce.ai
-    const API_URL = `${getBackendBaseUrl()}/api/airtable-sync`;
+    // Backend Express: PATCH /api/dashboard/records/:tableName/:recordId with body { fields }
+    const API_URL = `${getBackendBaseUrl()}/api/dashboard/records/Web Popup Leads/${encodeURIComponent(sync.recordId)}`;
 
-    console.log("🔄 Syncing behavioral data via secure API:", {
+    console.log("🔄 Syncing behavioral data via backend API:", {
       recordId: sync.recordId,
       fields,
     });
@@ -214,7 +214,7 @@ async function performSync(): Promise<void> {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ recordId: sync.recordId, fields }),
+      body: JSON.stringify({ fields }),
     });
 
     if (!response.ok) {
