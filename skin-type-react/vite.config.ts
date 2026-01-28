@@ -10,10 +10,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: {
-        main: './index.html',
-        dashboard: './dashboard.html'
-      }
+      input: './index.html'
     }
   }
 })
