@@ -11,6 +11,10 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/lakeshore/:path*",
+      "destination": "https://web-version-v0-staging.vercel.app/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
