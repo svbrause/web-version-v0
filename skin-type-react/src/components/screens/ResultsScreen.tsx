@@ -237,7 +237,7 @@ export default function ResultsScreen() {
           </button>
           {practice === "lakeshore" && (
             <p className="results-cta-incentive">
-              $50 off any new treatments
+              Receive $50 credit when you book a consult
             </p>
           )}
         </div>
@@ -330,129 +330,127 @@ export default function ResultsScreen() {
                   }`}
                   onClick={() => handleCaseClick(caseItem.id)}
                 >
-                  <div className="concern-case-card-image-wrapper">
-                    {imageUrl ? (
-                      <div className="concern-case-card-image">
-                        <img
-                          src={imageUrl}
-                          alt={caseTitle}
-                          loading="lazy"
-                          onError={(e) => {
-                            (
-                              e.target as HTMLImageElement
-                            ).parentElement!.innerHTML =
-                              '<div class="case-placeholder">Before/After</div>';
-                          }}
-                        />
-                        {relevantAreas.length > 0 && (
-                          <div className="concern-case-card-areas-overlay">
-                            {relevantAreas.length <= 2 ? (
-                              // If 2 or fewer areas, show all
-                              relevantAreas.map((area, idx) => (
+                  {imageUrl ? (
+                    <div className="concern-case-card-image">
+                      <img
+                        src={imageUrl}
+                        alt={caseTitle}
+                        loading="lazy"
+                        onError={(e) => {
+                          (
+                            e.target as HTMLImageElement
+                          ).parentElement!.innerHTML =
+                            '<div class="case-placeholder">Before/After</div>';
+                        }}
+                      />
+                      {relevantAreas.length > 0 && (
+                        <div className="concern-case-card-areas-overlay">
+                          {relevantAreas.length <= 2 ? (
+                            // If 2 or fewer areas, show all
+                            relevantAreas.map((area, idx) => (
+                              <span
+                                key={idx}
+                                className="concern-case-card-area-overlay"
+                              >
+                                {escapeHtml(area)}
+                              </span>
+                            ))
+                          ) : (
+                            // If more than 2, show first one + count
+                            <>
+                              {relevantAreas.slice(0, 1).map((area, idx) => (
                                 <span
                                   key={idx}
                                   className="concern-case-card-area-overlay"
                                 >
                                   {escapeHtml(area)}
                                 </span>
-                              ))
-                            ) : (
-                              // If more than 2, show first one + count
-                              <>
-                                {relevantAreas.slice(0, 1).map((area, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="concern-case-card-area-overlay"
-                                  >
-                                    {escapeHtml(area)}
-                                  </span>
-                                ))}
-                                <span className="concern-case-card-area-overlay">
-                                  +{relevantAreas.length - 1}
-                                </span>
-                              </>
-                            )}
-                          </div>
-                        )}
-                        {isRead ? (
-                          <div className="concern-case-card-read-indicator">
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M20 6L9 17l-5-5" />
-                            </svg>
-                            <span>seen</span>
-                          </div>
-                        ) : (
-                          <div className="concern-case-card-unread-indicator">
-                            <span>New</span>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="concern-case-card-image">
-                        <div className="case-placeholder">Before/After</div>
-                        {relevantAreas.length > 0 && (
-                          <div className="concern-case-card-areas-overlay">
-                            {relevantAreas.length <= 2 ? (
-                              // If 2 or fewer areas, show all
-                              relevantAreas.map((area, idx) => (
+                              ))}
+                              <span className="concern-case-card-area-overlay">
+                                +{relevantAreas.length - 1}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      )}
+                      {isRead ? (
+                        <div className="concern-case-card-read-indicator">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                          <span>seen</span>
+                        </div>
+                      ) : (
+                        <div className="concern-case-card-unread-indicator">
+                          <span>New</span>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="concern-case-card-image">
+                      <div className="case-placeholder">Before/After</div>
+                      {relevantAreas.length > 0 && (
+                        <div className="concern-case-card-areas-overlay">
+                          {relevantAreas.length <= 2 ? (
+                            // If 2 or fewer areas, show all
+                            relevantAreas.map((area, idx) => (
+                              <span
+                                key={idx}
+                                className="concern-case-card-area-overlay"
+                              >
+                                {escapeHtml(area)}
+                              </span>
+                            ))
+                          ) : (
+                            // If more than 2, show first one + count
+                            <>
+                              {relevantAreas.slice(0, 1).map((area, idx) => (
                                 <span
                                   key={idx}
                                   className="concern-case-card-area-overlay"
                                 >
                                   {escapeHtml(area)}
                                 </span>
-                              ))
-                            ) : (
-                              // If more than 2, show first one + count
-                              <>
-                                {relevantAreas.slice(0, 1).map((area, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="concern-case-card-area-overlay"
-                                  >
-                                    {escapeHtml(area)}
-                                  </span>
-                                ))}
-                                <span className="concern-case-card-area-overlay">
-                                  +{relevantAreas.length - 1}
-                                </span>
-                              </>
-                            )}
-                          </div>
-                        )}
-                        {isRead ? (
-                          <div className="concern-case-card-read-indicator">
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M20 6L9 17l-5-5" />
-                            </svg>
-                            <span>seen</span>
-                          </div>
-                        ) : (
-                          <div className="concern-case-card-unread-indicator">
-                            <span>New</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                              ))}
+                              <span className="concern-case-card-area-overlay">
+                                +{relevantAreas.length - 1}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      )}
+                      {isRead ? (
+                        <div className="concern-case-card-read-indicator">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                          <span>seen</span>
+                        </div>
+                      ) : (
+                        <div className="concern-case-card-unread-indicator">
+                          <span>New</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div className="concern-case-card-content">
                     <h3 className="concern-case-card-title">
                       {escapeHtml(caseTitle)}
@@ -470,7 +468,7 @@ export default function ResultsScreen() {
           </button>
           {practice === "lakeshore" && (
             <p className="results-cta-incentive">
-              $50 off any new treatments
+              Receive $50 credit when you book a consult
             </p>
           )}
         </div>
@@ -528,16 +526,10 @@ export default function ResultsScreen() {
                 caseData,
                 state
               );
-              const caseImagesWithData = matchingCases
-                .map((c) => ({
-                  imageUrl: c.beforeAfter || c.thumbnail,
-                  caseItem: c
-                }))
-                .filter((item): item is { imageUrl: string; caseItem: CaseItem } => !!item.imageUrl)
+              const caseImages = matchingCases
+                .map((c) => c.beforeAfter || c.thumbnail)
+                .filter((img): img is string => !!img)
                 .slice(0, 10);
-              
-              const caseImages = caseImagesWithData.map(item => item.imageUrl);
-              const caseItems = caseImagesWithData.map(item => item.caseItem);
 
               const reviewedCount = matchingCases.filter((c) =>
                 readCases.has(c.id)
@@ -552,7 +544,6 @@ export default function ResultsScreen() {
                     <PhotoScroll
                       concernId={concernId}
                       caseImages={caseImages}
-                      caseItems={caseItems}
                       scrollStatesRef={scrollStatesRef}
                     />
                   )}
@@ -609,12 +600,10 @@ export default function ResultsScreen() {
 function PhotoScroll({
   concernId,
   caseImages,
-  caseItems,
   scrollStatesRef,
 }: {
   concernId: string;
   caseImages: string[];
-  caseItems?: CaseItem[];
   scrollStatesRef: React.MutableRefObject<
     Record<string, { showLeft: boolean; showRight: boolean }>
   >;
@@ -682,33 +671,18 @@ function PhotoScroll({
         <div className="concern-card-photos-fade-right"></div>
       )}
       <div ref={containerRef} className="concern-card-photos-container">
-        {caseImages.map((imageUrl, imgIdx) => {
-          const caseItem = caseItems?.[imgIdx];
-          const relevantAreas = caseItem ? getRelevantAreasForCase(caseItem) : [];
-          const displayArea = relevantAreas.length > 0 ? relevantAreas[0] : null;
-          
-          return (
-            <div key={imgIdx} className="concern-card-photo-wrapper">
-              <div className="concern-card-photo-item">
-                <img
-                  src={imageUrl}
-                  alt={`${concernName} case ${imgIdx + 1}`}
-                  className="concern-card-photo-image"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-                {displayArea && (
-                  <div className="concern-case-card-areas-overlay">
-                    <span className="concern-case-card-area-overlay">
-                      {displayArea}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+        {caseImages.map((imageUrl, imgIdx) => (
+          <div key={imgIdx} className="concern-card-photo-item">
+            <img
+              src={imageUrl}
+              alt={`${concernName} case ${imgIdx + 1}`}
+              className="concern-card-photo-image"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          </div>
+        ))}
       </div>
       {scrollState.isScrollable && (
         <>
@@ -926,7 +900,7 @@ function renderCaseDetailPage(
             <h3 className="case-detail-page-section-title">
               Treatment Details
             </h3>
-            <p className="case-detail-page-story-content">
+            <p className="case-detail-page-section-content">
               {escapeHtml(caseTreatment)}
             </p>
           </div>
