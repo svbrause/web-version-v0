@@ -88,7 +88,7 @@ export default function SuggestionDetailScreen() {
           </button>
           {practice === "lakeshore" && (
             <p className="results-cta-incentive">
-              Receive $50 credit when you book a consult
+              $50 off any new treatments
             </p>
           )}
         </div>
@@ -231,7 +231,7 @@ export default function SuggestionDetailScreen() {
         </button>
         {practice === "lakeshore" && (
           <p className="results-cta-incentive">
-            Receive $50 credit when you book
+            $50 off any new treatments
           </p>
         )}
       </div>
