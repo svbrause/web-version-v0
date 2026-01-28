@@ -9,13 +9,13 @@ import { trackEvent } from "../../utils/analytics";
 import { saveUserData } from "../../utils/userDataCollection";
 import { scheduleBehavioralSync, forceSyncNow } from "../../utils/airtableSync";
 import ConsultationModal from "../ConsultationModal";
-import Logo, { getPracticeHomeUrl, getPracticeFromConfig } from "../Logo";
+import OfferCard from "../OfferCard";
+import Logo, { getPracticeHomeUrl } from "../Logo";
 import type { CaseItem, AppState } from "../../types";
 import "../../App.css";
 
 export default function ResultsScreen() {
   const { state, caseData, setCaseData, updateState } = useApp();
-  const practice = getPracticeFromConfig();
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [showConsultationModal, setShowConsultationModal] = useState(false);
   const scrollStatesRef = useRef<
@@ -231,15 +231,11 @@ export default function ResultsScreen() {
         <div className="case-detail-page-content">
           {renderCaseDetailPage(selectedCaseItem, handleCloseCaseDetail, state)}
         </div>
-        <div className="case-detail-page-footer">
+        <div className="results-cta-container case-detail-page-footer">
+          <OfferCard showPresentIcon={false} />
           <button className="results-cta-button" onClick={requestConsultation}>
-            {practice === "lakeshore"
-              ? "Request Consult"
-              : "Request Consultation"}
+            Request Consult
           </button>
-          {practice === "lakeshore" && (
-            <p className="results-cta-incentive">$50 off any new treatments</p>
-          )}
         </div>
         <ConsultationModal
           isOpen={showConsultationModal}
@@ -465,14 +461,10 @@ export default function ResultsScreen() {
         </div>
 
         <div className="results-cta-container">
+          <OfferCard showPresentIcon={false} />
           <button className="results-cta-button" onClick={requestConsultation}>
-            {practice === "lakeshore"
-              ? "Request Consult"
-              : "Request Consultation"}
+            Request Consult
           </button>
-          {practice === "lakeshore" && (
-            <p className="results-cta-incentive">$50 off any new treatments</p>
-          )}
         </div>
 
         <ConsultationModal
@@ -593,16 +585,10 @@ export default function ResultsScreen() {
       )}
 
       <div className="results-cta-container">
+        <OfferCard showPresentIcon={false} />
         <button className="results-cta-button" onClick={requestConsultation}>
-          {practice === "lakeshore"
-            ? "Request Consult"
-            : "Request Consultation"}
+          Request Consult
         </button>
-        {practice === "lakeshore" && (
-          <p className="results-cta-incentive">
-            Receive $50 credit when you book a consult
-          </p>
-        )}
       </div>
 
       <ConsultationModal

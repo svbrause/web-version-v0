@@ -6,13 +6,13 @@ import {
   extractTreatmentFromCaseName,
 } from "../../utils/caseMatching";
 import ConsultationModal from "../ConsultationModal";
-import Logo, { getPracticeHomeUrl, getPracticeFromConfig } from "../Logo";
+import OfferCard from "../OfferCard";
+import Logo, { getPracticeHomeUrl } from "../Logo";
 import type { CaseItem } from "../../types";
 import "../../App.css";
 
 export default function SuggestionDetailScreen() {
   const { state, caseData, updateState } = useApp();
-  const practice = getPracticeFromConfig();
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [showConsultationModal, setShowConsultationModal] = useState(false);
 
@@ -82,13 +82,11 @@ export default function SuggestionDetailScreen() {
         <div className="case-detail-page-content">
           {renderCaseDetailPage(selectedCaseItem, handleCloseCaseDetail, state)}
         </div>
-        <div className="case-detail-page-footer">
+        <div className="results-cta-container case-detail-page-footer">
+          <OfferCard showPresentIcon={false} />
           <button className="results-cta-button" onClick={requestConsultation}>
-            Request Consultation
+            Request Consult
           </button>
-          {practice === "lakeshore" && (
-            <p className="results-cta-incentive">$50 off any new treatments</p>
-          )}
         </div>
         <ConsultationModal
           isOpen={showConsultationModal}
@@ -224,12 +222,10 @@ export default function SuggestionDetailScreen() {
       </div>
 
       <div className="results-cta-container">
+        <OfferCard showPresentIcon={false} />
         <button className="results-cta-button" onClick={requestConsultation}>
-          {practice === "lakeshore" ? "Proceed" : "Request Consultation"}
+          Request Consult
         </button>
-        {practice === "lakeshore" && (
-          <p className="results-cta-incentive">$50 off any new treatments</p>
-        )}
       </div>
 
       <ConsultationModal

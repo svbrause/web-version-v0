@@ -3,66 +3,137 @@ import { getPracticeFromConfig } from "./Logo";
 interface OfferCardProps {
   className?: string;
   style?: React.CSSProperties;
+  /** If true, show a small present/gift icon next to the offer text (for modal and onboarding) */
+  showPresentIcon?: boolean;
+  /** "compact" = bottom CTA bar; "expanded" = larger, detailed card for modal/onboarding (blueish accent, more bulk) */
+  variant?: "compact" | "expanded";
 }
 
-export default function OfferCard({ className = "", style }: OfferCardProps) {
-  void getPracticeFromConfig(); // reserved for future use (e.g. practice-specific copy)
+// Small present/gift icon for $50 off sections
+function PresentIcon({ size = 20, color }: { size?: number; color?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{
+        flexShrink: 0,
+        color: color ?? "rgba(255,255,255,0.95)",
+      }}
+      aria-hidden
+    >
+      <polyline points="20 12 20 22 4 22 4 12" />
+      <rect x="2" y="7" width="20" height="5" />
+      <line x1="12" y1="22" x2="12" y2="7" />
+      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+    </svg>
+  );
+}
+
+export default function OfferCard({
+  className = "",
+  style,
+  showPresentIcon = true,
+  variant = "compact",
+}: OfferCardProps) {
+  void getPracticeFromConfig(); // reserved for future use
+
+  const isExpanded = variant === "expanded";
+
+  if (isExpanded) {
+    return (
+      <div
+        className={`offer-card offer-card-expanded ${className}`}
+        style={{
+          border: "2px solid var(--pink-baby)",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+          borderRadius: "16px",
+          padding: "14px 18px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "6px",
+          minWidth: 0,
+          ...style,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+            flexWrap: "wrap",
+          }}
+        >
+          {showPresentIcon && (
+            <PresentIcon size={20} color="var(--pink-baby)" />
+          )}
+          <span
+            style={{
+              fontSize: "16px",
+              fontWeight: "600",
+              color: "var(--text-primary)",
+              lineHeight: "1.3",
+              fontFamily: "Montserrat, sans-serif",
+              textAlign: "center",
+            }}
+          >
+            $50 off any new treatments
+          </span>
+        </div>
+        <p
+          style={{
+            fontSize: "13px",
+            fontWeight: "500",
+            color: "var(--text-muted)",
+            lineHeight: "1.4",
+            margin: 0,
+            fontFamily: "Montserrat, sans-serif",
+          }}
+        >
+          Limited time offer — apply at your consultation
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div
       className={`offer-card ${className}`}
       style={{
         background: "#222222",
-        borderRadius: "24px",
-        padding: "20px",
+        borderRadius: "16px",
+        padding: "6px 14px",
         display: "flex",
-        flexDirection: "column",
-        gap: "16px",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "10px",
+        minWidth: 0,
         ...style,
       }}
     >
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            fontSize: "15px",
-            fontWeight: "700",
-            color: "#ffffff",
-            lineHeight: "1.3",
-            marginBottom: "4px",
-            fontFamily: "Montserrat, sans-serif",
-          }}
-        >
-          $50 OFF Any New Treatments
-        </div>
-        <div
-          style={{
-            fontSize: "12px",
-            fontWeight: "400",
-            color: "rgba(255, 255, 255, 0.8)",
-            lineHeight: "1.4",
-          }}
-        >
-          Limited time offer
-        </div>
-      </div>
-      <button
+      {showPresentIcon && <PresentIcon />}
+      <div
         style={{
-          width: "100%",
-          padding: "14px 24px",
-          background: "var(--bg-secondary)",
-          color: "#222222",
-          border: "none",
-          borderRadius: "16px",
-          fontSize: "16px",
-          fontWeight: "600",
+          fontSize: "15px",
+          fontWeight: "700",
+          color: "#ffffff",
+          lineHeight: "1.3",
           fontFamily: "Montserrat, sans-serif",
-          cursor: "pointer",
-          transition: "all 0.2s ease",
+          textAlign: "center",
         }}
-        type="button"
       >
-        Request Consult
-      </button>
+        $50 off any new treatments
+      </div>
+      {/* No button inside — parent places "Request Consult" below */}
     </div>
   );
 }

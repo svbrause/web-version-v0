@@ -1426,7 +1426,11 @@ body[data-practice="lakeshore"] .results-content {
   color: var(--pink-baby);
   text-align: center;
   line-height: 1.3;
-  background: linear-gradient(to top, rgba(247, 244, 241, 0.95) 0%, rgba(247, 244, 241, 0.85) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(247, 244, 241, 0.95) 0%,
+    rgba(247, 244, 241, 0.85) 100%
+  );
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 2;
@@ -1438,7 +1442,11 @@ body[data-practice="lakeshore"] .results-content {
 }
 
 body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
-  background: linear-gradient(to top, rgba(247, 244, 241, 0.98) 0%, rgba(247, 244, 241, 0.92) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(247, 244, 241, 0.98) 0%,
+    rgba(247, 244, 241, 0.92) 100%
+  );
   color: var(--pink-baby);
 }
 
@@ -1712,7 +1720,11 @@ body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
   color: var(--pink-baby);
   text-align: center;
   line-height: 1.4;
-  background: linear-gradient(to top, rgba(247, 244, 241, 0.95) 0%, rgba(247, 244, 241, 0.85) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(247, 244, 241, 0.95) 0%,
+    rgba(247, 244, 241, 0.85) 100%
+  );
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 2;
@@ -1721,7 +1733,11 @@ body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
 }
 
 body[data-practice="lakeshore"] .concern-case-card-area-label-overlay {
-  background: linear-gradient(to top, rgba(247, 244, 241, 0.98) 0%, rgba(247, 244, 241, 0.92) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(247, 244, 241, 0.98) 0%,
+    rgba(247, 244, 241, 0.92) 100%
+  );
   color: var(--pink-baby);
 }
 
@@ -2724,7 +2740,11 @@ body[data-practice="lakeshore"] .results-concern-header {
   color: var(--pink-baby);
   text-align: center;
   line-height: 1.4;
-  background: linear-gradient(to top, rgba(247, 244, 241, 0.95) 0%, rgba(247, 244, 241, 0.85) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(247, 244, 241, 0.95) 0%,
+    rgba(247, 244, 241, 0.85) 100%
+  );
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 2;
@@ -2733,7 +2753,11 @@ body[data-practice="lakeshore"] .results-concern-header {
 }
 
 body[data-practice="lakeshore"] .celebration-case-area-overlay {
-  background: linear-gradient(to top, rgba(247, 244, 241, 0.98) 0%, rgba(247, 244, 241, 0.92) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(247, 244, 241, 0.98) 0%,
+    rgba(247, 244, 241, 0.92) 100%
+  );
   color: var(--pink-baby);
 }
 
@@ -3358,7 +3382,7 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   background: var(--accent-dark);
   color: var(--white);
   border: none;
-  border-radius: 12px;
+  border-radius: 24px;
   font-size: 16px;
   font-weight: 600;
   font-family:
@@ -3381,7 +3405,7 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
 .consultation-submit-button:hover:not(:disabled) {
   background: #333333;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .consultation-submit-button:disabled {
@@ -3543,23 +3567,30 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   box-sizing: border-box;
 }
 
-/* Lakeshore: Match content area background for consistency */
-body[data-practice="lakeshore"] .results-cta-container {
-  background: var(--bg-primary); /* Pure white #FFFFFF to match results-content */
-  border-top: 1px solid var(--border-color);
+/* Dark bottom CTA section: $50 off card + cream Request Consult button (used everywhere) */
+.results-cta-container {
+  background: #222222;
+  padding: 8px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  border-top: none;
+  border-radius: 24px 24px 0 0;
 }
 
-.results-cta-button {
+.results-cta-button,
+.cta-button-cream {
   width: 100%;
   max-width: 100%;
-  padding: 16px 24px;
+  padding: 12px 24px;
   background: var(--bg-secondary);
   color: #222222;
   border: none;
   box-sizing: border-box;
-  border-radius: 16px;
+  border-radius: 24px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   font-family:
     "Montserrat",
     -apple-system,
@@ -3574,24 +3605,36 @@ body[data-practice="lakeshore"] .results-cta-container {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.results-cta-button:hover {
+.results-cta-button:hover,
+.cta-button-cream:hover {
   background: var(--pastel-cream);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.results-cta-button:active {
+.results-cta-button:active,
+.cta-button-cream:active {
   transform: translateY(0);
 }
 
-.results-cta-incentive {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: center;
-  margin-top: 12px;
-  margin-bottom: 0;
-  font-weight: 500;
-  line-height: 1.4;
+/* Expanded offer card (modal/onboarding) - very light background for readability */
+.offer-card-expanded {
+  background: linear-gradient(
+    135deg,
+    var(--bg-secondary) 0%,
+    rgba(255, 212, 229, 0.12) 50%,
+    var(--bg-secondary) 100%
+  ) !important;
+}
+
+/* Lakeshore: Add subtle teal tint to expanded offer card */
+body[data-practice="lakeshore"] .offer-card-expanded {
+  background: linear-gradient(
+    135deg,
+    var(--bg-secondary) 0%,
+    rgba(168, 196, 204, 0.1) 50%,
+    var(--bg-secondary) 100%
+  ) !important;
 }
 
 /* ============================================================================
@@ -4149,7 +4192,11 @@ body[data-practice="lakeshore"] .landing-screen {
   align-items: center;
   justify-content: center;
   color: var(--pink-baby);
-  background: linear-gradient(135deg, var(--pink-light) 0%, rgba(255, 255, 255, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--pink-light) 0%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
   border-radius: 30px;
   margin-bottom: 16px;
   flex-shrink: 0;
@@ -4159,19 +4206,28 @@ body[data-practice="lakeshore"] .landing-screen {
 }
 
 .onboarding-icon-wrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 70%
+  );
   animation: shimmer 3s ease-in-out infinite;
 }
 
 @keyframes shimmer {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(20px, 20px) rotate(180deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(20px, 20px) rotate(180deg);
+  }
 }
 
 .onboarding-icon-wrapper svg {
@@ -4228,19 +4284,28 @@ body[data-practice="lakeshore"] .landing-screen {
 }
 
 .onboarding-coupon-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   right: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.4) 0%,
+    transparent 70%
+  );
   animation: couponShine 4s ease-in-out infinite;
 }
 
 @keyframes couponShine {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(-30px, -30px) rotate(180deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-30px, -30px) rotate(180deg);
+  }
 }
 
 .onboarding-coupon-amount {
@@ -4326,10 +4391,28 @@ body[data-practice="lakeshore"] .landing-screen {
   transform: scale(0.98);
 }
 
+/* Third onboarding slide: cream CTA button (matches Request Consult style) */
+.onboarding-button-cta {
+  background: var(--bg-secondary);
+  color: #222222;
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.onboarding-button-cta:hover {
+  background: var(--pastel-cream);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
 /* Lakeshore-specific onboarding styles */
 body[data-practice="lakeshore"] .onboarding-icon-wrapper {
   color: var(--pink-baby);
-  background: linear-gradient(135deg, var(--pink-light) 0%, rgba(255, 255, 255, 0.9) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--pink-light) 0%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
 }
 
 body[data-practice="lakeshore"] .onboarding-dot.active {
@@ -5227,14 +5310,17 @@ body[data-practice="lakeshore"] .onboarding-coupon-amount {
   transform: translateX(-50%);
   width: 100%;
   max-width: 428px;
-  padding: 20px;
-  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 16px calc(20px + env(safe-area-inset-bottom, 0px));
   background: #222222;
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
   z-index: 100;
   border-top: none;
   box-sizing: border-box;
   border-radius: 24px 24px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
 }
 
 /* Lakeshore: Add subtle background to footer for contrast with content */

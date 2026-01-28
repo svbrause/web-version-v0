@@ -71,6 +71,8 @@ Deploy your app. PostHog will automatically initialize when the app loads (and r
 
 ### 6. Session Recordings Not Showing? Troubleshooting
 
+If the console shows **"📹 PostHog session recording started"** but **Recordings** is still empty, the usual cause is that session recordings are **not enabled** in PostHog for this project (see step 1 below). The SDK is sending data; PostHog will not store it until Replay is turned on.
+
 If events appear but **Recordings** is empty:
 
 1. **Enable session recordings in PostHog**

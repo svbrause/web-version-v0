@@ -415,11 +415,9 @@ export default function ConsultationModal({
                   recommendations for your specific needs
                 </p>
               </div>
-              {practice === "lakeshore" && (
-                <div style={{ marginBottom: "20px" }}>
-                  <OfferCard />
-                </div>
-              )}
+              <div style={{ marginBottom: "20px" }}>
+                <OfferCard showPresentIcon={true} variant="expanded" />
+              </div>
               <div
                 className="consultation-modal-benefits"
                 style={{
@@ -597,7 +595,7 @@ export default function ConsultationModal({
                   className="consultation-submit-button"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Submitting Request..." : "Submit Request"}
+                  {isSubmitting ? "Submitting..." : "Request Consult"}
                 </button>
               </form>
             </>

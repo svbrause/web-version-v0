@@ -146,15 +146,17 @@ export default function OnboardingScreen() {
             <h1 className="onboarding-slide-title">{slide.title}</h1>
             <p className="onboarding-slide-description">{slide.description}</p>
 
-            {/* Offer card for slide 3 */}
+            {/* Offer card for slide 3 — larger, detailed $50 off (blueish accent) */}
             {slide.showOfferCard && (
-              <div style={{ marginTop: "24px", width: "100%", maxWidth: "400px" }}>
-                <OfferCard />
+              <div
+                style={{ marginTop: "24px", width: "100%", maxWidth: "400px" }}
+              >
+                <OfferCard showPresentIcon={true} variant="expanded" />
               </div>
             )}
           </div>
 
-          {/* Navigation button */}
+          {/* Navigation button — matches Next style on all slides (dark accent) */}
           <div className="onboarding-navigation">
             <button
               type="button"

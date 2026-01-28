@@ -70,25 +70,31 @@ export function initAnalytics() {
         personProfiles: "always",
         mode: import.meta.env.MODE,
       });
-      // Session recorder loads lazily from PostHog; log when it actually starts (after a short delay)
-      if (
-        typeof (ph as { sessionRecordingStarted?: () => boolean })
-          .sessionRecordingStarted === "function"
-      ) {
-        const checkStarted = (): void => {
-          if (
-            (
-              ph as { sessionRecordingStarted: () => boolean }
-            ).sessionRecordingStarted()
-          ) {
-            console.log(
-              "📹 PostHog session recording started — replays will appear in PostHog → Recordings",
-            );
-          }
-        };
-        setTimeout(checkStarted, 2000);
-        setTimeout(checkStarted, 5000);
+      // Force session recording to start so this session is sent (Project Settings → Replay must be ON in PostHog)
+      const startRecording = (ph as { startSessionRecording?: () => void })
+        .startSessionRecording;
+      if (typeof startRecording === "function") {
+        try {
+          startRecording.call(ph);
+        } catch (_) {
+          /* ignore */
+        }
       }
+      // Log when recorder actually starts (recorder loads lazily)
+      const checkStarted = (): void => {
+        const started = (ph as { sessionRecordingStarted?: () => boolean })
+          .sessionRecordingStarted;
+        if (typeof started === "function" && started.call(ph)) {
+          console.log(
+            "📹 PostHog session recording started — replays will appear in PostHog → Recordings",
+          );
+          console.log(
+            "💡 If recordings still don’t show: enable Session recordings in PostHog Project Settings → Replay, and use the app for 5+ seconds.",
+          );
+        }
+      };
+      setTimeout(checkStarted, 2000);
+      setTimeout(checkStarted, 5000);
     },
   });
 }
