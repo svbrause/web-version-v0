@@ -65,9 +65,31 @@ Deploy your app. PostHog will automatically initialize when the app loads (and r
 
 1. Visit your deployed app
 2. Open browser developer tools (F12)
-3. Check the console - you should see: `📊 PostHog initialized for analytics and session recording`
+3. Check the console - you should see: `✅ PostHog initialized successfully` and (after a few seconds) `📹 PostHog session recording started`
 4. Perform some actions in the app
-5. Check your PostHog dashboard (sessions appear within minutes)
+5. In PostHog go to **Recordings** — sessions appear within a few minutes
+
+### 6. Session Recordings Not Showing? Troubleshooting
+
+If events appear but **Recordings** is empty:
+
+1. **Enable session recordings in PostHog**
+   - Go to **Project Settings** → **Replay** (or **Session recordings**).
+   - Turn **on** “Enable session recordings” (or equivalent) for this project.
+   - Save. Recordings are not stored until this is on.
+
+2. **URL / Replay triggers**
+   - Under **Replay** → **Replay triggers**, check “Record when URL matches”.
+   - If you set a pattern, ensure it matches your app (e.g. `cases\.ponce\.ai` or leave default to record all).
+
+3. **Authorized domains (older projects)**
+   - If you see “Authorized domains for replay”, add `https://cases.ponce.ai` or leave the list empty to allow all.
+
+4. **Minimum duration**
+   - PostHog often only saves recordings that last at least a few seconds. Use the app for 5–10+ seconds before checking Recordings.
+
+5. **Console check**
+   - After loading the app, wait a few seconds. You should see: `📹 PostHog session recording started`. If you never see that, the recorder may not be loading (e.g. blocked by CSP or network).
 
 ## Tracked Events
 

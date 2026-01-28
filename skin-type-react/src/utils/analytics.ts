@@ -48,6 +48,8 @@ export function initAnalytics() {
     capture_pageview: true,
     capture_pageleave: true,
     disable_session_recording: false,
+    // Create person profiles for anonymous users so session recordings show under People
+    person_profiles: "always",
     session_recording: {
       recordCrossOriginIframes: false,
       maskAllInputs: true,
@@ -65,8 +67,28 @@ export function initAnalytics() {
         apiHost,
         autocapture: true,
         sessionRecording: true,
+        personProfiles: "always",
         mode: import.meta.env.MODE,
       });
+      // Session recorder loads lazily from PostHog; log when it actually starts (after a short delay)
+      if (
+        typeof (ph as { sessionRecordingStarted?: () => boolean })
+          .sessionRecordingStarted === "function"
+      ) {
+        const checkStarted = (): void => {
+          if (
+            (
+              ph as { sessionRecordingStarted: () => boolean }
+            ).sessionRecordingStarted()
+          ) {
+            console.log(
+              "📹 PostHog session recording started — replays will appear in PostHog → Recordings",
+            );
+          }
+        };
+        setTimeout(checkStarted, 2000);
+        setTimeout(checkStarted, 5000);
+      }
     },
   });
 }
