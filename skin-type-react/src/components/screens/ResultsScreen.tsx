@@ -780,7 +780,6 @@ function renderCaseDetailPage(
   const caseStory = caseItem.story;
   const solvedIssues = caseItem.solved || [];
   const caseTreatment = (caseItem as any).treatment;
-  const relevanceScore = caseItem.matchingScore || 0;
   const patientAge = (caseItem as any).patientAge;
 
   let patientInfo = "";

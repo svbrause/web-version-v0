@@ -6,7 +6,7 @@ interface OfferCardProps {
 }
 
 export default function OfferCard({ className = "", style }: OfferCardProps) {
-  const practice = getPracticeFromConfig();
+  void getPracticeFromConfig(); // reserved for future use (e.g. practice-specific copy)
 
   return (
     <div

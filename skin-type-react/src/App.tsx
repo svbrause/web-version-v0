@@ -161,7 +161,7 @@ function AppContent() {
           const contentType = response.headers.get('content-type') || '';
           if (contentType.includes('text/html')) {
             // Got HTML instead of JSON - API route doesn't exist
-            const responseText = await response.text();
+            await response.text(); // consume body
             throw new Error(`API route returned HTML instead of JSON. This usually means the API route isn't configured. In development, set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file to use direct Airtable API.`);
           }
 

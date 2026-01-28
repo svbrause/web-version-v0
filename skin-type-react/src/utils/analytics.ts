@@ -29,8 +29,9 @@ export function initAnalytics() {
   });
 
   if (!apiKey) {
-    console.log('📊 PostHog API key not found. Analytics disabled.');
-    console.log('💡 To enable PostHog: Set VITE_POSTHOG_KEY in .env file or window.POSTHOG_KEY in index.html');
+    console.warn('⚠️ PostHog API key not found. Analytics disabled.');
+    console.log('💡 To enable PostHog in production: Set VITE_POSTHOG_KEY in Vercel environment variables');
+    console.log('💡 To enable PostHog locally: Set VITE_POSTHOG_KEY in .env file');
     return;
   }
 
@@ -52,7 +53,13 @@ export function initAnalytics() {
         },
         loaded: (_posthog: any) => {
           posthogInitialized = true;
-          console.log('📊 PostHog initialized for analytics and session recording');
+          console.log('✅ PostHog initialized successfully for analytics and session recording');
+          console.log('📊 PostHog config:', {
+            apiHost,
+            autocapture: true,
+            sessionRecording: true,
+            mode: import.meta.env.MODE
+          });
         }
       });
     }
@@ -64,9 +71,9 @@ export function trackEvent(eventName: string, properties?: Record<string, any>) 
   if (typeof window !== 'undefined' && window.posthog && posthogInitialized) {
     window.posthog.capture(eventName, properties);
   } else {
-    // Log to console in development
-    if (import.meta.env.DEV) {
-      console.log('📊 Event:', eventName, properties);
+    // Log to console if PostHog is not initialized (helpful for debugging)
+    if (import.meta.env.DEV || !posthogInitialized) {
+      console.log('📊 Event (PostHog not initialized):', eventName, properties);
     }
   }
 }
