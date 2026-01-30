@@ -17,6 +17,7 @@ declare global {
 window.USE_BACKEND_API = true; // Always use backend API proxy
 
 // Initialize PostHog when VITE_POSTHOG_KEY is set (analytics + session recording)
+// Vite bakes env vars at BUILD time — set VITE_POSTHOG_KEY in Vercel and redeploy
 const posthogKey = import.meta.env.VITE_POSTHOG_KEY;
 if (posthogKey) {
   posthog.init(posthogKey, {
@@ -27,6 +28,11 @@ if (posthogKey) {
     person_profiles: "identified_only", // create person on identify (e.g. login)
   });
   window.posthog = posthog;
+  if (import.meta.env.DEV) console.log("[PostHog] initialized");
+} else {
+  console.warn(
+    "[PostHog] Not loaded: VITE_POSTHOG_KEY was not set at build time. Add it in Vercel → Project → Settings → Environment Variables, then redeploy.",
+  );
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
