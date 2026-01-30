@@ -9,7 +9,7 @@ import { formatRelativeDate } from "../../utils/dateFormatting";
 import {
   formatFacialStatusForDisplay,
   getFacialStatusColorForDisplay,
-  getFacialStatusBorderColor,
+  getFacialStatusBorderColorForDisplay,
   hasInterestedTreatments,
 } from "../../utils/statusFormatting";
 import { applyFilters, applySorting } from "../../utils/filtering";

@@ -80,7 +80,7 @@ export function getFacialStatusBorderColorForDisplay(
   return getFacialStatusBorderColor(status);
 }
 
-export function getFacialStatusColor(status: string | null): string {
+export function getFacialStatusColor(status: string | null | undefined): string {
   if (!status) return "#E0E0E0"; // Gray for "Not Started"
 
   // First format the status to get the display version, then match
@@ -115,7 +115,7 @@ export function getFacialStatusColor(status: string | null): string {
   return "#E0E0E0"; // Default gray
 }
 
-export function getFacialStatusBorderColor(status: string | null): string {
+export function getFacialStatusBorderColor(status: string | null | undefined): string {
   if (!status) return "#E0E0E0"; // Gray for "Not Started"
 
   // First format the status to get the display version, then match
