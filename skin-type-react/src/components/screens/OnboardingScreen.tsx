@@ -155,7 +155,7 @@ export default function OnboardingScreen() {
                 <OfferCard
                   showPresentIcon={true}
                   variant="expanded"
-                  giftImageSrc="/wmremove-transformed (1).png"
+                  giftImageSrc="/gift-offer.png"
                 />
               </div>
             ) : null}
