@@ -17,7 +17,7 @@ import NextButton from "./components/NextButton";
 import ConsultationModal from "./components/ConsultationModal";
 import { FORM_STEPS } from "./constants/data";
 import { trackEvent } from "./utils/analytics";
-import { getPracticeFromConfig } from "./components/Logo";
+import { getPracticeFromConfig, getPracticeDisplayName } from "./components/Logo";
 import { isSurgicalCase } from "./utils/caseMatching";
 import { getBackendBaseUrl } from "./config/backend";
 import "./App.css";
@@ -26,52 +26,37 @@ function AppContent() {
   const { state, caseData, setCaseData, isLoading, setIsLoading } = useApp();
 
   // Set practice-specific data attribute on body for CSS targeting
-  // This needs to run on mount and when URL changes
   useEffect(() => {
     const practice = getPracticeFromConfig();
-    if (typeof document !== "undefined") {
+    if (typeof document !== "undefined" && practice !== null) {
       document.body.setAttribute("data-practice", practice);
-      // Update page title based on practice
-      const practiceName =
-        practice === "lakeshore"
-          ? "Lakeshore Skin + Body"
-          : "Unique Aesthetics & Wellness";
-      document.title = `Discover Your Perfect Treatment | ${practiceName}`;
+      document.title = `Discover Your Perfect Treatment | ${getPracticeDisplayName(practice)}`;
       console.log(
-        `🎨 Set practice to: ${practice} (from URL: ${window.location.search})`,
+        `🎨 Set practice to: ${practice} (from URL: ${window.location.pathname}${window.location.search})`,
       );
     }
-  }, []); // Run on mount
+  }, []);
 
-  // Also update when URL changes (for development/testing)
   useEffect(() => {
     const handleLocationChange = () => {
       const practice = getPracticeFromConfig();
-      if (typeof document !== "undefined") {
+      if (typeof document !== "undefined" && practice !== null) {
         document.body.setAttribute("data-practice", practice);
+        document.title = `Discover Your Perfect Treatment | ${getPracticeDisplayName(practice)}`;
         console.log(
-          `🎨 Updated practice to: ${practice} (from URL: ${window.location.search})`,
+          `🎨 Updated practice to: ${practice} (from URL: ${window.location.pathname}${window.location.search})`,
         );
       }
     };
 
-    // Listen for popstate (back/forward buttons)
     window.addEventListener("popstate", handleLocationChange);
-
-    // Also check periodically in case URL changes without navigation (for dev)
     const interval = setInterval(() => {
       const currentPractice = document.body.getAttribute("data-practice");
       const expectedPractice = getPracticeFromConfig();
-      if (currentPractice !== expectedPractice) {
+      if (expectedPractice !== null && currentPractice !== expectedPractice) {
         handleLocationChange();
-        // Update title when practice changes
-        const practiceName =
-          expectedPractice === "lakeshore"
-            ? "Lakeshore Skin + Body"
-            : "Unique Aesthetics & Wellness";
-        document.title = `Discover Your Perfect Treatment | ${practiceName}`;
       }
-    }, 100); // Check every 100ms
+    }, 100);
 
     return () => {
       window.removeEventListener("popstate", handleLocationChange);

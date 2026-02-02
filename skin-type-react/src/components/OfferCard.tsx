@@ -7,6 +7,31 @@ interface OfferCardProps {
   showPresentIcon?: boolean;
   /** "compact" = bottom CTA bar; "expanded" = larger, detailed card for modal/onboarding (blueish accent, more bulk) */
   variant?: "compact" | "expanded";
+  /** "icon" = flat SVG icon; "3d" = 3D animated gift (for onboarding slide 3) */
+  giftVariant?: "icon" | "3d";
+  /** When set, show this image as the gift (e.g. onboarding slide 3). Takes precedence over giftVariant. */
+  giftImageSrc?: string;
+}
+
+// 3D animated gift box for onboarding "Unlock Exclusive Offers" — box + ribbon + bow, gentle float
+function Gift3D({ size = 56 }: { size?: number }) {
+  return (
+    <div
+      className="gift-3d"
+      style={{ width: size, height: size }}
+      aria-hidden
+    >
+      <div className="gift-3d-box">
+        <div className="gift-3d-ribbon gift-3d-ribbon-h" />
+        <div className="gift-3d-ribbon gift-3d-ribbon-v" />
+        <div className="gift-3d-bow">
+          <span className="gift-3d-bow-loop gift-3d-bow-loop-l" />
+          <span className="gift-3d-bow-loop gift-3d-bow-loop-r" />
+          <span className="gift-3d-bow-knot" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // Small present/gift icon for $50 off sections
@@ -41,10 +66,15 @@ export default function OfferCard({
   style,
   showPresentIcon = true,
   variant = "compact",
+  giftVariant = "icon",
+  giftImageSrc,
 }: OfferCardProps) {
   void getPracticeFromConfig(); // reserved for future use
 
   const isExpanded = variant === "expanded";
+  const useGiftImage = isExpanded && showPresentIcon && giftImageSrc;
+  const use3DGift =
+    isExpanded && showPresentIcon && !giftImageSrc && giftVariant === "3d";
 
   if (isExpanded) {
     return (
@@ -72,9 +102,19 @@ export default function OfferCard({
             flexWrap: "wrap",
           }}
         >
-          {showPresentIcon && (
-            <PresentIcon size={20} color="var(--pink-baby)" />
-          )}
+          {showPresentIcon &&
+            (useGiftImage ? (
+              <img
+                src={giftImageSrc}
+                alt=""
+                className="offer-card-gift-image"
+                aria-hidden
+              />
+            ) : use3DGift ? (
+              <Gift3D size={56} />
+            ) : (
+              <PresentIcon size={20} color="var(--pink-baby)" />
+            ))}
           <span
             style={{
               fontSize: "16px",

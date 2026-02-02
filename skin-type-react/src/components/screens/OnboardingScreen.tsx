@@ -5,6 +5,12 @@ import { getPracticeFromConfig } from "../Logo";
 import OfferCard from "../OfferCard";
 import "../../App.css";
 
+const ONBOARDING_CASE_IMAGES = [
+  "/onboarding case 1.webp",
+  "/onboarding case 2.jpg",
+  "/onboarding case 3.jpg",
+] as const;
+
 // Onboarding step constants
 const ONBOARDING_STEPS = {
   SCREEN_1: -0.7,
@@ -13,8 +19,9 @@ const ONBOARDING_STEPS = {
 };
 
 export default function OnboardingScreen() {
-  const { state, updateState } = useApp();
+  const { state, updateState, goToPreviousStep, caseData } = useApp();
   const practice = getPracticeFromConfig();
+  const otherCasesCount = Math.max(0, caseData.length - 3);
 
   // Determine current slide based on step value
   const getCurrentSlide = (step: number) => {
@@ -60,100 +67,100 @@ export default function OnboardingScreen() {
     {
       title: "Share Your Aesthetic Goals",
       description: "Quick questions to understand what matters most to you",
-      icon: (
-        <svg
-          width="80"
-          height="80"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      ),
+      imageSrc: "/onboarding 1 image.png",
       buttonText: "Next",
     },
     {
       title: "See Real Patient Results",
       description: "Review real medical aesthetic cases tailored to your needs",
-      icon: (
-        <svg
-          width="80"
-          height="80"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-          <circle cx="8.5" cy="8.5" r="1.5" />
-          <polyline points="21 15 16 10 5 21" />
-          <circle cx="17" cy="7" r="1" />
-        </svg>
-      ),
+      showCasePreviews: true,
       buttonText: "Next",
     },
     {
       title: "Unlock Exclusive Offers",
       description:
         "Discover special discounts and offers tailored to your needs",
-      showOfferCard: true,
-      icon: (
-        <svg
-          width="80"
-          height="80"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M20 7h-4M4 7h4m0 0a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2m-8 0v10a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-          <path d="M12 12v.01" />
-          <circle cx="12" cy="16" r="1" />
-        </svg>
-      ),
+      showOfferAtTop: true,
       buttonText: "Get Started",
     },
   ];
 
   const slide = slides[currentSlide];
 
+  const handleBack = () => {
+    trackEvent("onboarding_back", { practice, fromSlide: currentSlide + 1 });
+    goToPreviousStep();
+  };
+
   return (
     <div className="onboarding-screen">
       <div className="onboarding-container">
-        {/* Dot indicators */}
-        <div className="onboarding-dots">
-          {slides.map((_, index) => (
-            <div
-              key={index}
-              className={`onboarding-dot ${index === currentSlide ? "active" : ""}`}
-            />
-          ))}
+        {/* Top bar: back button + dot indicators */}
+        <div className="onboarding-top-bar">
+          <button
+            type="button"
+            className="back-button onboarding-back-button"
+            onClick={handleBack}
+            aria-label="Go back"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <div className="onboarding-dots">
+            {slides.map((_, index) => (
+              <div
+                key={index}
+                className={`onboarding-dot ${index === currentSlide ? "active" : ""}`}
+              />
+            ))}
+          </div>
+          <div className="onboarding-back-spacer" aria-hidden />
         </div>
 
         {/* Slide content */}
         <div className="onboarding-slide">
           <div className="onboarding-slide-content">
-            <div className="onboarding-icon-wrapper">{slide.icon}</div>
+            {/* Top area: image (slide 1), case previews (slide 2), or offer card (slide 3) */}
+            {"imageSrc" in slide && slide.imageSrc ? (
+              <div
+                className={`onboarding-icon-wrapper onboarding-image-wrapper${currentSlide === 0 ? " onboarding-image-wrapper--screen-1" : ""}`}
+              >
+                <img
+                  src={slide.imageSrc}
+                  alt=""
+                  className="onboarding-top-image"
+                />
+              </div>
+            ) : "showCasePreviews" in slide && slide.showCasePreviews ? (
+              <div className="onboarding-cases-preview">
+                <div className="onboarding-cases-preview-layout">
+                  {ONBOARDING_CASE_IMAGES.map((src, i) => (
+                    <div key={i} className="onboarding-case-preview-card">
+                      <img
+                        src={src}
+                        alt="Real patient result"
+                        className="onboarding-case-preview-image"
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="onboarding-cases-more">
+                  +{otherCasesCount} other cases
+                </div>
+              </div>
+            ) : "showOfferAtTop" in slide && slide.showOfferAtTop ? (
+              <div className="onboarding-offer-hero">
+                <OfferCard
+                  showPresentIcon={true}
+                  variant="expanded"
+                  giftImageSrc="/wmremove-transformed (1).png"
+                />
+              </div>
+            ) : null}
             <h1 className="onboarding-slide-title">{slide.title}</h1>
             <p className="onboarding-slide-description">{slide.description}</p>
-
-            {/* Offer card for slide 3 — larger, detailed $50 off (blueish accent) */}
-            {slide.showOfferCard && (
-              <div
-                style={{ marginTop: "24px", width: "100%", maxWidth: "400px" }}
-              >
-                <OfferCard showPresentIcon={true} variant="expanded" />
-              </div>
-            )}
           </div>
 
           {/* Navigation button — matches Next style on all slides (dark accent) */}

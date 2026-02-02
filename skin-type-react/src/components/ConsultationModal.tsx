@@ -11,7 +11,7 @@ import {
   updateLeadInAirtable,
 } from "../utils/airtableLeads";
 import { storeLeadRecordId, getLeadRecordId } from "../utils/airtableSync";
-import { getPracticeFromConfig } from "./Logo";
+import { getPracticeFromConfig, getPracticeDisplayName } from "./Logo";
 import OfferCard from "./OfferCard";
 import "../App.css";
 
@@ -290,9 +290,7 @@ export default function ConsultationModal({
       // when "Offer Claimed" field is set to true
 
       const practiceName =
-        practice === "lakeshore"
-          ? "Lakeshore Skin + Body"
-          : "Unique Aesthetics & Wellness";
+        practice !== null ? getPracticeDisplayName(practice) : "Practice";
 
       console.log("📧 Would send offer email to:", emailAddress);
       console.log("Offer: $50 off any new treatments");
@@ -339,9 +337,19 @@ export default function ConsultationModal({
   if (!isOpen) return null;
 
   const practiceName =
+    practice !== null ? getPracticeDisplayName(practice) : "Practice";
+  const accentColor =
     practice === "lakeshore"
-      ? "Lakeshore Skin + Body"
-      : "Unique Aesthetics & Wellness";
+      ? "#6b8a9a"
+      : practice === "admin"
+        ? "#CEAA75" /* admin accent yellow */
+        : "#ffa2c7";
+  const accentBg =
+    practice === "lakeshore"
+      ? "rgba(107, 138, 154, 0.1)"
+      : practice === "admin"
+        ? "rgba(206, 170, 117, 0.25)"
+        : "rgba(255, 162, 199, 0.15)";
 
   return (
     <div className="consultation-modal-overlay" onClick={handleClose}>
@@ -370,11 +378,8 @@ export default function ConsultationModal({
               <div
                 className="consultation-confirmation-icon"
                 style={{
-                  background:
-                    practice === "lakeshore"
-                      ? "rgba(107, 138, 154, 0.1)"
-                      : "rgba(255, 162, 199, 0.15)",
-                  color: practice === "lakeshore" ? "#6b8a9a" : "#ffa2c7",
+                  background: accentBg,
+                  color: accentColor,
                 }}
               >
                 <svg
@@ -458,7 +463,7 @@ export default function ConsultationModal({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       style={{
-                        color: practice === "lakeshore" ? "#D4A574" : "#ffa2c7",
+                        color: accentColor,
                         flexShrink: 0,
                         marginTop: "2px",
                       }}
@@ -490,7 +495,7 @@ export default function ConsultationModal({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       style={{
-                        color: practice === "lakeshore" ? "#D4A574" : "#ffa2c7",
+                        color: accentColor,
                         flexShrink: 0,
                         marginTop: "2px",
                       }}
@@ -519,7 +524,7 @@ export default function ConsultationModal({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       style={{
-                        color: practice === "lakeshore" ? "#D4A574" : "#ffa2c7",
+                        color: accentColor,
                         flexShrink: 0,
                         marginTop: "2px",
                       }}

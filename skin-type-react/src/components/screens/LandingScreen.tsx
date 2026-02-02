@@ -1,5 +1,5 @@
 import { useApp } from "../../context/AppContext";
-import { getPracticeFromConfig } from "../Logo";
+import { getPracticeFromConfig, getPracticeHomeUrl } from "../Logo";
 import Logo from "../Logo";
 import { trackEvent } from "../../utils/analytics";
 import "../../App.css";
@@ -8,15 +8,15 @@ export default function LandingScreen() {
   const { updateState } = useApp();
   const practice = getPracticeFromConfig();
 
+  if (practice === null) return null;
+
   const handleGetStarted = () => {
     trackEvent("landing_get_started", {
       practice: practice,
     });
-    // Navigate to first onboarding screen
     updateState({ currentStep: -0.7 });
   };
 
-  // Provider information based on practice
   const providerInfo =
     practice === "lakeshore"
       ? {
@@ -32,19 +32,33 @@ export default function LandingScreen() {
             "Expert in injectables and facial aesthetics with a passion for natural-looking results.",
           tagline: "Professional aesthetic care",
         }
-      : {
-          name: "Unique Aesthetics & Wellness",
-          description:
-            "Expert providers specializing in personalized aesthetic treatments to help you look and feel your best.",
-          highlight: "Personalized aesthetic solutions for your unique goals",
-          showProviderPhoto: true,
-          providerName: "Amber",
-          providerTitle: "Lead Aesthetic Specialist",
-          providerImage: "/amber-provider.jpg",
-          providerBio:
-            "Expert in injectables and facial aesthetics with a passion for natural-looking results.",
-          tagline: "Where Luxury Aesthetic Treatment Feels Like Home",
-        };
+      : practice === "admin"
+        ? {
+            name: "Ponce",
+            description:
+              "Expert providers specializing in personalized aesthetic treatments to help you look and feel your best.",
+            highlight: "Personalized aesthetic solutions for your unique goals",
+            showProviderPhoto: true,
+            providerName: "Amber",
+            providerTitle: "Lead Aesthetic Specialist",
+            providerImage: "/amber-provider.jpg",
+            providerBio:
+              "Expert in injectables and facial aesthetics with a passion for natural-looking results.",
+            tagline: "Where Luxury Aesthetic Treatment Feels Like Home",
+          }
+        : {
+            name: "Unique Aesthetics & Wellness",
+            description:
+              "Expert providers specializing in personalized aesthetic treatments to help you look and feel your best.",
+            highlight: "Personalized aesthetic solutions for your unique goals",
+            showProviderPhoto: true,
+            providerName: "Amber",
+            providerTitle: "Lead Aesthetic Specialist",
+            providerImage: "/amber-provider.jpg",
+            providerBio:
+              "Expert in injectables and facial aesthetics with a passion for natural-looking results.",
+            tagline: "Where Luxury Aesthetic Treatment Feels Like Home",
+          };
 
   return (
     <div className="landing-screen">
@@ -53,12 +67,7 @@ export default function LandingScreen() {
           <Logo className="landing-logo-header" />
           <button
             className="landing-close-button"
-            onClick={() =>
-              (window.location.href =
-                practice === "lakeshore"
-                  ? "https://www.lakeshoreshinandbody.com/"
-                  : "https://www.myuniqueaesthetics.com/")
-            }
+            onClick={() => (window.location.href = getPracticeHomeUrl())}
           >
             <svg
               width="24"

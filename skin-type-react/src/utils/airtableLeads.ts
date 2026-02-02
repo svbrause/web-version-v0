@@ -159,13 +159,21 @@ export async function submitLeadToAirtable(
       fields["Source"] = leadData.source;
     }
 
-    // Add Providers field (linked record)
+    // Add Providers field (linked record) – Web Popup Leads links to Providers table
     const practice = getPracticeFromConfig();
+    const adminProviderId = import.meta.env.VITE_ADMIN_PROVIDER_RECORD_ID;
+    const isValidRecordId = (id: string) =>
+      id && id.startsWith("rec") && id.length >= 14;
     if (practice === "lakeshore") {
       fields["Providers"] = ["rec3oXyrb1t6YUvoe"];
+    } else if (practice === "admin" && isValidRecordId(adminProviderId || "")) {
+      fields["Providers"] = [adminProviderId!];
+    } else if (practice === "admin") {
+      console.warn(
+        "VITE_ADMIN_PROVIDER_RECORD_ID not set; create an Admin record in the Providers table and set the env var so Admin leads link correctly.",
+      );
     } else {
-      // Default to Unique Aesthetics
-      fields["Providers"] = ["recN9Q4W02xtroD6g"];
+      fields["Providers"] = ["recN9Q4W02xtroD6g"]; // Unique Aesthetics
     }
 
     // Add behavioral data if available
