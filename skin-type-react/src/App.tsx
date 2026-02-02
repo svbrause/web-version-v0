@@ -17,9 +17,17 @@ import NextButton from "./components/NextButton";
 import ConsultationModal from "./components/ConsultationModal";
 import { FORM_STEPS } from "./constants/data";
 import { trackEvent } from "./utils/analytics";
-import { getPracticeFromConfig, getPracticeDisplayName } from "./components/Logo";
+import {
+  getPracticeFromConfig,
+  getPracticeDisplayName,
+} from "./components/Logo";
 import { isSurgicalCase } from "./utils/caseMatching";
 import { getBackendBaseUrl } from "./config/backend";
+import { getProviderIdForPractice } from "./config/providerId";
+import {
+  fetchProviderAllowedTreatmentIds,
+  filterPhotoRecordsByTreatmentIds,
+} from "./utils/providerTreatmentFilter";
 import "./App.css";
 
 function AppContent() {
@@ -30,9 +38,11 @@ function AppContent() {
     const practice = getPracticeFromConfig();
     if (typeof document !== "undefined" && practice !== null) {
       document.body.setAttribute("data-practice", practice);
-      document.title = `Discover Your Perfect Treatment | ${getPracticeDisplayName(practice)}`;
+      document.title = `Discover Your Perfect Treatment | ${getPracticeDisplayName(
+        practice
+      )}`;
       console.log(
-        `🎨 Set practice to: ${practice} (from URL: ${window.location.pathname}${window.location.search})`,
+        `🎨 Set practice to: ${practice} (from URL: ${window.location.pathname}${window.location.search})`
       );
     }
   }, []);
@@ -42,9 +52,11 @@ function AppContent() {
       const practice = getPracticeFromConfig();
       if (typeof document !== "undefined" && practice !== null) {
         document.body.setAttribute("data-practice", practice);
-        document.title = `Discover Your Perfect Treatment | ${getPracticeDisplayName(practice)}`;
+        document.title = `Discover Your Perfect Treatment | ${getPracticeDisplayName(
+          practice
+        )}`;
         console.log(
-          `🎨 Updated practice to: ${practice} (from URL: ${window.location.pathname}${window.location.search})`,
+          `🎨 Updated practice to: ${practice} (from URL: ${window.location.pathname}${window.location.search})`
         );
       }
     };
@@ -75,12 +87,12 @@ function AppContent() {
         if (Array.isArray(data) && data.length > 0) {
           // Filter out surgical cases
           const nonSurgicalData = data.filter(
-            (caseItem: any) => !isSurgicalCase(caseItem),
+            (caseItem: any) => !isSurgicalCase(caseItem)
           );
           setCaseData(nonSurgicalData);
           setIsLoading(false);
           console.log(
-            `✓ Loaded ${data.length} cases from window.caseData, filtered to ${nonSurgicalData.length} non-surgical cases`,
+            `✓ Loaded ${data.length} cases from window.caseData, filtered to ${nonSurgicalData.length} non-surgical cases`
           );
 
           // Also try to get CASE_CATEGORY_MAPPING from main app if available
@@ -116,14 +128,17 @@ function AppContent() {
           console.log("📡 Using direct Airtable API (development mode)");
           if (!airtableApiKey || !airtableBaseId) {
             throw new Error(
-              "Airtable API key or Base ID not configured. Set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file",
+              "Airtable API key or Base ID not configured. Set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file"
             );
           }
         } else {
           console.log(
-            "📡 Using backend GET /api/dashboard/leads?tableName=Photos",
+            "📡 Using backend GET /api/dashboard/leads?tableName=Photos"
           );
         }
+
+        const practice = getPracticeFromConfig();
+        const providerId = practice ? getProviderIdForPractice(practice) : null;
 
         if (useDirectAirtable) {
           // Paginate with Airtable offset
@@ -144,7 +159,7 @@ function AppContent() {
             if (contentType.includes("text/html")) {
               await response.text();
               throw new Error(
-                `API route returned HTML instead of JSON. In development, set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file.`,
+                `API route returned HTML instead of JSON. In development, set VITE_AIRTABLE_API_KEY and VITE_AIRTABLE_BASE_ID in .env file.`
               );
             }
             if (!response.ok) {
@@ -152,7 +167,9 @@ function AppContent() {
                 .json()
                 .catch(() => ({ message: "Unknown error" }));
               throw new Error(
-                `API error: ${response.status} ${response.statusText} - ${error.message || "Unknown error"}`,
+                `API error: ${response.status} ${response.statusText} - ${
+                  error.message || "Unknown error"
+                }`
               );
             }
             const data = await response.json();
@@ -160,12 +177,33 @@ function AppContent() {
             allRecords = allRecords.concat(pageRecords);
             offset = data.offset || null;
             console.log(
-              `Fetched page ${pageCount}: ${pageRecords.length} records (total so far: ${allRecords.length})`,
+              `Fetched page ${pageCount}: ${pageRecords.length} records (total so far: ${allRecords.length})`
             );
           } while (offset !== null && pageCount < maxPages);
+
+          // Provider-treatment filter (direct Airtable): only show cases for treatments this provider offers
+          if (providerId && airtableApiKey && airtableBaseId) {
+            const allowedIds = await fetchProviderAllowedTreatmentIds(
+              airtableApiKey,
+              airtableBaseId,
+              providerId
+            );
+            if (allowedIds && allowedIds.length > 0) {
+              const before = allRecords.length;
+              allRecords = filterPhotoRecordsByTreatmentIds(
+                allRecords,
+                allowedIds
+              );
+              console.log(
+                `✓ Provider filter: ${before} Photos → ${allRecords.length} (allowed treatments)`
+              );
+            }
+          }
         } else {
-          // Backend: single request, returns { success, records, count } (backend paginates internally)
-          const url = `${getBackendBaseUrl()}/api/dashboard/leads?tableName=Photos`;
+          // Backend: GET /api/dashboard/leads?tableName=Photos&providerId=... (backend filters by Provider-Treatment Mapping)
+          const urlParams = new URLSearchParams({ tableName: "Photos" });
+          if (providerId) urlParams.append("providerId", providerId);
+          const url = `${getBackendBaseUrl()}/api/dashboard/leads?${urlParams.toString()}`;
           const response = await fetch(url, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -174,7 +212,7 @@ function AppContent() {
           if (contentType.includes("text/html")) {
             await response.text();
             throw new Error(
-              `Backend returned HTML instead of JSON. Check that ponce-patient-backend.vercel.app is deployed and FRONTEND_URL includes https://cases.ponce.ai.`,
+              `Backend returned HTML instead of JSON. Check that ponce-patient-backend.vercel.app is deployed and FRONTEND_URL includes https://cases.ponce.ai.`
             );
           }
           if (!response.ok) {
@@ -182,19 +220,21 @@ function AppContent() {
               .json()
               .catch(() => ({ message: "Unknown error" }));
             throw new Error(
-              `API error: ${response.status} ${response.statusText} - ${error.message || "Unknown error"}`,
+              `API error: ${response.status} ${response.statusText} - ${
+                error.message || "Unknown error"
+              }`
             );
           }
           const data = await response.json();
           allRecords = data.records || [];
           pageCount = 1;
           console.log(
-            `✓ Fetched ${allRecords.length} records from backend (Photos table)`,
+            `✓ Fetched ${allRecords.length} records from backend (Photos table)`
           );
         }
 
         console.log(
-          `✓ Successfully fetched ${allRecords.length} total records (${pageCount} page(s))`,
+          `✓ Successfully fetched ${allRecords.length} total records (${pageCount} page(s))`
         );
 
         const records = allRecords;
@@ -294,13 +334,13 @@ function AppContent() {
 
         // Filter out surgical cases before setting state
         const nonSurgicalData = transformedData.filter(
-          (caseItem: any) => !isSurgicalCase(caseItem),
+          (caseItem: any) => !isSurgicalCase(caseItem)
         );
 
         setCaseData(nonSurgicalData);
         setIsLoading(false);
         console.log(
-          `✓ Loaded ${transformedData.length} cases from Airtable, filtered to ${nonSurgicalData.length} non-surgical cases`,
+          `✓ Loaded ${transformedData.length} cases from Airtable, filtered to ${nonSurgicalData.length} non-surgical cases`
         );
       } catch (error) {
         setIsLoading(false);
@@ -325,7 +365,7 @@ function AppContent() {
           setCaseData(data);
           setIsLoading(false);
           console.log(
-            `✓ Loaded ${data.length} cases from window.caseData (retry)`,
+            `✓ Loaded ${data.length} cases from window.caseData (retry)`
           );
           clearInterval(retryInterval);
         }
@@ -406,21 +446,21 @@ function AppContent() {
     state.currentStep === -1
       ? "landing"
       : state.currentStep === -0.7 ||
-          state.currentStep === -0.5 ||
-          state.currentStep === -0.3
-        ? "onboarding"
-        : state.viewingSuggestionDetail
-          ? "suggestionDetail"
-          : state.currentStep < FORM_STEPS.length
-            ? FORM_STEPS[state.currentStep]
-            : state.currentStep === FORM_STEPS.length
-              ? "celebration"
-              : state.currentStep === FORM_STEPS.length + 1
-                ? "leadCapture"
-                : "results";
+        state.currentStep === -0.5 ||
+        state.currentStep === -0.3
+      ? "onboarding"
+      : state.viewingSuggestionDetail
+      ? "suggestionDetail"
+      : state.currentStep < FORM_STEPS.length
+      ? FORM_STEPS[state.currentStep]
+      : state.currentStep === FORM_STEPS.length
+      ? "celebration"
+      : state.currentStep === FORM_STEPS.length + 1
+      ? "leadCapture"
+      : "results";
   const showHeader =
     !["landing", "onboarding", "results", "suggestionDetail"].includes(
-      currentStepName,
+      currentStepName
     ) &&
     state.currentStep >= 0 &&
     state.currentStep < FORM_STEPS.length + 3;
