@@ -32,7 +32,7 @@ export default function OnboardingScreen() {
   };
 
   const [currentSlide, setCurrentSlide] = useState(() =>
-    getCurrentSlide(state.currentStep),
+    getCurrentSlide(state.currentStep)
   );
 
   // Update slide when step changes (e.g., from back button)
@@ -103,7 +103,16 @@ export default function OnboardingScreen() {
             onClick={handleBack}
             aria-label="Go back"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
@@ -111,7 +120,9 @@ export default function OnboardingScreen() {
             {slides.map((_, index) => (
               <div
                 key={index}
-                className={`onboarding-dot ${index === currentSlide ? "active" : ""}`}
+                className={`onboarding-dot ${
+                  index === currentSlide ? "active" : ""
+                }`}
               />
             ))}
           </div>
@@ -124,7 +135,11 @@ export default function OnboardingScreen() {
             {/* Top area: image (slide 1), case previews (slide 2), or offer card (slide 3) */}
             {"imageSrc" in slide && slide.imageSrc ? (
               <div
-                className={`onboarding-icon-wrapper onboarding-image-wrapper${currentSlide === 0 ? " onboarding-image-wrapper--screen-1" : ""}`}
+                className={`onboarding-icon-wrapper onboarding-image-wrapper${
+                  currentSlide === 0
+                    ? " onboarding-image-wrapper--screen-1"
+                    : ""
+                }`}
               >
                 <img
                   src={slide.imageSrc}
