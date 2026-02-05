@@ -16,11 +16,7 @@ interface OfferCardProps {
 // 3D animated gift box for onboarding "Unlock Exclusive Offers" — box + ribbon + bow, gentle float
 function Gift3D({ size = 56 }: { size?: number }) {
   return (
-    <div
-      className="gift-3d"
-      style={{ width: size, height: size }}
-      aria-hidden
-    >
+    <div className="gift-3d" style={{ width: size, height: size }} aria-hidden>
       <div className="gift-3d-box">
         <div className="gift-3d-ribbon gift-3d-ribbon-h" />
         <div className="gift-3d-ribbon gift-3d-ribbon-v" />
@@ -69,12 +65,17 @@ export default function OfferCard({
   giftVariant = "icon",
   giftImageSrc,
 }: OfferCardProps) {
-  void getPracticeFromConfig(); // reserved for future use
+  const practice = getPracticeFromConfig();
+  const isUnique = practice === "unique";
 
   const isExpanded = variant === "expanded";
   const useGiftImage = isExpanded && showPresentIcon && giftImageSrc;
   const use3DGift =
     isExpanded && showPresentIcon && !giftImageSrc && giftVariant === "3d";
+
+  const expandedSubtext = isUnique
+    ? "Excludes tox & filler. Limited time — apply at your consultation."
+    : "Limited time offer — apply at your consultation";
 
   if (isExpanded) {
     return (
@@ -138,11 +139,15 @@ export default function OfferCard({
             fontFamily: "Montserrat, sans-serif",
           }}
         >
-          Limited time offer — apply at your consultation
+          {expandedSubtext}
         </p>
       </div>
     );
   }
+
+  const compactText = isUnique
+    ? "$50 off new treatments"
+    : "$50 off any new treatments";
 
   return (
     <div
@@ -171,7 +176,7 @@ export default function OfferCard({
           textAlign: "center",
         }}
       >
-        $50 off any new treatments
+        {compactText}
       </div>
       {/* No button inside — parent places "Request Consult" below */}
     </div>
