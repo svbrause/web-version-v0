@@ -4439,6 +4439,48 @@ body[data-practice="lakeshore"] .landing-screen {
   }
 }
 
+/* Desktop: card-style layout so it doesn't look like a narrow strip */
+@media (min-width: 769px) {
+  .landing-screen {
+    background: var(--bg-secondary);
+    padding: 32px 24px 40px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .landing-container {
+    max-width: 460px;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    background: var(--bg-primary);
+  }
+
+  .landing-content {
+    padding: 28px 28px 24px;
+    max-width: 100%;
+  }
+
+  .landing-centered .landing-title-serif {
+    font-size: 26px;
+  }
+
+  .landing-feature-card span {
+    max-width: 130px;
+  }
+
+  .landing-hero {
+    min-height: 320px;
+    max-height: 42vh;
+  }
+
+  .landing-cta {
+    padding: 20px 28px 24px;
+    max-width: 100%;
+  }
+}
+
 .landing-cta-button {
   width: 100%;
   max-width: 100%;
