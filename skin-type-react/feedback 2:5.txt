@@ -1,0 +1,14 @@
+Feedback
+1. when you add a treatment to the plan by treatment and then you select multiple issues and then add to plan the plan at the top is showing the region of the issue rather than the issues themselves, we need to change that
+2. also we want to move the specific type of products up after you select the treatment or general treatment type then show the specific options that are within the providers catalog and then optionally link them to specific issues
+2A. This is how it works when adding to the plan by patient interest, the order is the right way where you selected general treatment first and then the specific treatment after
+3. there’s a bug when adding a treatment by patient interest and selecting a patient treatment interest and then a general treatment it by default is showing the concerns that were detected however, when you select other to add something else, it’s searching for treatments and isn’t finding additional issues
+4. Let’s not hide the optional details panel at the very bottom that has the timeline and notes field
+5. Smooth and fine lines by patient interest, when you select skin care is showing treatment treatments below that, seems like a bug
+6. Also when selecting these treatment options under the patient’s treatment interest, it’s pretty buggy
+7. Change discuss next visit to “add next visit”
+8. Plan should be organized by timeline with later at the bottom
+9. add recurring field which varies by treatment,
+9A. every 6 weeks, 3 mos, 6 months, yearly
+10. for next appt
+10A. In tx plan summary page, need to be able to mark complete, then ask to add next visit or remove from plan

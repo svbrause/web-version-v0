@@ -1,5 +1,5 @@
 import { useApp } from "../../context/AppContext";
-import { getPracticeFromConfig, getPracticeHomeUrl } from "../Logo";
+import { getPracticeFromConfig } from "../Logo";
 import Logo from "../Logo";
 import { trackEvent } from "../../utils/analytics";
 import "../../App.css";
@@ -17,135 +17,20 @@ export default function LandingScreen() {
     updateState({ currentStep: -0.7 });
   };
 
-  const providerInfo =
-    practice === "lakeshore"
-      ? {
-          name: "Lakeshore Skin + Body",
-          description:
-            "Expert aesthetic providers dedicated to helping you achieve your skincare goals with personalized treatment recommendations.",
-          highlight: "Professional care tailored to your unique needs",
-          showProviderPhoto: true,
-          providerName: "Jess",
-          providerTitle: "Lead Aesthetic Specialist",
-          providerImage: "/jess-lakeshore.jpg",
-          providerBio:
-            "Expert in injectables and facial aesthetics with a passion for natural-looking results.",
-          tagline: "Professional aesthetic care",
-        }
-      : practice === "admin"
-        ? {
-            name: "Ponce",
-            description:
-              "Expert providers specializing in personalized aesthetic treatments to help you look and feel your best.",
-            highlight: "Personalized aesthetic solutions for your unique goals",
-            showProviderPhoto: true,
-            providerName: "Amber",
-            providerTitle: "Lead Aesthetic Specialist",
-            providerImage: "/amber-provider.jpg",
-            providerBio:
-              "Expert in injectables and facial aesthetics with a passion for natural-looking results.",
-            tagline: "Where Luxury Aesthetic Treatment Feels Like Home",
-          }
-        : {
-            name: "Unique Aesthetics & Wellness",
-            description:
-              "Expert providers specializing in personalized aesthetic treatments to help you look and feel your best.",
-            highlight: "Personalized aesthetic solutions for your unique goals",
-            showProviderPhoto: true,
-            providerName: "Amber",
-            providerTitle: "Lead Aesthetic Specialist",
-            providerImage: "/amber-provider.jpg",
-            providerBio:
-              "Expert in injectables and facial aesthetics with a passion for natural-looking results.",
-            tagline: "Where Luxury Aesthetic Treatment Feels Like Home",
-          };
+  const heroImageSrc = "/1752520815-uneven-skin-tone-banner 1 (1).png";
 
   return (
     <div className="landing-screen">
       <div className="landing-container">
-        <div className="landing-header-top">
-          <Logo className="landing-logo-header" />
-          <button
-            className="landing-close-button"
-            onClick={() => (window.location.href = getPracticeHomeUrl())}
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
         <div className="landing-content">
-          <div
-            className="landing-section"
-            style={{ padding: "32px 20px 12px" }}
-          >
+          <div className="landing-centered">
+            <Logo className="landing-logo-centered" />
             <h1 className="landing-title-serif">
               Discover Your Perfect Treatment
             </h1>
-            <p className="landing-tagline">{providerInfo.tagline}</p>
-          </div>
-
-          <div className="landing-section" style={{ padding: "0 20px 0" }}>
-            {/* Hide provider section for Lakeshore practice */}
-            {practice !== "lakeshore" &&
-            providerInfo.showProviderPhoto &&
-            providerInfo.providerImage ? (
-              <div className="landing-provider-featured">
-                <div className="landing-provider-photo-wrapper">
-                  <img
-                    src={providerInfo.providerImage}
-                    alt={providerInfo.providerName}
-                    className="landing-provider-featured-photo"
-                    onError={(e) => {
-                      console.error(
-                        "Failed to load image:",
-                        providerInfo.providerImage,
-                        "for practice:",
-                        practice,
-                      );
-                      // Don't hide the image, show a placeholder instead
-                      (e.target as HTMLImageElement).style.backgroundColor =
-                        "#f0f0f0";
-                    }}
-                  />
-                </div>
-                <div className="landing-provider-details">
-                  <h2 className="landing-provider-name-large">
-                    {providerInfo.providerName}
-                  </h2>
-                  <p className="landing-provider-title-pink">
-                    {providerInfo.providerTitle}
-                  </p>
-                  <p className="landing-provider-bio">
-                    {providerInfo.providerBio}
-                  </p>
-                </div>
-              </div>
-            ) : practice !== "lakeshore" ? (
-              <div className="landing-provider-text">
-                <h3 className="landing-provider-title">
-                  with {providerInfo.name}
-                </h3>
-                <p className="landing-provider-highlight">
-                  {providerInfo.highlight}
-                </p>
-              </div>
-            ) : null}
-
-            <div className="landing-features-list">
-              <div className="landing-feature-item">
-                <div className="landing-feature-icon-pink">
+            <div className="landing-features-row">
+              <div className="landing-feature-card">
+                <div className="landing-feature-icon-black">
                   <svg
                     width="20"
                     height="20"
@@ -161,8 +46,8 @@ export default function LandingScreen() {
                 </div>
                 <span>Share Your Aesthetic Goals</span>
               </div>
-              <div className="landing-feature-item">
-                <div className="landing-feature-icon-pink">
+              <div className="landing-feature-card">
+                <div className="landing-feature-icon-black">
                   <svg
                     width="20"
                     height="20"
@@ -187,8 +72,8 @@ export default function LandingScreen() {
                 </div>
                 <span>See Real Patient Results</span>
               </div>
-              <div className="landing-feature-item">
-                <div className="landing-feature-icon-pink">
+              <div className="landing-feature-card">
+                <div className="landing-feature-icon-black">
                   <svg
                     width="20"
                     height="20"
@@ -207,7 +92,14 @@ export default function LandingScreen() {
               </div>
             </div>
           </div>
+        </div>
 
+        <div className="landing-hero">
+          <img
+            src={encodeURI(heroImageSrc)}
+            alt=""
+            className="landing-hero-image"
+          />
           <div className="landing-cta">
             <button
               type="button"

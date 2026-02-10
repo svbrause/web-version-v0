@@ -69,29 +69,33 @@ body[data-practice="lakeshore"] {
 /* Admin: Ponce / style guide – gradient, primary dark, accent yellow */
 body[data-practice="admin"] {
   --bg-primary: #ffffff;
-  --bg-secondary: #F3F3F3; /* Accent Light Gray */
-  --bg-gradient: linear-gradient(180deg, #FFD291 0%, #E5F6FE 100%); /* Warm peach → light blue */
+  --bg-secondary: #f3f3f3; /* Accent Light Gray */
+  --bg-gradient: linear-gradient(
+    180deg,
+    #ffd291 0%,
+    #e5f6fe 100%
+  ); /* Warm peach → light blue */
   --text-primary: #212121; /* Primary Dark */
   --text-secondary: #424242; /* Primary Text */
   --text-muted: #666; /* Primary Light Text */
   --accent-dark: #212121;
-  --accent-light: #F3F3F3; /* Accent Light Gray */
+  --accent-light: #f3f3f3; /* Accent Light Gray */
   --white: #ffffff;
-  --progress-track: #F3F3F3;
+  --progress-track: #f3f3f3;
 
   /* Accent Yellow (#CEAA75) – selected states, highlights; reuse --pink-* for component consistency */
-  --pink-baby: #CEAA75;
-  --pink-light: #E0C497;
-  --pink-dark: #B8945A;
+  --pink-baby: #ceaa75;
+  --pink-light: #e0c497;
+  --pink-dark: #b8945a;
 
-  --pastel-beige: #F3F3F3;
-  --pastel-cream: #EDE3E1; /* Background Gray */
-  --selected-bg: #CEAA75;
+  --pastel-beige: #f3f3f3;
+  --pastel-cream: #ede3e1; /* Background Gray */
+  --selected-bg: #ceaa75;
   --border-color: #e8e8e8; /* Border Gray */
 }
 
 body[data-practice="admin"] {
-  background: linear-gradient(180deg, #FFD291 0%, #E5F6FE 100%) !important;
+  background: linear-gradient(180deg, #ffd291 0%, #e5f6fe 100%) !important;
   background-attachment: fixed;
 }
 
@@ -208,8 +212,15 @@ body {
 }
 
 body {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
@@ -357,8 +368,15 @@ body {
 }
 
 .main-question {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 28px;
   font-weight: 700;
   line-height: 1.2;
@@ -1159,7 +1177,9 @@ body[data-practice="lakeshore"] .next-button {
   padding: 16px;
   background-color: var(--white);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .review-card-checkmark {
@@ -1329,8 +1349,15 @@ body[data-practice="lakeshore"] .results-header-bar {
 }
 
 .results-title {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
@@ -1399,8 +1426,15 @@ body[data-practice="lakeshore"] .results-content {
 }
 
 .browse-by-concern-heading {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
@@ -1409,8 +1443,15 @@ body[data-practice="lakeshore"] .results-content {
 }
 
 .browse-by-concern-subheading {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 14px;
   font-weight: 400;
   color: var(--text-muted);
@@ -1449,8 +1490,15 @@ body[data-practice="lakeshore"] .results-content {
 }
 
 .concern-card-new-title {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
@@ -1594,7 +1642,9 @@ body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.15);
   z-index: 10;
   transition: all 0.2s ease;
 }
@@ -1610,7 +1660,9 @@ body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
 .concern-card-scroll-arrow:hover {
   background-color: var(--white);
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .concern-card-new-footer {
@@ -1703,8 +1755,15 @@ body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
 }
 
 .concern-cases-title {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
@@ -1733,7 +1792,9 @@ body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.06);
   position: relative;
 }
 
@@ -1751,7 +1812,9 @@ body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
 
 .concern-case-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.06);
   border-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -1985,7 +2048,9 @@ body[data-practice="lakeshore"] .results-concern-header {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.06);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.06);
   position: relative;
 }
 
@@ -2003,7 +2068,9 @@ body[data-practice="lakeshore"] .results-concern-header {
 
 .treatment-group-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.06);
   border-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -2270,7 +2337,9 @@ body[data-practice="lakeshore"] .results-concern-header {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.06);
   position: relative;
 }
 
@@ -2288,7 +2357,9 @@ body[data-practice="lakeshore"] .results-concern-header {
 
 .case-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.06);
   border-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -2707,8 +2778,15 @@ body[data-practice="lakeshore"] .results-concern-header {
 }
 
 .celebration-title {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
@@ -2844,8 +2922,15 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -3057,8 +3142,15 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
 }
 
 .lead-form-title {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
@@ -3104,8 +3196,15 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   font-size: 16px;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   transition: all 0.2s ease;
   background: var(--white);
   color: var(--text-primary);
@@ -3145,16 +3244,28 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
   -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
   margin-top: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   -webkit-tap-highlight-color: transparent;
@@ -3285,8 +3396,15 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
 }
 
 .consultation-modal-title {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
@@ -3360,8 +3478,15 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   font-size: 16px;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   transition: all 0.2s ease;
   background: var(--white);
   color: var(--text-primary);
@@ -3405,8 +3530,15 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   border-radius: 24px;
   font-size: 16px;
   font-weight: 600;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   box-sizing: border-box;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3458,8 +3590,15 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
 }
 
 .consultation-confirmation-message {
@@ -3480,8 +3619,15 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   box-sizing: border-box;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3590,8 +3736,15 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   border-radius: 24px;
   font-size: 16px;
   font-weight: 700;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -3657,7 +3810,9 @@ body[data-practice="lakeshore"] .offer-card-expanded {
     var(--pink-baby) 35%,
     #c97a8f 100%
   );
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15), 0 6px 12px rgba(0, 0, 0, 0.2),
+  box-shadow:
+    0 4px 0 rgba(0, 0, 0, 0.15),
+    0 6px 12px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transform: rotateX(8deg) rotateY(-6deg);
   transform-style: preserve-3d;
@@ -3736,7 +3891,9 @@ body[data-practice="lakeshore"] .offer-card-expanded {
     var(--pink-baby) 40%,
     #b86b7d 100%
   );
-  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.2);
   animation: gift-bow-sway 2.2s ease-in-out infinite;
 }
 .gift-3d-bow-loop-l {
@@ -3850,6 +4007,7 @@ body[data-practice="lakeshore"] .offer-card-expanded {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
   min-height: var(--actual-vh, 100vh);
   padding: 0;
   margin: 0;
@@ -3936,7 +4094,8 @@ body[data-practice="lakeshore"] .offer-card-expanded {
   padding: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  flex: 1;
+  min-height: 0;
 }
 
 .landing-header-top {
@@ -3963,34 +4122,135 @@ body[data-practice="lakeshore"] .landing-screen {
 }
 
 .landing-content {
-  flex: 1;
-  padding: 0;
+  flex: 0 0 auto;
+  padding: 20px 20px 20px;
   max-width: 428px;
   width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   gap: 0;
 }
 
-.landing-title-serif {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+.landing-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.landing-logo-centered {
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Override .practice-logo.unique-logo (max-height: 50px) so landing logo can be larger */
+.landing-centered .landing-logo-centered {
+  max-width: 220px !important;
+  max-height: 64px !important;
+  width: auto;
+  height: auto;
+}
+
+.landing-centered .landing-title-serif {
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.3;
-  margin: 0 0 12px 0;
-  text-align: left;
+  margin: 0 0 18px 0;
+  text-align: center;
 }
 
-.landing-tagline {
-  font-size: 16px;
+/* Horizontal feature row: icon above text, left to right */
+.landing-features-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  margin-top: -4px;
+}
+
+.landing-feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
   font-weight: 400;
   color: var(--text-secondary);
-  line-height: 1.5;
-  margin: 0;
-  text-align: left;
+  line-height: 1.35;
+}
+
+.landing-feature-card span {
+  max-width: 120px;
+  margin-top: 8px;
+}
+
+.landing-feature-icon-black {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--pink-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #1a1a1a;
+}
+
+.landing-feature-icon-black svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Bottom section: hero image with CTA on top */
+.landing-hero {
+  position: relative;
+  flex: 1;
+  min-height: 65vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  overflow: hidden;
+}
+
+.landing-hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% top;
+  /* Shift image up so more of the top is visible; overflow hidden on parent clips the bottom */
+  transform: translateY(-7%);
+  z-index: 0;
+}
+
+.landing-hero .landing-cta {
+  position: relative;
+  z-index: 1;
 }
 
 .landing-provider-featured {
@@ -4030,8 +4290,15 @@ body[data-practice="lakeshore"] .landing-screen {
 }
 
 .landing-provider-name-large {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
@@ -4057,14 +4324,6 @@ body[data-practice="lakeshore"] .landing-screen {
 
 .landing-provider-text {
   margin: 0;
-}
-
-.landing-features-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin: 0;
-  padding-top: 20px;
 }
 
 .landing-feature-item {
@@ -4162,11 +4421,22 @@ body[data-practice="lakeshore"] .landing-screen {
 }
 
 .landing-cta {
-  margin: 8px 0 16px 0;
-  padding: 8px 20px 0;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 16px 20px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
   width: 100%;
   max-width: 428px;
   box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Mobile Safari: keep Get Started above the bottom address bar with visible margin */
+@media (max-width: 768px) {
+  .landing-cta {
+    padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 .landing-cta-button {
@@ -4179,8 +4449,15 @@ body[data-practice="lakeshore"] .landing-screen {
   border-radius: 12px;
   font-size: 15px;
   font-weight: 600;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: none;
@@ -4461,7 +4738,11 @@ body[data-practice="lakeshore"] .landing-screen {
   aspect-ratio: 1;
   border-radius: 12px;
   overflow: hidden;
-  background: linear-gradient(145deg, var(--pink-light) 0%, rgba(255,255,255,0.9) 100%);
+  background: linear-gradient(
+    145deg,
+    var(--pink-light) 0%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
   box-shadow:
     0 3px 10px rgba(0, 0, 0, 0.08),
     0 0 0 1px rgba(0, 0, 0, 0.04);
@@ -4510,8 +4791,15 @@ body[data-practice="lakeshore"] .landing-screen {
 
 /* Title */
 .onboarding-slide-title {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 32px;
   font-weight: 700;
   color: var(--text-primary);
@@ -4573,8 +4861,15 @@ body[data-practice="lakeshore"] .landing-screen {
 }
 
 .onboarding-coupon-amount {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 48px;
   font-weight: 800;
   color: var(--pink-baby);
@@ -4623,8 +4918,15 @@ body[data-practice="lakeshore"] .landing-screen {
   border-radius: 12px;
   font-size: 15px;
   font-weight: 600;
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: none;
@@ -4721,36 +5023,39 @@ body[data-practice="lakeshore"] .onboarding-coupon-amount {
   }
 
   .landing-screen {
-    padding: 24px 16px 100px;
+    padding: 0;
   }
 
-  .landing-close-button {
-    top: 16px;
-    right: 16px;
-    width: 36px;
-    height: 36px;
-  }
-
-  .landing-close-button svg {
-    width: 18px !important;
-    height: 18px !important;
-  }
-
-  .landing-title {
+  .landing-centered .landing-title-serif {
     font-size: 26px;
   }
 
-  .landing-subtitle {
-    font-size: 15px;
-  }
-
   .landing-content {
-    gap: 18px;
+    padding: 16px 16px 16px;
   }
 
-  .landing-logo {
-    max-width: 160px;
-    margin-bottom: 6px;
+  .landing-logo-centered {
+    margin-bottom: 16px;
+  }
+
+  .landing-centered .landing-logo-centered {
+    max-width: 200px !important;
+    max-height: 58px !important;
+  }
+
+  .landing-feature-card span {
+    max-width: 100px;
+    font-size: 12px;
+  }
+
+  .landing-feature-icon-black {
+    width: 32px;
+    height: 32px;
+  }
+
+  .landing-feature-icon-black svg {
+    width: 18px;
+    height: 18px;
   }
 
   .logo-image {
@@ -4901,8 +5206,15 @@ body[data-practice="lakeshore"] .onboarding-coupon-amount {
 }
 
 .consultation-modal-benefits-title {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: var(--text-primary);
@@ -5055,8 +5367,15 @@ body[data-practice="lakeshore"] .onboarding-coupon-amount {
 }
 
 .case-detail-page-title {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
