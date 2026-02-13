@@ -650,7 +650,6 @@ const filtered = casesWithScores.filter(caseItem => {
         ];
         
         const matchedAreas = new Set<string>();
-        const facialAreas = ['Forehead', 'Eyes', 'Cheeks', 'Nose', 'Lips', 'Jawline', 'Chin', 'Neck'];
         // Only add areas that the user actually selected (so we don't show eyes/forehead cases when user chose Jawline+Lips+Full Face)
         areaKeywords.forEach(({ keywords, area }) => {
           if (userSelectedAreaNames.includes(area)) {
@@ -672,7 +671,7 @@ const filtered = casesWithScores.filter(caseItem => {
     return false;
   });
 
-  let nonSurgical = filtered.filter((caseItem) => !isSurgicalCase(caseItem));
+  let nonSurgical: CaseItem[] = filtered.filter((caseItem) => !isSurgicalCase(caseItem));
 
   // When user selected areas but no cases match (e.g. Nose + mostly surgical), show concern-only
   // so they still see relevant cases instead of an empty experience (for all users).
