@@ -13,14 +13,22 @@ export function normalizeKeyword(keyword: string): string {
   return keyword.toLowerCase().replace(/[-_\s]+/g, "[-\\s_]*");
 }
 
+/** True if text contains all parts of a hyphenated keyword in any order (e.g. "ill-defined-jawline" matches "jawline ill-defined"). */
+function textContainsAllKeywordParts(text: string, keyword: string): boolean {
+  const parts = keyword.toLowerCase().split(/[-_\s]+/).filter(Boolean);
+  const textLower = text.toLowerCase();
+  return parts.length > 0 && parts.every((part) => textLower.includes(part));
+}
+
 // Check if a case is surgical
 export function isSurgicalCase(caseItem: CaseItem): boolean {
   if (!caseItem) return false;
   
-  // Check the "Surgical" field from Airtable
-  if ((caseItem as any).surgical !== undefined) {
-    const surgicalValue = String((caseItem as any).surgical || "").toLowerCase().trim();
-    if (surgicalValue === "surgical") {
+  // Check the "Surgical" / "Surgical (from General Treatments)" field from Airtable
+  const rawSurgical = (caseItem as any).surgical;
+  if (rawSurgical !== undefined && rawSurgical !== null && rawSurgical !== "") {
+    const surgicalValue = String(rawSurgical).toLowerCase().trim();
+    if (surgicalValue === "surgical" || surgicalValue.startsWith("surgical")) {
       return true;
     }
     if (surgicalValue === "non-surgical" || surgicalValue === "nonsurgical") {
@@ -35,12 +43,14 @@ export function isSurgicalCase(caseItem: CaseItem): boolean {
   const allText = [caseName, headline, treatment].join(" ");
   
   const surgicalKeywords = [
-    "surgical", 
-    "surgery", 
-    "rhinoplasty", 
-    "blepharoplasty", 
-    "facelift", 
+    "surgical",
+    "surgery",
+    "rhinoplasty",
+    "blepharoplasty",
+    "facelift",
+    "face lift",
     "neck lift",
+    "necklift",
     "browlift",
     "brow lift",
     "brow-lift",
@@ -55,7 +65,22 @@ export function isSurgicalCase(caseItem: CaseItem): boolean {
     "breast lift",
     "mastopexy",
     "augmentation",
-    "implant"
+    "implant",
+    "lip lift",
+    "lip-lift",
+    "liplift",
+    "corner lip lift",
+    "canthopexy",
+    "canthoplasty",
+    "lateral canthopexy",
+    "threadlift",
+    "thread lift",
+    "jaw reduction",
+    "jaw implant",
+    "chin implant",
+    "buccal fat",
+    "fat pad removal",
+    "minimally invasive surgery",
   ];
   
   for (const keyword of surgicalKeywords) {
@@ -492,13 +517,15 @@ export function getMatchingCasesForConcern(
   });
 
 const filtered = casesWithScores.filter(caseItem => {
-    // FIRST: Check if case has explicit category mapping from CSV
-    const caseCategories = CASE_CATEGORY_MAPPING[caseItem.id];
-    if (caseCategories && caseCategories.includes(concernId)) {
-      return true; // Direct match from CSV mapping
-    }
+    // FIRST: Check if case has explicit concern IDs from DB (e.g. Airtable "Case Concerns")
+    const dbConcernIds = caseItem.concernIds;
+    const concernMatchesViaDb = !!(dbConcernIds && Array.isArray(dbConcernIds) && dbConcernIds.includes(concernId));
 
-    // SECOND: Fall back to keyword matching if no CSV mapping
+    // SECOND: Check if case has explicit category mapping from CSV (legacy / main app)
+    const caseCategories = CASE_CATEGORY_MAPPING[caseItem.id];
+    const concernMatchesViaCsv = !!(caseCategories && caseCategories.includes(concernId));
+
+    // THIRD: Fall back to keyword matching if no DB or CSV mapping
     const caseNameLower = (caseItem.name || "").toLowerCase();
     const matchingCriteriaLower = ((caseItem.matchingCriteria || []) as string[]).map(c => 
       typeof c === 'string' ? c.toLowerCase() : String(c || '').toLowerCase()
@@ -509,10 +536,12 @@ const filtered = casesWithScores.filter(caseItem => {
       const keywordLower = keyword.toLowerCase();
       // Direct match
       if (caseNameLower.includes(keywordLower)) return true;
-      // Match with normalized keyword (handles hyphens/spaces)
+      // Match with normalized keyword (handles hyphens/spaces, fixed order)
       const normalized = normalizeKeyword(keyword);
       const regex = new RegExp(normalized, "i");
-      return regex.test(caseNameLower);
+      if (regex.test(caseNameLower)) return true;
+      // Hyphenated keyword in any order (e.g. "ill-defined-jawline" matches "jawline ill-defined")
+      return textContainsAllKeywordParts(caseNameLower, keyword);
     }) || false;
     
     // Check criteria match with normalized keywords
@@ -550,8 +579,9 @@ const filtered = casesWithScores.filter(caseItem => {
              solvedIssuesLower.some(s => regex.test(s));
     }) || false;
 
-    if (nameMatch || criteriaMatch || solvedMatch || specificIssuesMatch) {
-      // Now check area filtering if areas are selected
+    const concernMatches = concernMatchesViaDb || concernMatchesViaCsv || nameMatch || criteriaMatch || solvedMatch || specificIssuesMatch;
+    if (concernMatches) {
+      // Now check area filtering if areas are selected (applies to both CSV-mapped and keyword-matched cases)
       if (userSelections.selectedAreas && userSelections.selectedAreas.length > 0) {
         const userSelectedAreaNames = userSelections.selectedAreas.map(areaId => {
           const area = AREAS_OF_CONCERN.find(a => a.id === areaId);
@@ -561,39 +591,34 @@ const filtered = casesWithScores.filter(caseItem => {
         // Check if user selected "Full Face"
         const userSelectedFullFace = userSelectedAreaNames.includes('Full Face');
         
+        // Helper: only show "Skin All" / Full Face case when it's truly generic or overlaps user's areas.
+        // Many cases are tagged "Skin All" in Airtable but are really about one area (e.g. under eye, forehead).
+        const caseRelevantAreasForCheck = getRelevantAreasForCase(caseItem);
+        const specificAreasFromCase = caseRelevantAreasForCheck.filter((a) => a !== 'Full Face');
+
+        const showFullFaceCase = (): boolean => {
+          if (!userSelectedFullFace) return false;
+          if (specificAreasFromCase.length === 0) return true;
+          return specificAreasFromCase.some((a) => userSelectedAreaNames.includes(a));
+        };
+
         // First check if case has explicit area names from Airtable (e.g., "Skin All")
         const areaNames = (caseItem as any).areaNames;
         if (areaNames) {
           const areaNamesStr = typeof areaNames === 'string' ? areaNames : (Array.isArray(areaNames) ? areaNames.join(' ') : '');
-          // If it's a full-face treatment ("Skin All" or similar)
           if (areaNamesStr.toLowerCase().includes('all') || areaNamesStr.toLowerCase() === 'skin') {
-            // Full-face treatment matches "Full Face" selection or any individual facial area
-            if (userSelectedFullFace) {
+            if (showFullFaceCase()) return true;
+            // Case is tagged Skin All but content is about specific area(s) user didn't select — fall through
+          } else {
+            const caseAreaNames = Array.isArray(areaNames) ? areaNames : [areaNames];
+            if (caseAreaNames.some((caseArea) => userSelectedAreaNames.includes(caseArea))) {
               return true;
             }
-            const facialAreas = ['Forehead', 'Eyes', 'Cheeks', 'Nose', 'Lips', 'Jawline', 'Chin', 'Neck'];
-            if (userSelectedAreaNames.some(area => facialAreas.includes(area))) {
-              return true; // Full-face treatment matches any facial area
-            }
-          }
-          // Check if explicit area names match selected areas
-          const caseAreaNames = Array.isArray(areaNames) ? areaNames : [areaNames];
-          if (caseAreaNames.some(caseArea => userSelectedAreaNames.includes(caseArea))) {
-            return true;
           }
         }
-        
-        // Check if case is a full-face treatment (only if explicitly set in Airtable)
-        const caseRelevantAreas = getRelevantAreasForCase(caseItem);
-        if (caseRelevantAreas.includes('Full Face')) {
-          // If case is full-face (explicitly set in Airtable), it matches "Full Face" selection or any individual facial area
-          if (userSelectedFullFace) {
-            return true;
-          }
-          const facialAreas = ['Forehead', 'Eyes', 'Cheeks', 'Nose', 'Lips', 'Jawline', 'Chin', 'Neck'];
-          if (userSelectedAreaNames.some(area => facialAreas.includes(area))) {
-            return true;
-          }
+
+        if (caseRelevantAreasForCheck.includes('Full Face')) {
+          if (showFullFaceCase()) return true;
         }
         
         // Fall back to keyword matching
@@ -626,8 +651,9 @@ const filtered = casesWithScores.filter(caseItem => {
         
         const matchedAreas = new Set<string>();
         const facialAreas = ['Forehead', 'Eyes', 'Cheeks', 'Nose', 'Lips', 'Jawline', 'Chin', 'Neck'];
+        // Only add areas that the user actually selected (so we don't show eyes/forehead cases when user chose Jawline+Lips+Full Face)
         areaKeywords.forEach(({ keywords, area }) => {
-          if (userSelectedAreaNames.includes(area) || (userSelectedFullFace && facialAreas.includes(area))) {
+          if (userSelectedAreaNames.includes(area)) {
             keywords.forEach(keyword => {
               if (allCaseText.includes(keyword.toLowerCase())) {
                 matchedAreas.add(area);
@@ -636,16 +662,7 @@ const filtered = casesWithScores.filter(caseItem => {
           }
         });
 
-        // If user selected "Full Face", check if case is explicitly marked as full-face in Airtable
-        // Don't automatically treat 4+ areas as full-face - only use explicit "Full Face" from Airtable
-        if (userSelectedFullFace) {
-          const caseRelevantAreas = getRelevantAreasForCase(caseItem);
-          if (caseRelevantAreas.includes('Full Face')) {
-            return true;
-          }
-        }
-
-        // Case must match at least one selected area
+        // Case must match at least one selected area (Full Face cases already handled above with showFullFaceCase)
         return matchedAreas.size > 0;
       }
       
@@ -655,9 +672,56 @@ const filtered = casesWithScores.filter(caseItem => {
     return false;
   });
 
-  const nonSurgical = filtered.filter((caseItem) => !isSurgicalCase(caseItem));
+  let nonSurgical = filtered.filter((caseItem) => !isSurgicalCase(caseItem));
+
+  // When user selected areas but no cases match (e.g. Nose + mostly surgical), show concern-only
+  // so they still see relevant cases instead of an empty experience (for all users).
+  if (
+    userSelections.selectedAreas &&
+    userSelections.selectedAreas.length > 0 &&
+    nonSurgical.length === 0
+  ) {
+    const concernOnly = getMatchingCasesForConcern(concernId, caseData, {
+      ...userSelections,
+      selectedAreas: [],
+    });
+    if (concernOnly.length > 0) {
+      console.log(
+        `getMatchingCasesForConcern("${concernId}"): no cases matched selected areas; showing ${concernOnly.length} concern-only cases`
+      );
+      return concernOnly.sort((a, b) => (b.matchingScore || 0) - (a.matchingScore || 0));
+    }
+  }
+
+  // When area-matched list is sparse, add Full Face cases for this concern below (so user still sees more options)
+  const MIN_AREA_MATCHED_BEFORE_SUPPLEMENT = 10;
+  const MAX_FULL_FACE_SUPPLEMENT = 10;
+  const areaMatchedIds = new Set(nonSurgical.map((c) => c.id));
+  if (
+    userSelections.selectedAreas &&
+    userSelections.selectedAreas.length > 0 &&
+    nonSurgical.length > 0 &&
+    nonSurgical.length < MIN_AREA_MATCHED_BEFORE_SUPPLEMENT
+  ) {
+    const concernOnly = getMatchingCasesForConcern(concernId, caseData, {
+      ...userSelections,
+      selectedAreas: [],
+    });
+    const fullFaceSupplement = concernOnly
+      .filter((c) => !areaMatchedIds.has(c.id) && getRelevantAreasForCase(c).includes("Full Face"))
+      .sort((a, b) => (b.matchingScore || 0) - (a.matchingScore || 0))
+      .slice(0, MAX_FULL_FACE_SUPPLEMENT);
+    if (fullFaceSupplement.length > 0) {
+      nonSurgical = [
+        ...nonSurgical.sort((a, b) => (b.matchingScore || 0) - (a.matchingScore || 0)),
+        ...fullFaceSupplement,
+      ];
+    }
+  } else {
+    nonSurgical = nonSurgical.sort((a, b) => (b.matchingScore || 0) - (a.matchingScore || 0));
+  }
   
-  console.log(`getMatchingCasesForConcern("${concernId}"): ${caseData.length} total cases, ${filtered.length} after keyword/area filter, ${nonSurgical.length} after surgical filter`);
+  console.log(`getMatchingCasesForConcern("${concernId}"): ${caseData.length} total cases, ${filtered.length} after keyword/area filter, ${nonSurgical.length} after surgical/supplement`);
   
   // Debug: Log cases that didn't match for skin-texture concern
   if (concernId === 'skin-texture' && filtered.length === 0) {
@@ -667,7 +731,7 @@ const filtered = casesWithScores.filter(caseItem => {
       const matchingCriteriaLower = ((caseItem.matchingCriteria || []) as string[]).map(c => 
         typeof c === 'string' ? c.toLowerCase() : String(c || '').toLowerCase()
       );
-      const solvedIssuesLower = ((caseItem.solved || []) as string[]).map(issue => 
+      const solvedIssuesLower = ((caseItem.solved || []) as string[]).map(issue =>
         typeof issue === 'string' ? issue.toLowerCase() : String(issue || '').toLowerCase()
       );
       const allText = [caseNameLower, ...matchingCriteriaLower, ...solvedIssuesLower].join(' ');
@@ -680,7 +744,27 @@ const filtered = casesWithScores.filter(caseItem => {
     });
   }
   
-  return nonSurgical.sort((a, b) => (b.matchingScore || 0) - (a.matchingScore || 0));
+  return nonSurgical;
+}
+
+/**
+ * Returns one list of cases per concern so each case appears in exactly one list (first matching concern wins).
+ * Use this for both browse cards and Explore view to avoid repetition when a case matches multiple concerns.
+ */
+export function getDeduplicatedCasesPerConcern(
+  selectedConcernIds: string[],
+  caseData: CaseItem[],
+  userSelections: Partial<AppState>
+): Record<string, CaseItem[]> {
+  const result: Record<string, CaseItem[]> = {};
+  const seenCaseIds = new Set<string>();
+  for (const concernId of selectedConcernIds) {
+    const matching = getMatchingCasesForConcern(concernId, caseData, userSelections);
+    const deduplicated = matching.filter((c) => !seenCaseIds.has(c.id));
+    deduplicated.forEach((c) => seenCaseIds.add(c.id));
+    result[concernId] = deduplicated;
+  }
+  return result;
 }
 
 // Get relevant areas for a case

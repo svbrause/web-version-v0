@@ -21,6 +21,12 @@ export function getProviderIdForPractice(
   }
   if (practice === "unique") return UNIQUE_PROVIDER_ID;
   if (practice === "lakeshore") return LAKESHORE_PROVIDER_ID;
+  if (practice === "the-treatment") {
+    const treatmentId = import.meta.env.VITE_TREATMENT_PROVIDER_RECORD_ID;
+    return treatmentId && typeof treatmentId === "string" && treatmentId.startsWith("rec")
+      ? treatmentId
+      : null;
+  }
   if (practice === "admin") {
     const adminId = import.meta.env.VITE_ADMIN_PROVIDER_RECORD_ID;
     return adminId && typeof adminId === "string" && adminId.startsWith("rec")

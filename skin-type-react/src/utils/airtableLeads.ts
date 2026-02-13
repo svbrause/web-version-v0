@@ -164,8 +164,15 @@ export async function submitLeadToAirtable(
     const adminProviderId = import.meta.env.VITE_ADMIN_PROVIDER_RECORD_ID;
     const isValidRecordId = (id: string) =>
       id && id.startsWith("rec") && id.length >= 14;
+    const treatmentProviderId = import.meta.env.VITE_TREATMENT_PROVIDER_RECORD_ID;
     if (practice === "lakeshore") {
       fields["Providers"] = ["rec3oXyrb1t6YUvoe"];
+    } else if (practice === "the-treatment" && isValidRecordId(treatmentProviderId || "")) {
+      fields["Providers"] = [treatmentProviderId!];
+    } else if (practice === "the-treatment") {
+      console.warn(
+        "VITE_TREATMENT_PROVIDER_RECORD_ID not set; create a The Treatment record in the Providers table and set the env var so /the-treatment leads link correctly.",
+      );
     } else if (practice === "admin" && isValidRecordId(adminProviderId || "")) {
       fields["Providers"] = [adminProviderId!];
     } else if (practice === "admin") {

@@ -23,6 +23,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<HomeOrNotFound />} />
         <Route path="/demo" element={<App />} />
         <Route path="/lakeshore" element={<App />} />
+        <Route path="/the-treatment" element={<App />} />
         <Route path="/unique" element={<App />} />
       </Routes>
     </BrowserRouter>

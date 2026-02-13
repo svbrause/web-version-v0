@@ -33,6 +33,8 @@ export interface CaseItem {
   matchingScore?: number;
   treatment?: string;
   surgical?: string | boolean;
+  /** App concern IDs from DB (e.g. Airtable "Case Concerns") — used first for matching; keyword fallback when missing. */
+  concernIds?: string[];
 }
 
 export interface TreatmentGroup {

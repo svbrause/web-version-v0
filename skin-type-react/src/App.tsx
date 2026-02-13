@@ -15,7 +15,7 @@ import LandingScreen from "./components/screens/LandingScreen";
 import OnboardingScreen from "./components/screens/OnboardingScreen";
 import NextButton from "./components/NextButton";
 import ConsultationModal from "./components/ConsultationModal";
-import { FORM_STEPS } from "./constants/data";
+import { FORM_STEPS, HIGH_LEVEL_CONCERNS } from "./constants/data";
 import { trackEvent } from "./utils/analytics";
 import {
   getPracticeFromConfig,
@@ -324,11 +324,33 @@ function AppContent() {
             thumbnail: thumbnailField,
             treatment: treatment,
             directMatchingIssues: fields["Direct Matching Issues"] || [],
-            surgical: fields["Surgical"] || "",
+            surgical: fields["Surgical (from General Treatments)"] ?? fields["Surgical"] ?? "",
             patientAge: fields["Age"] || fields["Patient Age"] || null,
             skinType: fields["Skin Type"] || null,
             skinTone: fields["Skin Tone"] || null,
             areaNames: fields["Area Names"] || fields["Areas"] || null,
+            concernIds: (() => {
+              const raw = fields["Case Concerns"] || fields["App Concerns"] || null;
+              if (!raw) return undefined;
+              const strings = Array.isArray(raw)
+                ? raw.filter((v): v is string => typeof v === "string")
+                : typeof raw === "string"
+                  ? [raw.trim()].filter(Boolean)
+                  : [];
+              if (strings.length === 0) return undefined;
+              // Map Airtable values (display names like "Volume Loss" or IDs like "volume-loss") to app concern IDs
+              const ids = strings
+                .map((v) => {
+                  const trimmed = (v || "").trim();
+                  const byName = HIGH_LEVEL_CONCERNS.find((c) => c.name === trimmed);
+                  if (byName) return byName.id;
+                  const byId = HIGH_LEVEL_CONCERNS.find((c) => c.id === trimmed);
+                  if (byId) return byId.id;
+                  return null;
+                })
+                .filter((id): id is string => id != null);
+              return ids.length > 0 ? ids : undefined;
+            })(),
           };
         });
 

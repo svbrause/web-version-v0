@@ -66,6 +66,29 @@ body[data-practice="lakeshore"] {
   --peachy-pink: #dd9685; /* Muted Peachy-Pink/Terracotta */
 }
 
+/* The Treatment Skin Boutique – teal accent #58A193 */
+body[data-practice="the-treatment"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f5;
+  --bg-gradient: #f7f7f5;
+  --text-primary: #222222;
+  --text-secondary: #333333;
+  --text-muted: #666666;
+  --accent-dark: #58A193; /* Teal – main accent */
+  --accent-light: #e0ebe8; /* Light teal tint */
+  --white: #ffffff;
+  --progress-track: #e0ebe8;
+
+  --pink-baby: #58A193; /* Teal accent */
+  --pink-light: #8bc4b8;
+  --pink-dark: #4a8a7d;
+
+  --pastel-beige: #e0ebe8;
+  --pastel-cream: #f7f7f5;
+  --selected-bg: #8bc4b8;
+  --border-color: #e0ebe8;
+}
+
 /* Admin: Ponce / style guide – gradient, primary dark, accent yellow */
 body[data-practice="admin"] {
   --bg-primary: #ffffff;
@@ -1295,6 +1318,14 @@ body[data-practice="lakeshore"] .results-header-bar {
 }
 
 .practice-logo.admin-logo {
+  max-width: 180px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.practice-logo.the-treatment-logo {
   max-width: 180px;
   max-height: 50px;
   width: auto;

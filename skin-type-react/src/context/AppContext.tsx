@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import type { AppState, CaseItem } from '../types';
 import { FORM_STEPS } from '../constants/data';
+import { getDemoPresetFromUrl } from '../config/demoPreset';
 
 interface AppContextType {
   state: AppState;
@@ -39,23 +40,31 @@ const initialState: AppState = {
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(() => {
+    let base = initialState;
     // Try to restore from sessionStorage
     if (typeof window !== 'undefined' && window.sessionStorage) {
       try {
         const stored = sessionStorage.getItem('appState');
         if (stored) {
           const parsed = JSON.parse(stored);
-          // If user has already started the form (currentStep >= 0), restore their progress
-          // Otherwise, show landing page (currentStep === -1)
           if (parsed.currentStep !== undefined && parsed.currentStep >= 0) {
-            return { ...initialState, ...parsed };
+            base = { ...initialState, ...parsed };
           }
         }
       } catch (e) {
         console.error('Error restoring state:', e);
       }
     }
-    return initialState;
+    // Demo preset: when URL has ?demo=1 and we're on a fresh start, pre-fill concerns and areas
+    const demoPreset = getDemoPresetFromUrl();
+    if (demoPreset && base.currentStep === -1 && base.selectedConcerns.length === 0) {
+      return {
+        ...base,
+        selectedConcerns: [...demoPreset.concernIds],
+        selectedAreas: [...demoPreset.areaIds],
+      };
+    }
+    return base;
   });
 
   const [caseData, setCaseData] = useState<CaseItem[]>([]);

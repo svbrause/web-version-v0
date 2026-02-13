@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useRef } from "react";
 import { useApp } from "../../context/AppContext";
 import { HIGH_LEVEL_CONCERNS, FORM_STEPS } from "../../constants/data";
 import {
-  getMatchingCasesForConcern,
+  getDeduplicatedCasesPerConcern,
   getRelevantAreasForCase,
 } from "../../utils/caseMatching";
 import { trackEvent } from "../../utils/analytics";
@@ -135,11 +135,7 @@ export default function ResultsScreen() {
 
   const handleConcernClick = (concernId: string) => {
     const concern = HIGH_LEVEL_CONCERNS.find((c) => c.id === concernId);
-    const matchingCases = getMatchingCasesForConcern(
-      concernId,
-      caseData,
-      state,
-    );
+    const matchingCases = deduplicatedCasesByConcern[concernId] ?? [];
 
     // Track concern as explored in localStorage and schedule sync
     if (typeof window !== "undefined" && window.localStorage) {
@@ -213,16 +209,17 @@ export default function ResultsScreen() {
     return div.innerHTML;
   };
 
-  // Get the selected case item for the detail view
+  // Deduplicated cases per concern (each case in exactly one concern's list) for browse cards and Explore view
+  const deduplicatedCasesByConcern = useMemo(
+    () => getDeduplicatedCasesPerConcern(state.selectedConcerns, caseData, state),
+    [state.selectedConcerns, caseData, state],
+  );
+
+  // Get the selected case item for the detail view (look up in full caseData so it works with deduplicated lists)
   const selectedCaseItem: CaseItem | null = useMemo(() => {
-    if (!selectedCaseId || !state.viewingConcernCasesId) return null;
-    const matchingCases = getMatchingCasesForConcern(
-      state.viewingConcernCasesId,
-      caseData,
-      state,
-    );
-    return matchingCases.find((c) => c.id === selectedCaseId) || null;
-  }, [selectedCaseId, state.viewingConcernCasesId, caseData, state]);
+    if (!selectedCaseId) return null;
+    return caseData.find((c) => c.id === selectedCaseId) || null;
+  }, [selectedCaseId, caseData]);
 
   // Show case detail page
   if (selectedCaseId && selectedCaseItem) {
@@ -245,16 +242,12 @@ export default function ResultsScreen() {
     );
   }
 
-  // Show cases for a concern
+  // Show cases for a concern (use deduplicated list so no repetition across concerns)
   if (state.viewingConcernCases && state.viewingConcernCasesId) {
     const concern = HIGH_LEVEL_CONCERNS.find(
       (c) => c.id === state.viewingConcernCasesId,
     );
-    const matchingCases = getMatchingCasesForConcern(
-      state.viewingConcernCasesId,
-      caseData,
-      state,
-    );
+    const matchingCases = deduplicatedCasesByConcern[state.viewingConcernCasesId] ?? [];
     const readCount = matchingCases.filter((c) => readCases.has(c.id)).length;
     const totalCount = matchingCases.length;
 
@@ -515,11 +508,7 @@ export default function ResultsScreen() {
               );
               if (!concern) return null;
 
-              const matchingCases = getMatchingCasesForConcern(
-                concernId,
-                caseData,
-                state,
-              );
+              const matchingCases = deduplicatedCasesByConcern[concernId] ?? [];
               const caseImagesWithData = matchingCases
                 .map((c) => ({
                   imageUrl: c.beforeAfter || c.thumbnail,
@@ -534,7 +523,9 @@ export default function ResultsScreen() {
               const caseImages = caseImagesWithData.map(
                 (item) => item.imageUrl,
               );
-              const caseItems = caseImagesWithData.map((item) => item.caseItem);
+              const caseItems = caseImagesWithData.map(
+                (item) => item.caseItem,
+              );
 
               const reviewedCount = matchingCases.filter((c) =>
                 readCases.has(c.id),

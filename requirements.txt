@@ -1,0 +1,4 @@
+# For scripts/set_case_concerns_and_areas.py: SSL certs (fixes CERTIFICATE_VERIFY_FAILED on macOS)
+certifi>=2024.0.0
+# Optional: load AIRTABLE_* from .env
+python-dotenv>=1.0.0

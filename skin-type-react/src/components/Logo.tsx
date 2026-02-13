@@ -1,6 +1,6 @@
 import "../App.css";
 
-export type PracticeName = "lakeshore" | "unique" | "admin";
+export type PracticeName = "lakeshore" | "unique" | "admin" | "the-treatment";
 
 interface LogoProps {
   practice?: PracticeName;
@@ -8,7 +8,7 @@ interface LogoProps {
 }
 
 // Get practice from pathname first, then query, then env. Returns null for "/" with no ?practice= (show 404).
-// Path: /demo → admin, /lakeshore → lakeshore, /unique → unique. "/" + ?practice=unique|lakeshore → that practice.
+// Path: /demo → admin, /lakeshore → lakeshore, /the-treatment → the-treatment, /unique → unique. "/" + ?practice=... → that practice.
 export function getPracticeFromConfig(): PracticeName | null {
   if (typeof window === "undefined") return "unique";
 
@@ -16,14 +16,19 @@ export function getPracticeFromConfig(): PracticeName | null {
   const urlParams = new URLSearchParams(window.location.search);
   const practiceParam = urlParams.get("practice")?.toLowerCase();
 
-  // 1. Path-based: /demo, /lakeshore, /unique
+  // 1. Path-based: /demo, /lakeshore, /the-treatment, /unique
   if (pathname === "/demo") return "admin";
   if (pathname === "/lakeshore") return "lakeshore";
+  if (pathname === "/the-treatment") return "the-treatment";
   if (pathname === "/unique") return "unique";
 
-  // 2. "/" with query: ?practice=unique or ?practice=lakeshore (same result as /unique or /lakeshore)
+  // 2. "/" with query: ?practice=unique|lakeshore|the-treatment (same result as path)
   if (pathname === "/") {
-    if (practiceParam === "lakeshore" || practiceParam === "unique")
+    if (
+      practiceParam === "lakeshore" ||
+      practiceParam === "unique" ||
+      practiceParam === "the-treatment"
+    )
       return practiceParam as PracticeName;
     return null; // bare "/" → 404
   }
@@ -33,7 +38,8 @@ export function getPracticeFromConfig(): PracticeName | null {
   if (
     vitePractice === "lakeshore" ||
     vitePractice === "unique" ||
-    vitePractice === "admin"
+    vitePractice === "admin" ||
+    vitePractice === "the-treatment"
   ) {
     return vitePractice as PracticeName;
   }
@@ -41,7 +47,8 @@ export function getPracticeFromConfig(): PracticeName | null {
   if (
     windowPractice === "lakeshore" ||
     windowPractice === "unique" ||
-    windowPractice === "admin"
+    windowPractice === "admin" ||
+    windowPractice === "the-treatment"
   ) {
     return windowPractice as PracticeName;
   }
@@ -53,6 +60,7 @@ export function getPracticeFromConfig(): PracticeName | null {
 export function getPracticeDisplayName(practice: PracticeName): string {
   if (practice === "lakeshore") return "Lakeshore Skin + Body";
   if (practice === "admin") return "Ponce";
+  if (practice === "the-treatment") return "The Treatment Skin Boutique";
   return "Unique Aesthetics & Wellness";
 }
 
@@ -62,6 +70,7 @@ export function getPracticeHomeUrl(): string {
   if (practice === null) return "/";
   if (practice === "lakeshore") return "https://www.lakeshoreshinandbody.com/";
   if (practice === "admin") return "https://www.ponce.ai/";
+  if (practice === "the-treatment") return "https://www.thetreatmentskinboutique.com/";
   return "https://www.myuniqueaesthetics.com/";
 }
 
@@ -75,6 +84,15 @@ export default function Logo({ practice, className = "" }: LogoProps) {
         src="/lakeshore-logo.png"
         alt="Lakeshore Skin + Body"
         className={`practice-logo lakeshore-logo ${className}`}
+      />
+    );
+  }
+  if (practiceName === "the-treatment") {
+    return (
+      <img
+        src="/treatment-skin-boutique_logo_4x.png"
+        alt="The Treatment Skin Boutique"
+        className={`practice-logo the-treatment-logo ${className}`}
       />
     );
   }

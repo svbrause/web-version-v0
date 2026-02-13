@@ -341,15 +341,19 @@ export default function ConsultationModal({
   const accentColor =
     practice === "lakeshore"
       ? "#6b8a9a"
-      : practice === "admin"
-        ? "#CEAA75" /* admin accent yellow */
-        : "#ffa2c7";
+      : practice === "the-treatment"
+        ? "#58A193"
+        : practice === "admin"
+          ? "#CEAA75" /* admin accent yellow */
+          : "#ffa2c7";
   const accentBg =
     practice === "lakeshore"
       ? "rgba(107, 138, 154, 0.1)"
-      : practice === "admin"
-        ? "rgba(206, 170, 117, 0.25)"
-        : "rgba(255, 162, 199, 0.15)";
+      : practice === "the-treatment"
+        ? "rgba(88, 161, 147, 0.15)"
+        : practice === "admin"
+          ? "rgba(206, 170, 117, 0.25)"
+          : "rgba(255, 162, 199, 0.15)";
 
   return (
     <div className="consultation-modal-overlay" onClick={handleClose}>
