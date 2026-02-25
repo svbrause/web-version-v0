@@ -40,7 +40,8 @@ export default function OnboardingScreen() {
     setCurrentSlide(getCurrentSlide(state.currentStep));
   }, [state.currentStep]);
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+    (e.currentTarget as HTMLButtonElement).blur();
     trackEvent("onboarding_next", {
       practice: practice,
       slide: currentSlide + 1,
@@ -178,9 +179,10 @@ export default function OnboardingScreen() {
             <p className="onboarding-slide-description">{slide.description}</p>
           </div>
 
-          {/* Navigation button — matches Next style on all slides (dark accent) */}
+          {/* Navigation button — key forces remount per slide so it never keeps focus/hover state */}
           <div className="onboarding-navigation">
             <button
+              key={currentSlide}
               type="button"
               className="onboarding-button"
               onClick={handleNext}

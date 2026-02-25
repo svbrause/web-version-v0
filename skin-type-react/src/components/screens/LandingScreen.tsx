@@ -1,6 +1,5 @@
 import { useApp } from "../../context/AppContext";
 import { getPracticeFromConfig } from "../Logo";
-import Logo from "../Logo";
 import { trackEvent } from "../../utils/analytics";
 import "../../App.css";
 
@@ -24,7 +23,6 @@ export default function LandingScreen() {
       <div className="landing-container">
         <div className="landing-content">
           <div className="landing-centered">
-            <Logo className="landing-logo-centered" />
             <h1 className="landing-title-serif">
               Discover Your Perfect Treatment
             </h1>

@@ -1,6 +1,6 @@
 import "../App.css";
 
-export type PracticeName = "lakeshore" | "unique" | "admin" | "the-treatment";
+export type PracticeName = "lakeshore" | "unique" | "admin" | "the-treatment" | "buford";
 
 interface LogoProps {
   practice?: PracticeName;
@@ -13,21 +13,25 @@ export function getPracticeFromConfig(): PracticeName | null {
   if (typeof window === "undefined") return "unique";
 
   const pathname = window.location.pathname.replace(/\/$/, "") || "/";
+  const segments = pathname.split("/").filter(Boolean);
+  const basePath = segments[0] ?? "";
   const urlParams = new URLSearchParams(window.location.search);
   const practiceParam = urlParams.get("practice")?.toLowerCase();
 
-  // 1. Path-based: /demo, /lakeshore, /the-treatment, /unique
-  if (pathname === "/demo") return "admin";
-  if (pathname === "/lakeshore") return "lakeshore";
-  if (pathname === "/the-treatment") return "the-treatment";
-  if (pathname === "/unique") return "unique";
+  // 1. Path-based: /demo, /lakeshore, /the-treatment, /unique (and /lakeshore/web, /unique/linktree, etc.)
+  if (basePath === "demo") return "admin";
+  if (basePath === "lakeshore") return "lakeshore";
+  if (basePath === "the-treatment") return "the-treatment";
+  if (basePath === "unique") return "unique";
+  if (basePath === "buford") return "buford";
 
-  // 2. "/" with query: ?practice=unique|lakeshore|the-treatment (same result as path)
+  // 2. "/" with query: ?practice=unique|lakeshore|the-treatment|buford (same result as path)
   if (pathname === "/") {
     if (
       practiceParam === "lakeshore" ||
       practiceParam === "unique" ||
-      practiceParam === "the-treatment"
+      practiceParam === "the-treatment" ||
+      practiceParam === "buford"
     )
       return practiceParam as PracticeName;
     return null; // bare "/" → 404
@@ -39,7 +43,8 @@ export function getPracticeFromConfig(): PracticeName | null {
     vitePractice === "lakeshore" ||
     vitePractice === "unique" ||
     vitePractice === "admin" ||
-    vitePractice === "the-treatment"
+    vitePractice === "the-treatment" ||
+    vitePractice === "buford"
   ) {
     return vitePractice as PracticeName;
   }
@@ -48,7 +53,8 @@ export function getPracticeFromConfig(): PracticeName | null {
     windowPractice === "lakeshore" ||
     windowPractice === "unique" ||
     windowPractice === "admin" ||
-    windowPractice === "the-treatment"
+    windowPractice === "the-treatment" ||
+    windowPractice === "buford"
   ) {
     return windowPractice as PracticeName;
   }
@@ -61,6 +67,7 @@ export function getPracticeDisplayName(practice: PracticeName): string {
   if (practice === "lakeshore") return "Lakeshore Skin + Body";
   if (practice === "admin") return "Ponce";
   if (practice === "the-treatment") return "The Treatment Skin Boutique";
+  if (practice === "buford") return "Beauty by Buford";
   return "Unique Aesthetics & Wellness";
 }
 
@@ -68,9 +75,10 @@ export function getPracticeDisplayName(practice: PracticeName): string {
 export function getPracticeHomeUrl(): string {
   const practice = getPracticeFromConfig();
   if (practice === null) return "/";
-  if (practice === "lakeshore") return "https://www.lakeshoreshinandbody.com/";
+  if (practice === "lakeshore") return "https://www.lakeshoreskinandbody.com/";
   if (practice === "admin") return "https://www.ponce.ai/";
-  if (practice === "the-treatment") return "https://www.thetreatmentskinboutique.com/";
+  if (practice === "the-treatment") return "https://www.getthetreatment.com/";
+  if (practice === "buford") return "https://www.beautybybuford.com/";
   return "https://www.myuniqueaesthetics.com/";
 }
 
@@ -90,9 +98,18 @@ export default function Logo({ practice, className = "" }: LogoProps) {
   if (practiceName === "the-treatment") {
     return (
       <img
-        src="/treatment-skin-boutique_logo_4x.png"
+        src="/the_treatment/treatment-skin-boutique_logo_4x.png"
         alt="The Treatment Skin Boutique"
         className={`practice-logo the-treatment-logo ${className}`}
+      />
+    );
+  }
+  if (practiceName === "buford") {
+    return (
+      <img
+        src="/Beauty-by-Buford_Logo_Header.png"
+        alt="Beauty by Buford"
+        className={`practice-logo buford-logo ${className}`}
       />
     );
   }

@@ -4,6 +4,7 @@ import { trackEvent } from "../../utils/analytics";
 import { saveUserData } from "../../utils/userDataCollection";
 import { submitLeadToAirtable } from "../../utils/airtableLeads";
 import { storeLeadRecordId } from "../../utils/airtableSync";
+import { getLeadSourceFromUrl } from "../../utils/leadSource";
 import "../../App.css";
 
 // Email validation
@@ -238,7 +239,7 @@ export default function LeadCaptureScreen() {
         email,
         phone,
         zipCode,
-        source: "Lead Capture Form",
+        source: getLeadSourceFromUrl() || "Lead Capture Form",
       },
       stateSnapshot,
       behavioralDataSnapshot

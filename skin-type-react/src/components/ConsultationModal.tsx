@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useApp } from "../context/AppContext";
 import { trackEvent } from "../utils/analytics";
 import {
@@ -12,6 +13,7 @@ import {
 } from "../utils/airtableLeads";
 import { storeLeadRecordId, getLeadRecordId } from "../utils/airtableSync";
 import { getPracticeFromConfig, getPracticeDisplayName } from "./Logo";
+import { getLeadSourceFromUrl } from "../utils/leadSource";
 import OfferCard from "./OfferCard";
 import "../App.css";
 
@@ -63,6 +65,9 @@ function getConcernsExplored(): string[] {
     return [];
   }
 }
+
+const LAKESHORE_BOOKING_URL =
+  "https://booking.mangomint.com/lakeshoreskinbody1?serviceId=344";
 
 interface ConsultationModalProps {
   isOpen?: boolean;
@@ -223,7 +228,7 @@ export default function ConsultationModal({
             name: name || undefined,
             email,
             phone: phone || undefined,
-            source: "Consultation Request",
+            source: getLeadSourceFromUrl() || "Consultation Request",
             offerClaimed: true,
           },
           state,
@@ -249,7 +254,7 @@ export default function ConsultationModal({
             name: name || undefined,
             email,
             phone: phone || undefined,
-            source: "Consultation Request",
+            source: getLeadSourceFromUrl() || "Consultation Request",
             offerClaimed: true,
           },
           state,
@@ -342,20 +347,24 @@ export default function ConsultationModal({
     practice === "lakeshore"
       ? "#6b8a9a"
       : practice === "the-treatment"
-        ? "#58A193"
-        : practice === "admin"
-          ? "#CEAA75" /* admin accent yellow */
-          : "#ffa2c7";
+        ? "#58A194"
+        : practice === "buford"
+          ? "#e42217"
+          : practice === "admin"
+            ? "#CEAA75" /* admin accent yellow */
+            : "#ffa2c7";
   const accentBg =
     practice === "lakeshore"
       ? "rgba(107, 138, 154, 0.1)"
       : practice === "the-treatment"
-        ? "rgba(88, 161, 147, 0.15)"
-        : practice === "admin"
-          ? "rgba(206, 170, 117, 0.25)"
-          : "rgba(255, 162, 199, 0.15)";
+        ? "rgba(88, 161, 148, 0.15)"
+        : practice === "buford"
+          ? "rgba(228, 34, 23, 0.12)"
+          : practice === "admin"
+            ? "rgba(206, 170, 117, 0.25)"
+            : "rgba(255, 162, 199, 0.15)";
 
-  return (
+  const modalContent = (
     <div className="consultation-modal-overlay" onClick={handleClose}>
       <div className="consultation-modal" onClick={(e) => e.stopPropagation()}>
         <button
@@ -407,13 +416,30 @@ export default function ConsultationModal({
                 Your request has been sent to {practiceName}. We'll be in touch
                 soon to schedule your consultation.
               </p>
-              <button
-                type="button"
-                className="consultation-confirmation-button"
-                onClick={handleConfirmationClose}
-              >
-                Close
-              </button>
+              {practice === "lakeshore" ? (
+                <>
+                  <p className="consultation-confirmation-booking-text">
+                    You can also book your consultation directly online to choose
+                    your preferred date and time.
+                  </p>
+                  <a
+                    href={LAKESHORE_BOOKING_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="consultation-confirmation-button consultation-confirmation-button-link"
+                  >
+                    Book Consult
+                  </a>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="consultation-confirmation-button"
+                  onClick={handleConfirmationClose}
+                >
+                  Close
+                </button>
+              )}
             </div>
           ) : (
             <>
@@ -613,4 +639,6 @@ export default function ConsultationModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

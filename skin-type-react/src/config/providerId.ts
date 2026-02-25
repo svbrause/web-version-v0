@@ -6,6 +6,8 @@ import type { PracticeName } from "../components/Logo";
 
 const UNIQUE_PROVIDER_ID = "recN9Q4W02xtroD6g";
 const LAKESHORE_PROVIDER_ID = "rec3oXyrb1t6YUvoe";
+const TREATMENT_PROVIDER_ID = "rec8tXdyK2dGWPf3u";
+const BUFORD_PROVIDER_ID = "recY68MpDWjHNjWAd";
 
 /**
  * Returns the Airtable Providers record ID for the given practice, or null.
@@ -21,12 +23,8 @@ export function getProviderIdForPractice(
   }
   if (practice === "unique") return UNIQUE_PROVIDER_ID;
   if (practice === "lakeshore") return LAKESHORE_PROVIDER_ID;
-  if (practice === "the-treatment") {
-    const treatmentId = import.meta.env.VITE_TREATMENT_PROVIDER_RECORD_ID;
-    return treatmentId && typeof treatmentId === "string" && treatmentId.startsWith("rec")
-      ? treatmentId
-      : null;
-  }
+  if (practice === "the-treatment") return TREATMENT_PROVIDER_ID;
+  if (practice === "buford") return BUFORD_PROVIDER_ID;
   if (practice === "admin") {
     const adminId = import.meta.env.VITE_ADMIN_PROVIDER_RECORD_ID;
     return adminId && typeof adminId === "string" && adminId.startsWith("rec")

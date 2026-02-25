@@ -10,7 +10,6 @@ import { saveUserData } from "../../utils/userDataCollection";
 import { scheduleBehavioralSync, forceSyncNow } from "../../utils/airtableSync";
 import ConsultationModal from "../ConsultationModal";
 import OfferCard from "../OfferCard";
-import Logo, { getPracticeHomeUrl } from "../Logo";
 import type { CaseItem, AppState } from "../../types";
 import "../../App.css";
 
@@ -253,28 +252,6 @@ export default function ResultsScreen() {
 
     return (
       <div className="results-screen">
-        <div className="results-header-bar">
-          <Logo className="results-header-logo" />
-          <button
-            className="results-header-close"
-            onClick={() => (window.location.href = getPracticeHomeUrl())}
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
         <div className="concern-cases-section">
           <div className="concern-cases-header">
             <button
@@ -471,28 +448,6 @@ export default function ResultsScreen() {
   // Show concern cards (main view)
   return (
     <div className="results-screen">
-      <div className="results-header-bar">
-        <Logo className="results-header-logo" />
-        <button
-          className="results-header-close"
-          onClick={() => (window.location.href = getPracticeHomeUrl())}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-
       {state.selectedConcerns.length > 0 && (
         <>
           <div className="browse-by-concern-header">
@@ -781,27 +736,6 @@ function renderCaseDetailPage(
 
   return (
     <>
-      <div className="results-header-bar">
-        <Logo className="results-header-logo" />
-        <button
-          className="results-header-close"
-          onClick={() => (window.location.href = getPracticeHomeUrl())}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
       {imageUrl ? (
         <div className="case-detail-page-image">
           <button className="case-detail-back-button" onClick={onBack}>

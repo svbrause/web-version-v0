@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AppProvider, useApp } from "./context/AppContext";
 import Header from "./components/Header";
+import ClinicHeader from "./components/ClinicHeader";
 import ConcernsScreen from "./components/screens/ConcernsScreen";
 import AreasScreen from "./components/screens/AreasScreen";
 import AgeScreen from "./components/screens/AgeScreen";
@@ -487,6 +488,14 @@ function AppContent() {
     state.currentStep >= 0 &&
     state.currentStep < FORM_STEPS.length + 3;
 
+  // Reset focus when step/screen changes so buttons don't stay in hover/selected (gray) state
+  useEffect(() => {
+    const el = document.activeElement as HTMLElement | null;
+    if (el?.blur) {
+      el.blur();
+    }
+  }, [state.currentStep]);
+
   // Track screen views
   useEffect(() => {
     trackEvent("screen_viewed", {
@@ -508,6 +517,7 @@ function AppContent() {
 
   return (
     <div className={appContainerClass}>
+      <ClinicHeader />
       {showHeader && <Header />}
       {isLoading && caseData.length === 0 ? (
         <div className="loading-container">

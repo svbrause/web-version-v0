@@ -66,27 +66,337 @@ body[data-practice="lakeshore"] {
   --peachy-pink: #dd9685; /* Muted Peachy-Pink/Terracotta */
 }
 
-/* The Treatment Skin Boutique – teal accent #58A193 */
+/* The Treatment Skin Boutique – #58A194 secondary (white text on top), #faf6f0, Montserrat */
 body[data-practice="the-treatment"] {
   --bg-primary: #ffffff;
-  --bg-secondary: #f7f7f5;
-  --bg-gradient: #f7f7f5;
-  --text-primary: #222222;
-  --text-secondary: #333333;
-  --text-muted: #666666;
-  --accent-dark: #58A193; /* Teal – main accent */
-  --accent-light: #e0ebe8; /* Light teal tint */
+  --bg-secondary: #faf6f0; /* Warm off-white */
+  --bg-gradient: #faf6f0;
+  --text-primary: #232323;
+  --text-secondary: #232323;
+  --text-muted: #888888;
+  --accent-dark: #58a194; /* Teal secondary – white text on this */
+  --accent-light: #e0ebe8;
   --white: #ffffff;
-  --progress-track: #e0ebe8;
+  --progress-track: #e8e4dc;
 
-  --pink-baby: #58A193; /* Teal accent */
+  --pink-baby: #58a194; /* Secondary teal – used for accents; backgrounds use white text */
   --pink-light: #8bc4b8;
   --pink-dark: #4a8a7d;
 
   --pastel-beige: #e0ebe8;
-  --pastel-cream: #f7f7f5;
-  --selected-bg: #8bc4b8;
-  --border-color: #e0ebe8;
+  --pastel-cream: #faf6f0;
+  --selected-bg: #58a194;
+  --border-color: #eeeeee;
+}
+
+/* Beauty by Buford – #BCAAA8 primary neutral, #e42217 accent only for key CTAs */
+body[data-practice="buford"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f2f1;
+  --bg-gradient: #f5f2f1;
+  --text-primary: #232323;
+  --text-secondary: #232323;
+  --text-muted: #666666;
+  --accent-dark: #e42217;
+  --accent-light: #d4c8c6;
+  --white: #ffffff;
+  --progress-track: #e5dfdd;
+
+  --pink-baby: #e42217;
+  /* Pale red for form selected state (background); border stays --pink-baby */
+  --pink-light: #fad4d2;
+  --pink-dark: #a89a98;
+
+  --pastel-beige: #e5dfdd;
+  --pastel-cream: #f5f2f1;
+  --selected-bg: #e42217;
+  --border-color: #e0d9d7;
+}
+
+/* Buford: landing, results, onboarding, modals */
+body[data-practice="buford"] .landing-header-top {
+  background: var(--white);
+}
+
+body[data-practice="buford"] .landing-screen {
+  background: var(--bg-secondary);
+}
+
+body[data-practice="buford"] .next-button {
+  box-shadow: 0 4px 12px rgba(228, 34, 23, 0.35);
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .results-header-bar {
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+body[data-practice="buford"] .results-content {
+  background: var(--bg-primary);
+}
+
+body[data-practice="buford"] .concern-card-photo-area-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(190, 172, 170, 0.95) 0%,
+    rgba(190, 172, 170, 0.88) 100%
+  );
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .concern-case-card-area-label-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(190, 172, 170, 0.95) 0%,
+    rgba(190, 172, 170, 0.88) 100%
+  );
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .results-concern-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body[data-practice="buford"] .celebration-case-area-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(190, 172, 170, 0.95) 0%,
+    rgba(190, 172, 170, 0.88) 100%
+  );
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .consultation-modal-incentive-box {
+  background-color: rgba(190, 172, 170, 0.35);
+  border-color: rgba(190, 172, 170, 0.5);
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .consultation-modal-incentive-box * {
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .offer-card-expanded {
+  background: linear-gradient(
+    135deg,
+    #f0efed 0%,
+    var(--pink-dark) 100%
+  ) !important;
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .offer-card-expanded * {
+  color: #ffffff;
+}
+
+/* Buford third onboarding: $50 off card – light background, dark text */
+body[data-practice="buford"] .onboarding-offer-hero .offer-card-expanded {
+  background: #f0efed !important;
+  color: var(--text-primary);
+}
+
+body[data-practice="buford"] .onboarding-offer-hero .offer-card-expanded * {
+  color: var(--text-primary);
+}
+
+body[data-practice="buford"] .onboarding-icon-wrapper {
+  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    #f0efed 0%,
+    var(--pink-dark) 100%
+  );
+}
+
+body[data-practice="buford"] .onboarding-dot.active {
+  background: var(--pink-baby);
+}
+
+/* Buford skin type screen: unselected options black (highlight when selected) */
+body[data-practice="buford"] .skin-type-option:not(.selected) {
+  color: #232323;
+}
+body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon,
+body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg {
+  color: #232323;
+}
+body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg path,
+body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg rect,
+body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg circle,
+body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg polygon,
+body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg polyline {
+  fill: #232323;
+  stroke: #232323;
+}
+body[data-practice="buford"] .skin-type-option:not(.selected) span {
+  color: #232323;
+}
+
+body[data-practice="buford"] .onboarding-coupon-card {
+  background: linear-gradient(
+    135deg,
+    #f0efed 0%,
+    var(--pink-dark) 100%
+  );
+  border-color: var(--pink-dark);
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .onboarding-coupon-card *,
+body[data-practice="buford"] .onboarding-coupon-amount {
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .case-detail-page-footer {
+  background: #e42217;
+  border-top: none;
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .case-detail-page-footer * {
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .results-tab.active {
+  color: #ffffff;
+}
+
+body[data-practice="buford"] .treatment-group-count-chip,
+body[data-practice="buford"] .treatment-group-area-tag {
+  color: #ffffff;
+}
+
+/* The Treatment: landing, results, onboarding, modals – same structure as lakeshore/unique */
+body[data-practice="the-treatment"] .landing-header-top {
+  background: var(--white);
+}
+
+body[data-practice="the-treatment"] .landing-screen {
+  background: var(--bg-secondary);
+}
+
+body[data-practice="the-treatment"] .next-button {
+  box-shadow: 0 4px 12px rgba(88, 161, 148, 0.35);
+  color: #ffffff;
+}
+
+body[data-practice="the-treatment"] .results-header-bar {
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+body[data-practice="the-treatment"] .results-content {
+  background: var(--bg-primary);
+}
+
+body[data-practice="the-treatment"] .concern-card-photo-area-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(250, 246, 240, 0.98) 0%,
+    rgba(250, 246, 240, 0.92) 100%
+  );
+  color: var(--pink-baby);
+}
+
+body[data-practice="the-treatment"] .concern-case-card-area-label-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(250, 246, 240, 0.98) 0%,
+    rgba(250, 246, 240, 0.92) 100%
+  );
+  color: var(--pink-baby);
+}
+
+body[data-practice="the-treatment"] .results-concern-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body[data-practice="the-treatment"] .celebration-case-area-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(250, 246, 240, 0.98) 0%,
+    rgba(250, 246, 240, 0.92) 100%
+  );
+  color: var(--pink-baby);
+}
+
+body[data-practice="the-treatment"] .consultation-modal-incentive-box {
+  background-color: rgba(35, 35, 35, 0.08);
+  border-color: rgba(35, 35, 35, 0.2);
+}
+
+body[data-practice="the-treatment"] .offer-card-expanded {
+  background: linear-gradient(
+    135deg,
+    var(--bg-secondary) 0%,
+    rgba(35, 35, 35, 0.06) 50%,
+    var(--bg-secondary) 100%
+  ) !important;
+}
+
+body[data-practice="the-treatment"] .onboarding-icon-wrapper {
+  color: var(--pink-baby);
+  background: linear-gradient(
+    135deg,
+    var(--pink-light) 0%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
+}
+
+body[data-practice="the-treatment"] .onboarding-dot.active {
+  background: var(--pink-baby);
+}
+
+body[data-practice="the-treatment"] .onboarding-coupon-card {
+  background: linear-gradient(135deg, var(--pink-light) 0%, var(--white) 100%);
+  border-color: var(--pink-baby);
+}
+
+body[data-practice="the-treatment"] .onboarding-coupon-amount {
+  color: var(--pink-baby);
+}
+
+body[data-practice="the-treatment"] .case-detail-page-footer {
+  background: #58a194;
+  border-top: none;
+  color: #ffffff;
+}
+
+body[data-practice="the-treatment"] .case-detail-page-footer * {
+  color: #ffffff;
+}
+
+/* White text on #58A194 secondary for the-treatment */
+body[data-practice="the-treatment"] .results-tab.active {
+  color: #ffffff;
+}
+
+body[data-practice="the-treatment"] .treatment-group-count-chip,
+body[data-practice="the-treatment"] .treatment-group-area-tag {
+  color: #ffffff;
+}
+
+/* The Treatment skin type screen: unselected options black (highlight when selected) */
+body[data-practice="the-treatment"] .skin-type-option:not(.selected) {
+  color: #232323;
+}
+body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon,
+body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg {
+  color: #232323;
+}
+body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg path,
+body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg rect,
+body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg circle,
+body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg polygon,
+body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg polyline {
+  fill: #232323;
+  stroke: #232323;
+}
+body[data-practice="the-treatment"] .skin-type-option:not(.selected) span {
+  color: #232323;
 }
 
 /* Admin: Ponce / style guide – gradient, primary dark, accent yellow */
@@ -259,14 +569,16 @@ body {
   max-width: 428px;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
-/* App Container - Always constrained to mobile width */
+/* App Container - Always constrained to mobile width; use dvh so content stays above Safari UI */
 .app-container {
   max-width: 428px;
   width: 100%;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);
@@ -280,8 +592,62 @@ body {
   margin: 0 auto;
 }
 
-/* Header */
+/* Clinic header: fixed at top so it never scrolls away */
+.clinic-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 428px;
+  flex-shrink: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 200;
+  box-sizing: border-box;
+}
+
+.clinic-header-inner {
+  max-width: 428px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.clinic-header-logo {
+  max-width: 120px;
+  max-height: 36px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.clinic-header-home-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  flex-shrink: 0;
+  border-radius: 8px;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.clinic-header-home-link:hover {
+  background-color: var(--pastel-cream);
+  color: var(--text-primary);
+}
+
+/* Progress header (form steps) – push below fixed clinic header */
 .header {
+  margin-top: 58px;
   padding: 16px 20px 12px;
   display: flex;
   align-items: center;
@@ -289,6 +655,7 @@ body {
   background: var(--bg-primary);
   position: relative;
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .back-button {
@@ -373,14 +740,21 @@ body {
   margin: 0;
 }
 
-/* Main Content */
+/* Main Content – top padding for fixed clinic header (~52px); bottom for Safari safe area */
 .main-content {
   flex: 1;
   padding: 24px 20px;
+  padding-top: 52px;
+  padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   min-height: 0;
+}
+
+/* When progress bar is visible: smaller gap below it */
+.app-container:not(.header-hidden) > .main-content {
+  padding-top: 12px;
 }
 
 /* Question View */
@@ -567,7 +941,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 0;
   margin-bottom: 12px;
   max-height: none; /* Remove height restriction to prevent cut-off */
   overflow: visible; /* Allow all content to be visible */
@@ -736,7 +1110,7 @@ body {
 
 .next-button {
   position: fixed;
-  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   right: 24px;
   left: auto;
   width: 56px;
@@ -1326,6 +1700,14 @@ body[data-practice="lakeshore"] .results-header-bar {
 }
 
 .practice-logo.the-treatment-logo {
+  max-width: 180px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.practice-logo.buford-logo {
   max-width: 180px;
   max-height: 50px;
   width: auto;
@@ -2767,14 +3149,16 @@ body[data-practice="lakeshore"] .results-concern-header {
    CELEBRATION SCREEN (Great News!)
    ============================================================================ */
 
+/* Center in the area below the clinic header (64px); min-height so we fill that region only */
 .celebration-screen {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 64px);
+  min-height: calc(var(--actual-vh, 100dvh) - 64px);
   padding: 20px;
   padding-top: 0;
-  margin-top: -40px;
+  margin-top: 0;
   overflow-y: auto;
   position: relative;
   background: var(--bg-primary);
@@ -2784,6 +3168,7 @@ body[data-practice="lakeshore"] .results-concern-header {
   max-width: 100%;
   width: 100%;
   margin: 0 auto;
+  margin-top: -80px;
 }
 
 .celebration-header {
@@ -2987,15 +3372,15 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
 
 .lead-capture-screen {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 60px);
-  padding: 20px;
-  padding-top: 0;
-  margin-top: -40px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 0;
+  padding: 12px 20px 20px;
+  padding-top: 8px;
   overflow-y: auto;
   position: relative;
   background: var(--bg-primary);
+  width: 100%;
 }
 
 /* Hide header (including progress bar) when celebration or lead capture screen is visible */
@@ -3003,11 +3388,12 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
   display: none;
 }
 
-/* When header is hidden (results screen shown) */
+/* When header is hidden (landing, onboarding, results, etc.) – keep content below fixed clinic header */
 .app-container.header-hidden > .main-content {
   min-height: 100vh;
-  min-height: var(--actual-vh, 100vh);
+  min-height: var(--actual-vh, 100dvh);
   padding: 0;
+  padding-top: 64px;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -3056,14 +3442,15 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
   justify-content: center !important;
 }
 
+/* Celebration: fill only the area below the header so content is centered in that region */
 .app-container.header-hidden > .main-content > .celebration-screen,
 .app-container.header-hidden > .celebration-screen {
   display: flex !important;
   visibility: visible !important;
   opacity: 1 !important;
   position: relative !important;
-  min-height: 100vh !important;
-  min-height: var(--actual-vh, 100vh) !important;
+  min-height: calc(100vh - 64px) !important;
+  min-height: calc(var(--actual-vh, 100dvh) - 64px) !important;
   align-items: center !important;
   justify-content: center !important;
 }
@@ -3102,7 +3489,7 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
 
 .lead-capture-header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   margin-top: 0;
 }
 
@@ -3347,6 +3734,7 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
    CONSULTATION MODAL
    ============================================================================ */
 
+/* Portaled to body so it appears above the fixed clinic header */
 .consultation-modal-overlay {
   position: fixed;
   top: 0;
@@ -3359,14 +3747,14 @@ body[data-practice="lakeshore"] .celebration-case-area-overlay {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10000;
   padding: 20px;
 }
 
 @media (max-width: 480px) {
   .consultation-modal-overlay {
-    padding-top: 20px;
-    align-items: flex-start;
+    padding: 20px;
+    align-items: center;
   }
 }
 
@@ -3638,6 +4026,24 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   line-height: 1.6;
   margin: 0;
   max-width: 400px;
+}
+
+.consultation-confirmation-booking-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 400px;
+}
+
+.consultation-confirmation-button-link {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.consultation-confirmation-button-link:hover {
+  color: var(--white);
 }
 
 .consultation-confirmation-button {
@@ -4255,11 +4661,12 @@ body[data-practice="lakeshore"] .landing-screen {
   height: 20px;
 }
 
-/* Bottom section: hero image with CTA on top */
+/* Bottom section: hero image with CTA – fixed height so button sits slightly higher (above Safari UI), image still sizable */
 .landing-hero {
   position: relative;
-  flex: 1;
+  flex: 0 0 auto;
   min-height: 65vh;
+  max-height: 65vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -4598,12 +5005,13 @@ body[data-practice="lakeshore"] .landing-screen {
   text-align: left;
 }
 
-/* Onboarding Screen Styles */
+/* Onboarding Screen Styles – compact so Next button aligns with landing Get Started */
 .onboarding-screen {
   width: 100%;
   max-width: 428px;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);
@@ -4617,19 +5025,19 @@ body[data-practice="lakeshore"] .landing-screen {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  flex: 1;
+  min-height: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Dot indicators */
 /* Top bar: back button + dots */
 .onboarding-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 16px 20px 12px;
+  padding: 14px 20px 12px;
   flex-shrink: 0;
 }
 .onboarding-top-bar .onboarding-dots {
@@ -4652,7 +5060,7 @@ body[data-practice="lakeshore"] .landing-screen {
   justify-content: center;
   align-items: center;
   gap: 8px;
-  padding: 24px 20px 16px;
+  padding: 18px 20px 12px;
   flex-shrink: 0;
 }
 
@@ -4671,32 +5079,36 @@ body[data-practice="lakeshore"] .landing-screen {
   background: var(--pink-baby);
 }
 
-/* Slide container */
+/* Slide container – max height so Next button aligns with landing Get Started */
 .onboarding-slide {
   flex: 1;
+  min-height: 0;
+  max-height: 68vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 0 20px;
-  padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px) + 80px);
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
 }
 
 .onboarding-slide-content {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 32px;
-  padding: 40px 0 20px;
+  gap: 24px;
+  padding: 24px 0 20px;
 }
 
 /* Icon wrapper */
 .onboarding-icon-wrapper {
-  width: 120px;
-  height: 120px;
+  width: 116px;
+  height: 116px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4706,10 +5118,10 @@ body[data-practice="lakeshore"] .landing-screen {
     var(--pink-light) 0%,
     rgba(255, 255, 255, 0.8) 100%
   );
-  border-radius: 30px;
-  margin-bottom: 16px;
+  border-radius: 28px;
+  margin-bottom: 14px;
   flex-shrink: 0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
 }
@@ -4740,23 +5152,24 @@ body[data-practice="lakeshore"] .landing-screen {
 }
 
 .onboarding-icon-wrapper svg {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   position: relative;
   z-index: 1;
 }
 
-/* Top image on onboarding slides 1–2 — larger size */
+/* Top image on onboarding slides 1–2 */
 .onboarding-image-wrapper.onboarding-icon-wrapper {
   padding: 0;
   width: 220px;
-  height: 320px;
-  border-radius: 24px;
-  margin-bottom: 20px;
+  height: 280px;
+  border-radius: 22px;
+  margin-bottom: 18px;
 }
 /* Screen 1: container fits image, gradient + polish */
 .onboarding-image-wrapper--screen-1.onboarding-icon-wrapper {
-  width: 320px;
+  width: 300px;
+  max-height: 240px;
   height: auto;
   border-radius: 20px;
   overflow: hidden;
@@ -4769,7 +5182,7 @@ body[data-practice="lakeshore"] .landing-screen {
   border: 1px solid rgba(255, 255, 255, 0.9);
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.04),
-    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 6px 20px rgba(0, 0, 0, 0.08),
     0 0 0 1px rgba(0, 0, 0, 0.03);
 }
 .onboarding-image-wrapper--screen-1 .onboarding-top-image {
@@ -4778,10 +5191,10 @@ body[data-practice="lakeshore"] .landing-screen {
   display: block;
   object-fit: contain;
 }
-/* Screen 2: show full image (no peek/cutoff) — contain so nothing looks cut off */
+/* Screen 2: show full image (no peek/cutoff) */
 .onboarding-image-wrapper--wide.onboarding-icon-wrapper {
   width: 220px;
-  height: 320px;
+  height: 280px;
   background: rgba(0, 0, 0, 0.04);
 }
 .onboarding-image-wrapper--wide .onboarding-top-image {
@@ -4796,10 +5209,10 @@ body[data-practice="lakeshore"] .landing-screen {
   border-radius: inherit;
 }
 
-/* Screen 2: fixed case previews — 3 equal cards */
+/* Screen 2: fixed case previews – 3 equal cards */
 .onboarding-cases-preview {
   width: 100%;
-  max-width: 360px;
+  max-width: 320px;
   margin-bottom: 8px;
 }
 .onboarding-cases-preview-layout {
@@ -4831,20 +5244,20 @@ body[data-practice="lakeshore"] .landing-screen {
   font-size: 13px;
   color: var(--pink-baby);
   font-weight: 600;
-  margin-top: 12px;
+  margin-top: 10px;
   letter-spacing: 0.3px;
 }
 
-/* Large $50 offer at top of third onboarding screen — #4F4F7F outline, bigger gift */
+/* Offer card on third onboarding screen */
 .onboarding-offer-hero {
   width: 100%;
   max-width: 360px;
   margin-bottom: 8px;
 }
 .onboarding-offer-hero .offer-card-expanded {
-  padding: 24px 28px;
+  padding: 20px 24px;
   border-radius: 20px;
-  font-size: 1.05em;
+  font-size: 1.04em;
   border: 2px solid #4f4f7f;
   box-shadow: 0 4px 16px rgba(79, 79, 127, 0.15);
 }
@@ -4857,8 +5270,8 @@ body[data-practice="lakeshore"] .landing-screen {
 }
 .onboarding-offer-hero svg[aria-hidden],
 .onboarding-offer-hero .offer-card-gift-image {
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
   flex-shrink: 0;
 }
 
@@ -4873,10 +5286,10 @@ body[data-practice="lakeshore"] .landing-screen {
     "Helvetica Neue",
     Arial,
     sans-serif;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 1.2;
+  line-height: 1.25;
   margin: 0;
   text-align: center;
   letter-spacing: -0.5px;
@@ -4974,17 +5387,18 @@ body[data-practice="lakeshore"] .landing-screen {
   opacity: 0.8;
 }
 
-/* Navigation button */
+/* Navigation button – aligned with landing Get Started position */
 .onboarding-navigation {
   width: 100%;
   padding: 0;
+  padding-top: 12px;
   flex-shrink: 0;
 }
 
 .onboarding-button {
   width: 100%;
   max-width: 100%;
-  padding: 18px 24px;
+  padding: 17px 24px;
   background: var(--accent-dark);
   color: var(--white);
   border: none;
@@ -5006,6 +5420,12 @@ body[data-practice="lakeshore"] .landing-screen {
   letter-spacing: 0.5px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
+}
+
+/* Keep accent color when focused (e.g. after tap) so button doesn't stay gray on next slide */
+.onboarding-button:focus {
+  background: var(--accent-dark);
+  outline: none;
 }
 
 .onboarding-button:hover {
@@ -5063,22 +5483,22 @@ body[data-practice="lakeshore"] .onboarding-coupon-amount {
   }
 
   .onboarding-icon-wrapper {
-    width: 100px;
-    height: 100px;
+    width: 104px;
+    height: 104px;
   }
 
-  /* Keep onboarding images larger on small screens */
   .onboarding-image-wrapper.onboarding-icon-wrapper {
-    width: 280px;
-    height: 180px;
+    width: 200px;
+    height: 240px;
   }
   .onboarding-image-wrapper--screen-1.onboarding-icon-wrapper {
-    width: 300px;
+    width: 280px;
+    max-height: 220px;
     height: auto;
   }
   .onboarding-image-wrapper--wide.onboarding-icon-wrapper {
-    width: 240px;
-    height: 170px;
+    width: 200px;
+    height: 240px;
   }
 
   .onboarding-icon-wrapper svg {
@@ -5091,8 +5511,8 @@ body[data-practice="lakeshore"] .onboarding-coupon-amount {
   }
 
   .onboarding-coupon-card {
-    max-width: 260px;
-    padding: 24px 20px;
+    max-width: 280px;
+    padding: 24px 22px;
   }
 
   .landing-screen {

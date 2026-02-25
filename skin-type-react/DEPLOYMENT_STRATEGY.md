@@ -21,6 +21,7 @@ This app supports multiple providers (Unique Aesthetics & Wellness and Lakeshore
 Create two separate Vercel projects:
 
 #### For Unique Aesthetics:
+
 1. **Project Name**: `unique-aesthetics-consultation` (or similar)
 2. **Environment Variables**:
    ```
@@ -33,6 +34,7 @@ Create two separate Vercel projects:
 4. **URL**: `https://unique-aesthetics-consultation.vercel.app`
 
 #### For Lakeshore:
+
 1. **Project Name**: `lakeshore-consultation` (or similar)
 2. **Environment Variables**:
    ```
@@ -41,7 +43,7 @@ Create two separate Vercel projects:
    VITE_AIRTABLE_BASE_ID=your_lakeshore_base_id
    VITE_POSTHOG_KEY=your_posthog_key (optional)
    ```
-3. **Custom Domain**: `consultation.lakeshoreshinandbody.com` (optional)
+3. **Custom Domain**: `consultation.lakeshoreskinandbody.com` (optional)
 4. **URL**: `https://lakeshore-consultation.vercel.app`
 
 ### Option 2: Single Deployment with Subdomains
@@ -66,7 +68,10 @@ Use a single deployment with different paths:
    {
      "rewrites": [
        { "source": "/unique", "destination": "/index.html?practice=unique" },
-       { "source": "/lakeshore", "destination": "/index.html?practice=lakeshore" }
+       {
+         "source": "/lakeshore",
+         "destination": "/index.html?practice=lakeshore"
+       }
      ]
    }
    ```
@@ -108,11 +113,12 @@ Use a single deployment with different paths:
    - `VITE_AIRTABLE_BASE_ID` = (Lakeshore Base ID - can be same or different)
    - `VITE_POSTHOG_KEY` = (Optional)
 5. **Deploy**
-6. **Set Custom Domain** (optional): `consultation.lakeshoreshinandbody.com`
+6. **Set Custom Domain** (optional): `consultation.lakeshoreskinandbody.com`
 
 ### ✅ Result
 
 Now both projects are linked to the same repository. When you push code:
+
 - Both projects automatically deploy with the new code
 - Each uses its own environment variables (so they stay separate)
 - **You only need to push once!**
@@ -185,6 +191,7 @@ When creating your Vercel projects:
 4. **Set different environment variables** in each project
 
 Now, every time you push code:
+
 - ✅ Unique Aesthetics project auto-deploys with `VITE_PRACTICE_NAME=unique`
 - ✅ Lakeshore project auto-deploys with `VITE_PRACTICE_NAME=lakeshore`
 - ✅ Both get the same code, but different configurations
@@ -194,6 +201,7 @@ Now, every time you push code:
 If you need to deploy manually (or if auto-deploy is disabled):
 
 1. **Deploy Unique Aesthetics**:
+
    ```bash
    vercel --prod --scope your-vercel-team --project unique-aesthetics-consultation
    ```
@@ -216,7 +224,7 @@ If you need to deploy manually (or if auto-deploy is disabled):
 
 ## Quick Reference
 
-| Provider | Vercel Project | Environment Variable | Airtable Provider ID | Custom Domain |
-|----------|---------------|---------------------|---------------------|---------------|
-| Unique Aesthetics | `unique-aesthetics-consultation` | `VITE_PRACTICE_NAME=unique` | `recN9Q4W02xtroD6g` | `consultation.myuniqueaesthetics.com` |
-| Lakeshore | `lakeshore-consultation` | `VITE_PRACTICE_NAME=lakeshore` | `rec3oXyrb1t6YUvoe` | `consultation.lakeshoreshinandbody.com` |
+| Provider          | Vercel Project                   | Environment Variable           | Airtable Provider ID | Custom Domain                           |
+| ----------------- | -------------------------------- | ------------------------------ | -------------------- | --------------------------------------- |
+| Unique Aesthetics | `unique-aesthetics-consultation` | `VITE_PRACTICE_NAME=unique`    | `recN9Q4W02xtroD6g`  | `consultation.myuniqueaesthetics.com`   |
+| Lakeshore         | `lakeshore-consultation`         | `VITE_PRACTICE_NAME=lakeshore` | `rec3oXyrb1t6YUvoe`  | `consultation.lakeshoreskinandbody.com` |

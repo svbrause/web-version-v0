@@ -23,8 +23,13 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<HomeOrNotFound />} />
         <Route path="/demo" element={<App />} />
         <Route path="/lakeshore" element={<App />} />
+        <Route path="/lakeshore/:source" element={<App />} />
         <Route path="/the-treatment" element={<App />} />
+        <Route path="/the-treatment/:source" element={<App />} />
         <Route path="/unique" element={<App />} />
+        <Route path="/unique/:source" element={<App />} />
+        <Route path="/buford" element={<App />} />
+        <Route path="/buford/:source" element={<App />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
