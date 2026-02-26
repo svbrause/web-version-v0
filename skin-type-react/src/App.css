@@ -249,16 +249,6 @@ body[data-practice="buford"] .onboarding-coupon-amount {
   color: #ffffff;
 }
 
-body[data-practice="buford"] .case-detail-page-footer {
-  background: #e42217;
-  border-top: none;
-  color: #ffffff;
-}
-
-body[data-practice="buford"] .case-detail-page-footer * {
-  color: #ffffff;
-}
-
 body[data-practice="buford"] .results-tab.active {
   color: #ffffff;
 }
@@ -357,16 +347,6 @@ body[data-practice="the-treatment"] .onboarding-coupon-card {
 
 body[data-practice="the-treatment"] .onboarding-coupon-amount {
   color: var(--pink-baby);
-}
-
-body[data-practice="the-treatment"] .case-detail-page-footer {
-  background: #58a194;
-  border-top: none;
-  color: #ffffff;
-}
-
-body[data-practice="the-treatment"] .case-detail-page-footer * {
-  color: #ffffff;
 }
 
 /* White text on #58A194 secondary for the-treatment */
@@ -529,11 +509,6 @@ body[data-practice="admin"] .offer-card-expanded {
     rgba(206, 170, 117, 0.15) 50%,
     var(--bg-secondary) 100%
   ) !important;
-}
-
-body[data-practice="admin"] .case-detail-page-footer {
-  background: #212121;
-  border-top: none;
 }
 
 html,
@@ -6385,8 +6360,3 @@ body[data-practice="lakeshore"] .onboarding-coupon-amount {
   align-items: stretch;
 }
 
-/* Lakeshore: Add subtle background to footer for contrast with content */
-body[data-practice="lakeshore"] .case-detail-page-footer {
-  background: #222222;
-  border-top: none;
-}
