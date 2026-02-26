@@ -180,53 +180,12 @@ export async function submitLeadToAirtable(
       fields["Providers"] = ["recN9Q4W02xtroD6g"]; // Unique Aesthetics
     }
 
-    // Add behavioral data if available
-    const readCaseIds = behavioralData?.readCases || getReadCases();
-    const caseData = behavioralData?.caseData || [];
-    const concernsExploredIds =
-      behavioralData?.concernsExplored || getConcernsExplored();
-
-    // Viewed Photos (linked records - send as array of record IDs)
-    if (readCaseIds.length > 0 && caseData.length > 0) {
-      // Get the Airtable record IDs for the viewed cases
-      const viewedPhotoRecordIds = readCaseIds
-        .map((caseId) => {
-          const caseItem = caseData.find((c) => c.id === caseId);
-          // The caseItem.id is the Airtable record ID
-          return caseItem?.id;
-        })
-        .filter((id): id is string => !!id); // Filter out undefined values
-
-      if (viewedPhotoRecordIds.length > 0) {
-        fields["Viewed Photos"] = viewedPhotoRecordIds; // Send as array for linked records
-      }
-    }
-
-    // Cases Viewed Count
-    if (readCaseIds.length > 0) {
-      fields["Cases Viewed Count"] = readCaseIds.length;
-    }
-
-    // Concerns Explored (multiselect - send as array)
-    if (concernsExploredIds.length > 0) {
-      const concernNames = concernsExploredIds
-        .map((id) => {
-          const concern = HIGH_LEVEL_CONCERNS.find((c) => c.id === id);
-          return concern ? concern.name : id;
-        })
-        .filter(Boolean);
-      if (concernNames.length > 0) {
-        fields["Concerns Explored"] = concernNames; // Send as array for multiselect
-      }
-    }
-
-    // Engagement Level
-    if (readCaseIds.length > 0) {
-      fields["Engagement Level"] = getEngagementLevel(readCaseIds.length);
-    }
+    // Do not send behavioral fields on initial lead create (Concerns Explored, Viewed Photos,
+    // Cases Viewed Count, Engagement Level). Those are only set later via PATCH when the user
+    // explores results; at lead capture time they have not been explored yet.
 
     // Total Cases Available (count of matching cases)
-    // This calculation can be expensive, so we do it carefully
+    const caseData = behavioralData?.caseData || [];
     try {
       if (
         caseData.length > 0 &&
