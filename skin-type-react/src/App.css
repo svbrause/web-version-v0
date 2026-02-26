@@ -122,6 +122,10 @@ body[data-practice="buford"] .landing-screen {
   background: var(--bg-secondary);
 }
 
+body[data-practice="buford"] .clinic-header {
+  background: #BEACAB;
+}
+
 body[data-practice="buford"] .next-button {
   box-shadow: 0 4px 12px rgba(228, 34, 23, 0.35);
   color: #ffffff;
