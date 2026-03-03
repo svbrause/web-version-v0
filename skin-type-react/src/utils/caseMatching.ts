@@ -20,6 +20,18 @@ function textContainsAllKeywordParts(text: string, keyword: string): boolean {
   return parts.length > 0 && parts.every((part) => textLower.includes(part));
 }
 
+/** Treatments no providers offer – these cases are hidden for all practices. */
+const GLOBALLY_EXCLUDED_TREATMENT_PHRASES = ["Upneeq"];
+
+/** True if the case's treatment is globally excluded (e.g. Upneeq – no providers offer it). */
+export function isGloballyExcludedCase(caseItem: CaseItem): boolean {
+  const treatment = ((caseItem as any).treatment || "").toLowerCase();
+  if (!treatment) return false;
+  return GLOBALLY_EXCLUDED_TREATMENT_PHRASES.some((phrase) =>
+    treatment.includes(phrase.toLowerCase())
+  );
+}
+
 // Check if a case is surgical
 export function isSurgicalCase(caseItem: CaseItem): boolean {
   if (!caseItem) return false;

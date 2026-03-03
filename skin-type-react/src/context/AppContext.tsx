@@ -14,6 +14,9 @@ interface AppContextType {
   goToPreviousStep: () => void;
   goToStep: (step: number) => void;
   getCurrentStepName: () => string;
+  /** Test version: show Wellness Quiz modal when true (?wellnessQuiz=1). */
+  showWellnessQuizModal: boolean;
+  setShowWellnessQuizModal: (show: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -69,6 +72,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const [caseData, setCaseData] = useState<CaseItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showWellnessQuizModal, setShowWellnessQuizModal] = useState<boolean>(false);
 
   // Save to sessionStorage whenever state changes (async, don't block UI)
   useEffect(() => {
@@ -154,7 +158,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         goToNextStep,
         goToPreviousStep,
         goToStep,
-        getCurrentStepName
+        getCurrentStepName,
+        showWellnessQuizModal,
+        setShowWellnessQuizModal,
       }}
     >
       {children}

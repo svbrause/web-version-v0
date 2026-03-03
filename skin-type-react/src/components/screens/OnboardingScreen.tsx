@@ -64,11 +64,20 @@ export default function OnboardingScreen() {
     }
   };
 
+  const firstSlideImageSrc =
+    practice === "the-treatment"
+      ? "/the_treatment/Oct-2639.JPG"
+      : "/onboarding 1 image.png";
+
   const slides = [
     {
       title: "Share Your Aesthetic Goals",
       description: "Quick questions to understand what matters most to you",
-      imageSrc: "/onboarding 1 image.png",
+      imageSrc: firstSlideImageSrc,
+      imageClassName:
+        practice === "the-treatment"
+          ? "onboarding-top-image onboarding-top-image--the-treatment-crop"
+          : undefined,
       buttonText: "Next",
     },
     {
@@ -145,7 +154,11 @@ export default function OnboardingScreen() {
                 <img
                   src={slide.imageSrc}
                   alt=""
-                  className="onboarding-top-image"
+                  className={
+                    "imageClassName" in slide && slide.imageClassName
+                      ? slide.imageClassName
+                      : "onboarding-top-image"
+                  }
                 />
               </div>
             ) : "showCasePreviews" in slide && slide.showCasePreviews ? (

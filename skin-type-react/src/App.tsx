@@ -16,23 +16,25 @@ import LandingScreen from "./components/screens/LandingScreen";
 import OnboardingScreen from "./components/screens/OnboardingScreen";
 import NextButton from "./components/NextButton";
 import ConsultationModal from "./components/ConsultationModal";
+import WellnessQuizModal from "./components/WellnessQuizModal";
 import { FORM_STEPS, HIGH_LEVEL_CONCERNS } from "./constants/data";
 import { trackEvent } from "./utils/analytics";
 import {
   getPracticeFromConfig,
   getPracticeDisplayName,
 } from "./components/Logo";
-import { isSurgicalCase } from "./utils/caseMatching";
+import { isSurgicalCase, isGloballyExcludedCase } from "./utils/caseMatching";
 import { getBackendBaseUrl } from "./config/backend";
 import { getProviderIdForPractice } from "./config/providerId";
 import {
   fetchProviderAllowedTreatmentIds,
   filterPhotoRecordsByTreatmentIds,
 } from "./utils/providerTreatmentFilter";
+import { isTreatmentOfferedByTheTreatment } from "./config/theTreatmentOfferings";
 import "./App.css";
 
 function AppContent() {
-  const { state, caseData, setCaseData, isLoading, setIsLoading } = useApp();
+  const { state, caseData, setCaseData, isLoading, setIsLoading, showWellnessQuizModal, setShowWellnessQuizModal } = useApp();
 
   // Set practice-specific data attribute on body for CSS targeting
   useEffect(() => {
@@ -86,10 +88,22 @@ function AppContent() {
       if (typeof window !== "undefined" && (window as any).caseData) {
         const data = (window as any).caseData;
         if (Array.isArray(data) && data.length > 0) {
-          // Filter out surgical cases
-          const nonSurgicalData = data.filter(
-            (caseItem: any) => !isSurgicalCase(caseItem)
+          const practice = getPracticeFromConfig();
+          // Filter out surgical cases and globally excluded treatments (e.g. Upneeq)
+          let nonSurgicalData = data.filter(
+            (caseItem: any) =>
+              !isSurgicalCase(caseItem) && !isGloballyExcludedCase(caseItem)
           );
+          // The Treatment: only show cases for treatments they offer
+          if (practice === "the-treatment") {
+            const before = nonSurgicalData.length;
+            nonSurgicalData = nonSurgicalData.filter((caseItem: any) =>
+              isTreatmentOfferedByTheTreatment(caseItem)
+            );
+            console.log(
+              `✓ The Treatment: filtered to offered treatments: ${before} → ${nonSurgicalData.length} cases`
+            );
+          }
           setCaseData(nonSurgicalData);
           setIsLoading(false);
           console.log(
@@ -291,12 +305,22 @@ function AppContent() {
             fields["Notes"] ||
             "";
 
-          // Get treatment details - try multiple variations
-          const treatment =
+          // Get treatment details - try multiple variations (including linked record display names)
+          const treatmentFromLinked =
+            fields["Treatment (from General Treatments)"] ??
+            fields["General Treatments"] ??
+            fields["Treatment Name"];
+          const treatmentRaw =
             fields["Treatment Details"] ||
             fields["Treatment"] ||
             fields["Treatment Description"] ||
+            (Array.isArray(treatmentFromLinked)
+              ? treatmentFromLinked.filter((x: any) => typeof x === "string").join(" ")
+              : typeof treatmentFromLinked === "string"
+                ? treatmentFromLinked
+                : "") ||
             "";
+          const treatment = typeof treatmentRaw === "string" ? treatmentRaw : "";
 
           return {
             id: record.id,
@@ -355,10 +379,22 @@ function AppContent() {
           };
         });
 
-        // Filter out surgical cases before setting state
-        const nonSurgicalData = transformedData.filter(
-          (caseItem: any) => !isSurgicalCase(caseItem)
+        // Filter out surgical cases and globally excluded treatments (e.g. Upneeq)
+        let nonSurgicalData = transformedData.filter(
+          (caseItem: any) =>
+            !isSurgicalCase(caseItem) && !isGloballyExcludedCase(caseItem)
         );
+
+        // The Treatment: only show cases for treatments they offer (exclude e.g. Liquid Rhinoplasty, Laser Hair Removal, Ultraclear)
+        if (practice === "the-treatment") {
+          const before = nonSurgicalData.length;
+          nonSurgicalData = nonSurgicalData.filter((caseItem: any) =>
+            isTreatmentOfferedByTheTreatment(caseItem)
+          );
+          console.log(
+            `✓ The Treatment: filtered to offered treatments: ${before} → ${nonSurgicalData.length} cases`
+          );
+        }
 
         setCaseData(nonSurgicalData);
         setIsLoading(false);
@@ -385,10 +421,18 @@ function AppContent() {
       ) {
         const data = (window as any).caseData;
         if (Array.isArray(data) && data.length > 0) {
-          setCaseData(data);
+          let final = data.filter(
+            (c: any) => !isSurgicalCase(c) && !isGloballyExcludedCase(c)
+          );
+          if (getPracticeFromConfig() === "the-treatment") {
+            final = final.filter((c: any) =>
+              isTreatmentOfferedByTheTreatment(c)
+            );
+          }
+          setCaseData(final);
           setIsLoading(false);
           console.log(
-            `✓ Loaded ${data.length} cases from window.caseData (retry)`
+            `✓ Loaded ${data.length} cases from window.caseData (retry), ${final.length} after filters`
           );
           clearInterval(retryInterval);
         }
@@ -531,6 +575,9 @@ function AppContent() {
         <NextButton />
       )}
       <ConsultationModal />
+      {showWellnessQuizModal && (
+        <WellnessQuizModal onClose={() => setShowWellnessQuizModal(false)} />
+      )}
     </div>
   );
 }

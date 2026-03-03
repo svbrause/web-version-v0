@@ -98,7 +98,7 @@ export default function Logo({ practice, className = "" }: LogoProps) {
   if (practiceName === "the-treatment") {
     return (
       <img
-        src="/the_treatment/treatment-skin-boutique_logo_4x.png"
+        src="/the_treatment/The%20Treatment%20Mint%20and%20Gray.png"
         alt="The Treatment Skin Boutique"
         className={`practice-logo the-treatment-logo ${className}`}
       />

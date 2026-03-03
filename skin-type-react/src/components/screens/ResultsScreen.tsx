@@ -13,8 +13,13 @@ import OfferCard from "../OfferCard";
 import type { CaseItem, AppState } from "../../types";
 import "../../App.css";
 
+const showWellnessQuizEntry =
+  typeof window !== "undefined" &&
+  new URLSearchParams(window.location.search).get("wellnessQuiz") === "1";
+
 export default function ResultsScreen() {
-  const { state, caseData, setCaseData, updateState } = useApp();
+  const { state, caseData, setCaseData, updateState, setShowWellnessQuizModal } =
+    useApp();
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [showConsultationModal, setShowConsultationModal] = useState(false);
   const scrollStatesRef = useRef<
@@ -232,6 +237,15 @@ export default function ResultsScreen() {
           <button className="results-cta-button" onClick={requestConsultation}>
             Request Consult
           </button>
+          {showWellnessQuizEntry && (
+            <button
+              type="button"
+              className="results-wellness-quiz-link"
+              onClick={() => setShowWellnessQuizModal(true)}
+            >
+              Take Wellness Quiz
+            </button>
+          )}
         </div>
         <ConsultationModal
           isOpen={showConsultationModal}
@@ -435,6 +449,15 @@ export default function ResultsScreen() {
           <button className="results-cta-button" onClick={requestConsultation}>
             Request Consult
           </button>
+          {showWellnessQuizEntry && (
+            <button
+              type="button"
+              className="results-wellness-quiz-link"
+              onClick={() => setShowWellnessQuizModal(true)}
+            >
+              Take Wellness Quiz
+            </button>
+          )}
         </div>
 
         <ConsultationModal
@@ -535,6 +558,15 @@ export default function ResultsScreen() {
         <button className="results-cta-button" onClick={requestConsultation}>
           Request Consult
         </button>
+        {showWellnessQuizEntry && (
+          <button
+            type="button"
+            className="results-wellness-quiz-link"
+            onClick={() => setShowWellnessQuizModal(true)}
+          >
+            Take Wellness Quiz
+          </button>
+        )}
       </div>
 
       <ConsultationModal

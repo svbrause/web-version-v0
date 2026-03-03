@@ -16,7 +16,10 @@ export default function LandingScreen() {
     updateState({ currentStep: -0.7 });
   };
 
-  const heroImageSrc = "/1752520815-uneven-skin-tone-banner 1 (1).png";
+  const heroImageSrc =
+    practice === "the-treatment"
+      ? "/the_treatment/IMG_2476 2.png"
+      : "/1752520815-uneven-skin-tone-banner 1 (1).png";
 
   return (
     <div className="landing-screen">

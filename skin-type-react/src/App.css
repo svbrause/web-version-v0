@@ -123,7 +123,7 @@ body[data-practice="buford"] .landing-screen {
 }
 
 body[data-practice="buford"] .clinic-header {
-  background: #BEACAB;
+  background: #beacab;
 }
 
 body[data-practice="buford"] .next-button {
@@ -207,11 +207,7 @@ body[data-practice="buford"] .onboarding-offer-hero .offer-card-expanded * {
 
 body[data-practice="buford"] .onboarding-icon-wrapper {
   color: #ffffff;
-  background: linear-gradient(
-    135deg,
-    #f0efed 0%,
-    var(--pink-dark) 100%
-  );
+  background: linear-gradient(135deg, #f0efed 0%, var(--pink-dark) 100%);
 }
 
 body[data-practice="buford"] .onboarding-dot.active {
@@ -223,14 +219,37 @@ body[data-practice="buford"] .skin-type-option:not(.selected) {
   color: #232323;
 }
 body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon,
-body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg {
+body[data-practice="buford"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg {
   color: #232323;
 }
-body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg path,
-body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg rect,
-body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg circle,
-body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg polygon,
-body[data-practice="buford"] .skin-type-option:not(.selected) .skin-type-icon svg polyline {
+body[data-practice="buford"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  path,
+body[data-practice="buford"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  rect,
+body[data-practice="buford"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  circle,
+body[data-practice="buford"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  polygon,
+body[data-practice="buford"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  polyline {
   fill: #232323;
   stroke: #232323;
 }
@@ -239,11 +258,7 @@ body[data-practice="buford"] .skin-type-option:not(.selected) span {
 }
 
 body[data-practice="buford"] .onboarding-coupon-card {
-  background: linear-gradient(
-    135deg,
-    #f0efed 0%,
-    var(--pink-dark) 100%
-  );
+  background: linear-gradient(135deg, #f0efed 0%, var(--pink-dark) 100%);
   border-color: var(--pink-dark);
   color: #ffffff;
 }
@@ -269,6 +284,14 @@ body[data-practice="the-treatment"] .landing-header-top {
 
 body[data-practice="the-treatment"] .landing-screen {
   background: var(--bg-secondary);
+}
+
+/* The Treatment landing hero: show full image, slightly larger and shifted up */
+body[data-practice="the-treatment"] .landing-hero-image {
+  object-fit: contain;
+  object-position: center center;
+  --landing-hero-image-shift-y: 0;
+  transform: scale(1.7) translate(3%, 0%);
 }
 
 body[data-practice="the-treatment"] .next-button {
@@ -353,6 +376,18 @@ body[data-practice="the-treatment"] .onboarding-coupon-amount {
   color: var(--pink-baby);
 }
 
+/* The Treatment first onboarding screen: cropped consultation photo */
+body[data-practice="the-treatment"] .onboarding-image-wrapper--screen-1 {
+  height: 240px;
+}
+body[data-practice="the-treatment"]
+  .onboarding-image-wrapper--screen-1
+  .onboarding-top-image--the-treatment-crop {
+  object-fit: cover;
+  object-position: center 45%;
+  height: 100%;
+}
+
 /* White text on #58A194 secondary for the-treatment */
 body[data-practice="the-treatment"] .results-tab.active {
   color: #ffffff;
@@ -367,15 +402,40 @@ body[data-practice="the-treatment"] .treatment-group-area-tag {
 body[data-practice="the-treatment"] .skin-type-option:not(.selected) {
   color: #232323;
 }
-body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon,
-body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg {
+body[data-practice="the-treatment"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon,
+body[data-practice="the-treatment"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg {
   color: #232323;
 }
-body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg path,
-body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg rect,
-body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg circle,
-body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg polygon,
-body[data-practice="the-treatment"] .skin-type-option:not(.selected) .skin-type-icon svg polyline {
+body[data-practice="the-treatment"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  path,
+body[data-practice="the-treatment"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  rect,
+body[data-practice="the-treatment"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  circle,
+body[data-practice="the-treatment"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  polygon,
+body[data-practice="the-treatment"]
+  .skin-type-option:not(.selected)
+  .skin-type-icon
+  svg
+  polyline {
   fill: #232323;
   stroke: #232323;
 }
@@ -2174,7 +2234,7 @@ body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
   grid-template-columns: 1fr;
   gap: 16px;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 124px; /* 100px for CTA + 24px extra below last case */
 }
 
 .concern-case-card {
@@ -3857,6 +3917,11 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   border-color: rgba(107, 138, 154, 0.3);
 }
 
+/* Request consult popup: offer box always solid, never gradient */
+.consultation-modal .offer-card-expanded {
+  background: var(--bg-secondary) !important;
+}
+
 .consultation-form {
   display: flex;
   flex-direction: column;
@@ -4176,6 +4241,23 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
 .results-cta-button:active,
 .cta-button-cream:active {
   transform: translateY(0);
+}
+
+/* Test: Wellness Quiz entry when ?wellnessQuiz=1 */
+.results-wellness-quiz-link {
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--pastel-cream);
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.results-wellness-quiz-link:hover {
+  color: var(--white);
 }
 
 /* Expanded offer card (modal/onboarding) - very light background for readability */
@@ -4660,8 +4742,10 @@ body[data-practice="lakeshore"] .landing-screen {
   height: 100%;
   object-fit: cover;
   object-position: 55% top;
-  /* Shift image up so more of the top is visible; overflow hidden on parent clips the bottom */
-  transform: translateY(-7%);
+  /* Shift image up so more of the top is visible; overflow hidden on parent clips the bottom.
+     Adjust translateY: more negative = higher (e.g. -15%), less negative = lower (e.g. -5%). */
+  --landing-hero-image-shift-y: -7%;
+  transform: translateY(var(--landing-hero-image-shift-y));
   z-index: 0;
 }
 
@@ -6363,4 +6447,3 @@ body[data-practice="lakeshore"] .onboarding-coupon-amount {
   gap: 8px;
   align-items: stretch;
 }
-
