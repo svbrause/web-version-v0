@@ -35,6 +35,7 @@ import {
 import { isTreatmentOfferedByTheTreatment } from "./config/theTreatmentOfferings";
 import { isCaseForWellnest } from "./config/wellnestPeptideOfferings";
 import { WELLNEST_SAMPLE_CASES } from "./data/wellnestSampleCases";
+import type { CaseItem } from "./types";
 import "./App.css";
 
 function AppContent() {
@@ -395,10 +396,10 @@ function AppContent() {
         });
 
         // Filter out surgical cases and globally excluded treatments (e.g. Upneeq)
-        let nonSurgicalData = transformedData.filter(
+        let nonSurgicalData: CaseItem[] = transformedData.filter(
           (caseItem: any) =>
             !isSurgicalCase(caseItem) && !isGloballyExcludedCase(caseItem)
-        );
+        ) as CaseItem[];
 
         // The Treatment: only show cases for treatments they offer (exclude e.g. Liquid Rhinoplasty, Laser Hair Removal, Ultraclear)
         if (practice === "the-treatment") {
