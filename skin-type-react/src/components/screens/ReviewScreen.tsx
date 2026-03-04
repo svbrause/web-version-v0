@@ -1,13 +1,13 @@
 // import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { HIGH_LEVEL_CONCERNS, AREAS_OF_CONCERN } from '../../constants/data';
+import { getConcernById, AREAS_OF_CONCERN } from '../../constants/data';
 import "../../App.css";
 
 export default function ReviewScreen() {
   const { state } = useApp();
 
   const getConcernName = (id: string) => {
-    return HIGH_LEVEL_CONCERNS.find(c => c.id === id)?.name || id;
+    return getConcernById(id)?.name || id;
   };
 
   const getAreaName = (id: string) => {

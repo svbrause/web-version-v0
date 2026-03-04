@@ -1,7 +1,12 @@
 // import React from 'react';
 import { useState, useMemo } from "react";
 import { useApp } from "../../context/AppContext";
-import { HIGH_LEVEL_CONCERNS } from "../../constants/data";
+import {
+  getConcernsForPractice,
+  MAX_SELECTED_CONCERNS,
+  MAX_SELECTED_CONCERNS_WELLNEST,
+} from "../../constants/data";
+import { getPracticeFromConfig } from "../Logo";
 import { getMatchingCasesForConcern } from "../../utils/caseMatching";
 import { trackEvent } from "../../utils/analytics";
 import ConsultationModal from "../ConsultationModal";
@@ -11,12 +16,16 @@ export default function ConcernsScreen() {
   const { state, updateState, caseData } = useApp();
   const [showConsultationModal, setShowConsultationModal] = useState(false);
   const [showLimitWarning, setShowLimitWarning] = useState(false);
+  const practice = getPracticeFromConfig();
+  const concerns = getConcernsForPractice(practice);
+  const maxConcerns =
+    practice === "wellnest" ? MAX_SELECTED_CONCERNS_WELLNEST : MAX_SELECTED_CONCERNS;
 
   // Sort concerns by number of matching cases (most to least)
   // Only recalculate when caseData or demographic fields change, NOT when selectedConcerns changes
   // This prevents expensive recalculation on every click
   const sortedConcerns = useMemo(() => {
-    if (caseData.length === 0) return HIGH_LEVEL_CONCERNS;
+    if (caseData.length === 0) return concerns;
 
     // Use a minimal state object for matching - only include fields that affect case matching
     const minimalState = {
@@ -28,7 +37,7 @@ export default function ConcernsScreen() {
       selectedAreas: [],
     };
 
-    return [...HIGH_LEVEL_CONCERNS].sort((a, b) => {
+    return [...concerns].sort((a, b) => {
       const aCount = getMatchingCasesForConcern(
         a.id,
         caseData,
@@ -47,11 +56,12 @@ export default function ConcernsScreen() {
     state.skinType,
     state.skinTone,
     state.ethnicBackground,
+    concerns,
   ]);
 
   const toggleConcern = (concernId: string) => {
     const current = state.selectedConcerns;
-    const concern = HIGH_LEVEL_CONCERNS.find((c) => c.id === concernId);
+    const concern = concerns.find((c) => c.id === concernId);
 
     // Update state immediately for instant UI feedback
     if (current.includes(concernId)) {
@@ -73,7 +83,7 @@ export default function ConcernsScreen() {
     }
 
     // Prevent selection if limit is already reached
-    if (current.length >= 3) {
+    if (current.length >= maxConcerns) {
       setShowLimitWarning(true);
       // Track analytics asynchronously
       setTimeout(() => {
@@ -101,12 +111,18 @@ export default function ConcernsScreen() {
     }, 0);
   };
 
+  const isWellnest = practice === "wellnest";
+  const mainQuestion = isWellnest
+    ? "What are your main wellness goals?"
+    : "First, what would you like to improve?";
+  const subtitle = isWellnest
+    ? `Select up to ${maxConcerns} goals that matter most to you.`
+    : `Select up to ${maxConcerns} concerns that matter most to you.`;
+
   return (
     <div className="question-view">
-      <h1 className="main-question">First, what would you like to improve?</h1>
-      <p className="subtitle">
-        Select up to 3 concerns that matter most to you.
-      </p>
+      <h1 className="main-question">{mainQuestion}</h1>
+      <p className="subtitle">{subtitle}</p>
 
       {showLimitWarning && (
         <div className="selection-warning">
@@ -126,7 +142,8 @@ export default function ConcernsScreen() {
           </svg>
           <div className="selection-warning-content">
             <p className="selection-warning-text">
-              You can only select up to 3 concerns in this virtual consultation.
+              You can only select up to {maxConcerns}{" "}
+              {isWellnest ? "goals" : "concerns"} in this virtual consultation.
               For personalized recommendations tailored to your specific needs,{" "}
               <button
                 className="selection-warning-link"
@@ -166,7 +183,7 @@ export default function ConcernsScreen() {
         })}
       </div>
       <div className="selection-count">
-        {state.selectedConcerns.length} of 3 selected
+        {state.selectedConcerns.length} of {maxConcerns} selected
       </div>
 
       <ConsultationModal

@@ -350,9 +350,11 @@ export default function ConsultationModal({
         ? "#58A194"
         : practice === "buford"
           ? "#e42217"
-          : practice === "admin"
-            ? "#CEAA75" /* admin accent yellow */
-            : "#ffa2c7";
+          : practice === "wellnest"
+            ? "#63D4AC"
+            : practice === "admin"
+              ? "#CEAA75" /* admin accent yellow */
+              : "#ffa2c7";
   const accentBg =
     practice === "lakeshore"
       ? "rgba(107, 138, 154, 0.1)"
@@ -360,9 +362,11 @@ export default function ConsultationModal({
         ? "rgba(88, 161, 148, 0.15)"
         : practice === "buford"
           ? "rgba(228, 34, 23, 0.12)"
-          : practice === "admin"
-            ? "rgba(206, 170, 117, 0.25)"
-            : "rgba(255, 162, 199, 0.15)";
+          : practice === "wellnest"
+            ? "rgba(99, 212, 172, 0.15)"
+            : practice === "admin"
+              ? "rgba(206, 170, 117, 0.25)"
+              : "rgba(255, 162, 199, 0.15)";
 
   const modalContent = (
     <div className="consultation-modal-overlay" onClick={handleClose}>
@@ -451,7 +455,7 @@ export default function ConsultationModal({
                 </p>
               </div>
               <div style={{ marginBottom: "20px" }}>
-                <OfferCard showPresentIcon={true} variant="expanded" />
+                <OfferCard showPresentIcon={true} variant="expanded" showExclusionDisclaimer />
               </div>
               <div
                 className="consultation-modal-benefits"

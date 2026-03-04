@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { getUserData, getStageDisplayName, clearUserData, type UserData } from '../utils/userDataCollection';
-import { HIGH_LEVEL_CONCERNS, AREAS_OF_CONCERN } from '../constants/data';
+import { getConcernById, AREAS_OF_CONCERN } from '../constants/data';
 import '../App.css';
 import './Dashboard.css';
 
@@ -105,7 +105,7 @@ export default function Dashboard() {
   };
 
   const getConcernName = (id: string) => {
-    return HIGH_LEVEL_CONCERNS.find(c => c.id === id)?.name || id;
+    return getConcernById(id)?.name || id;
   };
 
   const getAreaName = (id: string) => {

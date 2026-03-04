@@ -1,6 +1,6 @@
 /**
  * Wellness Quiz modal – test version for patient app.
- * Questions map to Dr Reddy treatment offerings; suggests one or more treatments.
+ * Questions map to peptide treatment offerings; suggests one or more treatments.
  * No Airtable save; results can be stored in localStorage for demo.
  */
 
@@ -11,6 +11,7 @@ import {
   buildWellnessQuizPayload,
   getSuggestedWellnessTreatments,
 } from "../data/wellnessQuiz";
+import { getPracticeFromConfig } from "./Logo";
 import WellnessQuizResultsCards from "./wellnessQuiz/WellnessQuizResultsCards";
 import "./WellnessQuizModal.css";
 
@@ -265,6 +266,7 @@ export default function WellnessQuizModal({
                     <WellnessQuizResultsCards
                       suggestedTreatments={suggestedTreatments}
                       answers={answers}
+                      practice={getPracticeFromConfig()}
                     />
                   )}
                 </>

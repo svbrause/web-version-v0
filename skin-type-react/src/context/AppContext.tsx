@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import type { AppState, CaseItem } from '../types';
-import { FORM_STEPS } from '../constants/data';
+import { getFormStepsForPractice } from '../constants/data';
+import { getPracticeFromConfig } from '../components/Logo';
 import { getDemoPresetFromUrl } from '../config/demoPreset';
 
 interface AppContextType {
@@ -38,7 +39,8 @@ const initialState: AppState = {
   suggestionDetailConcernId: null,
   suggestionDetailGroupIndex: null,
   viewingConcernCases: false,
-  viewingConcernCasesId: null
+  viewingConcernCasesId: null,
+  wellnessStepIndex: 0
 };
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -143,7 +145,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const getCurrentStepName = useCallback(() => {
-    return FORM_STEPS[state.currentStep] || 'concerns';
+    const steps = getFormStepsForPractice(getPracticeFromConfig());
+    return steps[state.currentStep] || 'concerns';
   }, [state.currentStep]);
 
   return (

@@ -1,18 +1,21 @@
 // import React from 'react';
 import { useApp } from '../context/AppContext';
-import { FORM_STEPS, NOT_SURE_QUESTIONS } from '../constants/data';
+import { getFormStepsForPractice, NOT_SURE_QUESTIONS } from '../constants/data';
+import { getPracticeFromConfig } from './Logo';
 import "../App.css";
 
 export default function Header() {
   const { state, goToPreviousStep, updateState } = useApp();
-  
+  const formSteps = getFormStepsForPractice(getPracticeFromConfig());
+
   // Calculate progress - account for celebration and lead capture screens
-  // Total steps: form steps (6) + celebration (1) + lead capture (1) = 8
-  const totalSteps = FORM_STEPS.length + 2;
+  // Total steps: form steps + celebration (1) + lead capture (1)
+  const totalSteps = formSteps.length + 2;
   let progress = ((state.currentStep + 1) / totalSteps) * 100;
-  
-  // Skin type is step index 3
-  const skinTypeStepProgress = ((3 + 1) / totalSteps) * 100;
+
+  // Skin type step index (wellnest has wellness at 3, so skinType is 4)
+  const skinTypeStepIndex = formSteps.indexOf('skinType');
+  const skinTypeStepProgress = skinTypeStepIndex >= 0 ? ((skinTypeStepIndex + 1) / totalSteps) * 100 : ((3 + 1) / totalSteps) * 100;
   
   if (state.showingSkinTypeDetail) {
     // When showing determined skin type screen, check if we came from not sure flow
@@ -30,6 +33,17 @@ export default function Header() {
     const questionProgress = (state.notSureQuestionIndex + 1) / NOT_SURE_QUESTIONS.length; // 0.5 for first question, 1.0 for second
     // Add up to 5% progress for answering questions within the not sure flow
     progress = skinTypeStepProgress + (questionProgress * 5);
+  } else if (formSteps[state.currentStep] === 'wellness') {
+    // Wellness step has 4 sub-screens; show progress within that step
+    const wellnessStepIndex = formSteps.indexOf('wellness');
+    const wellnessStepProgress = ((wellnessStepIndex + 1) / totalSteps) * 100;
+    const wellnessSubCount = 4;
+    const wellnessSubIndex = state.wellnessStepIndex ?? 0;
+    const subProgress = (wellnessSubIndex + 1) / wellnessSubCount;
+    const nextStepProgress = wellnessStepIndex + 2 <= formSteps.length
+      ? ((wellnessStepIndex + 2) / totalSteps) * 100
+      : wellnessStepProgress + (100 / totalSteps / wellnessSubCount);
+    progress = wellnessStepProgress + subProgress * (nextStepProgress - wellnessStepProgress);
   }
 
   const handleBack = () => {
@@ -68,10 +82,12 @@ export default function Header() {
     } else if (state.currentStep === 0) {
       // On the first form step (ConcernsScreen), go back to last onboarding screen
       updateState({ currentStep: -0.3 });
-    } else if (state.currentStep === FORM_STEPS.length) {
+    } else if (formSteps[state.currentStep] === 'wellness' && (state.wellnessStepIndex ?? 0) > 0) {
+      updateState({ wellnessStepIndex: (state.wellnessStepIndex ?? 0) - 1 });
+    } else if (state.currentStep === formSteps.length) {
       // On celebration screen, go back to last form step
       goToPreviousStep();
-    } else if (state.currentStep === FORM_STEPS.length + 1) {
+    } else if (state.currentStep === formSteps.length + 1) {
       // On lead capture screen, go back to celebration
       goToPreviousStep();
     } else {

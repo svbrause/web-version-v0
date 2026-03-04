@@ -30,6 +30,9 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/unique/:source" element={<App />} />
         <Route path="/buford" element={<App />} />
         <Route path="/buford/:source" element={<App />} />
+        <Route path="/wellnest" element={<App />} />
+        <Route path="/wellnest/:source" element={<App />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

@@ -113,6 +113,29 @@ body[data-practice="buford"] {
   --border-color: #e0d9d7;
 }
 
+/* Wellnest – #63D4AC accent, #7D8180 secondary/muted */
+body[data-practice="wellnest"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7faf9;
+  --bg-gradient: #f7faf9;
+  --text-primary: #232323;
+  --text-secondary: #7D8180;
+  --text-muted: #7D8180;
+  --accent-dark: #63D4AC;
+  --accent-light: #d4f0e6;
+  --white: #ffffff;
+  --progress-track: #e0ebe6;
+
+  --pink-baby: #63D4AC;
+  --pink-light: #d4f0e6;
+  --pink-dark: #4ab896;
+
+  --pastel-beige: #e0ebe6;
+  --pastel-cream: #f7faf9;
+  --selected-bg: #63D4AC;
+  --border-color: #e5e8e7;
+}
+
 /* Buford: landing, results, onboarding, modals */
 body[data-practice="buford"] .landing-header-top {
   background: var(--white);
@@ -829,6 +852,16 @@ body {
   margin-bottom: 8px;
 }
 
+/* Wellness step disclaimer (wellnest in-flow) */
+.wellness-disclaimer {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-top: 20px;
+  font-style: italic;
+}
+
 /* Skin Type Grid */
 .skin-type-grid {
   display: grid;
@@ -928,13 +961,17 @@ body {
   color: var(--text-primary);
 }
 
-/* Ensure unselected icons are dark */
+/* Unselected: dark icons and text for readability */
+.skin-type-option:not(.selected) {
+  color: var(--text-primary);
+}
+
 .skin-type-option:not(.selected) .skin-type-icon {
-  color: var(--accent-dark);
+  color: var(--text-primary);
 }
 
 .skin-type-option:not(.selected) .skin-type-icon svg {
-  color: var(--accent-dark);
+  color: var(--text-primary);
 }
 
 .skin-type-option:not(.selected) .skin-type-icon svg path,
@@ -942,8 +979,12 @@ body {
 .skin-type-option:not(.selected) .skin-type-icon svg circle,
 .skin-type-option:not(.selected) .skin-type-icon svg polygon,
 .skin-type-option:not(.selected) .skin-type-icon svg polyline {
-  fill: var(--accent-dark);
-  stroke: var(--accent-dark);
+  fill: var(--text-primary);
+  stroke: var(--text-primary);
+}
+
+.skin-type-option:not(.selected) span {
+  color: var(--text-primary);
 }
 
 .skin-type-icon {
@@ -972,7 +1013,8 @@ body {
   font-weight: 500;
   text-align: center;
   transition: color 0.2s ease;
-  color: var(--accent-dark);
+  /* Unselected uses .skin-type-option:not(.selected) span (dark); selected uses .skin-type-option.selected span */
+  color: var(--text-primary);
 }
 
 /* Characteristics Container */
@@ -1423,6 +1465,97 @@ body[data-practice="lakeshore"] .next-button {
   border: 1px solid var(--border-color);
 }
 
+/* Wellness step: full-width chips with bold headline + subtitle */
+.wellness-chips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+.wellness-chips-list > div {
+  width: 100%;
+}
+.wellness-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  background-color: var(--white);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: none;
+  text-align: center;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 0;
+  overflow: visible;
+}
+.wellness-chip input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.wellness-chip:active:not(:has(input:checked)):not(.selected),
+.wellness-chip:active:not(.selected) {
+  transform: scale(0.99);
+}
+@media (hover: hover) {
+  /* Only hover when not selected (label uses :has(input:checked), button uses .selected) */
+  .wellness-chip:not(:has(input:checked)):not(.selected):hover {
+    background-color: #f8f8f8;
+    border-color: var(--border-color);
+  }
+}
+.wellness-chip:has(input:checked),
+.wellness-chip.selected {
+  background-color: var(--pink-light);
+  border: 2px solid var(--pink-baby);
+}
+.wellness-chip:not(:has(input:checked)):not(.selected),
+.wellness-chip:not(.selected) {
+  border: 1px solid var(--border-color);
+}
+.wellness-chip-line {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 0.15em;
+  width: 100%;
+  text-align: center;
+}
+.wellness-chip-sep {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: inherit;
+}
+.wellness-chip-headline {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  flex-shrink: 0;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+.wellness-chip-subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--text-secondary);
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
 /* Skin Tone Scale */
 .skin-tone-scale {
   display: flex;
@@ -1749,6 +1882,14 @@ body[data-practice="lakeshore"] .results-header-bar {
 .practice-logo.buford-logo {
   max-width: 180px;
   max-height: 50px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.practice-logo.wellnest-logo {
+  max-width: 180px;
+  max-height: 48px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -2367,6 +2508,36 @@ body[data-practice="lakeshore"] .concern-case-card-area-label-overlay {
   line-height: 1.4;
 }
 
+/* Play icon overlay for video cases in the scroll list */
+.concern-card-video-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  pointer-events: none;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.concern-card-video-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+}
+
+.concern-card-video-overlay-grid {
+  width: 48px;
+  height: 48px;
+}
+
+/* Areas overlay - ensure it stays on top or below depending on preference (videos usually center, areas bottom) */
 .concern-case-card-areas-overlay {
   position: absolute;
   bottom: 8px;
@@ -4243,6 +4414,28 @@ body[data-practice="lakeshore"] .consultation-modal-incentive-box {
   transform: translateY(0);
 }
 
+/* Inline wellness peptide suggestions on results (wellnest, when in-flow wellness completed) */
+.results-inline-wellness {
+  margin-bottom: 24px;
+  padding: 0 20px;
+}
+.results-inline-wellness-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--text-primary);
+}
+.results-inline-wellness-subheading {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 16px;
+}
+.results-inline-wellness .wellness-quiz-results-cards-inline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 /* Test: Wellness Quiz entry when ?wellnessQuiz=1 */
 .results-wellness-quiz-link {
   background: none;
@@ -5885,6 +6078,70 @@ body[data-practice="lakeshore"] .onboarding-coupon-amount {
   color: var(--text-secondary);
   font-size: 16px;
   font-weight: 400;
+}
+
+/* Case detail: video with play button */
+.case-detail-page-video-wrap {
+  position: relative;
+  min-height: 280px;
+}
+
+.case-detail-page-video {
+  width: 100%;
+  height: auto;
+  max-height: 450px;
+  object-fit: contain;
+  display: block;
+  background: #000;
+}
+
+.case-detail-page-youtube {
+  aspect-ratio: 9 / 16;
+  max-height: 70vh;
+  min-height: 320px;
+  border: none;
+}
+
+.case-detail-page-video-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.case-detail-page-play-button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text-primary, #1a1a1a);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s, background 0.2s;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.case-detail-page-play-button:hover {
+  background: #fff;
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.case-detail-page-play-button:active {
+  transform: translate(-50%, -50%) scale(0.98);
+}
+
+.case-detail-page-play-button svg {
+  margin-left: 6px;
 }
 
 .case-detail-page-match-badge {

@@ -1,22 +1,28 @@
 /**
  * Wellness quiz results: suggested peptides with match reasons.
  * Test version – no "Add to treatment plan" (dashboard-only).
+ * For Wellnest practice, treatment names are shown by indication only (no compound names).
  */
 
 import {
   getWellnessQuizMatchReasons,
+  WELLNEST_DISPLAY_NAMES,
   type WellnessTreatment,
 } from "../../data/wellnessQuiz";
+import type { PracticeName } from "../Logo";
 import "../WellnessQuizModal.css";
 
 export interface WellnessQuizResultsCardsProps {
   suggestedTreatments: WellnessTreatment[];
   answers: Record<string, number | number[]>;
+  /** When "wellnest", display indication-only names (regulatory). */
+  practice?: PracticeName | null;
 }
 
 export default function WellnessQuizResultsCards({
   suggestedTreatments,
   answers,
+  practice = null,
 }: WellnessQuizResultsCardsProps) {
   if (suggestedTreatments.length === 0) return null;
 
@@ -24,10 +30,11 @@ export default function WellnessQuizResultsCards({
     <ul className="wellness-quiz-treatment-list wellness-quiz-results-cards-inline">
       {suggestedTreatments.map((t) => {
         const matchReasons = getWellnessQuizMatchReasons(answers, t.id);
+        const displayName = practice === "wellnest" ? (WELLNEST_DISPLAY_NAMES[t.id] ?? t.name) : t.name;
         return (
           <li key={t.id} className="wellness-quiz-treatment-card">
             <div className="wellness-quiz-treatment-card-header">
-              <div className="wellness-quiz-treatment-name">{t.name}</div>
+              <div className="wellness-quiz-treatment-name">{displayName}</div>
               <div className="wellness-quiz-treatment-category">{t.category}</div>
             </div>
             <div className="wellness-quiz-treatment-used-for">

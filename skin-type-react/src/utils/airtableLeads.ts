@@ -1,6 +1,6 @@
 // Utility to submit leads to Airtable "Web Popup Leads" table
 
-import { HIGH_LEVEL_CONCERNS, AREAS_OF_CONCERN } from "../constants/data";
+import { getConcernById, AREAS_OF_CONCERN } from "../constants/data";
 import type { AppState, CaseItem } from "../types";
 import { getMatchingCasesForConcern } from "./caseMatching";
 import { getPracticeFromConfig } from "../components/Logo";
@@ -123,7 +123,7 @@ export async function submitLeadToAirtable(
 
     // Add Concerns (multiselect - send as array)
     const concernNames = selectedConcerns.map((id) => {
-      const concern = HIGH_LEVEL_CONCERNS.find((c) => c.id === id);
+      const concern = getConcernById(id);
       return concern ? concern.name : id;
     });
     if (concernNames.length > 0) {
@@ -170,6 +170,16 @@ export async function submitLeadToAirtable(
       fields["Providers"] = ["rec8tXdyK2dGWPf3u"];
     } else if (practice === "buford") {
       fields["Providers"] = ["recY68MpDWjHNjWAd"];
+    } else if (practice === "wellnest") {
+      const wellnestProviderId = import.meta.env.VITE_WELLNEST_PROVIDER_RECORD_ID;
+      if (wellnestProviderId && isValidRecordId(wellnestProviderId)) {
+        fields["Providers"] = [wellnestProviderId];
+      } else {
+        console.warn(
+          "VITE_WELLNEST_PROVIDER_RECORD_ID not set; set it when Wellnest has a Providers table record so leads link correctly."
+        );
+        fields["Providers"] = [];
+      }
     } else if (practice === "admin" && isValidRecordId(adminProviderId || "")) {
       fields["Providers"] = [adminProviderId!];
     } else if (practice === "admin") {
@@ -457,7 +467,7 @@ export async function updateLeadInAirtable(
     if (concernsExploredIds.length > 0) {
       const concernNames = concernsExploredIds
         .map((id) => {
-          const concern = HIGH_LEVEL_CONCERNS.find((c) => c.id === id);
+          const concern = getConcernById(id);
           return concern ? concern.name : id;
         })
         .filter(Boolean);

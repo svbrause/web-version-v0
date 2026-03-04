@@ -67,7 +67,9 @@ export default function OnboardingScreen() {
   const firstSlideImageSrc =
     practice === "the-treatment"
       ? "/the_treatment/Oct-2639.JPG"
-      : "/onboarding 1 image.png";
+      : practice === "wellnest"
+        ? "/onboarding 1 image.png"
+        : "/onboarding 1 image.png";
 
   const slides = [
     {
@@ -185,6 +187,8 @@ export default function OnboardingScreen() {
                   showPresentIcon={true}
                   variant="expanded"
                   giftImageSrc="/gift-offer.png"
+                  subtextOnlyTermsApply
+                  iconAboveText
                 />
               </div>
             ) : null}

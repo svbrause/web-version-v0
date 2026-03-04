@@ -1,21 +1,31 @@
 // import React from 'react';
 import { useApp } from "../context/AppContext";
-import { FORM_STEPS, NOT_SURE_QUESTIONS } from "../constants/data";
+import {
+  getFormStepsForPractice,
+  NOT_SURE_QUESTIONS,
+  MAX_SELECTED_CONCERNS,
+  MAX_SELECTED_CONCERNS_WELLNEST,
+} from "../constants/data";
+import { getPracticeFromConfig } from "./Logo";
 import { trackEvent } from "../utils/analytics";
 import { saveUserData } from "../utils/userDataCollection";
 import "../App.css";
 
 export default function NextButton() {
   const { state, goToNextStep, updateState } = useApp();
+  const practice = getPracticeFromConfig();
+  const formSteps = getFormStepsForPractice(practice);
+  const maxConcerns =
+    practice === "wellnest" ? MAX_SELECTED_CONCERNS_WELLNEST : MAX_SELECTED_CONCERNS;
 
   const canProceed = () => {
-    const step = FORM_STEPS[state.currentStep];
+    const step = formSteps[state.currentStep];
 
     switch (step) {
       case "concerns":
         return (
           state.selectedConcerns.length > 0 &&
-          state.selectedConcerns.length <= 3
+          state.selectedConcerns.length <= maxConcerns
         );
       case "areas":
         return (
@@ -23,6 +33,13 @@ export default function NextButton() {
         );
       case "age":
         return state.ageRange !== null;
+      case "wellness": {
+        const wIdx = state.wellnessStepIndex ?? 0;
+        if (wIdx === 0) return state.wellnessQuizAnswers?.activity !== undefined;
+        if (wIdx === 1) return state.wellnessQuizAnswers?.bodyComposition !== undefined;
+        if (wIdx === 2) return state.wellnessQuizAnswers?.skinInterest !== undefined;
+        return true; // goals (3) and conditions (4) optional
+      }
       case "skinType":
         // If showing detail screen, allow proceeding
         if (state.showingSkinTypeDetail) return true;
@@ -41,7 +58,7 @@ export default function NextButton() {
   };
 
   const handleNext = () => {
-    const step = FORM_STEPS[state.currentStep];
+    const step = formSteps[state.currentStep];
     
     // If in not sure flow on skin type step, advance within the flow
     if (state.inNotSureFlow && step === 'skinType') {
@@ -99,12 +116,24 @@ export default function NextButton() {
       goToNextStep();
       return;
     }
+
+    // Wellness step: advance through sub-screens (0–4) then leave step
+    if (step === 'wellness') {
+      const wIdx = state.wellnessStepIndex ?? 0;
+      if (wIdx < 3) {
+        updateState({ wellnessStepIndex: wIdx + 1 });
+        return;
+      }
+      // Leaving wellness step
+      goToNextStep();
+      return;
+    }
     
     // Normal next step (including direct skin type selection)
     trackEvent('form_step_completed', {
       step_name: step,
       step_number: state.currentStep,
-      next_step: FORM_STEPS[state.currentStep + 1] || 'completed',
+      next_step: formSteps[state.currentStep + 1] || 'completed',
       selected_concerns: state.selectedConcerns.length,
       selected_areas: state.selectedAreas.length,
       age_range: state.ageRange,
@@ -113,7 +142,7 @@ export default function NextButton() {
     });
     
     // Save user data at each step
-    const nextStep = FORM_STEPS[state.currentStep + 1];
+    const nextStep = formSteps[state.currentStep + 1];
     if (nextStep) {
       saveUserData({
         stage: nextStep,
@@ -130,7 +159,7 @@ export default function NextButton() {
   };
 
   const isVisible =
-    state.currentStep < FORM_STEPS.length &&
+    state.currentStep < formSteps.length &&
     canProceed();
 
   if (!isVisible) {

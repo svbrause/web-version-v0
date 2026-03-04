@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useApp } from "../../context/AppContext";
-import { HIGH_LEVEL_CONCERNS, FORM_STEPS } from "../../constants/data";
+import { getConcernById, getFormStepsForPractice } from "../../constants/data";
+import { getPracticeFromConfig } from "../Logo";
 import {
   getDeduplicatedCasesPerConcern,
   getRelevantAreasForCase,
@@ -10,16 +11,47 @@ import { saveUserData } from "../../utils/userDataCollection";
 import { scheduleBehavioralSync, forceSyncNow } from "../../utils/airtableSync";
 import ConsultationModal from "../ConsultationModal";
 import OfferCard from "../OfferCard";
+import {
+  buildWellnessQuizPayload,
+  getSuggestedWellnessTreatments,
+  buildWellnessCategoriesAndCases,
+} from "../../data/wellnessQuiz";
 import type { CaseItem, AppState } from "../../types";
-import "../../App.css";
 
-const showWellnessQuizEntry =
-  typeof window !== "undefined" &&
-  new URLSearchParams(window.location.search).get("wellnessQuiz") === "1";
+const WELLNESS_PLACEHOLDER_IMAGE = "/onboarding 1 image.png";
+import "../../App.css";
 
 export default function ResultsScreen() {
   const { state, caseData, setCaseData, updateState, setShowWellnessQuizModal } =
     useApp();
+  const practice = getPracticeFromConfig();
+  const formSteps = getFormStepsForPractice(practice);
+  /* Wellness quiz active only for /wellnest and /demo (demo uses practice "admin") – not for /unique or others */
+  const showWellnessQuizEntry = practice === "wellnest" || practice === "admin";
+  /* Inline peptide suggestions when user completed in-flow wellness step (wellnest) */
+  const inlineWellnessPayload = useMemo(() => {
+    if (practice !== "wellnest" || !state.wellnessQuizAnswers) return null;
+    return buildWellnessQuizPayload(state.wellnessQuizAnswers);
+  }, [practice, state.wellnessQuizAnswers]);
+  const inlineWellnessTreatments = useMemo(
+    () =>
+      inlineWellnessPayload
+        ? getSuggestedWellnessTreatments(inlineWellnessPayload)
+        : [],
+    [inlineWellnessPayload],
+  );
+  const wellnessCategoriesAndCases = useMemo(() => {
+    if (practice !== "wellnest" || inlineWellnessTreatments.length === 0) return null;
+    return buildWellnessCategoriesAndCases(
+      inlineWellnessTreatments,
+      WELLNESS_PLACEHOLDER_IMAGE,
+      true
+    );
+  }, [practice, inlineWellnessTreatments]);
+  const hasCompletedWellness =
+    state.wellnessQuizAnswers?.activity !== undefined &&
+    state.wellnessQuizAnswers?.bodyComposition !== undefined &&
+    state.wellnessQuizAnswers?.skinInterest !== undefined;
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [showConsultationModal, setShowConsultationModal] = useState(false);
   const scrollStatesRef = useRef<
@@ -112,7 +144,7 @@ export default function ResultsScreen() {
 
   // Save user data when reaching results screen
   useEffect(() => {
-    if (state.currentStep >= FORM_STEPS.length + 2) {
+    if (state.currentStep >= formSteps.length + 2) {
       saveUserData({
         stage: "results",
         selectedConcerns: state.selectedConcerns,
@@ -124,6 +156,7 @@ export default function ResultsScreen() {
       });
     }
   }, [
+    formSteps.length,
     state.currentStep,
     state.selectedConcerns,
     state.selectedAreas,
@@ -138,7 +171,7 @@ export default function ResultsScreen() {
   };
 
   const handleConcernClick = (concernId: string) => {
-    const concern = HIGH_LEVEL_CONCERNS.find((c) => c.id === concernId);
+    const concern = getConcernById(concernId);
     const matchingCases = deduplicatedCasesByConcern[concernId] ?? [];
 
     // Track concern as explored in localStorage and schedule sync
@@ -180,6 +213,16 @@ export default function ResultsScreen() {
     setSelectedCaseId(null);
   };
 
+  const handleWellnessCategoryClick = (categoryId: string) => {
+    updateState({ viewingWellnessCategoryId: categoryId });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleBackFromWellnessCategory = () => {
+    updateState({ viewingWellnessCategoryId: null });
+    setSelectedCaseId(null);
+  };
+
   const handleCaseClick = (caseId: string) => {
     markCaseAsRead(caseId);
     setSelectedCaseId(caseId);
@@ -194,9 +237,7 @@ export default function ResultsScreen() {
         case_id: caseId,
         case_name: caseItem.name || caseItem.headline,
         concern_id: state.viewingConcernCasesId,
-        concern_name: HIGH_LEVEL_CONCERNS.find(
-          (c) => c.id === state.viewingConcernCasesId,
-        )?.name,
+        concern_name: getConcernById(state.viewingConcernCasesId ?? "")?.name,
         relevance_score: caseItem.matchingScore,
       });
     }
@@ -219,11 +260,14 @@ export default function ResultsScreen() {
     [state.selectedConcerns, caseData, state],
   );
 
-  // Get the selected case item for the detail view (look up in full caseData so it works with deduplicated lists)
+  // Get the selected case item for the detail view (wellness cases or caseData)
   const selectedCaseItem: CaseItem | null = useMemo(() => {
     if (!selectedCaseId) return null;
+    if (selectedCaseId.startsWith("wellness-") && wellnessCategoriesAndCases) {
+      return wellnessCategoriesAndCases.allCases.find((c) => c.id === selectedCaseId) || null;
+    }
     return caseData.find((c) => c.id === selectedCaseId) || null;
-  }, [selectedCaseId, caseData]);
+  }, [selectedCaseId, caseData, wellnessCategoriesAndCases]);
 
   // Show case detail page
   if (selectedCaseId && selectedCaseItem) {
@@ -237,7 +281,7 @@ export default function ResultsScreen() {
           <button className="results-cta-button" onClick={requestConsultation}>
             Request Consult
           </button>
-          {showWellnessQuizEntry && (
+          {showWellnessQuizEntry && !hasCompletedWellness && (
             <button
               type="button"
               className="results-wellness-quiz-link"
@@ -255,11 +299,140 @@ export default function ResultsScreen() {
     );
   }
 
+  // Show cases for a wellness category (wellnest)
+  if (
+    practice === "wellnest" &&
+    state.viewingWellnessCategoryId &&
+    wellnessCategoriesAndCases
+  ) {
+    const category = wellnessCategoriesAndCases.categories.find(
+      (c) => c.id === state.viewingWellnessCategoryId
+    );
+    const matchingCases = category?.cases ?? [];
+    const readCount = matchingCases.filter((c) => readCases.has(c.id)).length;
+    const totalCount = matchingCases.length;
+
+    return (
+      <div className="results-screen">
+        <div className="concern-cases-section">
+          <div className="concern-cases-header">
+            <button
+              className="concern-cases-back-button"
+              onClick={handleBackFromWellnessCategory}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <div>
+              <h2 className="concern-cases-title">
+                {category?.name ?? "Options"}
+              </h2>
+              <p className="concern-cases-subtitle">
+                {readCount} of {totalCount} cases read
+              </p>
+            </div>
+          </div>
+
+          <div className="concern-cases-grid">
+            {matchingCases.map((caseItem) => {
+              const imageUrl = caseItem.beforeAfter || caseItem.thumbnail;
+              const caseTitle = caseItem.headline || caseItem.name || "Case";
+              const isRead = readCases.has(caseItem.id);
+
+              return (
+                <div
+                  key={caseItem.id}
+                  className={`concern-case-card ${isRead ? "concern-case-card-read" : ""}`}
+                  onClick={() => handleCaseClick(caseItem.id)}
+                >
+                  <div className="concern-case-card-image-wrapper">
+                    {imageUrl ? (
+                      <div className="concern-case-card-image">
+                        <img
+                          src={imageUrl}
+                          alt={caseTitle}
+                          loading="lazy"
+                          onError={(e) => {
+                            (
+                              e.target as HTMLImageElement
+                            ).parentElement!.innerHTML =
+                              '<div class="case-placeholder">Before/After</div>';
+                          }}
+                        />
+                        {caseItem.videoUrl && (
+                          <div className="concern-card-video-overlay concern-card-video-overlay-grid">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="concern-card-video-icon">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="concern-case-card-image">
+                        <div className="case-placeholder">Before/After</div>
+                      </div>
+                    )}
+                    {isRead ? (
+                      <div className="concern-case-card-read-indicator">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                        <span>seen</span>
+                      </div>
+                    ) : (
+                      <div className="concern-case-card-unread-indicator">
+                        <span>New</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="concern-case-card-content">
+                    <h3 className="concern-case-card-title">
+                      {escapeHtml(caseTitle)}
+                    </h3>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="results-cta-container">
+          <OfferCard showPresentIcon={false} />
+          <button className="results-cta-button" onClick={requestConsultation}>
+            Request Consult
+          </button>
+          {showWellnessQuizEntry && !hasCompletedWellness && (
+            <button
+              type="button"
+              className="results-wellness-quiz-link"
+              onClick={() => setShowWellnessQuizModal(true)}
+            >
+              Take Wellness Quiz
+            </button>
+          )}
+        </div>
+
+        <ConsultationModal
+          isOpen={showConsultationModal}
+          onClose={() => setShowConsultationModal(false)}
+        />
+      </div>
+    );
+  }
+
   // Show cases for a concern (use deduplicated list so no repetition across concerns)
   if (state.viewingConcernCases && state.viewingConcernCasesId) {
-    const concern = HIGH_LEVEL_CONCERNS.find(
-      (c) => c.id === state.viewingConcernCasesId,
-    );
+    const concern = getConcernById(state.viewingConcernCasesId);
     const matchingCases = deduplicatedCasesByConcern[state.viewingConcernCasesId] ?? [];
     const readCount = matchingCases.filter((c) => readCases.has(c.id)).length;
     const totalCount = matchingCases.length;
@@ -449,7 +622,7 @@ export default function ResultsScreen() {
           <button className="results-cta-button" onClick={requestConsultation}>
             Request Consult
           </button>
-          {showWellnessQuizEntry && (
+          {showWellnessQuizEntry && !hasCompletedWellness && (
             <button
               type="button"
               className="results-wellness-quiz-link"
@@ -471,6 +644,62 @@ export default function ResultsScreen() {
   // Show concern cards (main view)
   return (
     <div className="results-screen">
+      {practice === "wellnest" && wellnessCategoriesAndCases && wellnessCategoriesAndCases.categories.length > 0 && (
+        <>
+          <div className="browse-by-concern-header">
+            <h2 className="browse-by-concern-heading">Based on your wellness answers</h2>
+            <p className="browse-by-concern-subheading">
+              Explore options by category. Discuss with your provider (indication-based).
+            </p>
+          </div>
+          <div className="concern-cards-container">
+            {wellnessCategoriesAndCases.categories.map((cat) => {
+              const caseImagesWithData = cat.cases
+                .map((c) => ({
+                  imageUrl: c.beforeAfter || c.thumbnail,
+                  caseItem: c,
+                }))
+                .filter(
+                  (item): item is { imageUrl: string; caseItem: CaseItem } =>
+                    !!item.imageUrl,
+                )
+                .slice(0, 10);
+              const caseImages = caseImagesWithData.map((i) => i.imageUrl);
+              const caseItems = caseImagesWithData.map((i) => i.caseItem);
+              const reviewedCount = cat.cases.filter((c) => readCases.has(c.id)).length;
+              const totalCases = cat.cases.length;
+
+              return (
+                <div key={cat.id} className="concern-card-new">
+                  <h3 className="concern-card-new-title">{cat.name}</h3>
+                  {caseImages.length > 0 && (
+                    <PhotoScroll
+                      concernId={cat.id}
+                      caseImages={caseImages}
+                      caseItems={caseItems}
+                      scrollStatesRef={scrollStatesRef}
+                    />
+                  )}
+                  <div className="concern-card-new-footer">
+                    <p className="concern-card-new-count">
+                      {reviewedCount} of {totalCases} cases read
+                    </p>
+                    <button
+                      className="concern-card-new-button"
+                      onClick={() => handleWellnessCategoryClick(cat.id)}
+                    >
+                      {totalCases > 0 ? "Explore Cases" : "Review Cases"}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
       {state.selectedConcerns.length > 0 && (
         <>
           <div className="browse-by-concern-header">
@@ -481,9 +710,7 @@ export default function ResultsScreen() {
           </div>
           <div className="concern-cards-container">
             {state.selectedConcerns.map((concernId) => {
-              const concern = HIGH_LEVEL_CONCERNS.find(
-                (c) => c.id === concernId,
-              );
+              const concern = getConcernById(concernId);
               if (!concern) return null;
 
               const matchingCases = deduplicatedCasesByConcern[concernId] ?? [];
@@ -558,7 +785,7 @@ export default function ResultsScreen() {
         <button className="results-cta-button" onClick={requestConsultation}>
           Request Consult
         </button>
-        {showWellnessQuizEntry && (
+        {showWellnessQuizEntry && !hasCompletedWellness && (
           <button
             type="button"
             className="results-wellness-quiz-link"
@@ -641,7 +868,7 @@ function PhotoScroll({
     }
   };
 
-  const concern = HIGH_LEVEL_CONCERNS.find((c) => c.id === concernId);
+  const concern = getConcernById(concernId);
   const concernName = concern?.name || "Concern";
 
   return (
@@ -672,6 +899,19 @@ function PhotoScroll({
                     (e.target as HTMLImageElement).style.display = "none";
                   }}
                 />
+                {caseItem?.videoUrl && (
+                  <div className="concern-card-video-overlay">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="concern-card-video-icon"
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                )}
                 {displayArea && (
                   <div className="concern-case-card-areas-overlay">
                     <span className="concern-case-card-area-overlay">
@@ -736,19 +976,174 @@ function PhotoScroll({
   );
 }
 
+/** Extract YouTube video ID from shorts or watch URL; return null if not YouTube. */
+function getYouTubeEmbedUrl(url: string): string | null {
+  if (!url || !url.includes("youtube.com")) return null;
+  try {
+    const shortsMatch = url.match(/(?:shorts\/|embed\/)([a-zA-Z0-9_-]{11})/);
+    if (shortsMatch) return `https://www.youtube.com/embed/${shortsMatch[1]}`;
+    const watchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+    if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function CaseDetailMedia({
+  caseItem,
+  onBack,
+  storyTitle,
+}: {
+  caseItem: CaseItem;
+  onBack: () => void;
+  storyTitle: string;
+}) {
+  const imageUrl = caseItem.beforeAfter || caseItem.thumbnail;
+  const videoUrl = caseItem.videoUrl;
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [youtubeShown, setYoutubeShown] = useState(false);
+  const youtubeEmbedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
+  const isYouTube = Boolean(youtubeEmbedUrl);
+
+  const handlePlay = () => {
+    if (isYouTube) {
+      setYoutubeShown(true);
+      return;
+    }
+    const video = videoRef.current;
+    if (video) {
+      video.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const backButton = (
+    <button className="case-detail-back-button" onClick={onBack} type="button">
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+    </button>
+  );
+
+  if (videoUrl) {
+    if (isYouTube && youtubeEmbedUrl) {
+      return (
+        <div className="case-detail-page-image case-detail-page-video-wrap">
+          {backButton}
+          {youtubeShown ? (
+            <iframe
+              className="case-detail-page-video case-detail-page-youtube"
+              src={`${youtubeEmbedUrl}?autoplay=1`}
+              title="YouTube video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          ) : (
+            <>
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt=""
+                  className="case-detail-page-image-element case-detail-page-video-poster"
+                />
+              )}
+              <button
+                type="button"
+                className="case-detail-page-play-button"
+                onClick={handlePlay}
+                aria-label="Play video"
+              >
+                <svg
+                  width="80"
+                  height="80"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </button>
+            </>
+          )}
+        </div>
+      );
+    }
+    return (
+      <div className="case-detail-page-image case-detail-page-video-wrap">
+        {backButton}
+        <video
+          ref={videoRef}
+          className="case-detail-page-video"
+          src={videoUrl}
+          poster={imageUrl || undefined}
+          controls={isPlaying}
+          playsInline
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onEnded={() => setIsPlaying(false)}
+        />
+        {!isPlaying && (
+          <button
+            type="button"
+            className="case-detail-page-play-button"
+            onClick={handlePlay}
+            aria-label="Play video"
+          >
+            <svg
+              width="80"
+              height="80"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  if (imageUrl) {
+    return (
+      <div className="case-detail-page-image">
+        {backButton}
+        <img
+          src={imageUrl}
+          alt={storyTitle}
+          className="case-detail-page-image-element"
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.display = "none";
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="case-detail-page-image">
+      {backButton}
+      <div className="case-detail-page-placeholder">Before/After</div>
+    </div>
+  );
+}
+
 function renderCaseDetailPage(
   caseItem: CaseItem,
   onBack: () => void,
   _userState: AppState,
 ): JSX.Element {
-  const escapeHtml = (text: string | undefined): string => {
-    if (!text) return "";
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
-  };
-
-  const imageUrl = caseItem.beforeAfter || caseItem.thumbnail;
   const storyTitle = caseItem.headline || caseItem.name || "Case";
   const casePatient = caseItem.patient;
   const caseStory = caseItem.story;
@@ -768,53 +1163,10 @@ function renderCaseDetailPage(
 
   return (
     <>
-      {imageUrl ? (
-        <div className="case-detail-page-image">
-          <button className="case-detail-back-button" onClick={onBack}>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <img
-            src={imageUrl}
-            alt={storyTitle}
-            className="case-detail-page-image-element"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
-          />
-        </div>
-      ) : (
-        <div className="case-detail-page-image">
-          <button className="case-detail-back-button" onClick={onBack}>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <div className="case-detail-page-placeholder">Before/After</div>
-        </div>
-      )}
+      <CaseDetailMedia caseItem={caseItem} onBack={onBack} storyTitle={storyTitle} />
 
       <div className="case-detail-page-body">
-        <h1 className="case-detail-page-title">{escapeHtml(storyTitle)}</h1>
+        <h1 className="case-detail-page-title">{storyTitle}</h1>
 
         {(() => {
           const patientAge = (caseItem as any).patientAge;
@@ -827,17 +1179,17 @@ function renderCaseDetailPage(
                 <div className="case-detail-page-meta-line">
                   {patientAge && (
                     <span className="case-detail-page-meta-item">
-                      {escapeHtml(`${patientAge} years old`)}
+                      {patientAge} years old
                     </span>
                   )}
                   {caseSkinType && (
                     <span className="case-detail-page-meta-item">
-                      Skin Type: {escapeHtml(caseSkinType)}
+                      Skin Type: {caseSkinType}
                     </span>
                   )}
                   {caseSkinTone && (
                     <span className="case-detail-page-meta-item">
-                      Skin Tone: {escapeHtml(caseSkinTone)}
+                      Skin Tone: {caseSkinTone}
                     </span>
                   )}
                 </div>
@@ -851,7 +1203,7 @@ function renderCaseDetailPage(
           <div className="case-detail-page-section case-detail-page-story">
             <h3 className="case-detail-page-section-title">Patient Story</h3>
             <p className="case-detail-page-story-content">
-              {escapeHtml(caseStory)}
+              {caseStory}
             </p>
           </div>
         )}
@@ -862,7 +1214,7 @@ function renderCaseDetailPage(
             <div className="case-detail-page-tags">
               {solvedIssues.map((issue, idx) => (
                 <span key={idx} className="case-detail-page-tag">
-                  {escapeHtml(String(issue))}
+                  {String(issue)}
                 </span>
               ))}
             </div>
@@ -875,7 +1227,7 @@ function renderCaseDetailPage(
               Treatment Details
             </h3>
             <p className="case-detail-page-story-content">
-              {escapeHtml(caseTreatment)}
+              {caseTreatment}
             </p>
           </div>
         )}

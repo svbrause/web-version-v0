@@ -7,6 +7,7 @@ import type {
   NotSureQuestion,
   FormStep,
 } from "../types";
+import { WELLNEST_WELLNESS_GOALS } from "./wellnestWellnessGoals";
 
 export const FORM_STEPS: FormStep[] = [
   "concerns",
@@ -16,6 +17,21 @@ export const FORM_STEPS: FormStep[] = [
   "skinTone",
   "ethnicBackground",
 ];
+
+/** Wellnest: no areas step (only "General wellness" applies); adds wellness step after age. */
+const FORM_STEPS_WELLNEST: FormStep[] = [
+  "concerns",
+  "age",
+  "wellness",
+  "skinType",
+  "skinTone",
+  "ethnicBackground",
+];
+
+/** Returns form steps for the current practice (wellnest has an extra "wellness" step). */
+export function getFormStepsForPractice(practice: string | null): FormStep[] {
+  return practice === "wellnest" ? FORM_STEPS_WELLNEST : FORM_STEPS;
+}
 export const REQUIRED_STEPS: FormStep[] = [
   "concerns",
   "areas",
@@ -305,7 +321,34 @@ export const HIGH_LEVEL_CONCERNS: Concern[] = [
   },
 ];
 
+/** Returns concerns (aesthetic) or Wellnest wellness goals based on practice. */
+export function getConcernsForPractice(practice: string | null): Concern[] {
+  return practice === "wellnest" ? WELLNEST_WELLNESS_GOALS : HIGH_LEVEL_CONCERNS;
+}
+
+/** Resolve concern or wellnest goal by id (for display names in results, leads, etc.). */
+export function getConcernById(concernId: string): Concern | undefined {
+  return (
+    HIGH_LEVEL_CONCERNS.find((c) => c.id === concernId) ??
+    WELLNEST_WELLNESS_GOALS.find((c) => c.id === concernId)
+  );
+}
+
+/** Resolve concern or wellnest goal by name (e.g. for Airtable/deep-link mapping). */
+export function getConcernByName(name: string): Concern | undefined {
+  const trimmed = (name || "").trim();
+  return (
+    HIGH_LEVEL_CONCERNS.find((c) => c.name === trimmed) ??
+    WELLNEST_WELLNESS_GOALS.find((c) => c.name === trimmed)
+  );
+}
+
+/** Max number of concerns/goals user can select. Wellnest allows more (wellness multi-select). */
+export const MAX_SELECTED_CONCERNS = 3;
+export const MAX_SELECTED_CONCERNS_WELLNEST = 5;
+
 export const AREAS_OF_CONCERN: Area[] = [
+  { id: "general-wellness", name: "General wellness" },
   { id: "full-face", name: "Full Face" },
   { id: "forehead", name: "Forehead" },
   { id: "eyes", name: "Eyes" },

@@ -1,5 +1,6 @@
 import type { CaseItem, AppState } from '../types';
 import { HIGH_LEVEL_CONCERNS, AREAS_OF_CONCERN } from '../constants/data';
+import { WELLNEST_WELLNESS_GOALS, isWellnestWellnessGoalId } from '../constants/wellnestWellnessGoals';
 
 // Get CASE_CATEGORY_MAPPING from window if available
 let CASE_CATEGORY_MAPPING: Record<string, string[]> = {};
@@ -141,21 +142,39 @@ export function calculateMatchingScore(caseItem: CaseItem, userSelections: Parti
   // Category match (40 points max) - with minimum guarantee
   if (userSelections.selectedConcerns && userSelections.selectedConcerns.length > 0) {
     const caseNameLower = (caseItem.name || "").toLowerCase();
-    const matchingCriteriaLower = ((caseItem.matchingCriteria || []) as string[]).map(c => 
-      typeof c === 'string' ? c.toLowerCase() : String(c || '').toLowerCase()
+    const matchingCriteriaLower = ((caseItem.matchingCriteria || []) as string[]).map(c =>
+      typeof c === "string" ? c.toLowerCase() : String(c || "").toLowerCase()
     );
-    
+    const caseSearchText =
+      [
+        caseItem.name,
+        (caseItem as any).headline,
+        (caseItem as any).treatment,
+        caseItem.story,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
     let categoryMatches = 0;
-    userSelections.selectedConcerns.forEach(concernId => {
-      const category = HIGH_LEVEL_CONCERNS.find(c => c.id === concernId);
+    userSelections.selectedConcerns.forEach((concernId) => {
+      const category =
+        HIGH_LEVEL_CONCERNS.find((c) => c.id === concernId) ??
+        WELLNEST_WELLNESS_GOALS.find((c) => c.id === concernId);
       if (category) {
-        const nameMatch = category.mapsToPhotos?.some(keyword => 
+        const isWellnest = isWellnestWellnessGoalId(concernId);
+        const nameMatch = category.mapsToPhotos?.some((keyword) =>
           caseNameLower.includes(keyword.toLowerCase())
         );
-        const criteriaMatch = category.mapsToPhotos?.some(keyword =>
-          matchingCriteriaLower.some(criteria => criteria.includes(keyword.toLowerCase()))
+        const criteriaMatch = category.mapsToPhotos?.some((keyword) =>
+          matchingCriteriaLower.some((criteria) => criteria.includes(keyword.toLowerCase()))
         );
-        if (nameMatch || criteriaMatch) {
+        const wellnestMatch =
+          isWellnest &&
+          category.mapsToPhotos?.some((keyword) =>
+            caseSearchText.includes(keyword.toLowerCase())
+          );
+        if (nameMatch || criteriaMatch || wellnestMatch) {
           categoryMatches++;
         }
       }
@@ -311,37 +330,46 @@ export function getCaseRelevanceBreakdown(caseItem: CaseItem, userSelections: Pa
       typeof issue === 'string' ? issue.toLowerCase() : String(issue || '').toLowerCase()
     );
     
+    const caseSearchText = [
+      caseItem.name,
+      (caseItem as any).headline,
+      (caseItem as any).treatment,
+      caseItem.story,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
     const matchingConcerns: string[] = [];
-    userSelections.selectedConcerns.forEach(concernId => {
-      const category = HIGH_LEVEL_CONCERNS.find(c => c.id === concernId);
+    userSelections.selectedConcerns.forEach((concernId) => {
+      const category =
+        HIGH_LEVEL_CONCERNS.find((c) => c.id === concernId) ??
+        WELLNEST_WELLNESS_GOALS.find((c) => c.id === concernId);
       if (category) {
-        // Check case name
-        const nameMatch = category.mapsToPhotos?.some(keyword => 
+        const nameMatch = category.mapsToPhotos?.some((keyword) =>
           caseNameLower.includes(keyword.toLowerCase())
         );
-        // Check matching criteria
-        const criteriaMatch = category.mapsToPhotos?.some(keyword =>
-          matchingCriteriaLower.some(criteria => criteria.includes(keyword.toLowerCase()))
+        const criteriaMatch = category.mapsToPhotos?.some((keyword) =>
+          matchingCriteriaLower.some((criteria) => criteria.includes(keyword.toLowerCase()))
         );
-        // Check solved issues (this shows what the case patient was interested in)
-        const solvedMatch = category.mapsToPhotos?.some(keyword => {
+        const solvedMatch = category.mapsToPhotos?.some((keyword) => {
           const keywordLower = keyword.toLowerCase();
-          return solvedIssuesLower.some(issue => issue.includes(keywordLower));
+          return solvedIssuesLower.some((issue) => issue.includes(keywordLower));
         });
-        // Check specific issues mapping
-        const specificIssuesMatch = category.mapsToSpecificIssues?.some(issue => {
+        const specificIssuesMatch = category.mapsToSpecificIssues?.some((issue) => {
           const issueLower = issue.toLowerCase();
-          return caseNameLower.includes(issueLower) ||
-                 matchingCriteriaLower.some(c => c.includes(issueLower)) ||
-                 solvedIssuesLower.some(s => s.includes(issueLower));
+          return (
+            caseNameLower.includes(issueLower) ||
+            matchingCriteriaLower.some((c) => c.includes(issueLower)) ||
+            solvedIssuesLower.some((s) => s.includes(issueLower))
+          );
         });
-        
-        if (nameMatch || criteriaMatch || solvedMatch || specificIssuesMatch) {
+        const wellnestMatch = isWellnestWellnessGoalId(concernId) && category.mapsToPhotos?.some((keyword) => caseSearchText.includes(keyword.toLowerCase()));
+        if (nameMatch || criteriaMatch || solvedMatch || specificIssuesMatch || wellnestMatch) {
           matchingConcerns.push(category.name);
         }
       }
     });
-    
+
     if (matchingConcerns.length > 0) {
       if (matchingConcerns.length === 1) {
         breakdown.push({ category: 'Concerns', explanation: `You both share an interest in addressing ${matchingConcerns[0].toLowerCase()}` });
@@ -384,26 +412,37 @@ export function getCaseRelevanceExplanation(caseItem: CaseItem, userSelections: 
   // Check concern matches
   if (userSelections.selectedConcerns && userSelections.selectedConcerns.length > 0) {
     const caseNameLower = (caseItem.name || "").toLowerCase();
-    const matchingCriteriaLower = ((caseItem.matchingCriteria || []) as string[]).map(c => 
-      typeof c === 'string' ? c.toLowerCase() : String(c || '').toLowerCase()
+    const matchingCriteriaLower = ((caseItem.matchingCriteria || []) as string[]).map((c) =>
+      typeof c === "string" ? c.toLowerCase() : String(c || "").toLowerCase()
     );
-    
+    const caseSearchText = [
+      caseItem.name,
+      (caseItem as any).headline,
+      (caseItem as any).treatment,
+      caseItem.story,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
     const matchingConcerns: string[] = [];
-    userSelections.selectedConcerns.forEach(concernId => {
-      const category = HIGH_LEVEL_CONCERNS.find(c => c.id === concernId);
+    userSelections.selectedConcerns.forEach((concernId) => {
+      const category =
+        HIGH_LEVEL_CONCERNS.find((c) => c.id === concernId) ??
+        WELLNEST_WELLNESS_GOALS.find((c) => c.id === concernId);
       if (category) {
-        const nameMatch = category.mapsToPhotos?.some(keyword => 
+        const nameMatch = category.mapsToPhotos?.some((keyword) =>
           caseNameLower.includes(keyword.toLowerCase())
         );
-        const criteriaMatch = category.mapsToPhotos?.some(keyword =>
-          matchingCriteriaLower.some(criteria => criteria.includes(keyword.toLowerCase()))
+        const criteriaMatch = category.mapsToPhotos?.some((keyword) =>
+          matchingCriteriaLower.some((criteria) => criteria.includes(keyword.toLowerCase()))
         );
-        if (nameMatch || criteriaMatch) {
+        const wellnestMatch = isWellnestWellnessGoalId(concernId) && category.mapsToPhotos?.some((keyword) => caseSearchText.includes(keyword.toLowerCase()));
+        if (nameMatch || criteriaMatch || wellnestMatch) {
           matchingConcerns.push(category.name);
         }
       }
     });
-    
+
     if (matchingConcerns.length > 0) {
       if (matchingConcerns.length === 1) {
         reasons.push(`addresses your ${matchingConcerns[0]} concern`);
@@ -520,15 +559,38 @@ export function getMatchingCasesForConcern(
     return [];
   }
 
-  const concern = HIGH_LEVEL_CONCERNS.find(c => c.id === concernId);
+  const concern = HIGH_LEVEL_CONCERNS.find(c => c.id === concernId) ?? WELLNEST_WELLNESS_GOALS.find(c => c.id === concernId);
   if (!concern) return [];
+
+  const isWellnestGoal = isWellnestWellnessGoalId(concernId);
 
   const casesWithScores = caseData.map(caseItem => {
     const score = calculateMatchingScore(caseItem, userSelections);
     return { ...caseItem, matchingScore: score };
   });
 
-const filtered = casesWithScores.filter(caseItem => {
+  const filtered = casesWithScores.filter(caseItem => {
+    // Wellnest: match by keyword in name, headline, treatment, story (no compound names)
+    if (isWellnestGoal) {
+      const searchText = [
+        caseItem.name,
+        (caseItem as any).headline,
+        (caseItem as any).treatment,
+        caseItem.story,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      const wellnestMatch = concern.mapsToPhotos?.some((keyword) =>
+        searchText.includes(keyword.toLowerCase())
+      );
+      if (wellnestMatch) {
+        // Skip area filtering for wellnest (peptide cases may not have areas)
+        return true;
+      }
+      return false;
+    }
+
     // FIRST: Check if case has explicit concern IDs from DB (e.g. Airtable "Case Concerns")
     const dbConcernIds = caseItem.concernIds;
     const concernMatchesViaDb = !!(dbConcernIds && Array.isArray(dbConcernIds) && dbConcernIds.includes(concernId));
@@ -886,6 +948,11 @@ export function getAvailableAreasForConcerns(
     // If no concerns selected, show all areas
     console.log('📊 getAvailableAreasForConcerns: No concerns selected, showing all areas');
     return AREAS_OF_CONCERN.map(a => a.id);
+  }
+
+  // Wellnest: only "General wellness" area for peptide flow
+  if (selectedConcerns.every((id) => isWellnestWellnessGoalId(id))) {
+    return ["general-wellness"];
   }
 
   // If caseData is empty, we can't filter - this should be handled by the caller

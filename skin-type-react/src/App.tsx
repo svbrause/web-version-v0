@@ -8,6 +8,7 @@ import AgeScreen from "./components/screens/AgeScreen";
 import SkinTypeScreen from "./components/screens/SkinTypeScreen";
 import SkinToneScreen from "./components/screens/SkinToneScreen";
 import EthnicBackgroundScreen from "./components/screens/EthnicBackgroundScreen";
+import WellnessStepScreen from "./components/screens/WellnessStepScreen";
 import CelebrationScreen from "./components/screens/CelebrationScreen";
 import LeadCaptureScreen from "./components/screens/LeadCaptureScreen";
 import ResultsScreen from "./components/screens/ResultsScreen";
@@ -17,12 +18,13 @@ import OnboardingScreen from "./components/screens/OnboardingScreen";
 import NextButton from "./components/NextButton";
 import ConsultationModal from "./components/ConsultationModal";
 import WellnessQuizModal from "./components/WellnessQuizModal";
-import { FORM_STEPS, HIGH_LEVEL_CONCERNS } from "./constants/data";
-import { trackEvent } from "./utils/analytics";
 import {
-  getPracticeFromConfig,
-  getPracticeDisplayName,
-} from "./components/Logo";
+  getFormStepsForPractice,
+  getConcernById,
+  getConcernByName,
+} from "./constants/data";
+import { getPracticeFromConfig, getPracticeDisplayName } from "./components/Logo";
+import { trackEvent } from "./utils/analytics";
 import { isSurgicalCase, isGloballyExcludedCase } from "./utils/caseMatching";
 import { getBackendBaseUrl } from "./config/backend";
 import { getProviderIdForPractice } from "./config/providerId";
@@ -31,6 +33,8 @@ import {
   filterPhotoRecordsByTreatmentIds,
 } from "./utils/providerTreatmentFilter";
 import { isTreatmentOfferedByTheTreatment } from "./config/theTreatmentOfferings";
+import { isCaseForWellnest } from "./config/wellnestPeptideOfferings";
+import { WELLNEST_SAMPLE_CASES } from "./data/wellnestSampleCases";
 import "./App.css";
 
 function AppContent() {
@@ -103,6 +107,17 @@ function AppContent() {
             console.log(
               `✓ The Treatment: filtered to offered treatments: ${before} → ${nonSurgicalData.length} cases`
             );
+          }
+          // Wellnest (peptide version): only show cases matching indication keywords (no compound names)
+          if (practice === "wellnest") {
+            const before = nonSurgicalData.length;
+            nonSurgicalData = nonSurgicalData.filter((caseItem: any) =>
+              isCaseForWellnest(caseItem)
+            );
+            console.log(
+              `✓ Wellnest: filtered to peptide/indication cases: ${before} → ${nonSurgicalData.length} cases`
+            );
+            nonSurgicalData = [...nonSurgicalData, ...WELLNEST_SAMPLE_CASES];
           }
           setCaseData(nonSurgicalData);
           setIsLoading(false);
@@ -367,9 +382,9 @@ function AppContent() {
               const ids = strings
                 .map((v) => {
                   const trimmed = (v || "").trim();
-                  const byName = HIGH_LEVEL_CONCERNS.find((c) => c.name === trimmed);
+                  const byName = getConcernByName(trimmed);
                   if (byName) return byName.id;
-                  const byId = HIGH_LEVEL_CONCERNS.find((c) => c.id === trimmed);
+                  const byId = getConcernById(trimmed);
                   if (byId) return byId.id;
                   return null;
                 })
@@ -394,6 +409,18 @@ function AppContent() {
           console.log(
             `✓ The Treatment: filtered to offered treatments: ${before} → ${nonSurgicalData.length} cases`
           );
+        }
+        // Wellnest (peptide version): only show cases matching indication keywords
+        if (practice === "wellnest") {
+          const before = nonSurgicalData.length;
+          nonSurgicalData = nonSurgicalData.filter((caseItem: any) =>
+            isCaseForWellnest(caseItem)
+          );
+          console.log(
+            `✓ Wellnest: filtered to peptide/indication cases: ${before} → ${nonSurgicalData.length} cases`
+          );
+          // Ensure wellnest always has sample cases to show when Airtable has none
+          nonSurgicalData = [...nonSurgicalData, ...WELLNEST_SAMPLE_CASES];
         }
 
         setCaseData(nonSurgicalData);
@@ -429,6 +456,10 @@ function AppContent() {
               isTreatmentOfferedByTheTreatment(c)
             );
           }
+          if (getPracticeFromConfig() === "wellnest") {
+            final = final.filter((c: any) => isCaseForWellnest(c));
+            final = [...final, ...WELLNEST_SAMPLE_CASES];
+          }
           setCaseData(final);
           setIsLoading(false);
           console.log(
@@ -453,6 +484,8 @@ function AppContent() {
     };
   }, [caseData.length, setCaseData, setIsLoading]);
 
+  const formSteps = getFormStepsForPractice(getPracticeFromConfig());
+
   // Calculate which screen to show based on current step
   const getCurrentScreen = () => {
     // Show landing screen first (currentStep === -1)
@@ -472,21 +505,21 @@ function AppContent() {
       return <SuggestionDetailScreen />;
     }
     // After all form steps (including review), show celebration
-    if (state.currentStep === FORM_STEPS.length) {
+    if (state.currentStep === formSteps.length) {
       return <CelebrationScreen />;
     }
     // After celebration, show lead capture
-    if (state.currentStep === FORM_STEPS.length + 1) {
+    if (state.currentStep === formSteps.length + 1) {
       return <LeadCaptureScreen />;
     }
     // After lead capture, show results
-    if (state.currentStep >= FORM_STEPS.length + 2) {
+    if (state.currentStep >= formSteps.length + 2) {
       return <ResultsScreen />;
     }
 
     // Show form steps (including review)
-    if (state.currentStep >= 0 && state.currentStep < FORM_STEPS.length) {
-      const currentStepName = FORM_STEPS[state.currentStep];
+    if (state.currentStep >= 0 && state.currentStep < formSteps.length) {
+      const currentStepName = formSteps[state.currentStep];
       switch (currentStepName) {
         case "concerns":
           return <ConcernsScreen />;
@@ -494,6 +527,8 @@ function AppContent() {
           return <AreasScreen />;
         case "age":
           return <AgeScreen />;
+        case "wellness":
+          return <WellnessStepScreen />;
         case "skinType":
           return <SkinTypeScreen />;
         case "skinTone":
@@ -518,11 +553,11 @@ function AppContent() {
       ? "onboarding"
       : state.viewingSuggestionDetail
       ? "suggestionDetail"
-      : state.currentStep < FORM_STEPS.length
-      ? FORM_STEPS[state.currentStep]
-      : state.currentStep === FORM_STEPS.length
+      : state.currentStep < formSteps.length
+      ? formSteps[state.currentStep]
+      : state.currentStep === formSteps.length
       ? "celebration"
-      : state.currentStep === FORM_STEPS.length + 1
+      : state.currentStep === formSteps.length + 1
       ? "leadCapture"
       : "results";
   const showHeader =
@@ -530,7 +565,7 @@ function AppContent() {
       currentStepName
     ) &&
     state.currentStep >= 0 &&
-    state.currentStep < FORM_STEPS.length + 3;
+    state.currentStep < formSteps.length + 3;
 
   // Reset focus when step/screen changes so buttons don't stay in hover/selected (gray) state
   useEffect(() => {

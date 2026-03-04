@@ -19,7 +19,9 @@ export default function LandingScreen() {
   const heroImageSrc =
     practice === "the-treatment"
       ? "/the_treatment/IMG_2476 2.png"
-      : "/1752520815-uneven-skin-tone-banner 1 (1).png";
+      : practice === "wellnest"
+        ? "/wellnest/Dr-Reddy-qr-code.png"
+        : "/1752520815-uneven-skin-tone-banner 1 (1).png";
 
   return (
     <div className="landing-screen">

@@ -11,6 +11,12 @@ interface OfferCardProps {
   giftVariant?: "icon" | "3d";
   /** When set, show this image as the gift (e.g. onboarding slide 3). Takes precedence over giftVariant. */
   giftImageSrc?: string;
+  /** When true and practice is Unique, expanded variant shows "Excludes injectables…" in subtext (e.g. Request Consult modal only, not onboarding). */
+  showExclusionDisclaimer?: boolean;
+  /** When true, expanded variant subtext is just "Terms apply." (e.g. onboarding). */
+  subtextOnlyTermsApply?: boolean;
+  /** When true, expanded variant shows icon above the title (e.g. onboarding). */
+  iconAboveText?: boolean;
 }
 
 // 3D animated gift box for onboarding "Unlock Exclusive Offers" — box + ribbon + bow, gentle float
@@ -64,6 +70,9 @@ export default function OfferCard({
   variant = "compact",
   giftVariant = "icon",
   giftImageSrc,
+  showExclusionDisclaimer = false,
+  subtextOnlyTermsApply = false,
+  iconAboveText = false,
 }: OfferCardProps) {
   const practice = getPracticeFromConfig();
   const isUnique = practice === "unique";
@@ -73,9 +82,15 @@ export default function OfferCard({
   const use3DGift =
     isExpanded && showPresentIcon && !giftImageSrc && giftVariant === "3d";
 
-  const expandedSubtext = isUnique
-    ? "Excludes tox & filler. Limited time — apply at your consultation."
-    : "Limited time offer — apply at your consultation";
+  const expandedSubtext = subtextOnlyTermsApply
+    ? "Limited time offers. Terms apply."
+    : isUnique && showExclusionDisclaimer
+      ? "Excludes injectables (neurotoxin and filler) and skincare products. Limited time — apply at your consultation. Terms apply."
+      : "Limited time offer — apply at your consultation. Terms apply.";
+
+  const expandedTitle = isUnique
+    ? "$50 off new treatments"
+    : "$50 off any new treatments";
 
   if (isExpanded) {
     return (
@@ -94,41 +109,71 @@ export default function OfferCard({
           ...style,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-            flexWrap: "wrap",
-          }}
-        >
-          {showPresentIcon &&
-            (useGiftImage ? (
-              <img
-                src={giftImageSrc}
-                alt=""
-                className="offer-card-gift-image"
-                aria-hidden
-              />
-            ) : use3DGift ? (
-              <Gift3D size={56} />
-            ) : (
-              <PresentIcon size={20} color="var(--pink-baby)" />
-            ))}
-          <span
+        {iconAboveText ? (
+          <>
+            {showPresentIcon &&
+              (useGiftImage ? (
+                <img
+                  src={giftImageSrc}
+                  alt=""
+                  className="offer-card-gift-image"
+                  aria-hidden
+                />
+              ) : use3DGift ? (
+                <Gift3D size={56} />
+              ) : (
+                <PresentIcon size={20} color="var(--pink-baby)" />
+              ))}
+            <span
+              style={{
+                fontSize: "16px",
+                fontWeight: "600",
+                color: "var(--text-primary)",
+                lineHeight: "1.3",
+                fontFamily: "Montserrat, sans-serif",
+                textAlign: "center",
+              }}
+            >
+              {expandedTitle}
+            </span>
+          </>
+        ) : (
+          <div
             style={{
-              fontSize: "16px",
-              fontWeight: "600",
-              color: "var(--text-primary)",
-              lineHeight: "1.3",
-              fontFamily: "Montserrat, sans-serif",
-              textAlign: "center",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+              flexWrap: "wrap",
             }}
           >
-            $50 off any new treatments
-          </span>
-        </div>
+            {showPresentIcon &&
+              (useGiftImage ? (
+                <img
+                  src={giftImageSrc}
+                  alt=""
+                  className="offer-card-gift-image"
+                  aria-hidden
+                />
+              ) : use3DGift ? (
+                <Gift3D size={56} />
+              ) : (
+                <PresentIcon size={20} color="var(--pink-baby)" />
+              ))}
+            <span
+              style={{
+                fontSize: "16px",
+                fontWeight: "600",
+                color: "var(--text-primary)",
+                lineHeight: "1.3",
+                fontFamily: "Montserrat, sans-serif",
+                textAlign: "center",
+              }}
+            >
+              {expandedTitle}
+            </span>
+          </div>
+        )}
         <p
           style={{
             fontSize: "13px",
@@ -148,6 +193,9 @@ export default function OfferCard({
   const compactText = isUnique
     ? "$50 off new treatments"
     : "$50 off any new treatments";
+  const compactExclusion = isUnique
+    ? "Excludes injectables (neurotoxin & filler) and skincare"
+    : null;
 
   return (
     <div
@@ -155,29 +203,53 @@ export default function OfferCard({
       style={{
         background: "#222222",
         borderRadius: "16px",
-        padding: "6px 14px",
+        padding: compactExclusion ? "6px 14px 8px" : "6px 14px",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: "10px",
+        gap: "4px",
         minWidth: 0,
         ...style,
       }}
     >
-      {showPresentIcon && <PresentIcon />}
       <div
         style={{
-          fontSize: "15px",
-          fontWeight: "700",
-          color: "#ffffff",
-          lineHeight: "1.3",
-          fontFamily: "Montserrat, sans-serif",
-          textAlign: "center",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "10px",
         }}
       >
-        {compactText}
+        {showPresentIcon && <PresentIcon />}
+        <div
+          style={{
+            fontSize: "15px",
+            fontWeight: "700",
+            color: "#ffffff",
+            lineHeight: "1.3",
+            fontFamily: "Montserrat, sans-serif",
+            textAlign: "center",
+          }}
+        >
+          {compactText}
+        </div>
       </div>
+      {compactExclusion && (
+        <div
+          style={{
+            fontSize: "11px",
+            fontWeight: "500",
+            color: "rgba(255,255,255,0.85)",
+            lineHeight: "1.2",
+            fontFamily: "Montserrat, sans-serif",
+            textAlign: "center",
+          }}
+        >
+          {compactExclusion}
+        </div>
+      )}
       {/* No button inside — parent places "Request Consult" below */}
     </div>
   );

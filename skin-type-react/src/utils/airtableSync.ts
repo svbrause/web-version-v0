@@ -2,7 +2,7 @@
 // Uses debouncing and final sync on exit to balance efficiency and data integrity
 
 import type { CaseItem } from "../types";
-import { HIGH_LEVEL_CONCERNS } from "../constants/data";
+import { getConcernById } from "../constants/data";
 import { getBackendBaseUrl } from "../config/backend";
 
 interface SyncData {
@@ -173,7 +173,7 @@ async function performSync(): Promise<void> {
     if (sync.concernsExploredIds.length > 0) {
       const concernNames = sync.concernsExploredIds
         .map((id) => {
-          const concern = HIGH_LEVEL_CONCERNS.find((c) => c.id === id);
+          const concern = getConcernById(id);
           return concern ? concern.name : id;
         })
         .filter(Boolean);
@@ -284,7 +284,7 @@ export function forceSyncNow(caseData: CaseItem[]): void {
       if (pendingSync.concernsExploredIds.length > 0) {
         const concernNames = pendingSync.concernsExploredIds
           .map((id) => {
-            const concern = HIGH_LEVEL_CONCERNS.find((c) => c.id === id);
+            const concern = getConcernById(id);
             return concern ? concern.name : id;
           })
           .filter(Boolean);

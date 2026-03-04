@@ -1,6 +1,6 @@
 import "../App.css";
 
-export type PracticeName = "lakeshore" | "unique" | "admin" | "the-treatment" | "buford";
+export type PracticeName = "lakeshore" | "unique" | "admin" | "the-treatment" | "buford" | "wellnest";
 
 interface LogoProps {
   practice?: PracticeName;
@@ -24,6 +24,7 @@ export function getPracticeFromConfig(): PracticeName | null {
   if (basePath === "the-treatment") return "the-treatment";
   if (basePath === "unique") return "unique";
   if (basePath === "buford") return "buford";
+  if (basePath === "wellnest") return "wellnest";
 
   // 2. "/" with query: ?practice=unique|lakeshore|the-treatment|buford (same result as path)
   if (pathname === "/") {
@@ -31,7 +32,8 @@ export function getPracticeFromConfig(): PracticeName | null {
       practiceParam === "lakeshore" ||
       practiceParam === "unique" ||
       practiceParam === "the-treatment" ||
-      practiceParam === "buford"
+      practiceParam === "buford" ||
+      practiceParam === "wellnest"
     )
       return practiceParam as PracticeName;
     return null; // bare "/" → 404
@@ -44,7 +46,8 @@ export function getPracticeFromConfig(): PracticeName | null {
     vitePractice === "unique" ||
     vitePractice === "admin" ||
     vitePractice === "the-treatment" ||
-    vitePractice === "buford"
+    vitePractice === "buford" ||
+    vitePractice === "wellnest"
   ) {
     return vitePractice as PracticeName;
   }
@@ -54,7 +57,8 @@ export function getPracticeFromConfig(): PracticeName | null {
     windowPractice === "unique" ||
     windowPractice === "admin" ||
     windowPractice === "the-treatment" ||
-    windowPractice === "buford"
+    windowPractice === "buford" ||
+    windowPractice === "wellnest"
   ) {
     return windowPractice as PracticeName;
   }
@@ -68,6 +72,7 @@ export function getPracticeDisplayName(practice: PracticeName): string {
   if (practice === "admin") return "Ponce";
   if (practice === "the-treatment") return "The Treatment Skin Boutique";
   if (practice === "buford") return "Beauty by Buford";
+  if (practice === "wellnest") return "Wellnest";
   return "Unique Aesthetics & Wellness";
 }
 
@@ -79,6 +84,7 @@ export function getPracticeHomeUrl(): string {
   if (practice === "admin") return "https://www.ponce.ai/";
   if (practice === "the-treatment") return "https://www.getthetreatment.com/";
   if (practice === "buford") return "https://www.beautybybuford.com/";
+  if (practice === "wellnest") return "/wellnest";
   return "https://www.myuniqueaesthetics.com/";
 }
 
@@ -119,6 +125,15 @@ export default function Logo({ practice, className = "" }: LogoProps) {
         src="/ponce-logo.png"
         alt="Ponce"
         className={`practice-logo admin-logo ${className}`}
+      />
+    );
+  }
+  if (practiceName === "wellnest") {
+    return (
+      <img
+        src="/wellnest/nav-logo-5.svg"
+        alt="Wellnest"
+        className={`practice-logo wellnest-logo ${className}`}
       />
     );
   }
