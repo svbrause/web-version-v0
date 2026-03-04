@@ -71,9 +71,10 @@ export default function OnboardingScreen() {
         ? "/onboarding 1 image.png"
         : "/onboarding 1 image.png";
 
+  const isWellness = practice === "wellnest";
   const slides = [
     {
-      title: "Share Your Aesthetic Goals",
+      title: isWellness ? "Share Your Wellness Goals" : "Share Your Aesthetic Goals",
       description: "Quick questions to understand what matters most to you",
       imageSrc: firstSlideImageSrc,
       imageClassName:
@@ -84,7 +85,9 @@ export default function OnboardingScreen() {
     },
     {
       title: "See Real Patient Results",
-      description: "Review real medical aesthetic cases tailored to your needs",
+      description: isWellness
+        ? "Review real wellness cases tailored to your needs"
+        : "Review real medical aesthetic cases tailored to your needs",
       showCasePreviews: true,
       buttonText: "Next",
     },
