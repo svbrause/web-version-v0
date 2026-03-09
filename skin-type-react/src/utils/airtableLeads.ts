@@ -463,7 +463,7 @@ export async function updateLeadInAirtable(
       }
     }
 
-    // Concerns Explored
+    // Concerns Explored (send as string to avoid INVALID_VALUE_FOR_COLUMN when backend or Airtable stringifies arrays)
     if (concernsExploredIds.length > 0) {
       const concernNames = concernsExploredIds
         .map((id) => {
@@ -472,7 +472,7 @@ export async function updateLeadInAirtable(
         })
         .filter(Boolean);
       if (concernNames.length > 0) {
-        fields["Concerns Explored"] = concernNames;
+        fields["Concerns Explored"] = concernNames.join(", ");
       }
     }
 

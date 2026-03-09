@@ -169,7 +169,7 @@ async function performSync(): Promise<void> {
       }
     }
 
-    // Concerns Explored (multiselect)
+    // Concerns Explored (send as string to avoid INVALID_VALUE_FOR_COLUMN when backend or Airtable stringifies arrays)
     if (sync.concernsExploredIds.length > 0) {
       const concernNames = sync.concernsExploredIds
         .map((id) => {
@@ -179,7 +179,7 @@ async function performSync(): Promise<void> {
         .filter(Boolean);
 
       if (concernNames.length > 0) {
-        fields["Concerns Explored"] = concernNames;
+        fields["Concerns Explored"] = concernNames.join(", ");
       }
     }
 
@@ -290,7 +290,7 @@ export function forceSyncNow(caseData: CaseItem[]): void {
           .filter(Boolean);
 
         if (concernNames.length > 0) {
-          fields["Concerns Explored"] = concernNames;
+          fields["Concerns Explored"] = concernNames.join(", ");
         }
       }
 
