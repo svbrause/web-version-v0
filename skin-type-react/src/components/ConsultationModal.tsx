@@ -12,6 +12,7 @@ import {
   updateLeadInAirtable,
 } from "../utils/airtableLeads";
 import { storeLeadRecordId, getLeadRecordId } from "../utils/airtableSync";
+import { logActionToAirtable } from "../utils/actionLog";
 import { getPracticeFromConfig, getPracticeDisplayName } from "./Logo";
 import { getLeadSourceFromUrl } from "../utils/leadSource";
 import OfferCard from "./OfferCard";
@@ -239,6 +240,9 @@ export default function ConsultationModal({
           console.log(
             "✅ Consultation request updated in Airtable successfully",
           );
+          logActionToAirtable(email, "offer_claimed", {
+            practice: getPracticeFromConfig(),
+          });
           await sendOfferEmail(email);
         } else {
           console.warn(
@@ -266,6 +270,9 @@ export default function ConsultationModal({
             "✅ Consultation request submitted to Airtable successfully",
           );
           storeLeadRecordId(result.record.id);
+          logActionToAirtable(email, "offer_claimed", {
+            practice: getPracticeFromConfig(),
+          });
           await sendOfferEmail(email);
         } else {
           console.warn(

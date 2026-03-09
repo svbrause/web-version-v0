@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 import { getPracticeFromConfig } from "../Logo";
 import { trackEvent } from "../../utils/analytics";
@@ -6,6 +7,15 @@ import "../../App.css";
 export default function LandingScreen() {
   const { updateState } = useApp();
   const practice = getPracticeFromConfig();
+
+  // Funnel: track landing view (with version) so we can compare to lead_capture_viewed
+  useEffect(() => {
+    if (practice === null) return;
+    trackEvent("landing_viewed", {
+      practice,
+      path: typeof window !== "undefined" ? window.location.pathname : undefined,
+    });
+  }, [practice]);
 
   if (practice === null) return null;
 

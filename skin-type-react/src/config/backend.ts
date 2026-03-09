@@ -5,6 +5,7 @@
  *   POST /api/dashboard/leads (create lead)
  *   PATCH /api/dashboard/leads/:recordId (update lead)
  *   PATCH /api/dashboard/records/Web Popup Leads/:id (behavioral sync)
+ *   POST /api/logs (log patient actions to Airtable Logs table; optional body.practice for version/path)
  * Set VITE_BACKEND_URL to your backend URL. Ensure FRONTEND_URL on the backend allows this app for CORS.
  */
 const DEFAULT_BACKEND_URL = "https://ponce-patient-backend.vercel.app";

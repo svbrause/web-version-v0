@@ -576,11 +576,14 @@ function AppContent() {
     }
   }, [state.currentStep]);
 
-  // Track screen views
+  // Track screen views (funnel: landing → … → leadCapture; segment by practice/version)
   useEffect(() => {
+    const practice = getPracticeFromConfig();
     trackEvent("screen_viewed", {
       screen_name: currentStepName,
       step_number: state.currentStep,
+      practice: practice ?? undefined,
+      path: typeof window !== "undefined" ? window.location.pathname : undefined,
       selected_concerns_count: state.selectedConcerns.length,
       selected_areas_count: state.selectedAreas.length,
     });

@@ -4,6 +4,8 @@ import { trackEvent } from "../../utils/analytics";
 import { saveUserData } from "../../utils/userDataCollection";
 import { submitLeadToAirtable } from "../../utils/airtableLeads";
 import { storeLeadRecordId } from "../../utils/airtableSync";
+import { logActionToAirtable } from "../../utils/actionLog";
+import { getPracticeFromConfig } from "../Logo";
 import { getLeadSourceFromUrl } from "../../utils/leadSource";
 import "../../App.css";
 
@@ -256,6 +258,9 @@ export default function LeadCaptureScreen() {
           );
           // Store the record ID for future behavioral data syncs
           storeLeadRecordId(result.record.id);
+          logActionToAirtable(email, "lead_submitted", {
+            practice: getPracticeFromConfig(),
+          });
         } else {
           console.error("❌ Lead submission to Airtable failed:", result.error);
           // Don't show alert to user since they've already moved on
