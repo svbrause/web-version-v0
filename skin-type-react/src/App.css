@@ -2274,30 +2274,40 @@ body[data-practice="lakeshore"] .concern-card-photo-area-overlay {
 
 .concern-card-new-button {
   font-size: 15px;
-  color: var(--text-primary);
+  color: white;
   font-weight: 600;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 0;
-  background: none;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--accent-dark);
   border: none;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .concern-card-new-button:hover {
-  gap: 6px;
-  color: var(--pink-baby);
+  background: #333333;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+}
+
+.concern-card-new-button:active {
+  transform: translateY(0);
 }
 
 .concern-card-new-button svg {
   transition: transform 0.2s ease;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
-.concern-card-new:hover .concern-card-new-button svg {
+.concern-card-new-button:hover svg {
   transform: translateX(2px);
 }
 
@@ -2506,6 +2516,45 @@ body[data-practice="lakeshore"] .concern-case-card-area-label-overlay {
   color: var(--text-primary);
   margin: 0;
   line-height: 1.4;
+}
+
+.concern-case-card-view-button {
+  margin-top: 8px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  background: var(--accent-dark);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.concern-case-card-view-button:hover {
+  background: #333333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.concern-case-card-view-button:active {
+  transform: translateY(0);
+}
+
+.concern-case-card-view-button svg {
+  transition: transform 0.2s ease;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.concern-case-card-view-button:hover svg {
+  transform: translateX(2px);
 }
 
 /* Play icon overlay for video cases in the scroll list */
